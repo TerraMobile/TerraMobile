@@ -1,0 +1,3 @@
+[submodule "Java-OpenMobility"]
+	path = Java-OpenMobility
+	url = https://github.com/claudiobogossian/Java-OpenMobility.git
