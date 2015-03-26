@@ -9,6 +9,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/AugTech_GeoAPI" />
+            <option value="$PROJECT_DIR$/JGPKG" />
           </set>
         </option>
       </GradleProjectSettings>
