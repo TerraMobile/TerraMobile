@@ -46,4 +46,13 @@
         android:padding="5dip"
         android:text="Ready" />
 
+
+    <org.osmdroid.views.MapView
+        android:id="@+id/mapview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tilesource="Mapnik"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/statusText" />
+
 </RelativeLayout>
