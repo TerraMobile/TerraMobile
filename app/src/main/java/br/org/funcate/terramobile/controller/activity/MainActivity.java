@@ -20,16 +20,31 @@ import java.io.FileOutputStream;
 import java.util.List;
 
 import org.opengis.feature.simple.SimpleFeature;
+import org.osmdroid.ResourceProxy;
+import org.osmdroid.tileprovider.MapTileProviderArray;
+import org.osmdroid.tileprovider.MapTileProviderBasic;
+import org.osmdroid.tileprovider.modules.MapTileModuleProviderBase;
+import org.osmdroid.tileprovider.tilesource.ITileSource;
+import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase;
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.tileprovider.tilesource.XYTileSource;
+import org.osmdroid.tileprovider.util.SimpleInvalidationHandler;
+import org.osmdroid.tileprovider.util.SimpleRegisterReceiver;
+import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.TilesOverlay;
 
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import br.org.funcate.jgpkg.service.GeoPackageService;
+import br.org.funcate.terramobile.model.tilesource.CustomBitmapTileSourceBase;
+import br.org.funcate.terramobile.model.tilesource.MapTileGeoPackageProvider;
 import br.org.funcate.terramobile.test.JGPKGTestInterface;
 import br.org.funcate.terramobile.R;
 import com.augtech.geoapi.geopackage.GeoPackage;
@@ -60,10 +75,68 @@ public class MainActivity extends Activity implements JGPKGTestInterface {
         readTiles.setOnClickListener(testReadTilesClick);
 
 
+        createBaseTileSource();
+/*
         MapFragment mapFragment = new MapFragment();
         FragmentManager fm = this.getFragmentManager();
         fm.beginTransaction().add(R.id.mapview, (Fragment)mapFragment).commit();
+*/
 
+
+
+    }
+
+    private void createBaseTileSource() {
+
+    /*    MapView mapView = (MapView) findViewById(R.id.mapview);
+        mapView.setMaxZoomLevel(20);
+        mapView.setBuiltInZoomControls(true);
+        mapView.setMultiTouchControls(true);
+
+        OnlineTileSourceBase mapQuestTileSource = TileSourceFactory.MAPQUESTOSM;
+        String tileSourcePath = mapQuestTileSource.OSMDROID_PATH.getAbsolutePath() + "/";
+
+        final MapTileProviderBasic tileProvider = new MapTileProviderBasic(getApplicationContext());
+        final ITileSource tileSource = new XYTileSource("MapquestOSM", ResourceProxy.string.mapnik, 1, 18, 256, ".png", new String[] { "http://tile.openstreetmap.org/" });
+
+        tileProvider.setTileSource(tileSource);
+        final TilesOverlay tilesOverlay = new TilesOverlay(tileProvider, this.getBaseContext());
+        tilesOverlay.setLoadingBackgroundColor(Color.TRANSPARENT);
+        mapView.getOverlays().add(tilesOverlay);
+
+        tileProvider.setTileRequestCompleteHandler(new SimpleInvalidationHandler(mapView));
+
+        mapView.setTileSource(tileSource);
+        mapView.setUseDataConnection(false); //  letting osmdroid know you would use it in offline mode, keeps the mapView from loading online tiles using network connection.*/
+    }
+
+    private void createGeoPackageTileSourceOverlay()
+    {
+        MapView mapView = (MapView) findViewById(R.id.mapview);
+        mapView.setMaxZoomLevel(20);
+        mapView.setBuiltInZoomControls(true);
+        mapView.setMultiTouchControls(true);
+
+/*        OnlineTileSourceBase mapQuestTileSource = TileSourceFactory.MAPQUESTOSM;
+        String tileSourcePath = mapQuestTileSource.OSMDROID_PATH.getAbsolutePath() + "/";*/
+
+        final MapTileProviderBasic tileProvider = new MapTileProviderBasic(getApplicationContext());
+
+        final ITileSource tileSource = new XYTileSource("MapquestOSM", ResourceProxy.string.mapquest_osm, 1, 18, 256, ".png", new String[] {});
+
+        MapTileModuleProviderBase moduleProvider = new MapTileGeoPackageProvider(tileSource);
+        SimpleRegisterReceiver simpleReceiver = new SimpleRegisterReceiver(getApplicationContext());
+        MapTileProviderArray tileProviderArray = new MapTileProviderArray(tileSource, simpleReceiver, new MapTileModuleProviderBase[] { moduleProvider });
+
+/*        tileProvider.setTileSource(tileSource);*/
+        final TilesOverlay tilesOverlay = new TilesOverlay(tileProviderArray, this.getApplicationContext());
+        tilesOverlay.setLoadingBackgroundColor(Color.TRANSPARENT);
+        mapView.getOverlays().add(tilesOverlay);
+        //mapView.getOverlayManager().overlaysReversed();
+        //mapView.getTileProvider().clearTileCache();
+        tileProvider.setTileRequestCompleteHandler(new SimpleInvalidationHandler(mapView));
+        mapView.setTileSource(tileSource);
+        mapView.setUseDataConnection(false); //  letting osmdroid know you would use it in offline mode, keeps the mapView from loading online tiles using network connection.*/
     }
 
 	private View.OnClickListener testCreateClick = new View.OnClickListener() {
@@ -131,8 +204,11 @@ public class MainActivity extends Activity implements JGPKGTestInterface {
                 GeoPackage gpkg = GeoPackageService.readGPKG(thisActivity,"/GeoPackageTest/landsat2012_tiles.gpkg");
 
 
+                createGeoPackageTileSourceOverlay();
+
     //            List<SimpleFeature> features = GeoPackageService.getTiles(gpkg, "landsat2012_tiles");
 
+/*
                 byte[] b1 = GeoPackageService.getTile(gpkg, "landsat2012_tiles", 0,0,1 );
 
                 byte[] b2 = GeoPackageService.getTile(gpkg, "landsat2012_tiles", 84,131,8 );
@@ -152,6 +228,7 @@ public class MainActivity extends Activity implements JGPKGTestInterface {
                 fos.write(b2);
                 fos.flush();
                 fos.close();
+*/
 
 
 

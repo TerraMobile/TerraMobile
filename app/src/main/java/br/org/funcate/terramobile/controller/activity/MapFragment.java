@@ -7,6 +7,7 @@ import org.osmdroid.ResourceProxy;
 import org.osmdroid.samplefragments.SampleFactory;*/
 import org.osmdroid.tileprovider.tilesource.ITileSource;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.tileprovider.tilesource.XYTileSource;
 import org.osmdroid.tileprovider.util.CloudmadeUtil;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.MinimapOverlay;
@@ -62,11 +63,6 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants
 
     private SharedPreferences mPrefs;
     private MapView mMapView;
-    private MyLocationNewOverlay mLocationOverlay;
-    private CompassOverlay mCompassOverlay;
-    private MinimapOverlay mMinimapOverlay;
-	private ScaleBarOverlay mScaleBarOverlay;
-    /*private RotationGestureOverlay mRotationGestureOverlay;*/
     private ResourceProxy mResourceProxy;
 
     @Override
@@ -110,54 +106,50 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants
             CloudmadeUtil.retrieveCloudmadeKey(context.getApplicationContext());
         }
 
-        this.mCompassOverlay = new CompassOverlay(context, new InternalCompassOrientationProvider(context),
-                mMapView);
-        this.mLocationOverlay = new MyLocationNewOverlay(context, new GpsMyLocationProvider(context),
-                mMapView);
+/*        this.mCompassOverlay = new CompassOverlay(context, new InternalCompassOrientationProvider(context),
+                mMapView);*/
+/*        this.mLocationOverlay = new MyLocationNewOverlay(context, new GpsMyLocationProvider(context),
+                mMapView);*/
 
-        mMinimapOverlay = new MinimapOverlay(getActivity(), mMapView.getTileRequestCompleteHandler());
+/*        mMinimapOverlay = new MinimapOverlay(getActivity(), mMapView.getTileRequestCompleteHandler());
 		mMinimapOverlay.setWidth(dm.widthPixels / 5);
-		mMinimapOverlay.setHeight(dm.heightPixels / 5);
+		mMinimapOverlay.setHeight(dm.heightPixels / 5);*/
 
-		mScaleBarOverlay = new ScaleBarOverlay(context);
+/*		mScaleBarOverlay = new ScaleBarOverlay(context);
 		mScaleBarOverlay.setCentred(true);
-		mScaleBarOverlay.setScaleBarOffset(dm.widthPixels / 2, 10);
+		mScaleBarOverlay.setScaleBarOffset(dm.widthPixels / 2, 10);*/
 
 /*        mRotationGestureOverlay = new RotationGestureOverlay(context, mMapView);
 		mRotationGestureOverlay.setEnabled(false);*/
 
-        mMapView.setBuiltInZoomControls(true);
-        mMapView.setMultiTouchControls(true);
-        mMapView.getOverlays().add(this.mLocationOverlay);
-        mMapView.getOverlays().add(this.mCompassOverlay);
-        mMapView.getOverlays().add(this.mMinimapOverlay);
-		mMapView.getOverlays().add(this.mScaleBarOverlay);
+/*        mMapView.setBuiltInZoomControls(true);
+        mMapView.setMultiTouchControls(true);*/
+        /*mMapView.getOverlays().add(this.mLocationOverlay);*/
+/*        mMapView.getOverlays().add(this.mCompassOverlay);*/
+        /*mMapView.getOverlays().add(this.mMinimapOverlay);*/
+		/*mMapView.getOverlays().add(this.mScaleBarOverlay);*/
         /*mMapView.getOverlays().add(this.mRotationGestureOverlay);*/
 
-        mMapView.getController().setZoom(mPrefs.getInt(PREFS_ZOOM_LEVEL, 1));
-        mMapView.scrollTo(mPrefs.getInt(PREFS_SCROLL_X, 0), mPrefs.getInt(PREFS_SCROLL_Y, 0));
+/*        mMapView.getController().setZoom(mPrefs.getInt(PREFS_ZOOM_LEVEL, 1));
+        mMapView.scrollTo(mPrefs.getInt(PREFS_SCROLL_X, 23), mPrefs.getInt(PREFS_SCROLL_Y, 0));*/
+        mMapView.getController().setZoom(mPrefs.getInt(PREFS_ZOOM_LEVEL, 10));
+        mMapView.scrollTo(mPrefs.getInt(PREFS_SCROLL_X, 23), mPrefs.getInt(PREFS_SCROLL_Y, 10));
 
-		mLocationOverlay.enableMyLocation();
-		mCompassOverlay.enableCompass();
+		/*mLocationOverlay.enableMyLocation();*/
+		/*mCompassOverlay.enableCompass();*/
 
-        setHasOptionsMenu(true);
+      //  setHasOptionsMenu(true);
     }
 
     @Override
     public void onPause()
     {
-        final SharedPreferences.Editor edit = mPrefs.edit();
+/*        final SharedPreferences.Editor edit = mPrefs.edit();
         edit.putString(PREFS_TILE_SOURCE, mMapView.getTileProvider().getTileSource().name());
         edit.putInt(PREFS_SCROLL_X, mMapView.getScrollX());
         edit.putInt(PREFS_SCROLL_Y, mMapView.getScrollY());
         edit.putInt(PREFS_ZOOM_LEVEL, mMapView.getZoomLevel());
-        edit.putBoolean(PREFS_SHOW_LOCATION, mLocationOverlay.isMyLocationEnabled());
-        edit.putBoolean(PREFS_SHOW_COMPASS, mCompassOverlay.isCompassEnabled());
-        edit.commit();
-
-        this.mLocationOverlay.disableMyLocation();
-        this.mCompassOverlay.disableCompass();
-
+        edit.commit();*/
         super.onPause();
     }
 
@@ -168,76 +160,13 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants
         final String tileSourceName = mPrefs.getString(PREFS_TILE_SOURCE,
                 TileSourceFactory.DEFAULT_TILE_SOURCE.name());
         try {
-            final ITileSource tileSource = TileSourceFactory.getTileSource(tileSourceName);
+            String[] url= {"http://tile.openstreetmap.org/"};
+            final ITileSource tileSource = new XYTileSource("Mapnik", ResourceProxy.string.mapnik, 1, 18, 256, ".png", url);
             mMapView.setTileSource(tileSource);
+
         } catch (final IllegalArgumentException ignore) {
         }
-        if (mPrefs.getBoolean(PREFS_SHOW_LOCATION, false)) {
-			this.mLocationOverlay.enableMyLocation();
-        }
-        if (mPrefs.getBoolean(PREFS_SHOW_COMPASS, false)) {
-			this.mCompassOverlay.enableCompass();
-        }
     }
 
-/*    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
-    {
-        // Put overlay items first
-        mMapView.getOverlayManager().onCreateOptionsMenu(menu, MENU_LAST_ID, mMapView);
 
-        // Put samples next
-		SubMenu samplesSubMenu = menu.addSubMenu(0, MENU_SAMPLES, Menu.NONE, R.string.samples)
-				.setIcon(android.R.drawable.ic_menu_gallery);
-		SampleFactory sampleFactory = SampleFactory.getInstance();
-		for (int a = 0; a < sampleFactory.count(); a++) {
-			final BaseSampleFragment f = sampleFactory.getSample(a);
-			samplesSubMenu.add(f.getSampleTitle()).setOnMenuItemClickListener(
-					new OnMenuItemClickListener() {
-						@Override
-						public boolean onMenuItemClick(MenuItem item) {
-							startSampleFragment(f);
-							return true;
-						}
-					});
-		}
-
-        // Put "About" menu item last
-        menu.add(0, MENU_ABOUT, Menu.CATEGORY_SECONDARY, R.string.about).setIcon(
-                android.R.drawable.ic_menu_info_details);
-
-        super.onCreateOptionsMenu(menu, inflater);
-    }*/
-
-	protected void startSampleFragment(Fragment fragment) {
-		FragmentManager fm = getFragmentManager();
-		fm.beginTransaction().hide(this).add(android.R.id.content, fragment, "SampleFragment")
-				.addToBackStack(null).commit();
-	}
-
-    @Override
-    public void onPrepareOptionsMenu(final Menu pMenu)
-    {
-        mMapView.getOverlayManager().onPrepareOptionsMenu(pMenu, MENU_LAST_ID, mMapView);
-        super.onPrepareOptionsMenu(pMenu);
-    }
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item)
-	{
-		if (mMapView.getOverlayManager().onOptionsItemSelected(item, MENU_LAST_ID, mMapView))
-			return true;
-
-		switch (item.getItemId()) {
-		case MENU_ABOUT:
-			getActivity().showDialog(DIALOG_ABOUT_ID);
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}
-
-    // @Override
-    // public boolean onTrackballEvent(final MotionEvent event) {
-    // return this.mMapView.onTrackballEvent(event);
-    // }
 }
