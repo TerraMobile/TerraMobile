@@ -427,7 +427,15 @@ public abstract class GpkgTable {
 					thisRec.add( cur.getDouble(idx) );
 					break;
 				case BYTE_ARR:
-					thisRec.add( cur.getBlob(idx) );
+                    byte[] b;
+                    try
+                    {
+                        b =cur.getBlob(idx);
+                    } catch(Exception e)
+                    {
+                       b=new byte[0];
+                    }
+					thisRec.add(b);
 					break;
 				}
 				
@@ -438,6 +446,7 @@ public abstract class GpkgTable {
 		}
 		
 		cur.close();
+
 
 		return records;
 	}

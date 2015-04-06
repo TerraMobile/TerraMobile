@@ -114,7 +114,7 @@ public class GeoPackage {
 	 * be validated against the specification and exceptions thrown if not valid.
 	 * If False, checks will be performed, but exceptions won't be thrown unless
 	 * data cannot be understood. Typical examples are the application_id pragma and Geometry.*/
-	public static boolean MODE_STRICT = true;
+	public static boolean MODE_STRICT = false;
 		
 	/** The Geometry version to write in to the Geometry columns. Default is 0 
 	 * for Version 1.0 */

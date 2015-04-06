@@ -6,6 +6,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.geometry.BoundingBox;
 
 import android.content.Context;
 import android.os.Environment;
@@ -22,11 +23,13 @@ public class GeoPackageService {
 
         static Logger log = Logger.getAnonymousLogger();
 
+        public static GeoPackage geoPackage;
+
         private static GeoPackage connect(ISQLDatabase database, boolean overwrite) {
 
             log.log(Level.INFO, "Connecting to GeoPackage...");
 
-            GeoPackage geoPackage = new GeoPackage(database, overwrite);
+            geoPackage = new GeoPackage(database, overwrite);
 
             // Quick test to get the current contents
             if (geoPackage!=null) {
@@ -86,6 +89,22 @@ public class GeoPackageService {
 			return geoPackage;
 		
 		}
+
+        public static GeoPackage readTilesGPKG(Context context, String gpkgName) throws Exception
+        {
+            String path = Environment.getExternalStorageDirectory().toString();
+
+            AndroidSQLDatabase gpkgDB = new AndroidSQLDatabase(context, new File(path, gpkgName));
+
+            GeoPackage geoPackage = connect(gpkgDB, false);
+
+   /*			if(!geoPackage.isGPKGValid(true))
+                {
+                    throw new Exception("Unable to load "+gpkgName+" GeoPackage file.");
+                }*/
+            return geoPackage;
+
+        }
 		
 		
 		public static List<SimpleFeature> getGeometries(GeoPackage gpkg, String tableName) throws Exception
@@ -99,4 +118,40 @@ public class GeoPackageService {
 			
 			return features;
 		}
+
+    public static List<SimpleFeature> getTiles(GeoPackage gpkg, String tableName) throws Exception
+    {
+        if(!gpkg.isGPKGValid(true))
+        {
+            throw new Exception("Invalid GeoPackage file.");
+        }
+
+        List<SimpleFeature> features = gpkg.getTiles(tableName,"");
+
+        return features;
+    }
+
+    public static List<SimpleFeature> getTiles(GeoPackage gpkg, BoundingBox box, String tableName, int zoomLevel) throws Exception
+    {
+        if(!gpkg.isGPKGValid(true))
+        {
+            throw new Exception("Invalid GeoPackage file.");
+        }
+
+        List<SimpleFeature> features = gpkg.getTiles(tableName, box, zoomLevel);
+
+        return features;
+    }
+
+    public static byte[] getTile(GeoPackage gpkg, String tableName, int col, int row, int zoomLevel) throws Exception
+    {
+        if(!gpkg.isGPKGValid(true))
+        {
+            throw new Exception("Invalid GeoPackage file.");
+        }
+
+        byte[] tile = gpkg.getTile(tableName, col, row, zoomLevel);
+
+        return tile;
+    }
 }
