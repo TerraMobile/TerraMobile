@@ -145,6 +145,7 @@ public class MapTileGeoPackageProvider extends MapTileModuleProviderBase {
                     if(b==null)
                     {
                         System.out.println("FAILED to reach tile X: " + tile.getX() + " Y: " + tile.getY() + " Z: " +  tile.getZoomLevel());
+                        return null;
                     }
                     else
                     {

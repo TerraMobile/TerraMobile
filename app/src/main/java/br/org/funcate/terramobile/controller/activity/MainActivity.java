@@ -112,10 +112,14 @@ public class MainActivity extends Activity implements JGPKGTestInterface {
 
     private void createGeoPackageTileSourceOverlay()
     {
+
         MapView mapView = (MapView) findViewById(R.id.mapview);
         mapView.setMaxZoomLevel(20);
         mapView.setBuiltInZoomControls(true);
         mapView.setMultiTouchControls(true);
+
+
+        System.out.println("Overlay size:" + mapView.getOverlayManager().size());
 
 /*        OnlineTileSourceBase mapQuestTileSource = TileSourceFactory.MAPQUESTOSM;
         String tileSourcePath = mapQuestTileSource.OSMDROID_PATH.getAbsolutePath() + "/";*/
