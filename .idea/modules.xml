@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/AugTech_GeoAPI/AugTech_GeoAPI.iml" filepath="$PROJECT_DIR$/AugTech_GeoAPI/AugTech_GeoAPI.iml" />
+      <module fileurl="file://$PROJECT_DIR$/JGPKG/JGPKG.iml" filepath="$PROJECT_DIR$/JGPKG/JGPKG.iml" />
       <module fileurl="file://$PROJECT_DIR$/Java-OpenMobility.iml" filepath="$PROJECT_DIR$/Java-OpenMobility.iml" />
     </modules>
   </component>

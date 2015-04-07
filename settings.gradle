@@ -1,1 +1,1 @@
-include ':AugTech_GeoAPI'
+include ':AugTech_GeoAPI', ':JGPKG'
