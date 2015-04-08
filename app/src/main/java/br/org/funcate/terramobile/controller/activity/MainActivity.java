@@ -70,9 +70,11 @@ public class MainActivity extends Activity implements JGPKGTestInterface {
 		Button create = (Button)findViewById(R.id.btn_testCreate);
 		Button read = (Button)findViewById(R.id.btn_testRead);
 		Button readTiles = (Button)findViewById(R.id.btn_testReadTiles);
+        Button downloadTilesFileBtn = (Button)findViewById(R.id.btn_downloadFiles);
 		create.setOnClickListener(testCreateClick);
 		read.setOnClickListener(testReadClick);
         readTiles.setOnClickListener(testReadTilesClick);
+        downloadTilesFileBtn.setOnClickListener(downloadFiles);
 
 
         createBaseTileSource();
@@ -126,7 +128,7 @@ public class MainActivity extends Activity implements JGPKGTestInterface {
 
         final MapTileProviderBasic tileProvider = new MapTileProviderBasic(getApplicationContext());
 
-        final ITileSource tileSource = new XYTileSource("MapquestOSM", ResourceProxy.string.mapquest_osm, 1, 18, 256, ".png", new String[] {});
+        final ITileSource tileSource = new XYTileSource("Mapnik", ResourceProxy.string.mapnik, 1, 18, 256, ".png", new String[] {"http://tile.openstreetmap.org/"});
 
         MapTileModuleProviderBase moduleProvider = new MapTileGeoPackageProvider(tileSource);
         SimpleRegisterReceiver simpleReceiver = new SimpleRegisterReceiver(getApplicationContext());
@@ -169,6 +171,22 @@ public class MainActivity extends Activity implements JGPKGTestInterface {
 			
 		}
 	};
+    private View.OnClickListener downloadFiles = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+            try {
+
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+                statusText.setText("Error insert GML on device: " +e.getMessage());
+                return;
+            }
+
+
+        }
+    };
 	@Override
 	public void testComplete(String msg) {
 		statusText.setText( msg );
@@ -205,7 +223,7 @@ public class MainActivity extends Activity implements JGPKGTestInterface {
 
                 String path = Environment.getExternalStorageDirectory().toString();
 
-                GeoPackage gpkg = GeoPackageService.readGPKG(thisActivity,"/GeoPackageTest/landsat2012_tiles.gpkg");
+                GeoPackage gpkg = GeoPackageService.readGPKG(thisActivity,"/GeoPackageTest/landsat2009_tiles.gpkg");
 
 
                 createGeoPackageTileSourceOverlay();
