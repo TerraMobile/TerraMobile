@@ -1,4 +1,4 @@
-package br.org.funcate.terramobile.model.model.exception;
+package br.org.funcate.terramobile.model.exception;
 
 /**
  * Created by bogo on 01/04/15.

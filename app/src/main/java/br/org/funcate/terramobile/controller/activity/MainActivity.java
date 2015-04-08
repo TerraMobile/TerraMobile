@@ -16,8 +16,8 @@
 package br.org.funcate.terramobile.controller.activity;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.osmdroid.ResourceProxy;
@@ -25,8 +25,6 @@ import org.osmdroid.tileprovider.MapTileProviderArray;
 import org.osmdroid.tileprovider.MapTileProviderBasic;
 import org.osmdroid.tileprovider.modules.MapTileModuleProviderBase;
 import org.osmdroid.tileprovider.tilesource.ITileSource;
-import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase;
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.tileprovider.tilesource.XYTileSource;
 import org.osmdroid.tileprovider.util.SimpleInvalidationHandler;
 import org.osmdroid.tileprovider.util.SimpleRegisterReceiver;
@@ -34,8 +32,6 @@ import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.TilesOverlay;
 
 import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
@@ -43,7 +39,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import br.org.funcate.jgpkg.service.GeoPackageService;
-import br.org.funcate.terramobile.model.tilesource.CustomBitmapTileSourceBase;
+import br.org.funcate.terramobile.model.exception.DownloadException;
+import br.org.funcate.terramobile.model.exception.FileException;
+import br.org.funcate.terramobile.model.service.DownloadService;
+import br.org.funcate.terramobile.model.service.FileService;
+import br.org.funcate.terramobile.model.task.DownloadTask;
 import br.org.funcate.terramobile.model.tilesource.MapTileGeoPackageProvider;
 import br.org.funcate.terramobile.test.JGPKGTestInterface;
 import br.org.funcate.terramobile.R;
@@ -57,9 +57,10 @@ import com.augtech.geoapi.geopackage.GeoPackage;
 public class MainActivity extends Activity implements JGPKGTestInterface {
 
 	static final String LOG_TAG = "GeoPackage Client";
-	File testDir = getDirectory("GeoPackageTest");
+	File appPath = getDirectory("GeoPackageTest");
 	TextView statusText = null;
 	MainActivity thisActivity = null;
+    String tempURL = "http://200.144.100.34/temp/GPKG-TerraMobile-test.zip";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -149,7 +150,7 @@ public class MainActivity extends Activity implements JGPKGTestInterface {
 		@Override
 		public void onClick(View v) {
 			
-			GeoPackageService.createGPKG(thisActivity,"/GeoPackageTest/test.gpkg");
+			GeoPackageService.createGPKG(thisActivity,appPath.getPath()+"/test.gpkg");
 			
 			statusText.setText("GeoPackage file successfully created");
 		}
@@ -175,14 +176,30 @@ public class MainActivity extends Activity implements JGPKGTestInterface {
         @Override
         public void onClick(View v) {
 
-            try {
+            String fileName = appPath.getPath() +"/GPKG-TerraMobile-test.zip";
 
-            } catch (Exception e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-                statusText.setText("Error insert GML on device: " +e.getMessage());
-                return;
+            try {
+                DownloadTask task= new DownloadTask(tempURL, fileName, false);
+
+                boolean downloaded = task.execute().get();
+
+                if(!downloaded)
+                {
+                    statusText.setText(task.getException().getMessage());
+                    return;
+                }
+
+                FileService.unzip(fileName, appPath.getPath()+"/");
+
+            } catch (InterruptedException e) {
+                statusText.setText(e.getMessage());
+            } catch (ExecutionException e) {
+                statusText.setText(e.getMessage());
+            } catch (FileException e) {
+                statusText.setText(e.getMessage());
             }
+
+
 
 
         }
@@ -199,7 +216,7 @@ public class MainActivity extends Activity implements JGPKGTestInterface {
 			
 			try {
  
-				GeoPackage gpkg = GeoPackageService.readGPKG(thisActivity,"/GeoPackageTest/test.gpkg");
+				GeoPackage gpkg = GeoPackageService.readGPKG(thisActivity,appPath.getPath()+"/test.gpkg");
 				
 				
 				List<SimpleFeature> features = GeoPackageService.getGeometries(gpkg, "municipios_2005");
@@ -223,7 +240,7 @@ public class MainActivity extends Activity implements JGPKGTestInterface {
 
                 String path = Environment.getExternalStorageDirectory().toString();
 
-                GeoPackage gpkg = GeoPackageService.readGPKG(thisActivity,"/GeoPackageTest/landsat2009_tiles.gpkg");
+                GeoPackage gpkg = GeoPackageService.readGPKG(thisActivity,appPath.getPath()+"/landsat2009_tiles.gpkg");
 
 
                 createGeoPackageTileSourceOverlay();
