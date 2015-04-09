@@ -39,9 +39,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import br.org.funcate.jgpkg.service.GeoPackageService;
-import br.org.funcate.terramobile.model.exception.DownloadException;
 import br.org.funcate.terramobile.model.exception.FileException;
-import br.org.funcate.terramobile.model.service.DownloadService;
 import br.org.funcate.terramobile.model.service.FileService;
 import br.org.funcate.terramobile.model.task.DownloadTask;
 import br.org.funcate.terramobile.model.tilesource.MapTileGeoPackageProvider;
@@ -54,12 +52,12 @@ import com.augtech.geoapi.geopackage.GeoPackage;
  * @author Augmented Technologies Ltd.
  *
  */
-public class MainActivity extends Activity implements JGPKGTestInterface {
+public class TestActivity extends Activity implements JGPKGTestInterface {
 
 	static final String LOG_TAG = "GeoPackage Client";
 	File appPath = getDirectory("GeoPackageTest");
 	TextView statusText = null;
-	MainActivity thisActivity = null;
+	TestActivity thisActivity = null;
     String tempURL = "http://200.144.100.34/temp/GPKG-TerraMobile-test.zip";
 	
 	@Override
@@ -144,6 +142,7 @@ public class MainActivity extends Activity implements JGPKGTestInterface {
         tileProvider.setTileRequestCompleteHandler(new SimpleInvalidationHandler(mapView));
         mapView.setTileSource(tileSource);
         mapView.setUseDataConnection(false); //  letting osmdroid know you would use it in offline mode, keeps the mapView from loading online tiles using network connection.*/
+        mapView.invalidate();
     }
 
 	private View.OnClickListener testCreateClick = new View.OnClickListener() {
