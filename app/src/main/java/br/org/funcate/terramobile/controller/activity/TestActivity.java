@@ -250,31 +250,6 @@ public class TestActivity extends Activity implements JGPKGTestInterface {
 
                 createGeoPackageTileSourceOverlay();
 
-    //            List<SimpleFeature> features = GeoPackageService.getTiles(gpkg, "landsat2012_tiles");
-
-/*
-                byte[] b1 = GeoPackageService.getTile(gpkg, "landsat2012_tiles", 0,0,1 );
-
-                byte[] b2 = GeoPackageService.getTile(gpkg, "landsat2012_tiles", 84,131,8 );
-
-//                statusText.setText(""+features.size()+" features on the file");
-
-                File file = new File(path+"/b1.png");
-                FileOutputStream fos = new FileOutputStream(file);
-
-                fos.write(b1);
-                fos.flush();
-                fos.close();
-
-                file = new File(path+"/b2.png");
-                fos = new FileOutputStream(file);
-
-                fos.write(b2);
-                fos.flush();
-                fos.close();
-*/
-
-
 
             } catch (Exception e) {
                 statusText.setText("Error reading gpkg file: " + e.getMessage());
