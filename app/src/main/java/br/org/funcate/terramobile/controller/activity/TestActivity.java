@@ -67,14 +67,7 @@ public class TestActivity extends Activity implements JGPKGTestInterface {
 		thisActivity = this;
 		setContentView(R.layout.activity_main);
 		statusText = (TextView) findViewById(R.id.statusText);
-		Button create = (Button)findViewById(R.id.btn_testCreate);
-		Button read = (Button)findViewById(R.id.btn_testReadGeom);
-		Button readTiles = (Button)findViewById(R.id.btn_testReadTiles);
-        Button downloadTilesFileBtn = (Button)findViewById(R.id.btn_downloadFiles);
-		create.setOnClickListener(testCreateClick);
-		read.setOnClickListener(testReadClick);
-        readTiles.setOnClickListener(testReadTilesClick);
-        downloadTilesFileBtn.setOnClickListener(downloadFiles);
+
 
 
         createBaseTileSource();

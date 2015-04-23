@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="grptextsize">25sp</dimen>
+    <dimen name="childtextsize">20sp</dimen>
+    <dimen name="titletextsize">30sp</dimen>
+</resources>
