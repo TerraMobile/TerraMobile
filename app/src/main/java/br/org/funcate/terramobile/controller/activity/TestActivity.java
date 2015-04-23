@@ -21,13 +21,13 @@ import java.util.concurrent.ExecutionException;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.osmdroid.ResourceProxy;
-import org.osmdroid.tileprovider.MapTileProviderArray;
 import org.osmdroid.tileprovider.MapTileProviderBasic;
 import org.osmdroid.tileprovider.modules.MapTileModuleProviderBase;
 import org.osmdroid.tileprovider.tilesource.ITileSource;
 import org.osmdroid.tileprovider.tilesource.XYTileSource;
 import org.osmdroid.tileprovider.util.SimpleInvalidationHandler;
 import org.osmdroid.tileprovider.util.SimpleRegisterReceiver;
+import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.TilesOverlay;
 
@@ -43,6 +43,7 @@ import br.org.funcate.terramobile.model.exception.FileException;
 import br.org.funcate.terramobile.model.service.FileService;
 import br.org.funcate.terramobile.model.task.DownloadTask;
 import br.org.funcate.terramobile.model.tilesource.MapTileGeoPackageProvider;
+import br.org.funcate.terramobile.model.tilesource.MapTileProviderArrayGeoPackage;
 import br.org.funcate.terramobile.test.JGPKGTestInterface;
 import br.org.funcate.terramobile.R;
 import com.augtech.geoapi.geopackage.GeoPackage;
@@ -66,14 +67,7 @@ public class TestActivity extends Activity implements JGPKGTestInterface {
 		thisActivity = this;
 		setContentView(R.layout.activity_main);
 		statusText = (TextView) findViewById(R.id.statusText);
-/*		Button create = (Button)findViewById(R.id.btn_testCreate);
-		Button read = (Button)findViewById(R.id.btn_testRead);
-		Button readTiles = (Button)findViewById(R.id.btn_testReadTiles);
-        Button downloadTilesFileBtn = (Button)findViewById(R.id.btn_downloadFiles);
-		create.setOnClickListener(testCreateClick);
-		read.setOnClickListener(testReadClick);
-        readTiles.setOnClickListener(testReadTilesClick);
-        downloadTilesFileBtn.setOnClickListener(downloadFiles);*/
+
 
 
         createBaseTileSource();
@@ -88,6 +82,17 @@ public class TestActivity extends Activity implements JGPKGTestInterface {
     }
 
     private void createBaseTileSource() {
+
+        MapView mapView = (MapView) findViewById(R.id.mapview);
+        mapView.setMaxZoomLevel(10);
+        mapView.setBuiltInZoomControls(true);
+        mapView.setMultiTouchControls(true);
+        mapView.setDrawingCacheEnabled(false);
+        mapView.getController().setZoom(2);
+
+        GeoPoint gPt = new GeoPoint(-15.1656563,-47.9116195);
+
+        mapView.getController().setCenter(gPt);
 
     /*    MapView mapView = (MapView) findViewById(R.id.mapview);
         mapView.setMaxZoomLevel(20);
@@ -115,23 +120,17 @@ public class TestActivity extends Activity implements JGPKGTestInterface {
     {
 
         MapView mapView = (MapView) findViewById(R.id.mapview);
-        mapView.setMaxZoomLevel(20);
-        mapView.setBuiltInZoomControls(true);
-        mapView.setMultiTouchControls(true);
-
-
-        System.out.println("Overlay size:" + mapView.getOverlayManager().size());
-
+/*    mapView.getOverlayManager().get(0).onTouchEvent())*/
 /*        OnlineTileSourceBase mapQuestTileSource = TileSourceFactory.MAPQUESTOSM;
         String tileSourcePath = mapQuestTileSource.OSMDROID_PATH.getAbsolutePath() + "/";*/
 
         final MapTileProviderBasic tileProvider = new MapTileProviderBasic(getApplicationContext());
 
-        final ITileSource tileSource = new XYTileSource("Mapnik", ResourceProxy.string.mapnik, 1, 18, 256, ".png", new String[] {"http://tile.openstreetmap.org/"});
+        final ITileSource tileSource = new XYTileSource("Mapnik", ResourceProxy.string.mapnik, 1, 10, 256, ".png", new String[] {"http://tile.openstreetmap.org/"});
 
         MapTileModuleProviderBase moduleProvider = new MapTileGeoPackageProvider(tileSource);
         SimpleRegisterReceiver simpleReceiver = new SimpleRegisterReceiver(getApplicationContext());
-        MapTileProviderArray tileProviderArray = new MapTileProviderArray(tileSource, simpleReceiver, new MapTileModuleProviderBase[] { moduleProvider });
+        MapTileProviderArrayGeoPackage tileProviderArray = new MapTileProviderArrayGeoPackage(tileSource, simpleReceiver, new MapTileModuleProviderBase[] { moduleProvider }, mapView);
 
 /*        tileProvider.setTileSource(tileSource);*/
         final TilesOverlay tilesOverlay = new TilesOverlay(tileProviderArray, this.getApplicationContext());
@@ -178,7 +177,7 @@ public class TestActivity extends Activity implements JGPKGTestInterface {
             String fileName = appPath.getPath() +"/GPKG-TerraMobile-test.zip";
 
             try {
-                DownloadTask task= new DownloadTask(tempURL, fileName, false);
+                DownloadTask task= new DownloadTask(tempURL, fileName, true);
 
                 boolean downloaded = task.execute().get();
 
@@ -215,14 +214,14 @@ public class TestActivity extends Activity implements JGPKGTestInterface {
 			
 			try {
  
-				GeoPackage gpkg = GeoPackageService.readGPKG(thisActivity,appPath.getPath()+"/test.gpkg");
-				
-				
-				List<SimpleFeature> features = GeoPackageService.getGeometries(gpkg, "municipios_2005");
+				GeoPackage gpkg = GeoPackageService.readGPKG(thisActivity,appPath.getPath()+"/focosqueimadas.gpkg");
+
+				List<SimpleFeature> features = GeoPackageService.getGeometries(gpkg, "focosqueimadas");
 				
 				statusText.setText(""+features.size()+" features on the file");
 			
 			} catch (Exception e) {
+                e.printStackTrace();
 				statusText.setText("Error reading gpkg file: " + e.getMessage());
 				return;
 			}

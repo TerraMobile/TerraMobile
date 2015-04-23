@@ -123,20 +123,6 @@ public class MapTileGeoPackageProvider extends MapTileModuleProviderBase {
 
             final MapTile tile = pState.getMapTile();
 
-            // if there's no sdcard then don't do anything
-/*            if (!getSdCardAvailable()) {
-                if (DEBUGMODE) {
-                    logger.debug("No sdcard - do nothing for tile: " + tile);
-                }
-                return null;
-            }*/
-
-            // Check the tile source to see if its file is available and if so, then render the
-            // drawable and return the tile
-            final File file = new File(TILE_PATH_BASE,
-                    tileSource.getTileRelativeFilenameString(tile) + TILE_PATH_EXTENSION);
-            if (file.exists()) {
-
                 try {
 
                     System.out.println("Reaching tile X: " + tile.getX() + " Y: " + tile.getY() + " Z: " +  tile.getZoomLevel());
@@ -155,18 +141,6 @@ public class MapTileGeoPackageProvider extends MapTileModuleProviderBase {
                     InputStream is = new ByteArrayInputStream(b);
                     final Drawable drawable = tileSource.getDrawable(is);
 
-
-                    // Check to see if file has expired
-                    final long now = System.currentTimeMillis();
-                    final long lastModified = file.lastModified();
-/*                    final boolean fileExpired = lastModified < now - mMaximumCachedFileAge;
-
-                    if (fileExpired && drawable != null) {
-                        if (DEBUGMODE) {
-                            logger.debug("Tile expired: " + tile);
-                        }
-                        drawable.setState(new int[] {ExpirableBitmapDrawable.EXPIRED });
-                    }*/
                     return drawable;
 
                 } catch (final BitmapTileSourceBase.LowMemoryException e) {
@@ -176,7 +150,7 @@ public class MapTileGeoPackageProvider extends MapTileModuleProviderBase {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            }
+          //  }
 
             // If we get here then there is no file in the file cache
             return null;
@@ -184,6 +158,28 @@ public class MapTileGeoPackageProvider extends MapTileModuleProviderBase {
 
         private byte[] getTileFromGPKG(int col, int row, int level) throws Exception {
             return GeoPackageService.getTile(GeoPackageService.geoPackage, "landsat2012_tiles", col, row, level);
+        }
+        /**
+         * A tile has loaded.
+         */
+        protected void tileLoaded(final MapTileRequestState pState, final Drawable pDrawable) {
+            if (DEBUG_TILE_PROVIDERS) {
+                logger.debug("TileLoader.tileLoaded() on provider: " + getName() + " with tile: "
+                        + pState.getMapTile());
+            }
+            removeTileFromQueues(pState.getMapTile());
+            pState.getCallback().mapTileRequestCompleted(pState, pDrawable);
+        }
+
+        void removeTileFromQueues(final MapTile mapTile) {
+            synchronized (mQueueLockObject) {
+                if (DEBUG_TILE_PROVIDERS) {
+                    logger.debug("MapTileModuleProviderBase.removeTileFromQueues() on provider: "
+                            + getName() + " for tile: " + mapTile);
+                }
+                mPending.remove(mapTile);
+                mWorking.remove(mapTile);
+            }
         }
     }
 }

@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.augtech.geoapi.geopackage.GeoPackage;
 
+import org.opengis.feature.simple.SimpleFeature;
 import org.osmdroid.ResourceProxy;
 import org.osmdroid.tileprovider.MapTileProviderArray;
 import org.osmdroid.tileprovider.MapTileProviderBasic;
@@ -28,6 +29,7 @@ import org.osmdroid.views.overlay.TilesOverlay;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import br.org.funcate.jgpkg.service.GeoPackageService;
@@ -38,8 +40,6 @@ import br.org.funcate.terramobile.model.exception.FileException;
 import br.org.funcate.terramobile.model.service.FileService;
 import br.org.funcate.terramobile.model.task.DownloadTask;
 import br.org.funcate.terramobile.model.tilesource.MapTileGeoPackageProvider;
-
-import static br.org.funcate.terramobile.controller.activity.MapFragment.getDirectory;
 
 @SuppressWarnings("unchecked")
 public class MenuAdapter extends BaseExpandableListAdapter {
@@ -124,7 +124,7 @@ public class MenuAdapter extends BaseExpandableListAdapter {
         private int grpID;
         private int chlID;
         private File appPath = getDirectory("GeoPackageTest");
-        private String tempURL = "http://200.144.100.34/temp/GPKG-TerraMobile-test.zip";
+        private String tempURL = context.getResources().getString(R.string.gpkg_url);
 
         public TreeViewEventController(int groupPosition, int childPosition){
             this.grpID=groupPosition;
@@ -138,6 +138,7 @@ public class MenuAdapter extends BaseExpandableListAdapter {
             exec();
             Toast.makeText(context, groupItem.get(this.grpID) + ":" + v.getTag(),
                     Toast.LENGTH_SHORT).show();
+            return;
         }
 
         private void exec() {
@@ -153,50 +154,68 @@ public class MenuAdapter extends BaseExpandableListAdapter {
                                 boolean downloaded = task.execute().get();
 
                                 if (!downloaded) {
-                                    //statusText.setText(task.getException().getMessage());
                                     Toast.makeText(context, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                                    return;
+                                    break;
                                 }
 
                                 FileService.unzip(fileName, appPath.getPath() + "/");
 
                             } catch (InterruptedException e) {
-                                //statusText.setText(e.getMessage());
                                 Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
                             } catch (ExecutionException e) {
-                                //statusText.setText(e.getMessage());
                                 Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
                             } catch (FileException e) {
-                                //statusText.setText(e.getMessage());
                                 Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
                             }
+                            break;
                         }
                         case 1:{//Create GeoPackage
-                            //testCreateClick
+                            GeoPackageService.createGPKG(context, appPath.getPath() + "/test.gpkg");
+                            Toast.makeText(context, "GeoPackage file successfully created", Toast.LENGTH_SHORT).show();
+                            break;
                         }
                         case 2:{//Read Geometries
+                            try {
 
+                                GeoPackage gpkg = GeoPackageService.readGPKG(context,appPath.getPath()+"/test.gpkg");
+
+
+                                List<SimpleFeature> features = GeoPackageService.getGeometries(gpkg, "municipios_2005");
+
+                                Toast.makeText(context, ""+features.size()+" features on the file", Toast.LENGTH_SHORT).show();
+
+                            } catch (Exception e) {
+                                Toast.makeText(context, "Error reading gpkg file: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                            break;
                         }
                         case 3:{//Read Tiles
                             try {
 
-                                String path = Environment.getExternalStorageDirectory().toString();
+                                String path = appPath.getPath();
 
-                                GeoPackage gpkg = GeoPackageService.readGPKG(context, appPath.getPath() + "/landsat2009_tiles.gpkg");
-
-
+                                GeoPackage gpkg = GeoPackageService.readGPKG(context, path+"/landsat2009_tiles.gpkg");
                                 createGeoPackageTileSourceOverlay();
 
                             } catch (Exception e) {
-                                //statusText.setText("Error reading gpkg file: " + e.getMessage());
                                 Toast.makeText(context, "Error reading gpkg file: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                                return;
                             }
+                            break;
+                        }
+                        case 4:{// Insert
+                            try {
+                                //GeoPackageService.insertDataGPKG(thisActivity,"/GeoPackageTest/test.gpkg");
+                            } catch (Exception e) {
+                                // TODO Auto-generated catch block
+                                e.printStackTrace();
+                                Toast.makeText(context, "Error insert GML on device: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                            break;
                         }
                     }
                 }
                 case 1:{// Layers
-
+                    break;
                 }
             }
         }
@@ -257,6 +276,20 @@ public class MenuAdapter extends BaseExpandableListAdapter {
                         Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    /** Get a directory on extenal storage (SD card etc), ensuring it exists
+     *
+     * @return a new File representing the chosen directory
+     */
+    public static File getDirectory(String directory) {
+        if (directory==null) return null;
+        String path = Environment.getExternalStorageDirectory().toString();
+        path += directory.startsWith("/") ? "" : "/";
+        path += directory.endsWith("/") ? directory : directory + "/";
+        File file = new File(path);
+        file.mkdirs();
+        return file;
     }
 
     @Override
