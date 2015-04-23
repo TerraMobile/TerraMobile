@@ -15,7 +15,7 @@
         android:layout_alignLeft="@+id/btn_downloadFiles" />
 
     <Button
-        android:id="@+id/btn_testRead"
+        android:id="@+id/btn_testReadGeom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="15dip"
@@ -36,8 +36,8 @@
         android:id="@+id/statusText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/btn_testRead"
-        android:layout_below="@+id/btn_testRead"
+        android:layout_alignLeft="@+id/btn_testReadGeom"
+        android:layout_below="@+id/btn_testReadGeom"
         android:layout_margin="5dp"
         android:layout_marginTop="22dp"
         android:padding="5dip"
@@ -59,6 +59,6 @@
         android:text="Download File"
         android:enabled="true"
         android:layout_below="@+id/btn_testCreate"
-        android:layout_alignLeft="@+id/btn_testRead" />
+        android:layout_alignLeft="@+id/btn_testReadGeom" />
 
 </RelativeLayout>
