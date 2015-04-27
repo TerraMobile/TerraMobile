@@ -2,6 +2,7 @@
 <resources>
     <string name="gpkg_url">http://200.144.100.34/temp/GPKG-TerraMobile-test.zip</string>
     <string name="app_workspace_dir">GeoPackageTest</string>
+    <string name="destination_file_path">GPKG-TerraMobile-test.zip</string>
     <item name="default_map_center_x" format="float" type="dimen">-15.1656563</item>
     <item name="default_map_center_y" format="float" type="dimen">-47.9116195</item>
     <integer name="default_max_zoom_level">10</integer>
