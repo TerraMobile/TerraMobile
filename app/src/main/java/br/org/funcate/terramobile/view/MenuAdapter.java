@@ -123,7 +123,7 @@ public class MenuAdapter extends BaseExpandableListAdapter {
 
         private int grpID;
         private int chlID;
-        private File appPath = getDirectory("GeoPackageTest");
+        private File appPath = getDirectory(context.getResources().getString(R.string.app_workspace_dir));
         private String tempURL = context.getResources().getString(R.string.gpkg_url);
 
         public TreeViewEventController(int groupPosition, int childPosition){
