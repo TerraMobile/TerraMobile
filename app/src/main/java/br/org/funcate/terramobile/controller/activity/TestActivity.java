@@ -68,16 +68,7 @@ public class TestActivity extends Activity implements JGPKGTestInterface {
 		setContentView(R.layout.activity_main);
 		statusText = (TextView) findViewById(R.id.statusText);
 
-
-
         createBaseTileSource();
-/*
-        MapFragment mapFragment = new MapFragment();
-        FragmentManager fm = this.getFragmentManager();
-        fm.beginTransaction().add(R.id.mapview, (Fragment)mapFragment).commit();
-*/
-
-
 
     }
 
@@ -90,9 +81,6 @@ public class TestActivity extends Activity implements JGPKGTestInterface {
         mapView.setDrawingCacheEnabled(false);
         mapView.getController().setZoom(2);
 
-        GeoPoint gPt = new GeoPoint(-15.1656563,-47.9116195);
-
-        mapView.getController().setCenter(gPt);
 
     /*    MapView mapView = (MapView) findViewById(R.id.mapview);
         mapView.setMaxZoomLevel(20);
@@ -119,10 +107,10 @@ public class TestActivity extends Activity implements JGPKGTestInterface {
     private void createGeoPackageTileSourceOverlay()
     {
 
-        MapView mapView = (MapView) findViewById(R.id.mapview);
-/*    mapView.getOverlayManager().get(0).onTouchEvent())*/
-/*        OnlineTileSourceBase mapQuestTileSource = TileSourceFactory.MAPQUESTOSM;
-        String tileSourcePath = mapQuestTileSource.OSMDROID_PATH.getAbsolutePath() + "/";*/
+ /*       MapView mapView = (MapView) findViewById(R.id.mapview);
+*//*    mapView.getOverlayManager().get(0).onTouchEvent())*//*
+*//*        OnlineTileSourceBase mapQuestTileSource = TileSourceFactory.MAPQUESTOSM;
+        String tileSourcePath = mapQuestTileSource.OSMDROID_PATH.getAbsolutePath() + "/";*//*
 
         final MapTileProviderBasic tileProvider = new MapTileProviderBasic(getApplicationContext());
 
@@ -132,7 +120,7 @@ public class TestActivity extends Activity implements JGPKGTestInterface {
         SimpleRegisterReceiver simpleReceiver = new SimpleRegisterReceiver(getApplicationContext());
         MapTileProviderArrayGeoPackage tileProviderArray = new MapTileProviderArrayGeoPackage(tileSource, simpleReceiver, new MapTileModuleProviderBase[] { moduleProvider }, mapView);
 
-/*        tileProvider.setTileSource(tileSource);*/
+*//*        tileProvider.setTileSource(tileSource);*//*
         final TilesOverlay tilesOverlay = new TilesOverlay(tileProviderArray, this.getApplicationContext());
         tilesOverlay.setLoadingBackgroundColor(Color.TRANSPARENT);
         mapView.getOverlays().add(tilesOverlay);
@@ -140,8 +128,8 @@ public class TestActivity extends Activity implements JGPKGTestInterface {
         //mapView.getTileProvider().clearTileCache();
         tileProvider.setTileRequestCompleteHandler(new SimpleInvalidationHandler(mapView));
         mapView.setTileSource(tileSource);
-        mapView.setUseDataConnection(false); //  letting osmdroid know you would use it in offline mode, keeps the mapView from loading online tiles using network connection.*/
-        mapView.invalidate();
+        mapView.setUseDataConnection(false); //  letting osmdroid know you would use it in offline mode, keeps the mapView from loading online tiles using network connection.*//*
+        mapView.invalidate();*/
     }
 
 	private View.OnClickListener testCreateClick = new View.OnClickListener() {
@@ -242,31 +230,6 @@ public class TestActivity extends Activity implements JGPKGTestInterface {
 
 
                 createGeoPackageTileSourceOverlay();
-
-    //            List<SimpleFeature> features = GeoPackageService.getTiles(gpkg, "landsat2012_tiles");
-
-/*
-                byte[] b1 = GeoPackageService.getTile(gpkg, "landsat2012_tiles", 0,0,1 );
-
-                byte[] b2 = GeoPackageService.getTile(gpkg, "landsat2012_tiles", 84,131,8 );
-
-//                statusText.setText(""+features.size()+" features on the file");
-
-                File file = new File(path+"/b1.png");
-                FileOutputStream fos = new FileOutputStream(file);
-
-                fos.write(b1);
-                fos.flush();
-                fos.close();
-
-                file = new File(path+"/b2.png");
-                fos = new FileOutputStream(file);
-
-                fos.write(b2);
-                fos.flush();
-                fos.close();
-*/
-
 
 
             } catch (Exception e) {

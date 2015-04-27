@@ -10,18 +10,20 @@ import org.osmdroid.tileprovider.modules.MapTileModuleProviderBase;
 import org.osmdroid.tileprovider.tilesource.ITileSource;
 import org.osmdroid.views.MapView;
 
+import br.org.funcate.terramobile.controller.activity.MapFragment;
+
 /**
  * Created by bogo on 09/04/15.
  */
 public class MapTileProviderArrayGeoPackage extends MapTileProviderArray implements IMapTileProviderCallback {
 
-    MapView mapView;
+    MapFragment mapFragment;
 
     public MapTileProviderArrayGeoPackage(final ITileSource pTileSource,
                                 final IRegisterReceiver aRegisterReceiver,
-                                final MapTileModuleProviderBase[] pTileProviderArray, final MapView mapView) {
+                                final MapTileModuleProviderBase[] pTileProviderArray, final MapFragment mapFragment) {
         super(pTileSource, aRegisterReceiver, pTileProviderArray);
-        this.mapView = mapView;
+        this.mapFragment = mapFragment;
     }
 
     @Override
@@ -29,10 +31,12 @@ public class MapTileProviderArrayGeoPackage extends MapTileProviderArray impleme
         super.mapTileRequestCompleted(aState, aDrawable);
         /*synchronized(mapView)
         {
-            if(mapView!=null)
-            {
-                mapView.invalidate();
-            }
+
         }*/
+
+        if(mapFragment!=null)
+        {
+            mapFragment.updateMap();
+        }
     }
 }

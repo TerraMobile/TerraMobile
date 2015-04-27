@@ -243,7 +243,6 @@ public class MainActivity extends Activity {
         fragment.setArguments(args);*/
         FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
-
         //mDrawerList.getAdapter().
 
         // update selected item and title, then close the drawer

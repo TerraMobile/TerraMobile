@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -30,6 +31,7 @@ import org.osmdroid.tileprovider.tilesource.XYTileSource;
 import org.osmdroid.tileprovider.util.CloudmadeUtil;
 import org.osmdroid.tileprovider.util.SimpleInvalidationHandler;
 import org.osmdroid.tileprovider.util.SimpleRegisterReceiver;
+import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.TilesOverlay;
 
@@ -44,6 +46,7 @@ import br.org.funcate.terramobile.model.exception.FileException;
 import br.org.funcate.terramobile.model.service.FileService;
 import br.org.funcate.terramobile.model.task.DownloadTask;
 import br.org.funcate.terramobile.model.tilesource.MapTileGeoPackageProvider;
+import br.org.funcate.terramobile.util.ResourceUtil;
 import br.org.funcate.terramobile.view.ResourceProxyImpl;
 
 /*import org.osmdroid.samplefragments.BaseSampleFragment;
@@ -146,13 +149,16 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants
 
 /*        mMapView.getController().setZoom(mPrefs.getInt(PREFS_ZOOM_LEVEL, 1));
         mMapView.scrollTo(mPrefs.getInt(PREFS_SCROLL_X, 23), mPrefs.getInt(PREFS_SCROLL_Y, 0));*/
+/*
         mMapView.getController().setZoom(mPrefs.getInt(PREFS_ZOOM_LEVEL, 10));
         mMapView.scrollTo(mPrefs.getInt(PREFS_SCROLL_X, 23), mPrefs.getInt(PREFS_SCROLL_Y, 10));
+*/
 
 		/*mLocationOverlay.enableMyLocation();*/
 		/*mCompassOverlay.enableCompass();*/
 
       //  setHasOptionsMenu(true);
+        configureMapView(mMapView);
     }
 
     @Override
@@ -180,6 +186,39 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants
 
         } catch (final IllegalArgumentException ignore) {
         }
+    }
+
+    public void configureMapView(MapView mapView)
+    {
+
+        double x = ResourceUtil.getDoubleResource(getResources(), R.dimen.default_map_center_x);
+        double y = ResourceUtil.getDoubleResource(getResources(), R.dimen.default_map_center_y);
+
+        GeoPoint gPt = new GeoPoint(x,y);
+
+        mapView.getController().setCenter(gPt);
+
+        int maxZoomLevel = ResourceUtil.getIntResource(getResources(), R.integer.default_max_zoom_level);
+
+        mapView.setMaxZoomLevel(maxZoomLevel);
+
+        boolean builtInZoomControls=ResourceUtil.getBooleanResource(getResources(), R.bool.default_built_in_zoom_controls);
+
+        mapView.setBuiltInZoomControls(builtInZoomControls);
+
+        boolean multiTouchControls=ResourceUtil.getBooleanResource(getResources(), R.bool.default_multi_touch_controls);
+
+        mapView.setMultiTouchControls(multiTouchControls);
+
+        int initialZoomLevel = ResourceUtil.getIntResource(getResources(), R.integer.default_initial_zoom_level);
+
+        mapView.getController().setZoom(initialZoomLevel);
+
+    }
+
+    public synchronized void updateMap()
+    {
+        this.mMapView.invalidate();
     }
 
 }
