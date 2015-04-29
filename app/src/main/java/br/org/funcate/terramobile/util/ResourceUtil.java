@@ -1,10 +1,12 @@
 package br.org.funcate.terramobile.util;
 
 import android.content.res.Resources;
+import android.os.Environment;
 import android.util.TypedValue;
 
 import com.vividsolutions.jts.util.CollectionUtil;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -51,5 +53,19 @@ public class ResourceUtil {
         //l.addAll(s);
         return l;
        // return resources.getStringArray(resourceId);
+    }
+
+    /** Get a directory on extenal storage (SD card etc), ensuring it exists
+     *
+     * @return a new File representing the chosen directory
+     */
+    public static File getDirectory(String directory) {
+        if (directory==null) return null;
+        String path = Environment.getExternalStorageDirectory().toString();
+        path += directory.startsWith("/") ? "" : "/";
+        path += directory.endsWith("/") ? directory : directory + "/";
+        File file = new File(path);
+        file.mkdirs();
+        return file;
     }
 }

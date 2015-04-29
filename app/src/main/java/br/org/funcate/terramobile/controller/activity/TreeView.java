@@ -7,8 +7,11 @@ import android.widget.Toast;
 import android.content.res.Resources;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import br.org.funcate.terramobile.R;
+import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayers;
+import br.org.funcate.terramobile.model.tilesource.AppGeoPackageService;
 import br.org.funcate.terramobile.util.ResourceUtil;
 import br.org.funcate.terramobile.view.MenuAdapter;
 
@@ -55,28 +58,74 @@ public class TreeView {
     }
 
     private void setChildGroupData() {
+
         ArrayList<String> child = new ArrayList<String>();
+        ArrayList<String> childBaseLayers = new ArrayList<String>();
+        ArrayList<String> childCollectLayers = new ArrayList<String>();
+        ArrayList<String> childOnlineLayers = new ArrayList<String>();
         /**
          * Add menu items from strings resource file.
          */
         String[] items=ResourceUtil.getStringArrayResource(this.resources,R.array.menu_items);
-        int l=items.length;
-        for (int i = 0; i < l; i++) {
+        int len=items.length;
+        for (int i = 0; i < len; i++) {
             child.add(items[i]);
         }
         childItem.add(child);
 
-        /**
-         * Insert items into menu group loaded from database configuration in run time.
-         */
-        child = new ArrayList<String>();
-        child.add("Base layer");
-        child.add("Collect layer");
-        child.add("Online layer");
-        childItem.add(child);
+        // get list layers from GeoPackage
+        AppGeoPackageService metadata=new AppGeoPackageService(this.context);
+        ArrayList<GpkgLayers> layers = null;
+        try {
+            layers = metadata.getLayers();
+        } catch (Exception e) {
+            System.out.print("Fail on load layers :" + e.getMessage());
+            populateDefaultNotFoundLayer();
+        }
+
+        if (null == layers) {
+            populateDefaultNotFoundLayer();
+            return;
+        }
+
+        Iterator<GpkgLayers> layersIterator = layers.iterator();
+        while (layersIterator.hasNext()) {
+
+            GpkgLayers l = layersIterator.next();
+            if("features".equals(l.getLayerType()))
+                childCollectLayers.add(l.getLayerName());
+            else if("tiles".equals(l.getLayerType()))
+                childBaseLayers.add(l.getLayerName());
+        }
+
+        if(childCollectLayers.isEmpty())
+            childCollectLayers.add(this.context.getResources().getString(R.string.data_not_found));
+        if(childBaseLayers.isEmpty())
+            childBaseLayers.add(this.context.getResources().getString(R.string.data_not_found));
+        if(childOnlineLayers.isEmpty())
+            childOnlineLayers.add(this.context.getResources().getString(R.string.data_not_found));
+
+        childItem.add(childBaseLayers);
+        childItem.add(childCollectLayers);
+        childItem.add(childOnlineLayers);
     }
 
     public ExpandableListView getUIComponent(){
         return mDrawerList;
+    }
+
+    private void populateDefaultNotFoundLayer() {
+
+        ArrayList<String> childBaseLayers = new ArrayList<String>();
+        ArrayList<String> childCollectLayers = new ArrayList<String>();
+        ArrayList<String> childOnlineLayers = new ArrayList<String>();
+
+        childBaseLayers.add(this.context.getResources().getString(R.string.data_not_found));
+        childCollectLayers.add(this.context.getResources().getString(R.string.data_not_found));
+        childOnlineLayers.add(this.context.getResources().getString(R.string.data_not_found));
+
+        childItem.add(childBaseLayers);
+        childItem.add(childCollectLayers);
+        childItem.add(childOnlineLayers);
     }
 }

@@ -8,11 +8,14 @@
     <string name="server_not_available">Sorry, there\'s no web server available</string>
     <string name="action_boeing_page">Search boeing on google</string>
     <string name="app_not_available">Sorry, there\'s no web browser available</string>
+    <string name="data_not_found">Not Found</string>
 
     <!-- These fields are defined only names to menu items. To actions associated, see MenuToolController class. -->
         <string-array name="menu_groups">
             <item name="tools">Tools</item>
-            <item name="layers">Map Layers</item><!-- This "Group Menu" does not have static items. -->
+            <item name="base_layers">Base Layers</item><!-- This "Group Menu" does not have static items. -->
+            <item name="collect_layers">Collect Layers</item><!-- This "Group Menu" does not have static items. -->
+            <item name="online_layers">Online Layers</item><!-- This "Group Menu" does not have static items. -->
         </string-array>
         <!-- These are second level to Tools menu. -->
         <string-array name="menu_items">

@@ -2,7 +2,6 @@ package br.org.funcate.terramobile.controller.activity;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.os.Environment;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,6 +31,7 @@ import br.org.funcate.terramobile.model.exception.FileException;
 import br.org.funcate.terramobile.model.service.FileService;
 import br.org.funcate.terramobile.model.task.DownloadTask;
 import br.org.funcate.terramobile.model.tilesource.MapTileGeoPackageProvider;
+import br.org.funcate.terramobile.util.ResourceUtil;
 
 /**
  * Created by Andre Carvalho on 27/04/15.
@@ -56,7 +56,7 @@ public class MenuToolController implements View.OnClickListener {
     }
 
     private void initResources() {
-        appPath = getDirectory(context.getResources().getString(R.string.app_workspace_dir));
+        appPath = ResourceUtil.getDirectory(context.getResources().getString(R.string.app_workspace_dir));
         tempURL = context.getResources().getString(R.string.gpkg_url);
     }
     @Override
@@ -224,17 +224,4 @@ public class MenuToolController implements View.OnClickListener {
         }
     }
 
-    /** Get a directory on extenal storage (SD card etc), ensuring it exists
-     *
-     * @return a new File representing the chosen directory
-     */
-    public static File getDirectory(String directory) {
-        if (directory==null) return null;
-        String path = Environment.getExternalStorageDirectory().toString();
-        path += directory.startsWith("/") ? "" : "/";
-        path += directory.endsWith("/") ? directory : directory + "/";
-        File file = new File(path);
-        file.mkdirs();
-        return file;
-    }
 }

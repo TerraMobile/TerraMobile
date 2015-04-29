@@ -14,6 +14,7 @@ public class ViewContextParameters {
     }
 
     public void setSelectedLayers(ArrayList<String> selectedLayers) {
+
         this.selectedLayers = selectedLayers;
     }
 
