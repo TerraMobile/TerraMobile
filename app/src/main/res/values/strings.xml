@@ -4,8 +4,24 @@
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
     <string name="action_download_gpkg">Get Data from server</string>
+    <string name="download_gpkg">Download</string>
     <string name="server_not_available">Sorry, there\'s no web server available</string>
-    <string name="action_boeing_page">Go boeing web page</string>
+    <string name="action_boeing_page">Search boeing on google</string>
     <string name="app_not_available">Sorry, there\'s no web browser available</string>
+
+    <!-- These fields are defined only names to menu items. To actions associated, see MenuToolController class. -->
+        <string-array name="menu_groups">
+            <item name="tools">Tools</item>
+            <item name="layers">Map Layers</item><!-- This "Group Menu" does not have static items. -->
+        </string-array>
+        <!-- These are second level to Tools menu. -->
+        <string-array name="menu_items">
+            <item name="download_gpkg">Download GeoPackage</item>
+            <item name="create_gpkg">Create GeoPackage</item>
+            <item name="read_geom">Read Geometries</item>
+            <item name="read_tiles">Read Tiles</item>
+        </string-array>
+    <!-- Finished list of the menu items -->
+
 
 </resources>

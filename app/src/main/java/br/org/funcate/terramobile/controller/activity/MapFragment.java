@@ -2,50 +2,26 @@
 package br.org.funcate.terramobile.controller.activity;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.DisplayMetrics;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
-import com.augtech.geoapi.geopackage.GeoPackage;
-
-import org.opengis.feature.simple.SimpleFeature;
 import org.osmdroid.ResourceProxy;
-import org.osmdroid.tileprovider.MapTileProviderArray;
-import org.osmdroid.tileprovider.MapTileProviderBasic;
-import org.osmdroid.tileprovider.modules.MapTileModuleProviderBase;
 import org.osmdroid.tileprovider.tilesource.ITileSource;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.tileprovider.tilesource.XYTileSource;
 import org.osmdroid.tileprovider.util.CloudmadeUtil;
-import org.osmdroid.tileprovider.util.SimpleInvalidationHandler;
-import org.osmdroid.tileprovider.util.SimpleRegisterReceiver;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
-import org.osmdroid.views.overlay.TilesOverlay;
 
-import java.io.File;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-
-import br.org.funcate.jgpkg.service.GeoPackageService;
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.model.constants.OpenStreetMapConstants;
-import br.org.funcate.terramobile.model.exception.FileException;
-import br.org.funcate.terramobile.model.service.FileService;
-import br.org.funcate.terramobile.model.task.DownloadTask;
-import br.org.funcate.terramobile.model.tilesource.MapTileGeoPackageProvider;
 import br.org.funcate.terramobile.util.ResourceUtil;
 import br.org.funcate.terramobile.view.ResourceProxyImpl;
 
@@ -61,12 +37,6 @@ import org.osmdroid.samplefragments.SampleFactory;*/
  */
 public class MapFragment extends Fragment implements OpenStreetMapConstants
 {
-    // ===========================================================
-    // Constants
-    // ===========================================================
-
-    private static final int MENU_SAMPLES = Menu.FIRST + 1;
-    private static final int MENU_ABOUT = MENU_SAMPLES + 1;
 
     // ===========================================================
     // Fields

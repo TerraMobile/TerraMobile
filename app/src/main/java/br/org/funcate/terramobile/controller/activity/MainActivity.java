@@ -39,7 +39,6 @@ import java.util.ArrayList;
 
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.configuration.ViewContextParameters;
-import br.org.funcate.terramobile.view.MenuAdapter;
 
 /**
  * This example illustrates a common usage of the DrawerLayout widget
@@ -71,14 +70,12 @@ import br.org.funcate.terramobile.view.MenuAdapter;
 public class MainActivity extends Activity {
 
     private DrawerLayout mDrawerLayout;
-    private ExpandableListView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
 
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
 
-    ArrayList<String> groupItem = new ArrayList<String>();
-    ArrayList<Object> childItem = new ArrayList<Object>();
+    private TreeView treeView;
 
     private ViewContextParameters parameters=new ViewContextParameters();
 
@@ -88,15 +85,9 @@ public class MainActivity extends Activity {
 
         setContentView(R.layout.activity_main);
 
-        setGroupData();
-        setChildGroupData();
-
-        initDrawer();
+        treeView = new TreeView(this);
 
         mTitle = mDrawerTitle = getTitle();
-
-
-        //mPlanetTitles = getResources().getStringArray(R.array.tools_array);
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
@@ -107,14 +98,19 @@ public class MainActivity extends Activity {
         //getActionBar().setDisplayHomeAsUpEnabled(true);
         //getActionBar().setHomeButtonEnabled(true);
 
-        // ActionBarDrawerToggle ties together the the proper interactions
+        int ActionBarTitleID = getResources().getSystem().getIdentifier("action_bar_title", "id", "android");
+        TextView ActionBarTextView = (TextView) this.findViewById(ActionBarTitleID);
+        ActionBarTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX,
+                getResources().getDimension(R.dimen.title_text_size));
+
+        // ActionBarDrawerToggle ties together the proper interactions
         // between the sliding drawer and the action bar app icon
         mDrawerToggle = new ActionBarDrawerToggle(
-                this,                  /* host Activity */
-                mDrawerLayout,         /* DrawerLayout object */
-                R.drawable.ic_drawer,  /* nav drawer image to replace 'Up' caret */
-                R.string.drawer_open,  /* "open drawer" description for accessibility */
-                R.string.drawer_close  /* "close drawer" description for accessibility */
+                this,                  //host Activity
+                mDrawerLayout,         //DrawerLayout object
+                R.drawable.ic_drawer,  //nav drawer image to replace 'Up' caret
+                R.string.drawer_open,  //"open drawer" description for accessibility
+                R.string.drawer_close  //"close drawer" description for accessibility
                 ) {
             public void onDrawerClosed(View view) {
                 getActionBar().setTitle(mTitle);
@@ -133,54 +129,9 @@ public class MainActivity extends Activity {
         }
     }
 
-    private void initDrawer() {
-        //DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-
-        mDrawerList = (ExpandableListView) findViewById(R.id.left_drawer);
-
-        MenuAdapter mMenuAdapter = new MenuAdapter(this, groupItem, childItem);
-        mDrawerList.setAdapter(mMenuAdapter);
-
-        int ActionBarTitleID = getResources().getSystem().getIdentifier("action_bar_title", "id", "android");
-        TextView ActionBarTextView = (TextView)findViewById(ActionBarTitleID);
-        ActionBarTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX,
-                getResources().getDimension(R.dimen.titletextsize));
-
-
-    }
-
     @Override
     public void onBackPressed() {
         System.exit(0);
-    }
-
-    public void setGroupData() {
-        groupItem.add("Tools");
-        groupItem.add("Map Layers");
-    }
-
-    public void setChildGroupData() {
-
-       /* MenuItem mItem = new MenuItem() {
-        }*/
-        /**
-         * Add Data For Tools
-         */
-        ArrayList<String> child = new ArrayList<String>();
-        child.add("Download GeoPackage");
-        child.add("Create GeoPackage");
-        child.add("Read Geometries");
-        child.add("Read Tiles");
-        childItem.add(child);
-
-        /**
-         * Add Data For Map Layers
-         */
-        child = new ArrayList<String>();
-        child.add("Base layer");
-        child.add("Levy layer");
-        child.add("Online layer");
-        childItem.add(child);
     }
 
     public ViewContextParameters getParameters(){
@@ -191,12 +142,15 @@ public class MainActivity extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main, menu);
+
         return super.onCreateOptionsMenu(menu);
     }
 
     /* Called whenever we call invalidateOptionsMenu() */
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
+        ExpandableListView mDrawerList=treeView.getUIComponent();
+        if(mDrawerList==null) return false;
         // If the nav drawer is open, hide action items related to the content view
         boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
         menu.findItem(R.id.action_boeing_page).setVisible(!drawerOpen);
@@ -228,14 +182,16 @@ public class MainActivity extends Activity {
                 Toast.makeText(this, R.string.app_not_available, Toast.LENGTH_LONG).show();
             }
             return true;
+            case R.id.download_geo_package:
+                MenuToolController ctl=new MenuToolController(getApplicationContext());
+                ctl.downloadGeoPackage();
+                return true;
         default:
             return super.onOptionsItemSelected(item);
         }
     }
 
     private void insertMapView() {
-
-
         // update the main content by replacing fragments
         Fragment fragment = new MapFragment();
 /*        Bundle args = new Bundle();
@@ -243,12 +199,6 @@ public class MainActivity extends Activity {
         fragment.setArguments(args);*/
         FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
-        //mDrawerList.getAdapter().
-
-        // update selected item and title, then close the drawer
-       /* mDrawerList.setItemChecked(position, true);
-        setTitle(mPlanetTitles[position]);
-        mDrawerLayout.closeDrawer(mDrawerList);*/
     }
 
     @Override
@@ -272,8 +222,8 @@ public class MainActivity extends Activity {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        // Pass any configuration change to the drawer toggls
-        mDrawerToggle.onConfigurationChanged(newConfig);
+        // Pass any configuration change to the drawer toggles
+       mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
 }

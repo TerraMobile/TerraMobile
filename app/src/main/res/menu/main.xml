@@ -15,6 +15,11 @@
   -->
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/download_geo_package"
+        android:title="@string/download_gpkg"
+        android:icon="@android:drawable/stat_sys_download"
+        android:showAsAction="ifRoom|withText" />
+
     <item android:id="@+id/action_boeing_page"
           android:icon="@drawable/action_boeing_page"
           android:title="@string/action_boeing_page"

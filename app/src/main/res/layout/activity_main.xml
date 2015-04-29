@@ -5,21 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- As the main content view, the view below consumes the entire
-         space available using match_parent in both dimensions. -->
     <FrameLayout
         android:id="@+id/content_frame"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <!-- android:layout_gravity="start" tells DrawerLayout to treat
-         this as a sliding drawer on the left side for left-to-right
-         languages and on the right side for right-to-left languages.
-         The drawer is given a fixed width in dp and extends the full height of
-         the container. A solid background is used for contrast
-         with the content view. -->
     <ExpandableListView
-        android:id="@+id/left_drawer"
+        android:id="@+id/expandable_tree_view"
         android:layout_width="240dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
@@ -28,68 +20,3 @@
         android:dividerHeight="1dp"
         android:background="#111" />
 </android.support.v4.widget.DrawerLayout>
-
-<!-- RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MainActivity" >
-
-    <Button
-        android:id="@+id/btn_testCreate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="15dip"
-        android:text="Create file"
-        android:enabled="false"
-        android:layout_alignParentTop="true"
-        android:layout_alignLeft="@+id/btn_downloadFiles" />
-
-    <Button
-        android:id="@+id/btn_testReadGeom"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="15dip"
-        android:text="Read Geometry File"
-        android:layout_below="@+id/btn_testReadTiles"
-        android:layout_alignParentLeft="true" />
-
-    <Button
-        android:id="@+id/btn_testReadTiles"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Read Tiles File"
-        android:enabled="true"
-        android:layout_below="@+id/btn_downloadFiles"
-        android:layout_alignLeft="@+id/btn_downloadFiles" />
-
-    <TextView
-        android:id="@+id/statusText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/btn_testReadGeom"
-        android:layout_below="@+id/btn_testReadGeom"
-        android:layout_margin="5dp"
-        android:layout_marginTop="22dp"
-        android:padding="5dip"
-        android:text="Ready" />
-
-
-    <org.osmdroid.views.MapView
-        android:id="@+id/mapview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/statusText" />
-
-    <Button
-        android:id="@+id/btn_downloadFiles"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="15dip"
-        android:text="Download File"
-        android:enabled="true"
-        android:layout_below="@+id/btn_testCreate"
-        android:layout_alignLeft="@+id/btn_testReadGeom" />
-
-</RelativeLayout -->

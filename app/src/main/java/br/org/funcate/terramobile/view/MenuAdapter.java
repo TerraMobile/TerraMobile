@@ -11,7 +11,6 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import br.org.funcate.terramobile.R;
-import br.org.funcate.terramobile.controller.activity.MainActivity;
 import br.org.funcate.terramobile.controller.activity.MenuMapController;
 import br.org.funcate.terramobile.controller.activity.MenuToolController;
 
@@ -47,12 +46,12 @@ public class MenuAdapter extends BaseExpandableListAdapter {
         }
         convertView.setClickable(false);
 
-        TextView text = null;
+        TextView text;
         text = (TextView) convertView;
         text.setText(groupItem.get(groupPosition));
         text.setTextColor(Color.WHITE);
         text.setTextSize(TypedValue.COMPLEX_UNIT_PX,
-                context.getResources().getDimension(R.dimen.grptextsize));
+                context.getResources().getDimension(R.dimen.grp_text_size));
         convertView.setTag(groupItem.get(groupPosition));
 
         return convertView;
@@ -62,7 +61,7 @@ public class MenuAdapter extends BaseExpandableListAdapter {
     public View getChildView(int groupPosition, int childPosition,
                              boolean isLastChild, View convertView, final ViewGroup parent) {
 
-        TextView text = null;
+        TextView text;
         if (convertView == null) {
             convertView = new TextView(context);
         }
@@ -73,7 +72,7 @@ public class MenuAdapter extends BaseExpandableListAdapter {
         text.setText("  "+child);
         text.setTag(child);
         text.setTextSize(TypedValue.COMPLEX_UNIT_PX,
-                context.getResources().getDimension(R.dimen.childtextsize));
+                context.getResources().getDimension(R.dimen.child_text_size));
 
         switch (groupPosition){
             case 0:{// Tools
@@ -107,16 +106,16 @@ public class MenuAdapter extends BaseExpandableListAdapter {
 	@Override
 	public void onGroupCollapsed(int groupPosition) {
 
-        String s=this.context.getString(R.string.app_name);
-        ((MainActivity) this.context).setTitle(s.subSequence(0,s.length()));
+/*        String s=this.context.getString(R.string.app_name);
+        ((MainActivity) this.context).setTitle(s.subSequence(0,s.length()));*/
         super.onGroupCollapsed(groupPosition);
 	}
 
 	@Override
 	public void onGroupExpanded(int groupPosition) {
 
-        String s=groupItem.get(groupPosition);
-        ((MainActivity) this.context).setTitle(s.subSequence(0,s.length()));
+/*        String s=groupItem.get(groupPosition);
+        ((MainActivity) this.context).setTitle(s.subSequence(0,s.length()));*/
 		super.onGroupExpanded(groupPosition);
 	}
 

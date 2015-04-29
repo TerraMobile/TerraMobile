@@ -46,10 +46,19 @@ public class MenuToolController implements View.OnClickListener {
     public MenuToolController(Context context, int childPosition) {
         this.childIdMenuPosition=childPosition;
         this.context=context;
+        initResources();
+    }
+
+    public MenuToolController(Context context) {
+        this.childIdMenuPosition=-1;
+        this.context=context;
+        initResources();
+    }
+
+    private void initResources() {
         appPath = getDirectory(context.getResources().getString(R.string.app_workspace_dir));
         tempURL = context.getResources().getString(R.string.gpkg_url);
     }
-
     @Override
     public void onClick(View v) {
 
@@ -86,7 +95,7 @@ public class MenuToolController implements View.OnClickListener {
         }
     }
 
-    private void readGeometries() {
+    public void readGeometries() {
         try {
             GeoPackage gpkg = GeoPackageService.readGPKG(context,appPath.getPath()+"/test.gpkg");
 
@@ -100,13 +109,13 @@ public class MenuToolController implements View.OnClickListener {
         return;
     }
 
-    private void createGeoPackage() {
+    public void createGeoPackage() {
         GeoPackageService.createGPKG(context, appPath.getPath() + "/test.gpkg");
         Toast.makeText(context, "GeoPackage file successfully created", Toast.LENGTH_SHORT).show();
     }
 
 
-    private void readTiles() {
+    public void readTiles() {
         try {
             String path = appPath.getPath();
 
@@ -123,7 +132,7 @@ public class MenuToolController implements View.OnClickListener {
         return;
     }
 
-    private void insertData() {
+    public void insertData() {
         try {
             //GeoPackageService.insertDataGPKG(thisActivity,"/GeoPackageTest/test.gpkg");
 
@@ -135,7 +144,7 @@ public class MenuToolController implements View.OnClickListener {
         return;
     }
 
-    private void downloadGeoPackage() {
+    public void downloadGeoPackage() {
         String destinationFilePath = appPath.getPath() + "/" + context.getResources().getString(R.string.destination_file_path);
 
         try {
