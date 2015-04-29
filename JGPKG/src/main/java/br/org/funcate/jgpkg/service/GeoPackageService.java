@@ -44,12 +44,9 @@ public class GeoPackageService {
 
         }
 		
-		public static void createGPKG(Context context, String gpkgName)
+		public static void createGPKG(Context context, String gpkgFilePath)
 		{
-			String path = Environment.getExternalStorageDirectory().toString();
-			System.out.println(path);
-			
-			AndroidSQLDatabase gpkgDB = new AndroidSQLDatabase(context, new File(path, gpkgName));
+			AndroidSQLDatabase gpkgDB = new AndroidSQLDatabase(context, new File(gpkgFilePath));
 
             GeoPackage geoPackage = connect(gpkgDB, true);
 
@@ -75,11 +72,9 @@ public class GeoPackageService {
 		}*/
 
 		
-		public static GeoPackage readGPKG(Context context, String gpkgName) throws Exception
+		public static GeoPackage readGPKG(Context context, String gpkgFilePath) throws Exception
 		{
-			String path = Environment.getExternalStorageDirectory().toString();
-
-			AndroidSQLDatabase gpkgDB = new AndroidSQLDatabase(context, new File(path, gpkgName));
+			AndroidSQLDatabase gpkgDB = new AndroidSQLDatabase(context, new File(gpkgFilePath));
 
             GeoPackage geoPackage = connect(gpkgDB, false);
 /*			if(!geoPackage.isGPKGValid(true))
@@ -90,11 +85,9 @@ public class GeoPackageService {
 		
 		}
 
-        public static GeoPackage readTilesGPKG(Context context, String gpkgName) throws Exception
+        public static GeoPackage readTilesGPKG(Context context, String gpkgFilePath) throws Exception
         {
-            String path = Environment.getExternalStorageDirectory().toString();
-
-            AndroidSQLDatabase gpkgDB = new AndroidSQLDatabase(context, new File(path, gpkgName));
+            AndroidSQLDatabase gpkgDB = new AndroidSQLDatabase(context, new File(gpkgFilePath));
 
             GeoPackage geoPackage = connect(gpkgDB, false);
 
@@ -114,7 +107,7 @@ public class GeoPackageService {
 				throw new Exception("Invalid GeoPackage file.");
 			}
 			
-			List<SimpleFeature> features = gpkg.getFeatures("municipios_2005");
+			List<SimpleFeature> features = gpkg.getFeatures("focosqueimadas");
 			
 			return features;
 		}
