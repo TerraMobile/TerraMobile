@@ -22,7 +22,6 @@
             <item name="download_gpkg">Download GeoPackage</item>
             <item name="create_gpkg">Create GeoPackage</item>
             <item name="read_geom">Read Geometries</item>
-            <item name="read_tiles">Read Tiles</item>
         </string-array>
     <!-- Finished list of the menu items -->
 

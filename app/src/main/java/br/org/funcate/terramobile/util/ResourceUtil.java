@@ -55,7 +55,7 @@ public class ResourceUtil {
        // return resources.getStringArray(resourceId);
     }
 
-    /** Get a directory on extenal storage (SD card etc), ensuring it exists
+    /** Get a directory on external storage (SD card etc), ensuring it exists
      *
      * @return a new File representing the chosen directory
      */

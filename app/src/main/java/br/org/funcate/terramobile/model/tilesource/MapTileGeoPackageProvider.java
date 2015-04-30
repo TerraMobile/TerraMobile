@@ -1,25 +1,19 @@
 package br.org.funcate.terramobile.model.tilesource;
 
 import android.graphics.drawable.Drawable;
-import android.os.Environment;
 
 import com.augtech.geoapi.geopackage.GeoPackage;
 
-import org.osmdroid.tileprovider.ExpirableBitmapDrawable;
-import org.osmdroid.tileprovider.IRegisterReceiver;
 import org.osmdroid.tileprovider.MapTile;
 import org.osmdroid.tileprovider.MapTileRequestState;
 import org.osmdroid.tileprovider.constants.OpenStreetMapTileProviderConstants;
-import org.osmdroid.tileprovider.modules.MapTileFileStorageProviderBase;
 import org.osmdroid.tileprovider.modules.MapTileModuleProviderBase;
 import org.osmdroid.tileprovider.tilesource.BitmapTileSourceBase;
 import org.osmdroid.tileprovider.tilesource.ITileSource;
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.InputStream;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -48,6 +42,8 @@ public class MapTileGeoPackageProvider extends MapTileModuleProviderBase {
 
 
     private final AtomicReference<ITileSource> mTileSource = new AtomicReference<ITileSource>();
+    private String mLayerName = null;
+    private GeoPackage mGeoPackage = null;
 
     // ===========================================================
     // Constructors
@@ -55,10 +51,12 @@ public class MapTileGeoPackageProvider extends MapTileModuleProviderBase {
 
 
 
-    public MapTileGeoPackageProvider(final ITileSource pTileSource) {
+    public MapTileGeoPackageProvider(final ITileSource pTileSource, String layerName, GeoPackage geoPackage) {
         super(OpenStreetMapTileProviderConstants.NUMBER_OF_TILE_FILESYSTEM_THREADS, OpenStreetMapTileProviderConstants.TILE_FILESYSTEM_MAXIMUM_QUEUE_SIZE);
 
         mTileSource.set(pTileSource);
+        mLayerName=layerName;
+        mGeoPackage=geoPackage;
     }
 
     // ===========================================================
@@ -157,7 +155,7 @@ public class MapTileGeoPackageProvider extends MapTileModuleProviderBase {
         }
 
         private byte[] getTileFromGPKG(int col, int row, int level) throws Exception {
-            return GeoPackageService.getTile(GeoPackageService.geoPackage, "landsat2012_tiles", col, row, level);
+            return GeoPackageService.getTile(mGeoPackage, mLayerName, col, row, level);
         }
         /**
          * A tile has loaded.

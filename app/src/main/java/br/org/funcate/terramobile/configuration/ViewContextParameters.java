@@ -2,33 +2,35 @@ package br.org.funcate.terramobile.configuration;
 
 import java.util.ArrayList;
 
+import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
+
 /**
  * Created by Andre Carvalho on 17/04/15.
  */
 public class ViewContextParameters {
 
-    private ArrayList<String> selectedLayers;
+    private ArrayList<GpkgLayer> selectedLayers;
 
     public ViewContextParameters(){
-        selectedLayers=new ArrayList<String>();
+        selectedLayers=new ArrayList<GpkgLayer>();
     }
 
-    public void setSelectedLayers(ArrayList<String> selectedLayers) {
+    public void setSelectedLayers(ArrayList<GpkgLayer> selectedLayers) {
 
         this.selectedLayers = selectedLayers;
     }
 
-    public ArrayList<String> getSelectedLayers() {
+    public ArrayList<GpkgLayer> getSelectedLayers() {
         return selectedLayers;
     }
 
-    public boolean addLayerName(String layerName){
-        return this.selectedLayers.add(layerName);
+    public boolean addLayer(GpkgLayer layer){
+        return this.selectedLayers.add(layer);
     }
 
-    public boolean removeLayerName(String layerName){
+    public boolean removeLayer(GpkgLayer layer){
         if(!this.selectedLayers.isEmpty())
-            return this.selectedLayers.remove(layerName);
+            return this.selectedLayers.remove(layer);
         return false;
     }
 }

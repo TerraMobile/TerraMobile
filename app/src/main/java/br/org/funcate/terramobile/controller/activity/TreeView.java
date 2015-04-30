@@ -10,10 +10,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import br.org.funcate.terramobile.R;
-import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayers;
+import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
 import br.org.funcate.terramobile.model.tilesource.AppGeoPackageService;
 import br.org.funcate.terramobile.util.ResourceUtil;
+import br.org.funcate.terramobile.view.TerraMobileMenuGroupItem;
+import br.org.funcate.terramobile.view.TerraMobileMenuItem;
+import br.org.funcate.terramobile.view.TerraMobileMenuLayerItem;
 import br.org.funcate.terramobile.view.MenuAdapter;
+import br.org.funcate.terramobile.view.TerraMobileMenuToolItem;
 
 /**
  * Created by Andre Carvalho on 28/04/15.
@@ -21,7 +25,7 @@ import br.org.funcate.terramobile.view.MenuAdapter;
 public class TreeView {
 
     private ExpandableListView mDrawerList;
-    private ArrayList<String> groupItem = new ArrayList<String>();
+    private ArrayList<TerraMobileMenuGroupItem> groupItem = new ArrayList<TerraMobileMenuGroupItem>();
     private ArrayList<Object> childItem = new ArrayList<Object>();
     private Context context;
     private Resources resources;
@@ -52,32 +56,36 @@ public class TreeView {
     private void setGroupData() {
         String[] grp= ResourceUtil.getStringArrayResource(this.resources, R.array.menu_groups);
         int l=grp.length;
+        TerraMobileMenuGroupItem grpItem;
         for (int i = 0; i < l; i++) {
-            groupItem.add(grp[i]);
+            grpItem=new TerraMobileMenuGroupItem(grp[i]);
+            groupItem.add(grpItem);
         }
     }
 
     private void setChildGroupData() {
 
-        ArrayList<String> child = new ArrayList<String>();
-        ArrayList<String> childBaseLayers = new ArrayList<String>();
-        ArrayList<String> childCollectLayers = new ArrayList<String>();
-        ArrayList<String> childOnlineLayers = new ArrayList<String>();
+        ArrayList<TerraMobileMenuItem> childTools = new ArrayList<TerraMobileMenuItem>();
+        ArrayList<TerraMobileMenuItem> childBaseLayers = new ArrayList<TerraMobileMenuItem>();
+        ArrayList<TerraMobileMenuItem> childCollectLayers = new ArrayList<TerraMobileMenuItem>();
+        ArrayList<TerraMobileMenuItem> childOnlineLayers = new ArrayList<TerraMobileMenuItem>();
         /**
          * Add menu items from strings resource file.
          */
         String[] items=ResourceUtil.getStringArrayResource(this.resources,R.array.menu_items);
         int len=items.length;
+        TerraMobileMenuToolItem toolItem;
         for (int i = 0; i < len; i++) {
-            child.add(items[i]);
+            toolItem=new TerraMobileMenuToolItem(items[i]);
+            childTools.add(toolItem);
         }
-        childItem.add(child);
+        childItem.add(childTools);
 
         // get list layers from GeoPackage
-        AppGeoPackageService metadata=new AppGeoPackageService(this.context);
-        ArrayList<GpkgLayers> layers = null;
+        AppGeoPackageService appGeoPackageService = new AppGeoPackageService(this.context);
+        ArrayList<GpkgLayer> layers = null;
         try {
-            layers = metadata.getLayers();
+            layers = appGeoPackageService.getLayers();
         } catch (Exception e) {
             System.out.print("Fail on load layers :" + e.getMessage());
             populateDefaultNotFoundLayer();
@@ -88,22 +96,42 @@ public class TreeView {
             return;
         }
 
-        Iterator<GpkgLayers> layersIterator = layers.iterator();
+        Iterator<GpkgLayer> layersIterator = layers.iterator();
         while (layersIterator.hasNext()) {
 
-            GpkgLayers l = layersIterator.next();
-            if("features".equals(l.getLayerType()))
-                childCollectLayers.add(l.getLayerName());
-            else if("tiles".equals(l.getLayerType()))
-                childBaseLayers.add(l.getLayerName());
+            GpkgLayer l = layersIterator.next();
+            TerraMobileMenuLayerItem m = new TerraMobileMenuLayerItem(l);
+
+            switch (l.getLayerType()){
+                case GpkgLayer.FEATURES:{
+                    childCollectLayers.add(m);
+                    break;
+                }
+                case GpkgLayer.TILES:{
+                    childBaseLayers.add(m);
+                    break;
+                }
+                case GpkgLayer.ONLINE:{
+                    // TODO: this type layer not implemented yet.
+                    childOnlineLayers.add(m);
+                    break;
+                }
+                case GpkgLayer.INVALID:{
+
+                    break;
+                }
+                default:{// default is GpkgLayer.INVALID ??
+
+                }
+            }
         }
 
         if(childCollectLayers.isEmpty())
-            childCollectLayers.add(this.context.getResources().getString(R.string.data_not_found));
+            childCollectLayers.add(getNotFoundMenuLayerItem());
         if(childBaseLayers.isEmpty())
-            childBaseLayers.add(this.context.getResources().getString(R.string.data_not_found));
+            childBaseLayers.add(getNotFoundMenuLayerItem());
         if(childOnlineLayers.isEmpty())
-            childOnlineLayers.add(this.context.getResources().getString(R.string.data_not_found));
+            childOnlineLayers.add(getNotFoundMenuLayerItem());
 
         childItem.add(childBaseLayers);
         childItem.add(childCollectLayers);
@@ -114,15 +142,24 @@ public class TreeView {
         return mDrawerList;
     }
 
+    private TerraMobileMenuLayerItem getNotFoundMenuLayerItem() {
+        GpkgLayer lnf = new GpkgLayer();
+        lnf.setGeoPackage(null);
+        lnf.setLayerName(this.context.getResources().getString(R.string.data_not_found));
+        lnf.setLayerType(GpkgLayer.INVALID);
+        TerraMobileMenuLayerItem mnf = new TerraMobileMenuLayerItem(lnf);
+        return mnf;
+    }
+
     private void populateDefaultNotFoundLayer() {
 
-        ArrayList<String> childBaseLayers = new ArrayList<String>();
-        ArrayList<String> childCollectLayers = new ArrayList<String>();
-        ArrayList<String> childOnlineLayers = new ArrayList<String>();
+        ArrayList<TerraMobileMenuItem> childBaseLayers = new ArrayList<TerraMobileMenuItem>();
+        ArrayList<TerraMobileMenuItem> childCollectLayers = new ArrayList<TerraMobileMenuItem>();
+        ArrayList<TerraMobileMenuItem> childOnlineLayers = new ArrayList<TerraMobileMenuItem>();
 
-        childBaseLayers.add(this.context.getResources().getString(R.string.data_not_found));
-        childCollectLayers.add(this.context.getResources().getString(R.string.data_not_found));
-        childOnlineLayers.add(this.context.getResources().getString(R.string.data_not_found));
+        childBaseLayers.add(getNotFoundMenuLayerItem());
+        childCollectLayers.add(getNotFoundMenuLayerItem());
+        childOnlineLayers.add(getNotFoundMenuLayerItem());
 
         childItem.add(childBaseLayers);
         childItem.add(childCollectLayers);

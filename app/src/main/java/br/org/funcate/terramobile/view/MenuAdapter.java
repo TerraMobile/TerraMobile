@@ -17,13 +17,13 @@ import br.org.funcate.terramobile.controller.activity.MenuToolController;
 @SuppressWarnings("unchecked")
 public class MenuAdapter extends BaseExpandableListAdapter {
 
-	public ArrayList<String> groupItem;
+	public ArrayList<TerraMobileMenuGroupItem> groupItem;
 	public ArrayList<Object> ChildItem = new ArrayList<Object>();
 	private final Context context;
 
-	public MenuAdapter(Context context, ArrayList<String> grList, ArrayList<Object> childItem) {
+	public MenuAdapter(Context context, ArrayList<TerraMobileMenuGroupItem> grpList, ArrayList<Object> childItem) {
 		this.context = context;
-		this.groupItem = grList;
+		this.groupItem = grpList;
 		this.ChildItem = childItem;
     }
 
@@ -43,16 +43,16 @@ public class MenuAdapter extends BaseExpandableListAdapter {
 
         if (convertView == null) {
             convertView = new TextView(context);
-        }
-        convertView.setClickable(false);
+            convertView.setClickable(false);
 
-        TextView text;
-        text = (TextView) convertView;
-        text.setText(groupItem.get(groupPosition));
-        text.setTextColor(Color.WHITE);
-        text.setTextSize(TypedValue.COMPLEX_UNIT_PX,
-                context.getResources().getDimension(R.dimen.grp_text_size));
-        convertView.setTag(groupItem.get(groupPosition));
+            TextView text;
+            text = (TextView) convertView;
+            text.setText(groupItem.get(groupPosition).getLabel());
+            text.setTextColor(Color.WHITE);
+            text.setTextSize(TypedValue.COMPLEX_UNIT_PX,
+                    context.getResources().getDimension(R.dimen.grp_text_size));
+            convertView.setTag(groupItem.get(groupPosition));
+        }
 
         return convertView;
     }
@@ -64,24 +64,24 @@ public class MenuAdapter extends BaseExpandableListAdapter {
         TextView text;
         if (convertView == null) {
             convertView = new TextView(context);
-        }
-        text = (TextView) convertView;
-        ArrayList<String> children = (ArrayList<String>) ChildItem.get(groupPosition);
-        final String child = children.get(childPosition);
-        text.setTextColor(Color.WHITE);
-        text.setText("  "+child);
-        text.setTag(child);
-        text.setTextSize(TypedValue.COMPLEX_UNIT_PX,
-                context.getResources().getDimension(R.dimen.child_text_size));
+            text = (TextView) convertView;
+            ArrayList<TerraMobileMenuItem> children = (ArrayList<TerraMobileMenuItem>) ChildItem.get(groupPosition);
+            final TerraMobileMenuItem child = children.get(childPosition);
+            text.setTextColor(Color.WHITE);
+            text.setText("  " + child.getLabel());
+            text.setTag(child);
+            text.setTextSize(TypedValue.COMPLEX_UNIT_PX,
+                    context.getResources().getDimension(R.dimen.child_text_size));
 
-        switch (groupPosition){
-            case 0:{// Tools
-                text.setOnClickListener(new MenuToolController(context, childPosition));
-                break;
-            }
-            case 1:{// Layers
-                text.setOnClickListener(new MenuMapController(context, childPosition));
-                break;
+            switch (child.getType()) {
+                case TerraMobileMenuItem.TOOL_ITEM: {// Tools
+                    text.setOnClickListener(new MenuToolController(context, (TerraMobileMenuToolItem) child));
+                    break;
+                }
+                case TerraMobileMenuItem.LAYER_ITEM: {// Layers
+                    text.setOnClickListener(new MenuMapController(context, (TerraMobileMenuLayerItem) child));
+                    break;
+                }
             }
         }
 

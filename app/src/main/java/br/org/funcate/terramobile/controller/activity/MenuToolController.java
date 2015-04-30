@@ -28,29 +28,32 @@ import br.org.funcate.jgpkg.service.GeoPackageService;
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.configuration.ViewContextParameters;
 import br.org.funcate.terramobile.model.exception.FileException;
+import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
 import br.org.funcate.terramobile.model.service.FileService;
 import br.org.funcate.terramobile.model.task.DownloadTask;
 import br.org.funcate.terramobile.model.tilesource.MapTileGeoPackageProvider;
 import br.org.funcate.terramobile.util.ResourceUtil;
+import br.org.funcate.terramobile.view.TerraMobileMenuItem;
+import br.org.funcate.terramobile.view.TerraMobileMenuToolItem;
 
 /**
  * Created by Andre Carvalho on 27/04/15.
  */
 public class MenuToolController implements View.OnClickListener {
 
-    private int childIdMenuPosition;
+    private TerraMobileMenuToolItem menuToolItem;
     private final Context context;
     private File appPath;
     private String tempURL;
 
-    public MenuToolController(Context context, int childPosition) {
-        this.childIdMenuPosition=childPosition;
+    public MenuToolController(Context context, TerraMobileMenuToolItem menuToolItem) {
+        this.menuToolItem=menuToolItem;
         this.context=context;
         initResources();
     }
 
     public MenuToolController(Context context) {
-        this.childIdMenuPosition=-1;
+        this.menuToolItem=null;
         this.context=context;
         initResources();
     }
@@ -59,40 +62,54 @@ public class MenuToolController implements View.OnClickListener {
         appPath = ResourceUtil.getDirectory(context.getResources().getString(R.string.app_workspace_dir));
         tempURL = context.getResources().getString(R.string.gpkg_url);
     }
+
     @Override
     public void onClick(View v) {
 
-        storeSelectedItem(v);
+        selectedItem(v);
         exec();
-        Toast.makeText(context, "Tool : " + v.getTag(),
+        Toast.makeText(context, "Tool : " + this.menuToolItem.getLabel(),
                 Toast.LENGTH_SHORT).show();
         return;
     }
 
+    private void selectedItem(View v) {
+        try {
+            if (v.isSelected()) {
+                v.setSelected(false);
+                v.setBackgroundColor(Color.BLACK);
+                ((TextView) v).setTextColor(Color.WHITE);
+            } else {
+                v.setSelected(true);
+                v.setBackgroundColor(Color.WHITE);
+                ((TextView) v).setTextColor(Color.BLACK);
+            }
+        }catch (Exception e){
+            Toast.makeText(context, e.getMessage(),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
 
     private void exec() {
-        switch (this.childIdMenuPosition) {
-            case 0: {//Download GeoPackage
-                downloadGeoPackage();
+        switch (this.menuToolItem.getType()) {
+            case TerraMobileMenuToolItem.DOWNLOAD_GPKG: {//Download GeoPackage
+                //downloadGeoPackage();
                 break;
             }
-            case 1:{//Create GeoPackage
+            case TerraMobileMenuToolItem.CREATE_GPKG:{//Create GeoPackage
                 createGeoPackage();
                 break;
             }
-            case 2:{//Read Geometries
+            case TerraMobileMenuToolItem.READ_GEOM:{//Read Geometries
                 readGeometries();
                 break;
             }
-            case 3:{//Read Tiles
-                readTiles();
-                break;
-            }
-            case 4:{// Insert Data
+            case TerraMobileMenuToolItem.INSERT_DATA:{// Insert Data
                 insertData();
                 break;
             }
         }
+
     }
 
     public void readGeometries() {
@@ -114,30 +131,11 @@ public class MenuToolController implements View.OnClickListener {
         Toast.makeText(context, "GeoPackage file successfully created", Toast.LENGTH_SHORT).show();
     }
 
-
-    public void readTiles() {
-        try {
-            String path = appPath.getPath();
-
-            GeoPackage geoPackage = GeoPackageService.readGPKG(context, path+"/landsat2009_tiles.gpkg");
-            if(geoPackage.isGPKGValid(true)) {
-                createGeoPackageTileSourceOverlay();
-            }else {
-                Toast.makeText(context, "Invalid GeoPackage file.", Toast.LENGTH_SHORT).show();
-            }
-
-        } catch (Exception e) {
-            Toast.makeText(context, "Error reading gpkg file: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-        }
-        return;
-    }
-
     public void insertData() {
         try {
             //GeoPackageService.insertDataGPKG(thisActivity,"/GeoPackageTest/test.gpkg");
 
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
             Toast.makeText(context, "Error insert GML on device: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
@@ -161,66 +159,13 @@ public class MenuToolController implements View.OnClickListener {
 
         } catch (InterruptedException e) {
             Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+            return;
         } catch (ExecutionException e) {
             Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+            return;
         } catch (FileException e) {
             Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void createGeoPackageTileSourceOverlay() {
-
-        MapView mapView = (MapView) ((MainActivity) context).findViewById(R.id.mapview);
-        mapView.setMaxZoomLevel(20);
-        mapView.setBuiltInZoomControls(true);
-        mapView.setMultiTouchControls(true);
-
-
-        System.out.println("Overlay size:" + mapView.getOverlayManager().size());
-
-/*        OnlineTileSourceBase mapQuestTileSource = TileSourceFactory.MAPQUESTOSM;
-        String tileSourcePath = mapQuestTileSource.OSMDROID_PATH.getAbsolutePath() + "/";*/
-
-        final MapTileProviderBasic tileProvider = new MapTileProviderBasic(context);
-
-        final ITileSource tileSource = new XYTileSource("Mapnik", ResourceProxy.string.mapnik, 1, 18, 256, ".png", new String[] {"http://tile.openstreetmap.org/"});
-
-        MapTileModuleProviderBase moduleProvider = new MapTileGeoPackageProvider(tileSource);
-        SimpleRegisterReceiver simpleReceiver = new SimpleRegisterReceiver(context);
-        MapTileProviderArray tileProviderArray = new MapTileProviderArray(tileSource, simpleReceiver, new MapTileModuleProviderBase[] { moduleProvider });
-
-/*        tileProvider.setTileSource(tileSource);*/
-        final TilesOverlay tilesOverlay = new TilesOverlay(tileProviderArray, context);
-        tilesOverlay.setLoadingBackgroundColor(Color.TRANSPARENT);
-        mapView.getOverlays().add(tilesOverlay);
-        //mapView.getOverlayManager().overlaysReversed();
-        //mapView.getTileProvider().clearTileCache();
-        tileProvider.setTileRequestCompleteHandler(new SimpleInvalidationHandler(mapView));
-        mapView.setTileSource(tileSource);
-        mapView.setUseDataConnection(false); //  letting osmdroid know you would use it in offline mode, keeps the mapView from loading online tiles using network connection.*/
-        mapView.invalidate();
-    }
-
-    private void storeSelectedItem(View v) {
-        ViewContextParameters par = ((MainActivity) context).getParameters();
-        TextView text = null;
-        text = (TextView) v;
-
-        try {
-            if (v.isSelected()) {
-                par.removeLayerName((String) text.getTag());
-                text.setSelected(false);
-                text.setBackgroundColor(Color.BLACK);
-                text.setTextColor(Color.WHITE);
-            } else {
-                par.addLayerName((String) text.getTag());
-                text.setSelected(true);
-                text.setBackgroundColor(Color.WHITE);
-                text.setTextColor(Color.BLACK);
-            }
-        }catch (Exception e){
-            Toast.makeText(context, e.getMessage(),
-                    Toast.LENGTH_SHORT).show();
+            return;
         }
     }
 

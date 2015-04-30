@@ -3,7 +3,6 @@ package br.org.funcate.terramobile.model.tilesource;
 /**
  * Created by Andre Carvalho on 29/04/15.
  */
-
 import android.content.Context;
 
 import com.augtech.geoapi.geopackage.GeoPackage;
@@ -14,7 +13,7 @@ import java.util.ArrayList;
 
 import br.org.funcate.jgpkg.service.GeoPackageService;
 import br.org.funcate.terramobile.R;
-import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayers;
+import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
 import br.org.funcate.terramobile.util.ResourceUtil;
 
 public class AppGeoPackageService {
@@ -35,10 +34,10 @@ public class AppGeoPackageService {
 
     /**
      * This method reads the layer names from GeoPackage.
-     * @return ArrayList<GpkgLayers> listLayers, the list Layers
+     * @return ArrayList<GpkgLayer> listLayers, the list Layers
      * @throws Exception
      */
-    public ArrayList<GpkgLayers> getLayers() throws Exception {
+    public ArrayList<GpkgLayer> getLayers() throws Exception {
 
         GeoPackage gpkg = GeoPackageService.readGPKG(context, gpkgFilePath);
         if(!gpkg.isGPKGValid(true))
@@ -52,28 +51,36 @@ public class AppGeoPackageService {
 
         ArrayList<ArrayList<GpkgField>> fields;
         fields = GeoPackageService.getGpkgFieldsContents(gpkg,columns);
-        ArrayList<GpkgLayers> listLayers=new ArrayList<GpkgLayers>();
-        GpkgLayers layer=null;
+        ArrayList<GpkgLayer> listLayers=new ArrayList<GpkgLayer>();
+        GpkgLayer layer;
 
         for (int i = 0,size = fields.size(); i < size; i++) {
+
             ArrayList<GpkgField> aField = fields.get(i);
-            layer=new GpkgLayers();
+            layer=new GpkgLayer(gpkg);// set geoPackage reference in this layer
+
             for (int j = 0,len = aField.size(); j < len; j++) {
+
                 GpkgField field = aField.get(j);
 
                 if(field.getFieldName().equals(columns[0]))
                     layer.setLayerName((String) field.getValue());
-                else
-                    layer.setLayerType((String) field.getValue());
+                else {
+                    if("features".equals(field.getValue())){
+                        layer.setLayerType(GpkgLayer.FEATURES);
+                    }else if("tiles".equals(field.getValue())){
+                        layer.setLayerType(GpkgLayer.TILES);
+                    }
+                }
             }
             listLayers.add(layer);
         }
         return listLayers;
     }
-
+/*
     public ArrayList<String> getAttributes() {
 
         return null;
-    }
+    }*/
 
 }
