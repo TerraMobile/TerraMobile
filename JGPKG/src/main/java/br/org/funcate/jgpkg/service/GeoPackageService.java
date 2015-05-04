@@ -30,17 +30,15 @@ public class GeoPackageService {
 
     static Logger log = Logger.getAnonymousLogger();
 
-    public static GeoPackage geoPackage;
-
     private static GeoPackage connect(ISQLDatabase database, boolean overwrite) {
 
         log.log(Level.INFO, "Connecting to GeoPackage...");
 
-        geoPackage = new GeoPackage(database, overwrite);
+        GeoPackage geoPackage = new GeoPackage(database, overwrite);
 
         // Quick test to get the current contents
-        if (geoPackage!=null) {
-
+        if(geoPackage!=null)
+        {
             int numExist = geoPackage.getUserTables(GpkgTable.TABLE_TYPE_FEATURES).size();
             log.log(Level.INFO, ""+numExist+" feature tables in the GeoPackage");
 
@@ -84,24 +82,7 @@ public class GeoPackageService {
         AndroidSQLDatabase gpkgDB = new AndroidSQLDatabase(context, new File(gpkgFilePath));
 
         GeoPackage geoPackage = connect(gpkgDB, false);
-/*			if(!geoPackage.isGPKGValid(true))
-        {
-            throw new Exception("Unable to load "+gpkgName+" GeoPackage file.");
-        }*/
-        return geoPackage;
 
-    }
-
-    public static GeoPackage readTilesGPKG(Context context, String gpkgFilePath) throws Exception
-    {
-        AndroidSQLDatabase gpkgDB = new AndroidSQLDatabase(context, new File(gpkgFilePath));
-
-        GeoPackage geoPackage = connect(gpkgDB, false);
-
-/*			if(!geoPackage.isGPKGValid(true))
-            {
-                throw new Exception("Unable to load "+gpkgName+" GeoPackage file.");
-            }*/
         return geoPackage;
 
     }
