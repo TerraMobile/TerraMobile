@@ -1,7 +1,9 @@
 package br.org.funcate.jgpkg.service;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -15,6 +17,7 @@ import com.augtech.geoapi.geopackage.GeoPackage;
 //import com.augtech.geoapi.geopackage.GpkgTEST;
 import br.org.funcate.geopackage.AndroidSQLDatabase;
 
+import com.augtech.geoapi.geopackage.ICursor;
 import com.augtech.geoapi.geopackage.ISQLDatabase;
 import com.augtech.geoapi.geopackage.GeoPackage;
 import com.augtech.geoapi.geopackage.GpkgTable;
@@ -77,7 +80,10 @@ public class GeoPackageService {
 			AndroidSQLDatabase gpkgDB = new AndroidSQLDatabase(context, new File(gpkgFilePath));
 
             GeoPackage geoPackage = connect(gpkgDB, false);
-/*			if(!geoPackage.isGPKGValid(true))
+
+
+
+            /*			if(!geoPackage.isGPKGValid(true))
 			{
 				throw new Exception("Unable to load "+gpkgName+" GeoPackage file."); 
 			}*/
@@ -146,5 +152,36 @@ public class GeoPackageService {
         byte[] tile = gpkg.getTile(tableName, col, row, zoomLevel);
 
         return tile;
+    }
+
+    public static Map<String, Integer> getTileTableMaxMin(GeoPackage gpkg, String tableName, String tableType) throws Exception
+    {
+        if(!gpkg.isGPKGValid(true))
+        {
+            throw new Exception("Invalid GeoPackage file.");
+        }
+
+        ICursor icursor = gpkg.getUserTable(tableName, tableType).query(gpkg, new String[]{"max(zoom_level), min(zoom_level), max(tile_row), min(tile_row), max(tile_column), min(tile_column)"},"");
+
+        Map<String, Integer> ranges = new HashMap<String, Integer>();
+
+        if(icursor.moveToNext())
+        {
+            int minZoomLevel = icursor.getInt(icursor.getColumnIndex("min(zoom_level)"));
+            int maxZoomLevel = icursor.getInt(icursor.getColumnIndex("max(zoom_level)"));
+            int minTileRow = icursor.getInt(icursor.getColumnIndex("min(tile_row)"));
+            int maxTileRow = icursor.getInt(icursor.getColumnIndex("max(tile_row)"));
+            int minTileColumn = icursor.getInt(icursor.getColumnIndex("min(tile_column)"));
+            int maxTileColumn = icursor.getInt(icursor.getColumnIndex("max(tile_column)"));
+            ranges.put("minZoomLevel",minZoomLevel);
+            ranges.put("maxZoomLevel",maxZoomLevel);
+            ranges.put("minTileRow",minTileRow);
+            ranges.put("maxTileRow",maxTileRow);
+            ranges.put("minTileColumn",minTileColumn);
+            ranges.put("maxTileColumn",maxTileColumn);
+        }
+
+
+        return ranges;
     }
 }
