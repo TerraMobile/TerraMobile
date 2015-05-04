@@ -4,6 +4,11 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -12,111 +17,68 @@ import org.opengis.geometry.BoundingBox;
 
 import android.content.Context;
 import android.os.Environment;
+import android.support.v4.util.ArrayMap;
 
 import com.augtech.geoapi.geopackage.GeoPackage;
-//import com.augtech.geoapi.geopackage.GpkgTEST;
 import br.org.funcate.geopackage.AndroidSQLDatabase;
+
+
+import com.augtech.geoapi.geopackage.GpkgField;
 
 import com.augtech.geoapi.geopackage.ICursor;
 import com.augtech.geoapi.geopackage.ISQLDatabase;
 import com.augtech.geoapi.geopackage.GeoPackage;
 import com.augtech.geoapi.geopackage.GpkgTable;
+import com.augtech.geoapi.geopackage.table.GpkgContents;
 
 public class GeoPackageService {
 
-        static Logger log = Logger.getAnonymousLogger();
+    static Logger log = Logger.getAnonymousLogger();
 
-        public static GeoPackage geoPackage;
+    private static GeoPackage connect(ISQLDatabase database, boolean overwrite) {
 
-        private static GeoPackage connect(ISQLDatabase database, boolean overwrite) {
+        log.log(Level.INFO, "Connecting to GeoPackage...");
 
-            log.log(Level.INFO, "Connecting to GeoPackage...");
+        GeoPackage geoPackage = new GeoPackage(database, overwrite);
 
-            geoPackage = new GeoPackage(database, overwrite);
+        // Quick test to get the current contents
+        if (geoPackage != null) {
+            int numExist = geoPackage.getUserTables(GpkgTable.TABLE_TYPE_FEATURES).size();
+            log.log(Level.INFO, "" + numExist + " feature tables in the GeoPackage");
 
-            // Quick test to get the current contents
-            if (geoPackage!=null) {
-
-                int numExist = geoPackage.getUserTables(GpkgTable.TABLE_TYPE_FEATURES).size();
-                log.log(Level.INFO, ""+numExist+" feature tables in the GeoPackage");
-
-                numExist = geoPackage.getUserTables(GpkgTable.TABLE_TYPE_TILES).size();
-                log.log(Level.INFO, ""+numExist+" tile tables in the GeoPackage");
-            }
-            return geoPackage;
-
+            numExist = geoPackage.getUserTables(GpkgTable.TABLE_TYPE_TILES).size();
+            log.log(Level.INFO, "" + numExist + " tile tables in the GeoPackage");
         }
-		
-		public static void createGPKG(Context context, String gpkgFilePath)
-		{
-			AndroidSQLDatabase gpkgDB = new AndroidSQLDatabase(context, new File(gpkgFilePath));
+        return geoPackage;
 
-            GeoPackage geoPackage = connect(gpkgDB, true);
-
-			/*GpkgTEST test = new GpkgTEST(gpkgDB, true);*/
-			
-			/*System.out.println(geoPackage.isGPKGValid(true));*/
-		}
-		
-/*		public static void insertDataGPKG(Context context, String gpkgName) throws Exception
-		{
-			String path = Environment.getExternalStorageDirectory().toString();
-
-			AndroidSQLDatabase gpkgDB = new AndroidSQLDatabase(context, new File(path, gpkgName));
-            GeoPackage geoPackage = connect(gpkgDB, true);
-
-			test.insertFeaturesFromCollection(true);
-			*//*			GeoPackage geoPackage = new GeoPackage(gpkgDB, false);*//*
-*//*			if(!geoPackage.isGPKGValid(true))
-			{
-				throw new Exception("Unable to load "+gpkgName+" GeoPackage file."); 
-			}
-*//*
-		}*/
-
-		
-		public static GeoPackage readGPKG(Context context, String gpkgFilePath) throws Exception
-		{
-			AndroidSQLDatabase gpkgDB = new AndroidSQLDatabase(context, new File(gpkgFilePath));
-
-            GeoPackage geoPackage = connect(gpkgDB, false);
+    }
 
 
 
-            /*			if(!geoPackage.isGPKGValid(true))
-			{
-				throw new Exception("Unable to load "+gpkgName+" GeoPackage file."); 
-			}*/
-			return geoPackage;
-		
-		}
 
-        public static GeoPackage readTilesGPKG(Context context, String gpkgFilePath) throws Exception
+
+    public static GeoPackage readGPKG(Context context, String gpkgFilePath) throws Exception
+    {
+        AndroidSQLDatabase gpkgDB = new AndroidSQLDatabase(context, new File(gpkgFilePath));
+
+        GeoPackage geoPackage = connect(gpkgDB, false);
+
+        return geoPackage;
+
+    }
+
+
+    public static List<SimpleFeature> getGeometries(GeoPackage gpkg, String tableName) throws Exception
+    {
+        if(!gpkg.isGPKGValid(true))
         {
-            AndroidSQLDatabase gpkgDB = new AndroidSQLDatabase(context, new File(gpkgFilePath));
-
-            GeoPackage geoPackage = connect(gpkgDB, false);
-
-   /*			if(!geoPackage.isGPKGValid(true))
-                {
-                    throw new Exception("Unable to load "+gpkgName+" GeoPackage file.");
-                }*/
-            return geoPackage;
-
+            throw new Exception("Invalid GeoPackage file.");
         }
-		
-		
-		public static List<SimpleFeature> getGeometries(GeoPackage gpkg, String tableName) throws Exception
-		{
-			if(!gpkg.isGPKGValid(true))
-			{
-				throw new Exception("Invalid GeoPackage file.");
-			}
-			
-			List<SimpleFeature> features = gpkg.getFeatures("focosqueimadas");
-			
-			return features;
-		}
+
+        List<SimpleFeature> features = gpkg.getFeatures("focosqueimadas");
+
+        return features;
+    }
 
     public static List<SimpleFeature> getTiles(GeoPackage gpkg, String tableName) throws Exception
     {
@@ -154,34 +116,65 @@ public class GeoPackageService {
         return tile;
     }
 
-    public static Map<String, Integer> getTileTableMaxMin(GeoPackage gpkg, String tableName, String tableType) throws Exception
-    {
-        if(!gpkg.isGPKGValid(true))
-        {
+    public static Map<String, Integer> getTileTableMaxMin(GeoPackage gpkg, String tableName, String tableType) throws Exception {
+        if (!gpkg.isGPKGValid(true)) {
             throw new Exception("Invalid GeoPackage file.");
         }
 
-        ICursor icursor = gpkg.getUserTable(tableName, tableType).query(gpkg, new String[]{"max(zoom_level), min(zoom_level), max(tile_row), min(tile_row), max(tile_column), min(tile_column)"},"");
+        ICursor icursor = gpkg.getUserTable(tableName, tableType).query(gpkg, new String[]{"max(zoom_level), min(zoom_level), max(tile_row), min(tile_row), max(tile_column), min(tile_column)"}, "");
 
         Map<String, Integer> ranges = new HashMap<String, Integer>();
 
-        if(icursor.moveToNext())
-        {
+        if (icursor.moveToNext()) {
             int minZoomLevel = icursor.getInt(icursor.getColumnIndex("min(zoom_level)"));
             int maxZoomLevel = icursor.getInt(icursor.getColumnIndex("max(zoom_level)"));
             int minTileRow = icursor.getInt(icursor.getColumnIndex("min(tile_row)"));
             int maxTileRow = icursor.getInt(icursor.getColumnIndex("max(tile_row)"));
             int minTileColumn = icursor.getInt(icursor.getColumnIndex("min(tile_column)"));
             int maxTileColumn = icursor.getInt(icursor.getColumnIndex("max(tile_column)"));
-            ranges.put("minZoomLevel",minZoomLevel);
-            ranges.put("maxZoomLevel",maxZoomLevel);
-            ranges.put("minTileRow",minTileRow);
-            ranges.put("maxTileRow",maxTileRow);
-            ranges.put("minTileColumn",minTileColumn);
-            ranges.put("maxTileColumn",maxTileColumn);
+            ranges.put("minZoomLevel", minZoomLevel);
+            ranges.put("maxZoomLevel", maxZoomLevel);
+            ranges.put("minTileRow", minTileRow);
+            ranges.put("maxTileRow", maxTileRow);
+            ranges.put("minTileColumn", minTileColumn);
+            ranges.put("maxTileColumn", maxTileColumn);
         }
 
 
         return ranges;
+    }
+
+    public static GpkgTable getGpkgTable(GeoPackage gpkg, String gpkgTableName) throws Exception {
+
+        GpkgTable systemTable = gpkg.getSystemTable(gpkgTableName);
+
+        return systemTable;
+    }
+
+    public static GpkgContents getGpkgContents(GeoPackage gpkg) throws Exception {
+
+        String gpkgTableName = "gpkg_contents";
+
+        return (GpkgContents) getGpkgTable(gpkg,gpkgTableName);
+    }
+
+    public static ArrayList<ArrayList<GpkgField>> getGpkgFieldsContents(GeoPackage gpkg, String[] columns) throws Exception {
+
+        GpkgContents contents = getGpkgContents(gpkg);
+        ICursor c = contents.query(gpkg, columns, null);
+        GpkgField field;
+        int len= columns.length;
+        ArrayList<ArrayList<GpkgField>> records=new ArrayList<ArrayList<GpkgField>>();
+
+        while (c.moveToNext()){
+            ArrayList<GpkgField> aRecord=new ArrayList<GpkgField>(len);
+            for (int i = 0; i < len; i++) {
+                field = contents.getField(columns[i]);
+                field.setValue(c.getString(i));
+                aRecord.add(field);
+            }
+            records.add(aRecord);
+        }
+        return records;
     }
 }
