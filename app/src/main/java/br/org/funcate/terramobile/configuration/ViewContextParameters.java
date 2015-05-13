@@ -1,5 +1,7 @@
 package br.org.funcate.terramobile.configuration;
 
+import org.osmdroid.views.MapView;
+
 import java.util.ArrayList;
 
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
@@ -10,6 +12,7 @@ import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
 public class ViewContextParameters {
 
     private ArrayList<GpkgLayer> selectedLayers;
+    private MapView mMapView;
 
     public ViewContextParameters(){
         selectedLayers=new ArrayList<GpkgLayer>();
@@ -18,6 +21,14 @@ public class ViewContextParameters {
     public void setSelectedLayers(ArrayList<GpkgLayer> selectedLayers) {
 
         this.selectedLayers = selectedLayers;
+    }
+
+    public MapView getMapView() {
+        return mMapView;
+    }
+
+    public void setMapView(MapView mMapView) {
+        this.mMapView = mMapView;
     }
 
     public ArrayList<GpkgLayer> getSelectedLayers() {
