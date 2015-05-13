@@ -17,6 +17,7 @@ import org.osmdroid.tileprovider.tilesource.ITileSource;
 import org.osmdroid.tileprovider.tilesource.XYTileSource;
 import org.osmdroid.tileprovider.util.SimpleInvalidationHandler;
 import org.osmdroid.tileprovider.util.SimpleRegisterReceiver;
+import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.TilesOverlay;
 
@@ -66,7 +67,7 @@ public class MenuToolController implements View.OnClickListener {
     @Override
     public void onClick(View v) {
 
-        selectedItem(v);
+        //selectedItem(v);
         exec();
         Toast.makeText(context, "Tool : " + this.menuToolItem.getLabel(),
                 Toast.LENGTH_SHORT).show();
@@ -91,9 +92,10 @@ public class MenuToolController implements View.OnClickListener {
     }
 
     private void exec() {
-        switch (this.menuToolItem.getType()) {
+        String l=this.menuToolItem.getLabel();
+        switch (this.menuToolItem.getToolID()) {
             case TerraMobileMenuToolItem.DOWNLOAD_GPKG: {//Download GeoPackage
-                //downloadGeoPackage();
+                downloadGeoPackage();
                 break;
             }
             case TerraMobileMenuToolItem.CREATE_GPKG:{//Create GeoPackage
@@ -108,8 +110,32 @@ public class MenuToolController implements View.OnClickListener {
                 insertData();
                 break;
             }
+            case TerraMobileMenuToolItem.BTN_TEST:{// Test button
+                setMapZoom();
+                break;
+            }
         }
 
+    }
+
+    public void setMapZoom(){
+
+        // nao funcionou!!!
+        // TODO: Tentar a solucao deste link: https://github.com/osmdroid/osmdroid/issues/22
+
+        ViewContextParameters parameters=((MainActivity) this.context).getParameters();
+        MapView mapView=parameters.getMapView();
+
+        double x = ResourceUtil.getDoubleResource(this.context.getResources(), R.dimen.default_map_center_x);
+        double y = ResourceUtil.getDoubleResource(this.context.getResources(), R.dimen.default_map_center_y);
+
+        GeoPoint gPt = new GeoPoint(x, y);
+
+        mapView.getController().setCenter(gPt);
+
+        mapView.getController().setZoom(10);
+
+        mapView.invalidate();
     }
 
     public void readGeometries() {
@@ -127,7 +153,7 @@ public class MenuToolController implements View.OnClickListener {
     }
 
     public void createGeoPackage() {
-        GeoPackageService.createGPKG(context, appPath.getPath() + "/test.gpkg");
+        //GeoPackageService.createGPKG(context, appPath.getPath() + "/test.gpkg");
         Toast.makeText(context, "GeoPackage file successfully created", Toast.LENGTH_SHORT).show();
     }
 
