@@ -21,6 +21,7 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 
 import br.org.funcate.terramobile.R;
+import br.org.funcate.terramobile.configuration.ViewContextParameters;
 import br.org.funcate.terramobile.model.constants.OpenStreetMapConstants;
 import br.org.funcate.terramobile.util.ResourceUtil;
 import br.org.funcate.terramobile.view.ResourceProxyImpl;
@@ -66,6 +67,10 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants
         //mMapView.setUseSafeCanvas(true);
         // Call this method to turn off hardware acceleration at the View level.
         // setHardwareAccelerationOff();
+
+        ViewContextParameters parameters=((MainActivity) this.getActivity()).getParameters();
+        parameters.setMapView(mMapView);
+
         return rootView;
     }
 
@@ -183,6 +188,8 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants
         int initialZoomLevel = ResourceUtil.getIntResource(getResources(), R.integer.default_initial_zoom_level);
 
         mapView.getController().setZoom(initialZoomLevel);
+
+        mapView.invalidate();
 
     }
 
