@@ -9,31 +9,13 @@ import android.widget.Toast;
 import com.augtech.geoapi.geopackage.GeoPackage;
 
 import org.opengis.feature.simple.SimpleFeature;
-import org.osmdroid.ResourceProxy;
-import org.osmdroid.tileprovider.MapTileProviderArray;
-import org.osmdroid.tileprovider.MapTileProviderBasic;
-import org.osmdroid.tileprovider.modules.MapTileModuleProviderBase;
-import org.osmdroid.tileprovider.tilesource.ITileSource;
-import org.osmdroid.tileprovider.tilesource.XYTileSource;
-import org.osmdroid.tileprovider.util.SimpleInvalidationHandler;
-import org.osmdroid.tileprovider.util.SimpleRegisterReceiver;
-import org.osmdroid.views.MapView;
-import org.osmdroid.views.overlay.TilesOverlay;
 
 import java.io.File;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import br.org.funcate.jgpkg.service.GeoPackageService;
 import br.org.funcate.terramobile.R;
-import br.org.funcate.terramobile.configuration.ViewContextParameters;
-import br.org.funcate.terramobile.model.exception.FileException;
-import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
-import br.org.funcate.terramobile.model.service.FileService;
-import br.org.funcate.terramobile.model.task.DownloadTask;
-import br.org.funcate.terramobile.model.tilesource.MapTileGeoPackageProvider;
 import br.org.funcate.terramobile.util.ResourceUtil;
-import br.org.funcate.terramobile.view.TerraMobileMenuItem;
 import br.org.funcate.terramobile.view.TerraMobileMenuToolItem;
 
 /**
@@ -42,7 +24,7 @@ import br.org.funcate.terramobile.view.TerraMobileMenuToolItem;
 public class MenuToolController implements View.OnClickListener {
 
     private TerraMobileMenuToolItem menuToolItem;
-    private final Context context;
+    private Context context;
     private File appPath;
     private String tempURL;
 
@@ -140,33 +122,6 @@ public class MenuToolController implements View.OnClickListener {
             Toast.makeText(context, "Error insert GML on device: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
         return;
-    }
-
-    public void downloadGeoPackage() {
-        String destinationFilePath = appPath.getPath() + "/" + context.getResources().getString(R.string.destination_file_path);
-
-        try {
-            DownloadTask task = new DownloadTask(tempURL, destinationFilePath, true);
-
-            boolean downloaded = task.execute().get();
-
-            if (!downloaded) {
-                Toast.makeText(context, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            FileService.unzip(destinationFilePath, appPath.getPath() + "/");
-
-        } catch (InterruptedException e) {
-            Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
-            return;
-        } catch (ExecutionException e) {
-            Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
-            return;
-        } catch (FileException e) {
-            Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
-            return;
-        }
     }
 
 }

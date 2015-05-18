@@ -17,11 +17,15 @@
 package br.org.funcate.terramobile.controller.activity;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.net.ConnectivityManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
@@ -35,10 +39,19 @@ import android.widget.ExpandableListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URL;
+import java.net.URLConnection;
 
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.configuration.ViewContextParameters;
+import br.org.funcate.terramobile.model.exception.DownloadException;
+import br.org.funcate.terramobile.util.ResourceUtil;
 
 /**
  * This example illustrates a common usage of the DrawerLayout widget
@@ -79,13 +92,16 @@ public class MainActivity extends Activity {
 
     private ViewContextParameters parameters=new ViewContextParameters();
 
+    // Progress Dialog
+    private ProgressDialog progressDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
 
-        treeView = new TreeView(this);
+        treeView = new TreeView(MainActivity.this);
 
         mTitle = mDrawerTitle = getTitle();
 
@@ -183,8 +199,21 @@ public class MainActivity extends Activity {
             }
             return true;
             case R.id.download_geo_package:
-                MenuToolController ctl=new MenuToolController(getApplicationContext());
-                ctl.downloadGeoPackage();
+                ConnectivityManager cm = (ConnectivityManager)this.getSystemService(this.CONNECTIVITY_SERVICE);
+
+                int wifi = ConnectivityManager.TYPE_WIFI;
+                int mobile = ConnectivityManager.TYPE_MOBILE;
+
+                if (cm.getNetworkInfo(mobile).isConnected() ||
+                        cm.getNetworkInfo(wifi).isConnected()) {
+                    File appPath = ResourceUtil.getDirectory(getResources().getString(R.string.app_workspace_dir));
+                    String tempURL = getResources().getString(R.string.gpkg_url);
+                    String destinationFilePath = appPath.getPath() + "/" + getResources().getString(R.string.destination_file_path);
+                    new DownloadTask(destinationFilePath, true).execute(tempURL);
+                }
+                else{
+                    Toast.makeText(this, "Conecte-se à internet", Toast.LENGTH_LONG).show();
+                }
                 return true;
         default:
             return super.onOptionsItemSelected(item);
@@ -226,4 +255,124 @@ public class MainActivity extends Activity {
        mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
+    protected Dialog onCreateDialog(int id) {
+        switch (id) {
+            case 0:
+                progressDialog = new ProgressDialog(this);
+                progressDialog.setMessage("Realizando o download...");
+                progressDialog.setIndeterminate(false);
+                progressDialog.setMax(100);
+                progressDialog.setProgress(0);
+                progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+                progressDialog.setCancelable(false);
+                progressDialog.show();
+                return progressDialog;
+            default:
+                return null;
+        }
+    }
+
+    class DownloadTask extends AsyncTask<String, String, Boolean> {
+
+        private String destinationFilePath;
+
+        private DownloadException exception;
+
+        private boolean overwrite;
+
+        public DownloadTask(String destinationFilePath, boolean overwrite) {
+            this.destinationFilePath = destinationFilePath;
+            this.overwrite = overwrite;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            showDialog(0);
+        }
+
+        protected Boolean doInBackground(String... urlToDownload) {
+            if (urlToDownload[0].isEmpty()) {
+                exception = new DownloadException("Missing URL to be downloaded.");
+                return false;
+            }
+
+            if (destinationFilePath.isEmpty()) {
+                exception = new DownloadException("Missing destination path to download to.");
+                return false;
+            }
+
+            try {
+                try {
+                    File file = new File(destinationFilePath);
+
+                    if (!file.exists()) {
+                        file.createNewFile();
+                    } else {
+                        if (overwrite) {
+                            file.delete();
+                        } else {
+                            return true;
+                        }
+                    }
+                    URL url = new URL(urlToDownload[0]);
+
+                    URLConnection urlConnection = url.openConnection();
+                    urlConnection.connect();
+
+                    int totalSize = urlConnection.getContentLength();
+
+                    InputStream inputStream = new BufferedInputStream(url.openStream(), 8192);
+
+                    OutputStream fileOutput = new FileOutputStream(file);
+
+                    byte buffer[] = new byte[1024];
+
+                    int bufferLength;
+
+                    long total = 0;
+
+                    while ((bufferLength = inputStream.read(buffer)) != -1) {
+                        total += bufferLength;
+                        publishProgress("" + (int) ((total * 100) / totalSize));
+
+                        fileOutput.write(buffer, 0, bufferLength);
+                    }
+                    fileOutput.flush();
+
+                    fileOutput.close();
+                    inputStream.close();
+
+                    return true;
+
+                } catch (IOException e) {
+                    throw new DownloadException("Error downloading file: " + urlToDownload[0], e);
+                }
+
+            } catch (DownloadException e) {
+                exception = e;
+            }
+            if(progressDialog != null && progressDialog.isShowing())
+                dismissDialog(0);
+            return false;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            if(progressDialog != null && progressDialog.isShowing()) {
+                dismissDialog(0);
+                Toast.makeText(MainActivity.this, "Download realizado com sucesso", Toast.LENGTH_LONG).show();
+            }
+        }
+
+        @Override
+        protected void onProgressUpdate(String... values) {
+            if(progressDialog != null && progressDialog.isShowing())
+                progressDialog.setProgress(Integer.parseInt(values[0]));
+        }
+
+        public DownloadException getException() {
+            return exception;
+
+        }
+    }
 }

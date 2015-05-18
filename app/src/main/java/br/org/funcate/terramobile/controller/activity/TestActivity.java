@@ -15,41 +15,28 @@
  */
 package br.org.funcate.terramobile.controller.activity;
 
-import java.io.File;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-
-import org.opengis.feature.simple.SimpleFeature;
-import org.osmdroid.ResourceProxy;
-import org.osmdroid.tileprovider.MapTileProviderBasic;
-import org.osmdroid.tileprovider.modules.MapTileModuleProviderBase;
-import org.osmdroid.tileprovider.tilesource.ITileSource;
-import org.osmdroid.tileprovider.tilesource.XYTileSource;
-import org.osmdroid.tileprovider.util.SimpleInvalidationHandler;
-import org.osmdroid.tileprovider.util.SimpleRegisterReceiver;
-import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.MapView;
-import org.osmdroid.views.overlay.TilesOverlay;
-
 import android.app.Activity;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
+
+import com.augtech.geoapi.geopackage.GeoPackage;
+
+import org.opengis.feature.simple.SimpleFeature;
+import org.osmdroid.views.MapView;
+
+import java.io.File;
+import java.util.List;
+
 import br.org.funcate.jgpkg.service.GeoPackageService;
+import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.model.exception.FileException;
 import br.org.funcate.terramobile.model.service.FileService;
-import br.org.funcate.terramobile.model.task.DownloadTask;
-import br.org.funcate.terramobile.model.tilesource.MapTileGeoPackageProvider;
-import br.org.funcate.terramobile.model.tilesource.MapTileProviderArrayGeoPackage;
 import br.org.funcate.terramobile.test.JGPKGTestInterface;
-import br.org.funcate.terramobile.R;
-import com.augtech.geoapi.geopackage.GeoPackage;
 //import com.augtech.geoapi.geopackage.GpkgTEST;
 /** The main Activity for running test cases
- * 
+ *
  * @author Augmented Technologies Ltd.
  *
  */
@@ -60,7 +47,7 @@ public class TestActivity extends Activity implements JGPKGTestInterface {
 	TextView statusText = null;
 	TestActivity thisActivity = null;
     String tempURL = "http://200.144.100.34/temp/GPKG-TerraMobile-test.zip";
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -135,17 +122,17 @@ public class TestActivity extends Activity implements JGPKGTestInterface {
 	private View.OnClickListener testCreateClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			
+
 			GeoPackageService.createGPKG(thisActivity,appPath.getPath()+"/test.gpkg");
-			
+
 			statusText.setText("GeoPackage file successfully created");
 		}
 	};
-	
+
 	private View.OnClickListener testInsertClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			
+
 			try {
 				//GeoPackageService.insertDataGPKG(thisActivity,"/GeoPackageTest/test.gpkg");
 			} catch (Exception e) {
@@ -154,8 +141,8 @@ public class TestActivity extends Activity implements JGPKGTestInterface {
 				statusText.setText("Error insert GML on device: " +e.getMessage());
 				return;
 			}
-			
-			
+
+
 		}
 	};
     private View.OnClickListener downloadFiles = new View.OnClickListener() {
@@ -165,22 +152,22 @@ public class TestActivity extends Activity implements JGPKGTestInterface {
             String fileName = appPath.getPath() +"/GPKG-TerraMobile-test.zip";
 
             try {
-                DownloadTask task= new DownloadTask(tempURL, fileName, true);
+//                DownloadTask task= new DownloadTask(tempURL, fileName, true, (MainActivity));
 
-                boolean downloaded = task.execute().get();
+//                boolean downloaded = task.execute().get();
 
-                if(!downloaded)
-                {
-                    statusText.setText(task.getException().getMessage());
-                    return;
-                }
+//                if(!downloaded)
+//                {
+//                    statusText.setText(task.getException().getMessage());
+//                    return;
+//                }
 
                 FileService.unzip(fileName, appPath.getPath()+"/");
 
-            } catch (InterruptedException e) {
-                statusText.setText(e.getMessage());
-            } catch (ExecutionException e) {
-                statusText.setText(e.getMessage());
+//            } catch (InterruptedException e) {
+//                statusText.setText(e.getMessage());
+//            } catch (ExecutionException e) {
+//                statusText.setText(e.getMessage());
             } catch (FileException e) {
                 statusText.setText(e.getMessage());
             }
