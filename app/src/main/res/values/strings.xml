@@ -18,10 +18,13 @@
             <item name="online_layers">Online Layers</item><!-- This "Group Menu" does not have static items. -->
         </string-array>
         <!-- These are second level to Tools menu. -->
+        <!-- The list items order must be the same on the TerraMobileMenuToolItem class -->
         <string-array name="menu_items">
             <item name="download_gpkg">Download GeoPackage</item>
             <item name="create_gpkg">Create GeoPackage</item>
             <item name="read_geom">Read Geometries</item>
+            <item name="insert_data">Insert Data</item>
+            <item name="btn_test">Test Zoom</item>
         </string-array>
     <!-- Finished list of the menu items -->
 

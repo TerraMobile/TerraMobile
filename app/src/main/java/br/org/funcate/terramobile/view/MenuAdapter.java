@@ -41,8 +41,10 @@ public class MenuAdapter extends BaseExpandableListAdapter {
     public View getGroupView(int groupPosition, boolean isExpanded,
                              View convertView, ViewGroup parent) {
 
-        if (convertView == null) {
-            convertView = new TextView(context);
+        try {
+            if (convertView == null) {
+                convertView = new TextView(context);
+            }
             convertView.setClickable(false);
 
             TextView text;
@@ -52,6 +54,8 @@ public class MenuAdapter extends BaseExpandableListAdapter {
             text.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                     context.getResources().getDimension(R.dimen.grp_text_size));
             convertView.setTag(groupItem.get(groupPosition));
+        }catch (Exception e){
+            String s= e.getMessage();
         }
 
         return convertView;
@@ -64,15 +68,16 @@ public class MenuAdapter extends BaseExpandableListAdapter {
         TextView text;
         if (convertView == null) {
             convertView = new TextView(context);
-            text = (TextView) convertView;
-            ArrayList<TerraMobileMenuItem> children = (ArrayList<TerraMobileMenuItem>) ChildItem.get(groupPosition);
-            final TerraMobileMenuItem child = children.get(childPosition);
-            text.setTextColor(Color.WHITE);
-            text.setText("  " + child.getLabel());
-            text.setTag(child);
-            text.setTextSize(TypedValue.COMPLEX_UNIT_PX,
-                    context.getResources().getDimension(R.dimen.child_text_size));
-
+        }
+        text = (TextView) convertView;
+        ArrayList<TerraMobileMenuItem> children = (ArrayList<TerraMobileMenuItem>) ChildItem.get(groupPosition);
+        final TerraMobileMenuItem child = children.get(childPosition);
+        text.setTextColor(Color.WHITE);
+        text.setText("  " + child.getLabel());
+        text.setTag(child);
+        text.setTextSize(TypedValue.COMPLEX_UNIT_PX,
+                context.getResources().getDimension(R.dimen.child_text_size));
+        try {
             switch (child.getType()) {
                 case TerraMobileMenuItem.TOOL_ITEM: {// Tools
                     text.setOnClickListener(new MenuToolController(this.context, (TerraMobileMenuToolItem) child));
@@ -83,6 +88,8 @@ public class MenuAdapter extends BaseExpandableListAdapter {
                     break;
                 }
             }
+        }catch (Exception e){
+            String l=e.getMessage();
         }
 
         return convertView;

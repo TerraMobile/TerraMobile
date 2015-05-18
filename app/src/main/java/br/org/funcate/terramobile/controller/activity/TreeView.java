@@ -76,7 +76,7 @@ public class TreeView {
         int len=items.length;
         TerraMobileMenuToolItem toolItem;
         for (int i = 0; i < len; i++) {
-            toolItem=new TerraMobileMenuToolItem(items[i]);
+            toolItem=new TerraMobileMenuToolItem(items[i], i);
             childTools.add(toolItem);
         }
         childItem.add(childTools);
