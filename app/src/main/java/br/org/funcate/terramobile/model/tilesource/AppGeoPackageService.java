@@ -75,6 +75,7 @@ public class AppGeoPackageService {
             }
             listLayers.add(layer);
         }
+        gpkg.close();
         return listLayers;
     }
 /*

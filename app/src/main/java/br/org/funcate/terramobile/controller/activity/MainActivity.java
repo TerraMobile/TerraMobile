@@ -16,10 +16,10 @@
 
 package br.org.funcate.terramobile.controller.activity;
 
-import android.app.Activity;
-import android.app.Dialog;
-import android.app.Fragment;
-import android.app.FragmentManager;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Intent;
@@ -36,6 +36,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ExpandableListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -80,7 +81,7 @@ import br.org.funcate.terramobile.util.ResourceUtil;
  * An action should be an operation performed on the current contents of the window,
  * for example enabling or disabling a data overlay on top of the current content.</p>
  */
-public class MainActivity extends Activity {
+public class MainActivity extends FragmentActivity {
 
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -127,7 +128,7 @@ public class MainActivity extends Activity {
                 R.drawable.ic_drawer,  //nav drawer image to replace 'Up' caret
                 R.string.drawer_open,  //"open drawer" description for accessibility
                 R.string.drawer_close  //"close drawer" description for accessibility
-                ) {
+        ) {
             public void onDrawerClosed(View view) {
                 getActionBar().setTitle(mTitle);
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
@@ -158,7 +159,6 @@ public class MainActivity extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main, menu);
-
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -180,24 +180,24 @@ public class MainActivity extends Activity {
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-         // The action bar home/up action should open or close the drawer.
-         // ActionBarDrawerToggle will take care of this.
+        // The action bar home/up action should open or close the drawer.
+        // ActionBarDrawerToggle will take care of this.
         if (mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
         // Handle action buttons
         switch(item.getItemId()) {
-        case R.id.action_boeing_page:
-            // create intent to perform web search for this planet
-            Intent intent = new Intent(Intent.ACTION_WEB_SEARCH);
-            intent.putExtra(SearchManager.QUERY, "Boeing");
-            // catch event that there's no activity to handle intent
-            if (intent.resolveActivity(getPackageManager()) != null) {
-                startActivity(intent);
-            } else {
-                Toast.makeText(this, R.string.app_not_available, Toast.LENGTH_LONG).show();
-            }
-            return true;
+            case R.id.action_boeing_page:
+                // create intent to perform web search for this planet
+                Intent intent = new Intent(Intent.ACTION_WEB_SEARCH);
+                intent.putExtra(SearchManager.QUERY, "Boeing");
+                // catch event that there's no activity to handle intent
+                if (intent.resolveActivity(getPackageManager()) != null) {
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(this, R.string.app_not_available, Toast.LENGTH_LONG).show();
+                }
+                return true;
             case R.id.download_geo_package:
                 ConnectivityManager cm = (ConnectivityManager)this.getSystemService(this.CONNECTIVITY_SERVICE);
 
@@ -215,8 +215,8 @@ public class MainActivity extends Activity {
                     Toast.makeText(this, "Conecte-se à internet", Toast.LENGTH_LONG).show();
                 }
                 return true;
-        default:
-            return super.onOptionsItemSelected(item);
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 
@@ -226,7 +226,7 @@ public class MainActivity extends Activity {
 /*        Bundle args = new Bundle();
         args.putStringArrayList(MapFragment.mLayers);
         fragment.setArguments(args);*/
-        FragmentManager fragmentManager = getFragmentManager();
+        FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
     }
 
@@ -252,24 +252,18 @@ public class MainActivity extends Activity {
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         // Pass any configuration change to the drawer toggles
-       mDrawerToggle.onConfigurationChanged(newConfig);
+        mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
-    protected Dialog onCreateDialog(int id) {
-        switch (id) {
-            case 0:
-                progressDialog = new ProgressDialog(this);
-                progressDialog.setMessage("Realizando o download...");
-                progressDialog.setIndeterminate(false);
-                progressDialog.setMax(100);
-                progressDialog.setProgress(0);
-                progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-                progressDialog.setCancelable(false);
-                progressDialog.show();
-                return progressDialog;
-            default:
-                return null;
-        }
+    protected void showProgressDialog() {
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Realizando o download...");
+        progressDialog.setIndeterminate(false);
+        progressDialog.setMax(100);
+        progressDialog.setProgress(0);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        progressDialog.setCancelable(false);
+        progressDialog.show();
     }
 
     class DownloadTask extends AsyncTask<String, String, Boolean> {
@@ -287,7 +281,7 @@ public class MainActivity extends Activity {
 
         @Override
         protected void onPreExecute() {
-            showDialog(0);
+            showProgressDialog();
         }
 
         protected Boolean doInBackground(String... urlToDownload) {
@@ -352,15 +346,23 @@ public class MainActivity extends Activity {
                 exception = e;
             }
             if(progressDialog != null && progressDialog.isShowing())
-                dismissDialog(0);
+                progressDialog.dismiss();
             return false;
         }
 
         @Override
         protected void onPostExecute(Boolean aBoolean) {
             if(progressDialog != null && progressDialog.isShowing()) {
-                dismissDialog(0);
-                Toast.makeText(MainActivity.this, "Download realizado com sucesso", Toast.LENGTH_LONG).show();
+                if (aBoolean) {
+                    progressDialog.dismiss();
+                    Toast.makeText(MainActivity.this, "Download realizado com sucesso!", Toast.LENGTH_LONG).show();
+                } else {
+                    progressDialog.dismiss();
+                    Toast.makeText(MainActivity.this, "Não foi possível realizar o download", Toast.LENGTH_LONG).show();
+                }
+            }
+            else{
+                Toast.makeText(MainActivity.this, "Não foi possível realizar o download", Toast.LENGTH_LONG).show();
             }
         }
 
