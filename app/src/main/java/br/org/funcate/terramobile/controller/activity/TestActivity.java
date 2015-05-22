@@ -123,7 +123,7 @@ public class TestActivity extends Activity implements JGPKGTestInterface {
 		@Override
 		public void onClick(View v) {
 
-			GeoPackageService.createGPKG(thisActivity,appPath.getPath()+"/test.gpkg");
+			//GeoPackageService.createGPKG(thisActivity,appPath.getPath()+"/test.gpkg");
 
 			statusText.setText("GeoPackage file successfully created");
 		}

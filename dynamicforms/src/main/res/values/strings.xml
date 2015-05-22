@@ -1,0 +1,10 @@
+<resources>
+    <string name="form_field_check">Please check that the field \"%1$s\" in section \"%2$s\" is valid. Not validated constraints: %3$s.</string>
+    <string name="cantcreate_img_folder">Can\'t create the folder into which to save the image.</string>
+    <string name="draw_sketch">Draw sketch</string>
+    <string name="take_picture">Take picture</string>
+    <string name="cantcreate_sdcard">Wasn\'t able to create folder on sdcard (%1$s). Exiting…</string>
+    <string name="app_name">TerraMobileDynamicForms</string>
+    <string name="error_while_storing_form_data">An error occurred while storing the form data.</string>
+    <string name="select_dotdot">Select…</string>
+</resources>

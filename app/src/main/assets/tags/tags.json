@@ -1,0 +1,247 @@
+[
+    {
+        "sectionname": "examples",
+        "sectiondescription": "examples of supported form widgets",
+        "forms": [
+            {
+                "formname": "text",
+                "formitems": [
+                    {
+                        "key": "some text",
+                        "value": "",
+                        "type": "string"
+                    }
+                ]
+            },{
+                "formname": "text example with key and label",
+                "formitems": [
+                    {
+                        "key": "the key used to index",
+                        "label": "the label used to describe",
+                        "value": "",
+                        "type": "string"
+                    }
+                ]
+            },{
+                "formname": "numeric text",
+                "formitems": [
+                    {
+                        "key": "a number",
+                        "value": "",
+                        "type": "double"
+                    },{
+                        "key": "an integer number",
+                        "value": "",
+                        "type": "integer"
+                    }
+                ]
+            },{
+                "formname": "date",
+                "formitems": [
+                    {
+                        "key": "a date",
+                        "value": "",
+                        "type": "date"
+                    }
+                ]
+            },{
+                "formname": "time",
+                "formitems": [
+                    {
+                        "key": "a time",
+                        "value": "",
+                        "type": "time"
+                    }
+                ]
+            },{
+                "formname": "labels",
+                "formitems": [
+                    {
+                        "value": "a simple label of size 20",
+						"size": "20",
+                        "type": "label"
+                    },{
+                        "value": "a underlined label of size 24",
+                        "size": "24",
+						"type": "labelwithline"
+                    },{
+                        "value": "a label with link to the geopaparazzi homepage",
+                        "url": "http://www.geopaparazzi.eu",
+                        "size": "20",
+                        "type": "labelwithline"
+                    }
+                ]
+            },{
+                "formname": "boolean",
+                "formitems": [
+                    {
+                        "key": "a boolean choice",
+                        "value": "",
+                        "type": "boolean"
+                    }
+                ]
+            },{
+                "formname": "combos",
+                "formitems": [
+                    {
+                        "key": "a single choice combo",
+                        "values": {
+                            "items": [
+                                {"item": ""},
+                                {"item": "choice 1"},
+                                {"item": "choice 2"},
+                                {"item": "choice 3"},
+                                {"item": "choice 4"},
+                                {"item": "choice 5"}
+                            ]
+                        },
+                        "value": "",
+                        "type": "stringcombo"
+                    },{
+                        "key": "a multiple choice combo",
+                        "values": {
+                            "items": [
+                                {"item": ""},
+                                {"item": "choice 1"},
+                                {"item": "choice 2"},
+                                {"item": "choice 3"},
+                                {"item": "choice 4"},
+                                {"item": "choice 5"}
+                            ]
+                        },
+                        "value": "",
+                        "type": "multistringcombo"
+                    },{
+                        "key": "two connected combos",
+                        "values": {
+                            "items 1": [
+                                {"item": ""},
+                                {"item": "choice 1 of 1"},
+                                {"item": "choice 2 of 1"},
+                                {"item": "choice 3 of 1"},
+                                {"item": "choice 4 of 1"},
+                                {"item": "choice 5 of 1"}
+                            ],
+                            "items 2": [
+                                {"item": ""},
+                                {"item": "choice 1 of 2"},
+                                {"item": "choice 2 of 2"},
+                                {"item": "choice 3 of 2"},
+                                {"item": "choice 4 of 2"},
+                                {"item": "choice 5 of 2"}
+                            ]
+                        },
+                        "value": "",
+                        "type": "connectedstringcombo"
+                    },{
+                        "key": "two connected combos, default selected",
+                        "values": {
+                            "items 1": [
+                                {"item": ""},
+                                {"item": "choice 1 of 1"},
+                                {"item": "choice 2 of 1"},
+                                {"item": "choice 3 of 1"},
+                                {"item": "choice 4 of 1"},
+                                {"item": "choice 5 of 1"}
+                            ],
+                            "items 2": [
+                                {"item": ""},
+                                {"item": "choice 1 of 2"},
+                                {"item": "choice 2 of 2"},
+                                {"item": "choice 3 of 2"},
+                                {"item": "choice 4 of 2"},
+                                {"item": "choice 5 of 2"}
+                            ]
+                        },
+                        "value": "choice 4 of 2",
+                        "type": "connectedstringcombo"
+                    }
+                ]
+            },{
+                "formname": "pictures",
+                "formitems": [
+                    {
+                        "key": "a picture archive",
+                        "value": "",
+                        "type": "pictures"
+                    }
+                ]
+            },{
+                "formname": "sketches",
+                "formitems": [
+                    {
+                        "key": "a sketches archive",
+                        "value": "",
+                        "type": "sketch"
+                    }
+                ]
+            },{
+                "formname": "map",
+                "formitems": [
+                    {
+                        "key": "an image of the last seen map",
+                        "value": "",
+                        "type": "map"
+                    }
+                ]
+            }
+        ]
+	},{
+        "sectionname": "terramobile",
+        "sectiondescription": "Data collector for field work",
+        "forms": [
+            {
+                "formname": "crop features",
+                "formitems": [
+                    {
+                        "key": "Location name",
+                        "label": "The name of this location",
+                        "value": "",
+                        "type": "string"
+                    },{
+                        "key": "temperature",
+                        "label": "The temperature in this location",
+                        "value": "",
+                        "type": "double"
+                    },{
+                        "key": "Soil pH",
+                        "label": "The number of the soil pH",
+                        "value": "",
+                        "type": "integer"
+                    },{
+                        "key": "Date",
+                        "value": "",
+                        "type": "date"
+                    },{
+                        "key": "Time",
+                        "value": "",
+                        "type": "time"
+                    },{
+                        "key": "Presence of termites?",
+                        "value": "",
+                        "type": "boolean"
+                    },{
+                        "key": "Crop stage",
+                        "label": "Crop development stage",
+                        "values": {
+                            "items": [
+                                {"item": ""},
+                                {"item": "stage 1"},
+                                {"item": "stage 2"},
+                                {"item": "stage 3"},
+                                {"item": "stage 4"},
+                                {"item": "stage 5"}
+                            ]
+                        },
+                        "value": "",
+                        "type": "stringcombo"
+                    },{
+                        "key": "Take a picture",
+                        "value": "",
+                        "type": "pictures"
+                    }
+                ]
+            }
+        ]
+    }
+]

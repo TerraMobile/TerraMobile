@@ -13,6 +13,7 @@
             <option value="$PROJECT_DIR$/Java-OpenMobility/AugTech_GeoAPI" />
             <option value="$PROJECT_DIR$/Java-OpenMobility/JGPKG" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/dynamicforms" />
           </set>
         </option>
       </GradleProjectSettings>
