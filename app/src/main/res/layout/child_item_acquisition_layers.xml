@@ -8,19 +8,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text=""
-        android:id="@+id/rBChildAcquisitionLayer" />
-
-    <TextView
-        android:id="@+id/tVChildAcquisitionLayer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingLeft="25dp"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="#000"
-        android:text=""
         android:textStyle="bold"
-        android:layout_alignTop="@+id/rBChildAcquisitionLayer"
-        android:layout_toRightOf="@+id/rBChildAcquisitionLayer"
-        android:layout_alignParentRight="true"
-        android:layout_alignBottom="@+id/rBChildAcquisitionLayer" />
+        android:id="@+id/rBChildAcquisitionLayer" />
 </RelativeLayout>

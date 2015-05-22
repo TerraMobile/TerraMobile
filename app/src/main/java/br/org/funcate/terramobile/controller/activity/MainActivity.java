@@ -174,6 +174,7 @@ public class MainActivity extends FragmentActivity {
 
     @Override
     public void onBackPressed() {
+        this.finish();
         System.exit(0);
     }
 
@@ -408,8 +409,7 @@ public class MainActivity extends FragmentActivity {
 
                     long total = 0;
 
-                    if(android.os.Debug.isDebuggerConnected())
-                        android.os.Debug.waitForDebugger();
+//                    if(android.os.Debug.isDebuggerConnected()) android.os.Debug.waitForDebugger(); Para debugar é preciso colocar um breakpoint nessa linha
 
                     while ((bufferLength = inputStream.read(buffer)) != -1) {
                         total += bufferLength;
@@ -420,9 +420,6 @@ public class MainActivity extends FragmentActivity {
                     fileOutput.flush();
 
                     fileOutput.close();
-
-                    if(android.os.Debug.isDebuggerConnected())
-                        android.os.Debug.waitForDebugger();
 
                     this.unzip(new File(downloadDestinationFilePath), new File(unzipDestinationFilePath));
 
@@ -525,7 +522,6 @@ public class MainActivity extends FragmentActivity {
 
         public DownloadException getException() {
             return exception;
-
         }
     }
 }

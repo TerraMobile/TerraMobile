@@ -8,19 +8,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text=""
-        android:id="@+id/cBChildOverlappingLayer" />
-
-    <TextView
-        android:id="@+id/tVChildOverlappingLayer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingLeft="25dp"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text=""
         android:textStyle="bold"
-        android:textColor="#000"
-        android:layout_alignTop="@+id/cBChildOverlappingLayer"
-        android:layout_toRightOf="@+id/cBChildOverlappingLayer"
-        android:layout_alignParentRight="true"
-        android:layout_alignBottom="@+id/cBChildOverlappingLayer" />
+        android:id="@+id/cBChildOverlappingLayer" />
 </RelativeLayout>

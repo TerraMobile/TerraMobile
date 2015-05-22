@@ -7,21 +7,7 @@
     <RadioButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text=""
-        android:id="@+id/rBChildBaseLayer" />
-
-    <TextView
-        android:id="@+id/tVChildBaseLayer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingLeft="25dp"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="#000"
         android:text=""
         android:textStyle="bold"
-        android:layout_alignTop="@+id/rBChildBaseLayer"
-        android:layout_toRightOf="@+id/rBChildBaseLayer"
-        android:layout_alignParentRight="true"
-        android:layout_alignBottom="@+id/rBChildBaseLayer" />
+        android:id="@+id/rBChildBaseLayer" />
 </RelativeLayout>
