@@ -3,8 +3,9 @@
     <string name="app_name">TerraMobile</string>
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
-    <string name="action_download_gpkg">Get Data from server</string>
-    <string name="download_gpkg">Download</string>
+    <!--string name="action_download_gpkg">Get Data from server</string-->
+    <string name="sync_data">Sync data</string>
+    <string name="acquire_new_point_description">Acquire new point</string>
     <string name="server_not_available">Sorry, there\'s no web server available</string>
     <string name="action_boeing_page">Search boeing on google</string>
     <string name="app_not_available">Sorry, there\'s no web browser available</string>

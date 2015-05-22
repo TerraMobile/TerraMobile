@@ -21,8 +21,10 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.SearchManager;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -35,10 +37,21 @@ import android.widget.ExpandableListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
+import br.org.funcate.dynamicforms.FormUtilities;
+import br.org.funcate.dynamicforms.FragmentDetailActivity;
+import br.org.funcate.dynamicforms.util.PositionUtilities;
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.configuration.ViewContextParameters;
+
+import br.org.funcate.dynamicforms.TagsManager;
+import br.org.funcate.dynamicforms.FormActivity;
+import br.org.funcate.dynamicforms.util.Utilities;
+import br.org.funcate.dynamicforms.util.LibraryConstants;
+
 
 /**
  * This example illustrates a common usage of the DrawerLayout widget
@@ -79,6 +92,16 @@ public class MainActivity extends Activity {
 
     private ViewContextParameters parameters=new ViewContextParameters();
 
+    // this members is used in dynamic form process.
+    private static final String USE_MAPCENTER_POSITION = "USE_MAPCENTER_POSITION";
+    private static final int FORM_RETURN_CODE = 669;
+    private double latitude;
+    private double longitude;
+    private double elevation;
+    private double[] gpsLocation;
+    private final int RETURNCODE_DETAILACTIVITY = 665;
+    // --------------------------------------------
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,7 +114,7 @@ public class MainActivity extends Activity {
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
-        // set a custom shadow that overlays the main content when the drawer opens
+        // set a custom shadow that overlays the action_bar content when the drawer opens
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
 
         // enable ActionBar app icon to behave as action to toggle nav drawer
@@ -141,7 +164,7 @@ public class MainActivity extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main, menu);
+        inflater.inflate(R.menu.action_bar, menu);
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -186,13 +209,68 @@ public class MainActivity extends Activity {
                 MenuToolController ctl=new MenuToolController(getApplicationContext());
                 ctl.downloadGeoPackage();
                 return true;
+            case R.id.acquire_new_point:
+                startForm();
+                return true;
         default:
             return super.onOptionsItemSelected(item);
         }
     }
 
+    private void startForm() {
+        // TODO: this name provided from the configuration of the "collect layer" in database.
+        String sectionName = "terramobile";
+        String selectedItemName = "crop features";
+
+        checkPositionCoordinates();
+
+        // insert note and then work on it
+        try {
+            JSONObject sectionObject = TagsManager.getInstance(MainActivity.this).getSectionByName(sectionName);
+            String sectionObjectString = sectionObject.toString();
+
+            long noteId = 123543;// fake number. remove this in future.
+
+            // launch form activity
+           /* Intent formIntent = new Intent(MainActivity.this, FormActivity.class);
+            formIntent.putExtra(LibraryConstants.DATABASE_ID, noteId);
+            formIntent.putExtra(LibraryConstants.PREFS_KEY_FORM_NAME, sectionName);
+            formIntent.putExtra(LibraryConstants.LATITUDE, latitude);
+            formIntent.putExtra(LibraryConstants.LONGITUDE, longitude);
+            formIntent.putExtra(LibraryConstants.ELEVATION, elevation);
+            startActivityForResult(formIntent, FORM_RETURN_CODE);*/
+
+            Intent formIntent = new Intent(MainActivity.this, FragmentDetailActivity.class);
+            formIntent.putExtra(LibraryConstants.DATABASE_ID, noteId);
+            formIntent.putExtra(FormUtilities.ATTR_FORMNAME, selectedItemName);
+            formIntent.putExtra(FormUtilities.ATTR_SECTIONOBJECTSTR, sectionObjectString);
+            formIntent.putExtra(LibraryConstants.LONGITUDE, longitude);
+            formIntent.putExtra(LibraryConstants.LATITUDE, latitude);
+            startActivityForResult(formIntent, RETURNCODE_DETAILACTIVITY);
+
+
+        } catch (Exception e) {
+            Utilities.messageDialog(MainActivity.this, "falhou ao abrir formulário de coleta de dados." + e.getMessage(), null);
+        }
+    }
+
+    private void checkPositionCoordinates() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean useMapCenterPosition = preferences.getBoolean(USE_MAPCENTER_POSITION, false);
+        if (useMapCenterPosition || gpsLocation == null) {
+            double[] mapCenter = PositionUtilities.getMapCenterFromPreferences(preferences, true, true);
+            latitude = mapCenter[1];
+            longitude = mapCenter[0];
+            elevation = 0.0;
+        } else {
+            latitude = gpsLocation[1];
+            longitude = gpsLocation[0];
+            elevation = gpsLocation[2];
+        }
+    }
+
     private void insertMapView() {
-        // update the main content by replacing fragments
+        // update the action_bar content by replacing fragments
         Fragment fragment = new MapFragment();
 /*        Bundle args = new Bundle();
         args.putStringArrayList(MapFragment.mLayers);

@@ -1,12 +1,12 @@
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 15
     buildToolsVersion "21.1.2"
+
     defaultConfig {
-        applicationId 'br.org.funcate.terramobile'
         minSdkVersion 15
-        targetSdkVersion 15
+        targetSdkVersion 21
         versionCode 1
         versionName "1.0"
     }
@@ -16,21 +16,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    productFlavors {
-    }
-    packagingOptions {
-        exclude 'META-INF/LICENSE'
-        exclude 'META-INF/DEPENDENCIES'
-        exclude 'META-INF/NOTICE'
-    }
-
 }
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:support-v4:21.0.0'
-    compile project(':JGPKG')
-    compile 'org.osmdroid:osmdroid-android:4.3'
-    compile 'org.slf4j:slf4j-android:1.7.12'
-    compile project(':dynamicforms')
 }

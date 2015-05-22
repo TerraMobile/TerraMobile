@@ -15,9 +15,14 @@
   -->
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/acquire_new_point"
+        android:title="@string/acquire_new_point_description"
+        android:icon="@android:drawable/ic_menu_add"
+        android:showAsAction="ifRoom|withText" />
+
     <item android:id="@+id/download_geo_package"
-        android:title="@string/download_gpkg"
-        android:icon="@android:drawable/stat_sys_download"
+        android:title="@string/sync_data"
+        android:icon="@android:drawable/stat_notify_sync"
         android:showAsAction="ifRoom|withText" />
 
     <item android:id="@+id/action_boeing_page"
