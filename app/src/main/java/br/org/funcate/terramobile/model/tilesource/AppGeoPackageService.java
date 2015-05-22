@@ -13,6 +13,7 @@ import java.util.ArrayList;
 
 import br.org.funcate.jgpkg.service.GeoPackageService;
 import br.org.funcate.terramobile.R;
+import br.org.funcate.terramobile.model.gpkg.objects.AppLayer;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
 import br.org.funcate.terramobile.util.ResourceUtil;
 
@@ -67,9 +68,9 @@ public class AppGeoPackageService {
                     layer.setLayerName((String) field.getValue());
                 else {
                     if("features".equals(field.getValue())){
-                        layer.setLayerType(GpkgLayer.FEATURES);
+                        layer.setLayerType(AppLayer.FEATURES);
                     }else if("tiles".equals(field.getValue())){
-                        layer.setLayerType(GpkgLayer.TILES);
+                        layer.setLayerType(AppLayer.TILES);
                     }
                 }
             }

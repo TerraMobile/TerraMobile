@@ -6,8 +6,6 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.augtech.geoapi.geopackage.GeoPackage;
-
 import org.osmdroid.ResourceProxy;
 import org.osmdroid.tileprovider.MapTileProviderArray;
 import org.osmdroid.tileprovider.MapTileProviderBasic;
@@ -19,25 +17,20 @@ import org.osmdroid.tileprovider.util.SimpleRegisterReceiver;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.TilesOverlay;
 
-import br.org.funcate.jgpkg.service.GeoPackageService;
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.configuration.ViewContextParameters;
-import br.org.funcate.terramobile.model.gpkg.objects.AppLayer;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
 import br.org.funcate.terramobile.model.tilesource.MapTileGeoPackageProvider;
-import br.org.funcate.terramobile.util.ResourceUtil;
-import br.org.funcate.terramobile.view.TerraMobileMenuItem;
-import br.org.funcate.terramobile.view.TerraMobileMenuLayerItem;
 
 /**
  * Created by Andre Carvalho on 27/04/15.
  */
 public class MenuMapController implements View.OnClickListener {
 
-    private TerraMobileMenuLayerItem child;
+    private GpkgLayer child;
     private final Context context;
 
-    public MenuMapController(Context context, TerraMobileMenuLayerItem child) {
+    public MenuMapController(Context context, GpkgLayer child) {
         this.child=child;
         this.context=context;
     }
@@ -51,16 +44,20 @@ public class MenuMapController implements View.OnClickListener {
 
     private void exec() {
         try{
-            switch (child.getLayer().getLayerType()){
-                case AppLayer.TILES:{// base
+            switch (child.getLayerType()){
+                case TILES:{// base
                     loadTiles();
                     break;
                 }
-                case AppLayer.FEATURES:{// collect
+                case FEATURES:{// collect
 
                     break;
                 }
-                case AppLayer.ONLINE:{// online
+                case EDITABLE:{// editable
+
+                    break;
+                }
+                case ONLINE:{// online
 
                     break;
                 }
@@ -74,12 +71,12 @@ public class MenuMapController implements View.OnClickListener {
         ViewContextParameters par = ((MainActivity) context).getParameters();
         try {
             if (v.isSelected()) {
-                par.removeLayer(child.getLayer());
+                par.removeLayer(child);
                 v.setSelected(false);
                 v.setBackgroundColor(Color.BLACK);
                 ((TextView) v).setTextColor(Color.WHITE);
             } else {
-                par.addLayer(child.getLayer());
+                par.addLayer(child);
                 v.setSelected(true);
                 v.setBackgroundColor(Color.WHITE);
                 ((TextView) v).setTextColor(Color.BLACK);
@@ -92,7 +89,7 @@ public class MenuMapController implements View.OnClickListener {
     }
 
     public void loadTiles() {
-        if(child.getLayer().getGeoPackage().isGPKGValid(true)) {
+        if(child.getGeoPackage().isGPKGValid(true)) {
             createGeoPackageTileSourceOverlay();
         }else {
             Toast.makeText(context, "Invalid GeoPackage file.", Toast.LENGTH_SHORT).show();
@@ -103,7 +100,7 @@ public class MenuMapController implements View.OnClickListener {
     private void createGeoPackageTileSourceOverlay() {
 
         MapView mapView = (MapView) ((MainActivity) context).findViewById(R.id.mapview);
-        mapView.setMaxZoomLevel(20);
+        mapView.setMaxZoomLevel(18);
         mapView.setBuiltInZoomControls(true);
         mapView.setMultiTouchControls(true);
 
@@ -117,7 +114,7 @@ public class MenuMapController implements View.OnClickListener {
 
         final ITileSource tileSource = new XYTileSource("Mapnik", ResourceProxy.string.mapnik, 1, 18, 256, ".png", new String[] {"http://tile.openstreetmap.org/"});
 
-        MapTileModuleProviderBase moduleProvider = new MapTileGeoPackageProvider(tileSource, child.getLayer().getLayerName(), child.getLayer().getGeoPackage());
+        MapTileModuleProviderBase moduleProvider = new MapTileGeoPackageProvider(tileSource, child.getLayerName(), child.getGeoPackage());
         SimpleRegisterReceiver simpleReceiver = new SimpleRegisterReceiver(context);
         MapTileProviderArray tileProviderArray = new MapTileProviderArray(tileSource, simpleReceiver, new MapTileModuleProviderBase[] { moduleProvider });
 

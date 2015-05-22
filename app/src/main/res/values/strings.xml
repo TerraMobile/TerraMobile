@@ -12,10 +12,10 @@
 
     <!-- These fields are defined only names to menu items. To actions associated, see MenuToolController class. -->
         <string-array name="menu_groups">
-            <item name="tools">Tools</item>
+            <!--<item name="tools">Tools</item>-->
             <item name="base_layers">Base Layers</item><!-- This "Group Menu" does not have static items. -->
-            <item name="collect_layers">Collect Layers</item><!-- This "Group Menu" does not have static items. -->
-            <item name="online_layers">Online Layers</item><!-- This "Group Menu" does not have static items. -->
+            <item name="overlapping_layers">Overlapping Layers</item><!-- This "Group Menu" does not have static items. -->
+            <item name="acquisition_layers">Acquisition Layers</item><!-- This "Group Menu" does not have static items. -->
         </string-array>
         <!-- These are second level to Tools menu. -->
         <!-- The list items order must be the same on the TerraMobileMenuToolItem class -->
