@@ -16,6 +16,7 @@
 
 package br.org.funcate.terramobile.controller.activity;
 
+import android.app.ActionBar;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Intent;
@@ -142,6 +143,8 @@ public class MainActivity extends FragmentActivity {
         TextView ActionBarTextView = (TextView) this.findViewById(ActionBarTitleID);
         ActionBarTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                 getResources().getDimension(R.dimen.title_text_size));
+
+        getActionBar().setDisplayHomeAsUpEnabled(true);
 
         // ActionBarDrawerToggle ties together the proper interactions
         // between the sliding drawer and the action bar app icon
