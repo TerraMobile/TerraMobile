@@ -16,13 +16,17 @@
 
 package br.org.funcate.terramobile.controller.activity;
 
-import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentManager;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
+import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.net.ConnectivityManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -34,18 +38,27 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ExpandableListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONObject;
-
-import java.util.ArrayList;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URL;
+import java.net.URLConnection;
 
 import br.org.funcate.dynamicforms.FormUtilities;
 import br.org.funcate.dynamicforms.FragmentDetailActivity;
 import br.org.funcate.dynamicforms.util.PositionUtilities;
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.configuration.ViewContextParameters;
+import br.org.funcate.terramobile.model.exception.DownloadException;
+import br.org.funcate.terramobile.util.ResourceUtil;
 
 import br.org.funcate.dynamicforms.TagsManager;
 import br.org.funcate.dynamicforms.FormActivity;
@@ -80,7 +93,7 @@ import br.org.funcate.dynamicforms.util.LibraryConstants;
  * An action should be an operation performed on the current contents of the window,
  * for example enabling or disabling a data overlay on top of the current content.</p>
  */
-public class MainActivity extends Activity {
+public class MainActivity extends FragmentActivity {
 
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -102,13 +115,16 @@ public class MainActivity extends Activity {
     private final int RETURNCODE_DETAILACTIVITY = 665;
     // --------------------------------------------
 
+    // Progress Dialog
+    private ProgressDialog progressDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
 
-        treeView = new TreeView(this);
+        treeView = new TreeView(MainActivity.this);
 
         mTitle = mDrawerTitle = getTitle();
 
@@ -134,7 +150,7 @@ public class MainActivity extends Activity {
                 R.drawable.ic_drawer,  //nav drawer image to replace 'Up' caret
                 R.string.drawer_open,  //"open drawer" description for accessibility
                 R.string.drawer_close  //"close drawer" description for accessibility
-                ) {
+        ) {
             public void onDrawerClosed(View view) {
                 getActionBar().setTitle(mTitle);
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
@@ -165,7 +181,6 @@ public class MainActivity extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.action_bar, menu);
-
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -187,27 +202,40 @@ public class MainActivity extends Activity {
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-         // The action bar home/up action should open or close the drawer.
-         // ActionBarDrawerToggle will take care of this.
+        // The action bar home/up action should open or close the drawer.
+        // ActionBarDrawerToggle will take care of this.
         if (mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
         // Handle action buttons
         switch(item.getItemId()) {
-        case R.id.action_boeing_page:
-            // create intent to perform web search for this planet
-            Intent intent = new Intent(Intent.ACTION_WEB_SEARCH);
-            intent.putExtra(SearchManager.QUERY, "Boeing");
-            // catch event that there's no activity to handle intent
-            if (intent.resolveActivity(getPackageManager()) != null) {
-                startActivity(intent);
-            } else {
-                Toast.makeText(this, R.string.app_not_available, Toast.LENGTH_LONG).show();
-            }
-            return true;
+            case R.id.action_boeing_page:
+                // create intent to perform web search for this planet
+                Intent intent = new Intent(Intent.ACTION_WEB_SEARCH);
+                intent.putExtra(SearchManager.QUERY, "Boeing");
+                // catch event that there's no activity to handle intent
+                if (intent.resolveActivity(getPackageManager()) != null) {
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(this, R.string.app_not_available, Toast.LENGTH_LONG).show();
+                }
+                return true;
             case R.id.download_geo_package:
-                MenuToolController ctl=new MenuToolController(getApplicationContext());
-                ctl.downloadGeoPackage();
+                ConnectivityManager cm = (ConnectivityManager)this.getSystemService(this.CONNECTIVITY_SERVICE);
+
+                int wifi = ConnectivityManager.TYPE_WIFI;
+                int mobile = ConnectivityManager.TYPE_MOBILE;
+
+                if (cm.getNetworkInfo(mobile).isConnected() ||
+                        cm.getNetworkInfo(wifi).isConnected()) {
+                    File appPath = ResourceUtil.getDirectory(getResources().getString(R.string.app_workspace_dir));
+                    String tempURL = getResources().getString(R.string.gpkg_url);
+                    String destinationFilePath = appPath.getPath() + "/" + getResources().getString(R.string.destination_file_path);
+                    new DownloadTask(destinationFilePath, true).execute(tempURL);
+                }
+                else{
+                    Toast.makeText(this, "Conecte-se à internet", Toast.LENGTH_LONG).show();
+                }
                 return true;
             case R.id.acquire_new_point:
                 startForm();
@@ -275,7 +303,7 @@ public class MainActivity extends Activity {
 /*        Bundle args = new Bundle();
         args.putStringArrayList(MapFragment.mLayers);
         fragment.setArguments(args);*/
-        FragmentManager fragmentManager = getFragmentManager();
+        FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
     }
 
@@ -301,7 +329,129 @@ public class MainActivity extends Activity {
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         // Pass any configuration change to the drawer toggles
-       mDrawerToggle.onConfigurationChanged(newConfig);
+        mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
+    protected void showProgressDialog() {
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Realizando o download...");
+        progressDialog.setIndeterminate(false);
+        progressDialog.setMax(100);
+        progressDialog.setProgress(0);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+    }
+
+    class DownloadTask extends AsyncTask<String, String, Boolean> {
+
+        private String destinationFilePath;
+
+        private DownloadException exception;
+
+        private boolean overwrite;
+
+        public DownloadTask(String destinationFilePath, boolean overwrite) {
+            this.destinationFilePath = destinationFilePath;
+            this.overwrite = overwrite;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            showProgressDialog();
+        }
+
+        protected Boolean doInBackground(String... urlToDownload) {
+            if (urlToDownload[0].isEmpty()) {
+                exception = new DownloadException("Missing URL to be downloaded.");
+                return false;
+            }
+
+            if (destinationFilePath.isEmpty()) {
+                exception = new DownloadException("Missing destination path to download to.");
+                return false;
+            }
+
+            try {
+                try {
+                    File file = new File(destinationFilePath);
+
+                    if (!file.exists()) {
+                        file.createNewFile();
+                    } else {
+                        if (overwrite) {
+                            file.delete();
+                        } else {
+                            return true;
+                        }
+                    }
+                    URL url = new URL(urlToDownload[0]);
+
+                    URLConnection urlConnection = url.openConnection();
+                    urlConnection.connect();
+
+                    int totalSize = urlConnection.getContentLength();
+
+                    InputStream inputStream = new BufferedInputStream(url.openStream(), 8192);
+
+                    OutputStream fileOutput = new FileOutputStream(file);
+
+                    byte buffer[] = new byte[1024];
+
+                    int bufferLength;
+
+                    long total = 0;
+
+                    while ((bufferLength = inputStream.read(buffer)) != -1) {
+                        total += bufferLength;
+                        publishProgress("" + (int) ((total * 100) / totalSize));
+
+                        fileOutput.write(buffer, 0, bufferLength);
+                    }
+                    fileOutput.flush();
+
+                    fileOutput.close();
+                    inputStream.close();
+
+                    return true;
+
+                } catch (IOException e) {
+                    throw new DownloadException("Error downloading file: " + urlToDownload[0], e);
+                }
+
+            } catch (DownloadException e) {
+                exception = e;
+            }
+            if(progressDialog != null && progressDialog.isShowing())
+                progressDialog.dismiss();
+            return false;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            if(progressDialog != null && progressDialog.isShowing()) {
+                if (aBoolean) {
+                    progressDialog.dismiss();
+                    Toast.makeText(MainActivity.this, "Download realizado com sucesso!", Toast.LENGTH_LONG).show();
+                } else {
+                    progressDialog.dismiss();
+                    Toast.makeText(MainActivity.this, "Não foi possível realizar o download", Toast.LENGTH_LONG).show();
+                }
+            }
+            else{
+                Toast.makeText(MainActivity.this, "Não foi possível realizar o download", Toast.LENGTH_LONG).show();
+            }
+        }
+
+        @Override
+        protected void onProgressUpdate(String... values) {
+            if(progressDialog != null && progressDialog.isShowing())
+                progressDialog.setProgress(Integer.parseInt(values[0]));
+        }
+
+        public DownloadException getException() {
+            return exception;
+
+        }
+    }
 }

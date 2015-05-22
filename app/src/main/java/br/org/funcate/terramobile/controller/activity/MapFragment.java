@@ -2,7 +2,7 @@
 package br.org.funcate.terramobile.controller.activity;
 
 import android.annotation.TargetApi;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;

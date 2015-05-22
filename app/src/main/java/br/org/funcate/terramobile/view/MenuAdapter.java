@@ -80,7 +80,7 @@ public class MenuAdapter extends BaseExpandableListAdapter {
         try {
             switch (child.getType()) {
                 case TerraMobileMenuItem.TOOL_ITEM: {// Tools
-                    text.setOnClickListener(new MenuToolController(context, (TerraMobileMenuToolItem) child));
+                    text.setOnClickListener(new MenuToolController(this.context, (TerraMobileMenuToolItem) child));
                     break;
                 }
                 case TerraMobileMenuItem.LAYER_ITEM: {// Layers
