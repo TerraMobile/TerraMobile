@@ -5,10 +5,10 @@ import com.augtech.geoapi.geopackage.GeoPackage;
 /**
  * Created by Andre Carvalho on 29/04/15.
  */
-public class GpkgLayer implements AppLayer {
+public class GpkgLayer{
 
     private String layerName;
-    private int layerType;
+    private AppLayer layerType;
     private GeoPackage geoPackage;
 
     public GpkgLayer() {
@@ -26,11 +26,11 @@ public class GpkgLayer implements AppLayer {
         this.layerName = layerName;
     }
 
-    public int getLayerType() {
+    public AppLayer getLayerType() {
         return layerType;
     }
 
-    public void setLayerType(int layerType) {
+    public void setLayerType(AppLayer layerType) {
         this.layerType = layerType;
     }
 

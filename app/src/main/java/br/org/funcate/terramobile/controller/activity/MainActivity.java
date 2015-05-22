@@ -16,10 +16,7 @@
 
 package br.org.funcate.terramobile.controller.activity;
 
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentTransaction;
+import android.app.ActionBar;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Intent;
@@ -30,6 +27,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.util.TypedValue;
@@ -38,32 +38,34 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ExpandableListView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONObject;
+
 import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import br.org.funcate.dynamicforms.FormUtilities;
 import br.org.funcate.dynamicforms.FragmentDetailActivity;
+import br.org.funcate.dynamicforms.TagsManager;
+import br.org.funcate.dynamicforms.util.LibraryConstants;
 import br.org.funcate.dynamicforms.util.PositionUtilities;
+import br.org.funcate.dynamicforms.util.Utilities;
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.configuration.ViewContextParameters;
 import br.org.funcate.terramobile.model.exception.DownloadException;
 import br.org.funcate.terramobile.util.ResourceUtil;
-
-import br.org.funcate.dynamicforms.TagsManager;
-import br.org.funcate.dynamicforms.FormActivity;
-import br.org.funcate.dynamicforms.util.Utilities;
-import br.org.funcate.dynamicforms.util.LibraryConstants;
 
 
 /**
@@ -141,6 +143,8 @@ public class MainActivity extends FragmentActivity {
         TextView ActionBarTextView = (TextView) this.findViewById(ActionBarTitleID);
         ActionBarTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                 getResources().getDimension(R.dimen.title_text_size));
+
+        getActionBar().setDisplayHomeAsUpEnabled(true);
 
         // ActionBarDrawerToggle ties together the proper interactions
         // between the sliding drawer and the action bar app icon
@@ -230,7 +234,7 @@ public class MainActivity extends FragmentActivity {
                         cm.getNetworkInfo(wifi).isConnected()) {
                     File appPath = ResourceUtil.getDirectory(getResources().getString(R.string.app_workspace_dir));
                     String tempURL = getResources().getString(R.string.gpkg_url);
-                    String destinationFilePath = appPath.getPath() + "/" + getResources().getString(R.string.destination_file_path);
+                    String destinationFilePath = appPath.getPath();
                     new DownloadTask(destinationFilePath, true).execute(tempURL);
                 }
                 else{
@@ -345,14 +349,16 @@ public class MainActivity extends FragmentActivity {
 
     class DownloadTask extends AsyncTask<String, String, Boolean> {
 
-        private String destinationFilePath;
+        private String unzipDestinationFilePath;
+        private String downloadDestinationFilePath;
 
         private DownloadException exception;
 
         private boolean overwrite;
 
-        public DownloadTask(String destinationFilePath, boolean overwrite) {
-            this.destinationFilePath = destinationFilePath;
+        public DownloadTask(String unzipDestinationFilePath, boolean overwrite) {
+            this.unzipDestinationFilePath = unzipDestinationFilePath;
+            this.downloadDestinationFilePath = unzipDestinationFilePath + "/" + getResources().getString(R.string.destination_file_path);
             this.overwrite = overwrite;
         }
 
@@ -367,14 +373,14 @@ public class MainActivity extends FragmentActivity {
                 return false;
             }
 
-            if (destinationFilePath.isEmpty()) {
+            if (downloadDestinationFilePath.isEmpty()) {
                 exception = new DownloadException("Missing destination path to download to.");
                 return false;
             }
 
             try {
                 try {
-                    File file = new File(destinationFilePath);
+                    File file = new File(downloadDestinationFilePath);
 
                     if (!file.exists()) {
                         file.createNewFile();
@@ -392,7 +398,7 @@ public class MainActivity extends FragmentActivity {
 
                     int totalSize = urlConnection.getContentLength();
 
-                    InputStream inputStream = new BufferedInputStream(url.openStream(), 8192);
+                    InputStream inputStream = new BufferedInputStream(url.openStream());
 
                     OutputStream fileOutput = new FileOutputStream(file);
 
@@ -402,16 +408,23 @@ public class MainActivity extends FragmentActivity {
 
                     long total = 0;
 
+                    if(android.os.Debug.isDebuggerConnected())
+                        android.os.Debug.waitForDebugger();
+
                     while ((bufferLength = inputStream.read(buffer)) != -1) {
                         total += bufferLength;
-                        publishProgress("" + (int) ((total * 100) / totalSize));
+                        publishProgress("" + (int) ((total * 100) / totalSize), "Realizando o download...");
 
                         fileOutput.write(buffer, 0, bufferLength);
                     }
                     fileOutput.flush();
 
                     fileOutput.close();
-                    inputStream.close();
+
+                    if(android.os.Debug.isDebuggerConnected())
+                        android.os.Debug.waitForDebugger();
+
+                    this.unzip(new File(downloadDestinationFilePath), new File(unzipDestinationFilePath));
 
                     return true;
 
@@ -427,8 +440,67 @@ public class MainActivity extends FragmentActivity {
             return false;
         }
 
+        private long countZipFiles(File zipFile){
+            ZipInputStream zis = null;
+            try {
+                zis = new ZipInputStream(
+                        new BufferedInputStream(new FileInputStream(zipFile)));
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+            long totalFiles = 0;
+            try {
+                while (zis.getNextEntry() != null) {
+                    totalFiles++;
+                }
+                zis.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return  totalFiles;
+        }
+
+        public void unzip(File zipFile, File targetDirectory) throws IOException {
+            ZipInputStream zis = new ZipInputStream(
+                    new BufferedInputStream(new FileInputStream(zipFile)));
+            try {
+                ZipEntry ze;
+                int count;
+                byte[] buffer = new byte[8192];
+                int numFiles = 0;
+                long totalFiles = countZipFiles(zipFile);
+
+                while ((ze = zis.getNextEntry()) != null) {
+                    numFiles++;
+
+                    File file = new File(targetDirectory, ze.getName());
+                    File dir = ze.isDirectory() ? file : file.getParentFile();
+                    if (!dir.isDirectory() && !dir.mkdirs())
+                        throw new FileNotFoundException("Failed to ensure directory: " +
+                                dir.getAbsolutePath());
+                    if (ze.isDirectory())
+                        continue;
+                    FileOutputStream fout = new FileOutputStream(file);
+                    try {
+                        long total = 0;
+                        long totalZipSize = ze.getCompressedSize();
+                        while ((count = zis.read(buffer)) != -1) {
+                            total += count;
+                            publishProgress("" + (int) ((total * 100) / totalZipSize), "Descompactando arquivos...\nArquivo "+ numFiles + " de " + totalFiles);
+                            fout.write(buffer, 0, count);
+                        }
+                    } finally {
+                        fout.close();
+                    }
+                }
+            } finally {
+                zis.close();
+            }
+        }
+
         @Override
         protected void onPostExecute(Boolean aBoolean) {
+            treeView.refreshTreeView();
             if(progressDialog != null && progressDialog.isShowing()) {
                 if (aBoolean) {
                     progressDialog.dismiss();
@@ -445,8 +517,10 @@ public class MainActivity extends FragmentActivity {
 
         @Override
         protected void onProgressUpdate(String... values) {
-            if(progressDialog != null && progressDialog.isShowing())
+            if(progressDialog != null && progressDialog.isShowing()) {
                 progressDialog.setProgress(Integer.parseInt(values[0]));
+                progressDialog.setMessage(values[1]);
+            }
         }
 
         public DownloadException getException() {

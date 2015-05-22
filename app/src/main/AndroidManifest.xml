@@ -10,16 +10,14 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
-
     <uses-sdk
         android:minSdkVersion="8"
         android:targetSdkVersion="21" />
-
      <application
             android:allowBackup="true"
             android:icon="@drawable/ic_launcher"
             android:label="@string/app_name"
-            android:theme="@android:style/Theme.Holo.Light.DarkActionBar" >
+            android:theme="@android:style/Theme.Holo.Light" >
             <activity
                 android:name=".controller.activity.MainActivity"
                 android:configChanges="orientation|screenSize|keyboardHidden"
@@ -33,5 +31,4 @@
          <activity android:name="br.org.funcate.dynamicforms.FragmentDetailActivity"></activity>
          <activity android:name="br.org.funcate.dynamicforms.camera.CameraActivity"></activity>
      </application>
-
 </manifest>
