@@ -2,10 +2,6 @@ package br.org.funcate.terramobile.view;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.LayerDrawable;
-import android.graphics.drawable.StateListDrawable;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -57,7 +53,7 @@ public class MenuAdapter extends BaseExpandableListAdapter {
 
             TextView grpLabel = (TextView)convertView.findViewById(R.id.tVGrpLayer);
             grpLabel.setText(groupItem.get(groupPosition).getLayerName());
-            grpLabel.setTextColor(Color.WHITE);
+            grpLabel.setTextColor(Color.BLACK);
             grpLabel.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                     context.getResources().getDimension(R.dimen.grp_text_size));
             convertView.setTag(groupItem.get(groupPosition));
@@ -84,25 +80,25 @@ public class MenuAdapter extends BaseExpandableListAdapter {
                 case TILES:
                     convertView = layoutInflater.inflate(R.layout.child_item_base_layers, null);
                     radioButton = (RadioButton)convertView.findViewById(R.id.rBChildBaseLayer);
-                    radioButton.setTextColor(Color.WHITE);
+                    radioButton.setTextColor(Color.BLACK);
                     radioButton.setText(child.getLayerName());
                     radioButton.setTag(child);
                     radioButton.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                             context.getResources().getDimension(R.dimen.child_text_size));
                     break;
                 case EDITABLE:
-                    convertView = layoutInflater.inflate(R.layout.child_item_overlapping_layers, null);
-                    checkBox = (CheckBox)convertView.findViewById(R.id.cBChildOverlappingLayer);
-                    checkBox.setTextColor(Color.WHITE);
+                    convertView = layoutInflater.inflate(R.layout.child_item_layers, null);
+                    checkBox = (CheckBox)convertView.findViewById(R.id.cBChildLayer);
+                    checkBox.setTextColor(Color.BLACK);
                     checkBox.setText(child.getLayerName());
                     checkBox.setTag(child);
                     checkBox.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                             context.getResources().getDimension(R.dimen.child_text_size));
                     break;
                 case FEATURES:
-                    convertView = layoutInflater.inflate(R.layout.child_item_acquisition_layers, null);
-                    radioButton = (RadioButton)convertView.findViewById(R.id.rBChildAcquisitionLayer);
-                    radioButton.setTextColor(Color.WHITE);
+                    convertView = layoutInflater.inflate(R.layout.child_item_gathering_layers, null);
+                    radioButton = (RadioButton)convertView.findViewById(R.id.rBChildGatheringLayer);
+                    radioButton.setTextColor(Color.BLACK);
                     radioButton.setText(child.getLayerName());
                     radioButton.setTag(child);
                     radioButton.setTextSize(TypedValue.COMPLEX_UNIT_PX,
@@ -111,7 +107,7 @@ public class MenuAdapter extends BaseExpandableListAdapter {
                 case INVALID:
                     convertView = layoutInflater.inflate(R.layout.child_item_invalid_layers, null);
                     childLabel = (TextView)convertView.findViewById(R.id.tVChildInvalidLayer);
-                    childLabel.setTextColor(Color.WHITE);
+                    childLabel.setTextColor(Color.BLACK);
                     childLabel.setText(child.getLayerName());
                     childLabel.setTag(child);
                     childLabel.setTextSize(TypedValue.COMPLEX_UNIT_PX,

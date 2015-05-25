@@ -1,0 +1,18 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:title="@string/settings">
+    <PreferenceCategory android:title="@string/sync_preferences">
+        <Preference android:title="@string/credentials"
+            android:key="credentials">
+        </Preference>
+        <EditTextPreference
+            android:key="url"
+            android:title="@string/eTURLServer"
+            android:selectAllOnFocus="true"
+            android:inputType="textUri"
+            android:hint="@string/hintURLServer"
+            android:singleLine="true"
+            android:maxLines="1" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/map_preferences">
+    </PreferenceCategory>
+</PreferenceScreen>

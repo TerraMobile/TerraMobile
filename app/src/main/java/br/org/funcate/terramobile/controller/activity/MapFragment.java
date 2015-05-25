@@ -71,7 +71,7 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        // inflat and return the layout
+        // inflate and return the layout
         View v = inflater.inflate(R.layout.fragment_map, container, false);
         mMapView = (MapView) v.findViewById(R.id.mapview);
         configureMapView(mMapView);
