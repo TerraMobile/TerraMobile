@@ -33,15 +33,18 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONObject;
+import org.osmdroid.views.MapView;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -119,6 +122,7 @@ public class MainActivity extends FragmentActivity {
 
     // Progress Dialog
     private ProgressDialog progressDialog;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -243,8 +247,13 @@ public class MainActivity extends FragmentActivity {
                 }
                 return true;
             case R.id.acquire_new_point:
+                FragmentManager fm = getSupportFragmentManager();
+                MapFragment fragment = (MapFragment)fm.findFragmentById(R.id.content_frame);
+
+                fragment.addBookmark();
+
                 startForm();
-                return true;
+                //return true;
         default:
             return super.onOptionsItemSelected(item);
         }

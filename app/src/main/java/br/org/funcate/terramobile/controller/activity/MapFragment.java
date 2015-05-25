@@ -2,6 +2,10 @@
 package br.org.funcate.terramobile.controller.activity;
 
 import android.annotation.TargetApi;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -12,9 +16,13 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 
 import org.osmdroid.ResourceProxy;
 import org.osmdroid.api.IMapController;
+import org.osmdroid.bonuspack.overlays.Marker;
 import org.osmdroid.tileprovider.tilesource.ITileSource;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.tileprovider.tilesource.XYTileSource;
@@ -57,12 +65,19 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants
     private SharedPreferences mPrefs;
     private MapView mMapView;
     private ResourceProxy mResourceProxy;
+    private ImageView drawingImageView;
+
+    private LayoutInflater inflater;
+    private ViewGroup container;
+
 
 
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+
+        setHasOptionsMenu(true);
 
 
 
@@ -74,6 +89,8 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants
         // inflat and return the layout
         View v = inflater.inflate(R.layout.fragment_map, container, false);
         mMapView = (MapView) v.findViewById(R.id.mapview);
+        drawingImageView = (ImageView) v.findViewById(R.id.DrawingImageView);
+        drawCross(drawingImageView);
         configureMapView(mMapView);
 
         super.onCreate(savedInstanceState);
@@ -199,7 +216,53 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants
         int initialZoomLevel = 5;
         mapView.getController().setZoom(initialZoomLevel);
 
+
     }
+
+    public void drawCross(ImageView drawingImageView) {
+
+        Bitmap bitmap = Bitmap.createBitmap((int) getActivity().getWindowManager()
+                .getDefaultDisplay().getWidth(), (int) getActivity().getWindowManager()
+                .getDefaultDisplay().getHeight(), Bitmap.Config.ARGB_8888);
+
+        Canvas canvas = new Canvas(bitmap);
+        drawingImageView.setImageBitmap(bitmap);
+
+
+        Paint paint = new Paint();
+        paint.setColor(Color.RED);
+        paint.setStrokeWidth(2);
+        paint.setAntiAlias(true);
+
+
+        int centerW = canvas.getWidth() / 2;
+        int centerH = canvas.getHeight() / 2;
+
+        int offset = ResourceUtil.getIntResource(getResources(), R.integer.offsetCross);
+
+        canvas.drawLine(centerW, centerH + offset, centerW, centerH - offset, paint);
+        canvas.drawLine(centerW + offset, centerH, centerW - offset, centerH, paint);
+
+    }
+
+
+
+    public void addBookmark() {
+
+        GeoPoint loc = (GeoPoint) this.mMapView.getMapCenter();
+        Marker marker = new Marker(this.mMapView);
+        marker.setPosition(new GeoPoint(loc.getLatitude(), loc.getLongitude()));
+        marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+        marker.setIcon(getResources().getDrawable(R.drawable.marker_red));
+        this.mMapView.getOverlays().add(marker);
+        updateMap();
+
+
+    }
+
+
+
+
 
     public synchronized void updateMap()
     {

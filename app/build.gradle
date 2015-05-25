@@ -32,5 +32,6 @@ dependencies {
     compile project(':JGPKG')
     compile 'org.osmdroid:osmdroid-android:4.3'
     compile 'org.slf4j:slf4j-android:1.7.12'
+    compile files('.../libraries/osmbonuspackv5.1.jar')
     compile project(':dynamicforms')
 }

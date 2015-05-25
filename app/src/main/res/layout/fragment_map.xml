@@ -11,4 +11,11 @@
         android:layout_alignParentRight="true"
         android:layout_below="@+id/statusText" />
 
+    <ImageView
+        android:id="@+id/DrawingImageView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        />
+
 </FrameLayout>
