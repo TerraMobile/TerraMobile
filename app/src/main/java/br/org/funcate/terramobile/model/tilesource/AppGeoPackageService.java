@@ -29,7 +29,7 @@ public class AppGeoPackageService {
         // ------------------------------------------------------------------------
         // TODO: alter temporary file name to dynamic file name as from user action when him acquire online GeoPackege from one server.
         //gpkgFilePath=this.context.getCurrentGeoPackageName();
-        gpkgFilePath=appPath+"/landsat2009_tiles.gpkg";
+        gpkgFilePath=appPath+"/terramobile_tasks.gpkg";
         // ------------------------------------------------------------------------
     }
 
