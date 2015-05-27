@@ -20,7 +20,7 @@
     <string name="map_preferences">Map preferences</string>
     <!-- Sync preferences -->
     <string name="credentials">Credentials</string>
-    <string name="eTURLServer">Set the URL server</string>
+    <string name="eTURLServer">Set the server URL</string>
     <string name="hintURLServer">Enter the URL</string>
     <!-- credentials -->
     <string name="hintUserNameCredentials">User name</string>

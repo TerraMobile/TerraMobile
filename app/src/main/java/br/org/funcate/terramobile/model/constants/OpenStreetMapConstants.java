@@ -8,7 +8,7 @@ package br.org.funcate.terramobile.model.constants;
  * @author Nicolas Gramlich
  *
  */
-public interface OpenStreetMapConstants {
+public interface  OpenStreetMapConstants {
 	// ===========================================================
 	// Final Fields
 	// ===========================================================
