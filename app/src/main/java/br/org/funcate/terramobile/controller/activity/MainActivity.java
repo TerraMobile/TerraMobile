@@ -33,15 +33,18 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONObject;
+import org.osmdroid.views.MapView;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -120,6 +123,7 @@ public class MainActivity extends FragmentActivity {
     // Progress Dialog
     private ProgressDialog progressDialog;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -195,8 +199,6 @@ public class MainActivity extends FragmentActivity {
         ExpandableListView mDrawerList=treeView.getUIComponent();
         if(mDrawerList==null) return false;
         // If the nav drawer is open, hide action items related to the content view
-        boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
-        menu.findItem(R.id.action_boeing_page).setVisible(!drawerOpen);
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -214,17 +216,6 @@ public class MainActivity extends FragmentActivity {
         }
         // Handle action buttons
         switch(item.getItemId()) {
-            case R.id.action_boeing_page:
-                // create intent to perform web search for this planet
-                Intent intent = new Intent(Intent.ACTION_WEB_SEARCH);
-                intent.putExtra(SearchManager.QUERY, "Boeing");
-                // catch event that there's no activity to handle intent
-                if (intent.resolveActivity(getPackageManager()) != null) {
-                    startActivity(intent);
-                } else {
-                    Toast.makeText(this, R.string.app_not_available, Toast.LENGTH_LONG).show();
-                }
-                return true;
             case R.id.download_geo_package:
                 ConnectivityManager cm = (ConnectivityManager)this.getSystemService(this.CONNECTIVITY_SERVICE);
 
@@ -243,11 +234,19 @@ public class MainActivity extends FragmentActivity {
                 }
                 return true;
             case R.id.acquire_new_point:
+                FragmentManager fm = getSupportFragmentManager();
+                MapFragment fragment = (MapFragment)fm.findFragmentById(R.id.content_frame);
+
+                fragment.addBookmark();
+
                 startForm();
-                return true;
+            case R.id.settings:
+                startActivity(new Intent(this, SettingsActivity.class));
+                break;
         default:
             return super.onOptionsItemSelected(item);
         }
+        return true;
     }
 
     private void startForm() {
@@ -339,7 +338,7 @@ public class MainActivity extends FragmentActivity {
 
     protected void showProgressDialog() {
         progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Realizando o download...");
+        progressDialog.setMessage(getResources().getString(R.string.downloding));
         progressDialog.setIndeterminate(false);
         progressDialog.setMax(100);
         progressDialog.setProgress(0);
@@ -413,7 +412,7 @@ public class MainActivity extends FragmentActivity {
 
                     while ((bufferLength = inputStream.read(buffer)) != -1) {
                         total += bufferLength;
-                        publishProgress("" + (int) ((total * 100) / totalSize), "Realizando o download...");
+                        publishProgress("" + (int) ((total * 100) / totalSize), getResources().getString(R.string.downloding));
 
                         fileOutput.write(buffer, 0, bufferLength);
                     }
@@ -483,8 +482,8 @@ public class MainActivity extends FragmentActivity {
                         long totalZipSize = ze.getCompressedSize();
                         while ((count = zis.read(buffer)) != -1) {
                             total += count;
-                            publishProgress("" + (int) ((total * 100) / totalZipSize), "Descompactando arquivos...\nArquivo "+ numFiles + " de " + totalFiles);
-                            fout.write(buffer, 0, count);
+                            publishProgress("" + (int) ((total * 100) / totalZipSize), getResources().getString(R.string.decompressing)+"\n"+getResources().getString(R.string.file) + " " + numFiles + "/" + totalFiles);
+                                    fout.write(buffer, 0, count);
                         }
                     } finally {
                         fout.close();
@@ -501,14 +500,14 @@ public class MainActivity extends FragmentActivity {
             if(progressDialog != null && progressDialog.isShowing()) {
                 if (aBoolean) {
                     progressDialog.dismiss();
-                    Toast.makeText(MainActivity.this, "Download realizado com sucesso!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(MainActivity.this, R.string.download_success, Toast.LENGTH_LONG).show();
                 } else {
                     progressDialog.dismiss();
-                    Toast.makeText(MainActivity.this, "Não foi possível realizar o download", Toast.LENGTH_LONG).show();
+                    Toast.makeText(MainActivity.this, R.string.download_failed, Toast.LENGTH_LONG).show();
                 }
             }
             else{
-                Toast.makeText(MainActivity.this, "Não foi possível realizar o download", Toast.LENGTH_LONG).show();
+                Toast.makeText(MainActivity.this, R.string.download_failed, Toast.LENGTH_LONG).show();
             }
         }
 
