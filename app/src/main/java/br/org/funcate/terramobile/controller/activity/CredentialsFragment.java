@@ -57,14 +57,14 @@ public class CredentialsFragment extends DialogFragment{
                 .setPositiveButton(R.string.btnSave, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if (eTPassword.getText().equals(eTRetypePassword.getText())) {
+//                        if (eTPassword.getText().equals(eTRetypePassword.getText())) {
                             SettingsFragment settingsFragment = (SettingsFragment) getActivity().getFragmentManager().findFragmentByTag("settings");
                             SharedPreferences sharedPreferences = settingsFragment.getPreferenceManager().getSharedPreferences();
                             SharedPreferences.Editor editor = sharedPreferences.edit();
                             editor.putString("userName", String.valueOf(eTUserName.getText()));
                             editor.putString("password", String.valueOf(eTPassword.getText()));
                             editor.commit();
-                        }
+//                        }
                     }
                 })
                 .setNegativeButton(R.string.btnCancel, new DialogInterface.OnClickListener() {
