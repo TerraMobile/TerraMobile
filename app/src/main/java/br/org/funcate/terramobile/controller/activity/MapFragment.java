@@ -22,7 +22,7 @@ import android.widget.ImageView;
 
 import org.osmdroid.ResourceProxy;
 import org.osmdroid.api.IMapController;
-import org.osmdroid.bonuspack.overlays.Marker;
+/*import org.osmdroid.bonuspack.overlays.Marker;*/
 import org.osmdroid.tileprovider.tilesource.ITileSource;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.tileprovider.tilesource.XYTileSource;
@@ -249,13 +249,13 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants
 
     public void addBookmark() {
 
-        GeoPoint loc = (GeoPoint) this.mMapView.getMapCenter();
+/*        GeoPoint loc = (GeoPoint) this.mMapView.getMapCenter();
         Marker marker = new Marker(this.mMapView);
         marker.setPosition(new GeoPoint(loc.getLatitude(), loc.getLongitude()));
         marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
         marker.setIcon(getResources().getDrawable(R.drawable.marker_red));
         this.mMapView.getOverlays().add(marker);
-        updateMap();
+        updateMap();*/
 
 
     }
