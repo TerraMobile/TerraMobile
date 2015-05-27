@@ -112,7 +112,7 @@ public class TreeView {
             populateDefaultNotFoundLayer();
         }
 
-        if (null == layers) {
+        if (null == layers || layers.size()==0) {
             populateDefaultNotFoundLayer();
             return;
         }
@@ -121,6 +121,10 @@ public class TreeView {
         while (layersIterator.hasNext()) {
 
             GpkgLayer l = layersIterator.next();
+
+            AppLayer type=l.getLayerType();
+
+            if(null==type) continue;
 
             switch (l.getLayerType()){
                 case FEATURES:{

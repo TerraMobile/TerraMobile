@@ -41,10 +41,10 @@ public class AppGeoPackageService {
         File appPath = ResourceUtil.getDirectory(context.getResources().getString(R.string.app_workspace_dir));
         // ------------------------------------------------------------------------
         // TODO: alter temporary file name to dynamic file name as from user action when him acquire online GeoPackege from one server.
-        //gpkgFilePath=this.context.getCurrentGeoPackageName();
-        String gpkgFilePath=appPath+"/inpe_geoeye_2013_mosaico.gpkg";
+
+        String gpkgFilePath=appPath+"/terramobile_tasks.gpkg";
+
         return gpkgFilePath;
-        // ------------------------------------------------------------------------
     }
 
     /**

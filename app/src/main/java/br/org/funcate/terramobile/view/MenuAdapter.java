@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
 
-@SuppressWarnings("unchecked")
 public class MenuAdapter extends BaseExpandableListAdapter {
 
 	public ArrayList<GpkgLayer> groupItem;
@@ -42,7 +41,6 @@ public class MenuAdapter extends BaseExpandableListAdapter {
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded,
                              View convertView, ViewGroup parent) {
-
         try {
             if (convertView == null) {
                 LayoutInflater layoutInflater = (LayoutInflater) context
@@ -130,13 +128,12 @@ public class MenuAdapter extends BaseExpandableListAdapter {
 //        }catch (Exception e){
 //            String l=e.getMessage();
 //        }
-
         return convertView;
     }
 
     @Override
 	public int getChildrenCount(int groupPosition) {
-		return ((ArrayList<GpkgLayer>) ChildItem.get(groupPosition)).size();
+		return (ChildItem.get(groupPosition)).size();
 	}
 
 	@Override
@@ -151,7 +148,6 @@ public class MenuAdapter extends BaseExpandableListAdapter {
 
 	@Override
 	public void onGroupCollapsed(int groupPosition) {
-
 /*        String s=this.context.getString(R.string.app_name);
         ((MainActivity) this.context).setTitle(s.subSequence(0,s.length()));*/
         super.onGroupCollapsed(groupPosition);
@@ -159,7 +155,6 @@ public class MenuAdapter extends BaseExpandableListAdapter {
 
 	@Override
 	public void onGroupExpanded(int groupPosition) {
-
 /*        String s=groupItem.get(groupPosition);
         ((MainActivity) this.context).setTitle(s.subSequence(0,s.length()));*/
 		super.onGroupExpanded(groupPosition);

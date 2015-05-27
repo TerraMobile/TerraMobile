@@ -11,6 +11,7 @@
             android:inputType="textUri"
             android:hint="@string/hintURLServer"
             android:singleLine="true"
+            android:defaultValue=""
             android:maxLines="1" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/map_preferences">

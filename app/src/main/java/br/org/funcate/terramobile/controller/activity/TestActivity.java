@@ -31,8 +31,6 @@ import java.util.List;
 
 import br.org.funcate.jgpkg.service.GeoPackageService;
 import br.org.funcate.terramobile.R;
-import br.org.funcate.terramobile.model.exception.FileException;
-import br.org.funcate.terramobile.model.service.FileService;
 import br.org.funcate.terramobile.test.JGPKGTestInterface;
 //import com.augtech.geoapi.geopackage.GpkgTEST;
 /** The main Activity for running test cases
@@ -145,38 +143,6 @@ public class TestActivity extends Activity implements JGPKGTestInterface {
 
 		}
 	};
-    private View.OnClickListener downloadFiles = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-
-            String fileName = appPath.getPath() +"/GPKG-TerraMobile-test.zip";
-
-            try {
-//                DownloadTask task= new DownloadTask(tempURL, fileName, true, (MainActivity));
-
-//                boolean downloaded = task.execute().get();
-
-//                if(!downloaded)
-//                {
-//                    statusText.setText(task.getException().getMessage());
-//                    return;
-//                }
-
-                FileService.unzip(fileName, appPath.getPath()+"/");
-
-//            } catch (InterruptedException e) {
-//                statusText.setText(e.getMessage());
-//            } catch (ExecutionException e) {
-//                statusText.setText(e.getMessage());
-            } catch (FileException e) {
-                statusText.setText(e.getMessage());
-            }
-
-
-
-
-        }
-    };
 	@Override
 	public void testComplete(String msg) {
 		statusText.setText( msg );

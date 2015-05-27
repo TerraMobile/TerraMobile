@@ -1,28 +1,23 @@
-// Created by plusminus on 00:23:14 - 03.10.2008
 package br.org.funcate.terramobile.controller.activity;
 
 import android.annotation.TargetApi;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.support.v4.app.Fragment;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import org.osmdroid.ResourceProxy;
-import org.osmdroid.api.IMapController;
-/*import org.osmdroid.bonuspack.overlays.Marker;*/
 import org.osmdroid.tileprovider.tilesource.ITileSource;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.tileprovider.tilesource.XYTileSource;
@@ -33,20 +28,18 @@ import org.osmdroid.views.MapView;
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.model.constants.OpenStreetMapConstants;
 import br.org.funcate.terramobile.util.ResourceUtil;
-import br.org.funcate.terramobile.view.ResourceProxyImpl;
 
 /*import org.osmdroid.samplefragments.BaseSampleFragment;
 import org.osmdroid.samplefragments.SampleFactory;*/
 
 /**
- * Default map view activity.
+ * Default map view fragment.
  *
  * @author Marc Kurtz
  * @author Manuel Stahl
  *
  */
-public class MapFragment extends Fragment implements OpenStreetMapConstants
-{
+public class MapFragment extends Fragment implements OpenStreetMapConstants{
     // ===========================================================
     // Constants
     // ===========================================================
@@ -70,22 +63,15 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants
     private LayoutInflater inflater;
     private ViewGroup container;
 
-
-
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-
         setHasOptionsMenu(true);
-
-
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         // inflate and return the layout
         View v = inflater.inflate(R.layout.fragment_map, container, false);
         mMapView = (MapView) v.findViewById(R.id.mapview);
@@ -193,34 +179,26 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants
 
     public void configureMapView(MapView mapView)
     {
-
         double x = ResourceUtil.getDoubleResource(getResources(), R.dimen.default_map_center_x);
         double y = ResourceUtil.getDoubleResource(getResources(), R.dimen.default_map_center_y);
+
+        int initialZoomLevel = 5;
+        int maxZoomLevel = ResourceUtil.getIntResource(getResources(), R.integer.default_max_zoom_level);
+
+        boolean builtInZoomControls=ResourceUtil.getBooleanResource(getResources(), R.bool.default_built_in_zoom_controls);
+        boolean multiTouchControls=ResourceUtil.getBooleanResource(getResources(), R.bool.default_multi_touch_controls);
 
         GeoPoint gPt = new GeoPoint(x,y);
 
         mapView.getController().animateTo(gPt);
-
-        int maxZoomLevel = ResourceUtil.getIntResource(getResources(), R.integer.default_max_zoom_level);
-
         mapView.setMaxZoomLevel(maxZoomLevel);
-
-        boolean builtInZoomControls=ResourceUtil.getBooleanResource(getResources(), R.bool.default_built_in_zoom_controls);
-
         mapView.setBuiltInZoomControls(builtInZoomControls);
-
-        boolean multiTouchControls=ResourceUtil.getBooleanResource(getResources(), R.bool.default_multi_touch_controls);
-
         mapView.setMultiTouchControls(multiTouchControls);
 
-        int initialZoomLevel = 5;
         mapView.getController().setZoom(initialZoomLevel);
-
-
     }
 
     public void drawCross(ImageView drawingImageView) {
-
         Bitmap bitmap = Bitmap.createBitmap((int) getActivity().getWindowManager()
                 .getDefaultDisplay().getWidth(), (int) getActivity().getWindowManager()
                 .getDefaultDisplay().getHeight(), Bitmap.Config.ARGB_8888);
@@ -228,12 +206,10 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants
         Canvas canvas = new Canvas(bitmap);
         drawingImageView.setImageBitmap(bitmap);
 
-
         Paint paint = new Paint();
         paint.setColor(Color.RED);
         paint.setStrokeWidth(2);
         paint.setAntiAlias(true);
-
 
         int centerW = canvas.getWidth() / 2;
         int centerH = canvas.getHeight() / 2;
@@ -242,31 +218,18 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants
 
         canvas.drawLine(centerW, centerH + offset, centerW, centerH - offset, paint);
         canvas.drawLine(centerW + offset, centerH, centerW - offset, centerH, paint);
-
     }
-
-
-
     public void addBookmark() {
-
-/*        GeoPoint loc = (GeoPoint) this.mMapView.getMapCenter();
+/*      GeoPoint loc = (GeoPoint) this.mMapView.getMapCenter();
         Marker marker = new Marker(this.mMapView);
         marker.setPosition(new GeoPoint(loc.getLatitude(), loc.getLongitude()));
         marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
         marker.setIcon(getResources().getDrawable(R.drawable.marker_red));
         this.mMapView.getOverlays().add(marker);
         updateMap();*/
-
-
     }
-
-
-
-
-
     public synchronized void updateMap()
     {
         this.mMapView.invalidate();
     }
-
 }
