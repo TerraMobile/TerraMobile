@@ -68,6 +68,9 @@ import br.org.funcate.dynamicforms.util.Utilities;
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.configuration.ViewContextParameters;
 import br.org.funcate.terramobile.model.exception.DownloadException;
+import br.org.funcate.terramobile.model.exception.TerraMobileException;
+import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
+import br.org.funcate.terramobile.model.tilesource.AppGeoPackageService;
 import br.org.funcate.terramobile.util.ResourceUtil;
 
 
@@ -178,8 +181,9 @@ public class MainActivity extends FragmentActivity {
 
     @Override
     public void onBackPressed() {
-        this.finish();
-        System.exit(0);
+
+/*        this.finish();
+        System.exit(0);*/
     }
 
     public ViewContextParameters getParameters(){
@@ -243,10 +247,27 @@ public class MainActivity extends FragmentActivity {
             case R.id.settings:
                 startActivity(new Intent(this, SettingsActivity.class));
                 break;
+            case R.id.test_raster_data:
+                showTestRaster();
+                break;
+
         default:
             return super.onOptionsItemSelected(item);
         }
         return true;
+    }
+
+    private void showTestRaster() {
+
+        try {
+            GpkgLayer layer = treeView.getLayerByName("inpe_geoeye_2013_mosaico");
+            AppGeoPackageService.createGeoPackageTileSourceOverlay(layer, MainActivity.this);
+
+        } catch (TerraMobileException e) {
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+        }
+
     }
 
     private void startForm() {
@@ -523,4 +544,5 @@ public class MainActivity extends FragmentActivity {
             return exception;
         }
     }
+
 }

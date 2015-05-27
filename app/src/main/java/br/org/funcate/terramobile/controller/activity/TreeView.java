@@ -11,9 +11,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import br.org.funcate.terramobile.R;
+import br.org.funcate.terramobile.model.exception.TerraMobileException;
 import br.org.funcate.terramobile.model.gpkg.objects.AppLayer;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
 import br.org.funcate.terramobile.model.tilesource.AppGeoPackageService;
+import br.org.funcate.terramobile.util.DevUtil;
 import br.org.funcate.terramobile.util.ResourceUtil;
 import br.org.funcate.terramobile.view.MenuAdapter;
 
@@ -102,10 +104,9 @@ public class TreeView {
 //        childItem.add(childTools);
 
         // get list layers from GeoPackage
-        AppGeoPackageService appGeoPackageService = new AppGeoPackageService(this.context);
         ArrayList<GpkgLayer> layers = null;
         try {
-            layers = appGeoPackageService.getLayers();
+            layers = AppGeoPackageService.getLayers(this.context);
         } catch (Exception e) {
             System.out.print("Fail on load layers :" + e.getMessage());
             populateDefaultNotFoundLayer();
@@ -186,4 +187,21 @@ public class TreeView {
         childItem.add(childCollectLayers);
         childItem.add(childOnlineLayers);
     }
+    public GpkgLayer getLayerByName(String layerName) throws TerraMobileException {
+        if(DevUtil.isNull(layerName))
+        {
+            throw new TerraMobileException("Invalid layer name.");
+        }
+
+        for(int i = 0; i < childItem.size(); i++) {
+            ArrayList<GpkgLayer> layers = childItem.get(i);
+            for (int j = 0; j < layers.size(); j++) {
+                if (layerName.equalsIgnoreCase(layers.get(j).getLayerName())) {
+                    return layers.get(j);
+                }
+            }
+        }
+        throw new TerraMobileException("Requested layer not found");
+    }
+
 }

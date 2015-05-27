@@ -4,32 +4,46 @@ package br.org.funcate.terramobile.model.tilesource;
  * Created by Andre Carvalho on 29/04/15.
  */
 import android.content.Context;
+import android.graphics.Color;
 
 import com.augtech.geoapi.geopackage.GeoPackage;
 import com.augtech.geoapi.geopackage.GpkgField;
+
+import org.osmdroid.ResourceProxy;
+import org.osmdroid.tileprovider.MapTileProviderArray;
+import org.osmdroid.tileprovider.MapTileProviderBasic;
+import org.osmdroid.tileprovider.modules.MapTileModuleProviderBase;
+import org.osmdroid.tileprovider.tilesource.ITileSource;
+import org.osmdroid.tileprovider.tilesource.XYTileSource;
+import org.osmdroid.tileprovider.util.SimpleInvalidationHandler;
+import org.osmdroid.tileprovider.util.SimpleRegisterReceiver;
+import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.TilesOverlay;
 
 import java.io.File;
 import java.util.ArrayList;
 
 import br.org.funcate.jgpkg.service.GeoPackageService;
 import br.org.funcate.terramobile.R;
+import br.org.funcate.terramobile.controller.activity.MainActivity;
 import br.org.funcate.terramobile.model.gpkg.objects.AppLayer;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
 import br.org.funcate.terramobile.util.ResourceUtil;
 
 public class AppGeoPackageService {
 
-    private Context context;
-    private String gpkgFilePath;
+    private AppGeoPackageService()
+    {
 
-    public AppGeoPackageService(Context context) {
-        this.context=context;
+    }
+
+    private static String getGpkgFilePath(Context context) {
         File appPath = ResourceUtil.getDirectory(context.getResources().getString(R.string.app_workspace_dir));
-
         // ------------------------------------------------------------------------
         // TODO: alter temporary file name to dynamic file name as from user action when him acquire online GeoPackege from one server.
         //gpkgFilePath=this.context.getCurrentGeoPackageName();
-        gpkgFilePath=appPath+"/inpe_geoeye_2013_mosaico.gpkg";
+        String gpkgFilePath=appPath+"/inpe_geoeye_2013_mosaico.gpkg";
+        return gpkgFilePath;
         // ------------------------------------------------------------------------
     }
 
@@ -38,7 +52,9 @@ public class AppGeoPackageService {
      * @return ArrayList<GpkgLayer> listLayers, the list Layers
      * @throws Exception
      */
-    public ArrayList<GpkgLayer> getLayers() throws Exception {
+    public static ArrayList<GpkgLayer> getLayers(Context context) throws Exception {
+
+        String gpkgFilePath = getGpkgFilePath(context);
 
         GeoPackage gpkg = GeoPackageService.readGPKG(context, gpkgFilePath);
         if(!gpkg.isGPKGValid(true))
@@ -78,6 +94,39 @@ public class AppGeoPackageService {
         }
         gpkg.close();
         return listLayers;
+    }
+
+    public static void createGeoPackageTileSourceOverlay(GpkgLayer layer, Context context) {
+
+        MapView mapView = (MapView) ((MainActivity) context).findViewById(R.id.mapview);
+        mapView.setMaxZoomLevel(18);
+        mapView.setBuiltInZoomControls(true);
+        mapView.setMultiTouchControls(true);
+
+
+        System.out.println("Overlay size:" + mapView.getOverlayManager().size());
+
+/*        OnlineTileSourceBase mapQuestTileSource = TileSourceFactory.MAPQUESTOSM;
+        String tileSourcePath = mapQuestTileSource.OSMDROID_PATH.getAbsolutePath() + "/";*/
+
+        final MapTileProviderBasic tileProvider = new MapTileProviderBasic(context);
+
+        final ITileSource tileSource = new XYTileSource("Mapnik", ResourceProxy.string.mapnik, 1, 18, 256, ".png", new String[] {"http://tile.openstreetmap.org/"});
+
+        MapTileModuleProviderBase moduleProvider = new MapTileGeoPackageProvider(tileSource, layer.getLayerName(), layer.getGeoPackage());
+        SimpleRegisterReceiver simpleReceiver = new SimpleRegisterReceiver(context);
+        MapTileProviderArray tileProviderArray = new MapTileProviderArray(tileSource, simpleReceiver, new MapTileModuleProviderBase[] { moduleProvider });
+
+/*        tileProvider.setTileSource(tileSource);*/
+        final TilesOverlay tilesOverlay = new TilesOverlay(tileProviderArray, context);
+        tilesOverlay.setLoadingBackgroundColor(Color.TRANSPARENT);
+        mapView.getOverlays().add(tilesOverlay);
+        //mapView.getOverlayManager().overlaysReversed();
+        //mapView.getTileProvider().clearTileCache();
+        tileProvider.setTileRequestCompleteHandler(new SimpleInvalidationHandler(mapView));
+        mapView.setTileSource(tileSource);
+        mapView.setUseDataConnection(false); //  letting osmdroid know you would use it in offline mode, keeps the mapView from loading online tiles using network connection.*/
+        mapView.invalidate();
     }
 /*
     public ArrayList<String> getAttributes() {
