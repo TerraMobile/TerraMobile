@@ -198,7 +198,8 @@ public abstract class GpkgTable {
 			this.description = contents.getFieldString(0, "description");
 			String lc = contents.getFieldString(0, "last_change");
 			if (!lc.equals("")) {
-				this.lastChange = DateUtil.deserializeDateTime( contents.getFieldString(0, "last_change") );
+				//this.lastChange = DateUtil.deserializeDateTime( contents.getFieldString(0, "last_change") );
+                this.lastChange = new Date();
 			}
 			
 			bbox = new BoundingBoxImpl(
