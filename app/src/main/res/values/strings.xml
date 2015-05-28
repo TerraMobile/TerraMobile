@@ -16,6 +16,8 @@
     <string name="file">File</string>
     <!-- Settings -->
     <string name="title_activity_settings">Settings</string>
+    <string name="test_raster_data">Test Raster Data</string>
+    <string name="test_vector_data">Test Vector Data</string>
     <string name="sync_preferences">Sync preferences</string>
     <string name="map_preferences">Map preferences</string>
     <!-- Sync preferences -->
