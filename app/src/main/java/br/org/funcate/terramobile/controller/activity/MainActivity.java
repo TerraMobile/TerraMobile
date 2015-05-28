@@ -14,7 +14,6 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -47,6 +46,7 @@ import br.org.funcate.dynamicforms.util.PositionUtilities;
 import br.org.funcate.dynamicforms.util.Utilities;
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.configuration.ViewContextParameters;
+import br.org.funcate.terramobile.controller.activity.settings.SettingsActivity;
 import br.org.funcate.terramobile.model.exception.DownloadException;
 import br.org.funcate.terramobile.model.exception.TerraMobileException;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
@@ -138,6 +138,7 @@ public class MainActivity extends FragmentActivity {
     public void onBackPressed() {
         this.finish();
         System.exit(0);
+        android.os.Process.killProcess(android.os.Process.myPid());
         return;
 
     }
@@ -190,7 +191,7 @@ public class MainActivity extends FragmentActivity {
                     new DownloadTask(destinationFilePath, true).execute(tempURL);
                 }
                 else{
-                    Toast.makeText(this, "Conecte-se à internet", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, R.string.no_connection, Toast.LENGTH_LONG).show();
                 }
                 return true;
             case R.id.acquire_new_point:
