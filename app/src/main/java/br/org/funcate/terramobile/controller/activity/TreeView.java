@@ -31,6 +31,7 @@ public class TreeView {
     private Context context;
     private Resources resources;
     private MenuAdapter mMenuAdapter;
+    private GpkgLayer selectedEditableLayer;
 
     public TreeView(Context context){
         this.context=context;
@@ -51,7 +52,7 @@ public class TreeView {
 
         mMenuAdapter = new MenuAdapter(this.context, groupItem, childItem);
         mDrawerList.setAdapter(mMenuAdapter);
-
+        selectedEditableLayer=null;
     }
 
     public void refreshTreeView(){
@@ -210,5 +211,15 @@ public class TreeView {
         }
         throw new TerraMobileException("Requested layer not found");
     }
+
+
+    public GpkgLayer getSelectedEditableLayer() {
+        return selectedEditableLayer;
+    }
+
+    public void setSelectedEditableLayer(GpkgLayer selectedEditableLayer) {
+        this.selectedEditableLayer = selectedEditableLayer;
+    }
+
 
 }

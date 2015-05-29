@@ -18,6 +18,7 @@ import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.configuration.ViewContextParameters;
 import br.org.funcate.terramobile.controller.activity.MainActivity;
 import br.org.funcate.terramobile.controller.activity.MenuMapController;
+import br.org.funcate.terramobile.controller.activity.TreeView;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
 
 @SuppressWarnings("unchecked")
@@ -61,7 +62,8 @@ public class MenuAdapter extends BaseExpandableListAdapter implements View.OnCli
                     break;
                 }
                 case EDITABLE:{// editable
-
+                    TreeView treeView=((MainActivity) this.context).getTreeView();
+                    treeView.setSelectedEditableLayer(child);
                     break;
                 }
                 case ONLINE:{// online
