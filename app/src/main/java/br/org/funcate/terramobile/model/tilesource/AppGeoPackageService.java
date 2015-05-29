@@ -27,6 +27,7 @@ import org.osmdroid.views.overlay.TilesOverlay;
 import java.io.File;
 import java.util.ArrayList;
 
+import br.org.funcate.extended.model.TMConfigEditableLayer;
 import br.org.funcate.jgpkg.exception.QueryException;
 import br.org.funcate.jgpkg.service.GeoPackageService;
 import br.org.funcate.terramobile.R;
@@ -47,9 +48,8 @@ public class AppGeoPackageService {
         // ------------------------------------------------------------------------
         // TODO: alter temporary file name to dynamic file name as from user action when him acquire online GeoPackege from one server.
         //gpkgFilePath=this.context.getCurrentGeoPackageName();
-        //gpkgFilePath=appPath+"/terramobile_demo.gpkg";
         // ------------------------------------------------------------------------
-        String gpkgFilePath=appPath+"/terramobile_tasks.gpkg";
+        String gpkgFilePath=appPath+"/terramobile_demo.gpkg";
 
         return gpkgFilePath;
     }
@@ -70,6 +70,7 @@ public class AppGeoPackageService {
         }
 
         ArrayList<ArrayList<GpkgField>> fields = GeoPackageService.getGpkgFieldsContents(gpkg, null,"");
+        TMConfigEditableLayer tmConfigEditableLayer = GeoPackageService.getTMConfigEditableLayer(gpkg);
         ArrayList<GpkgLayer> listLayers=new ArrayList<GpkgLayer>();
         GpkgLayer layer;
 
@@ -93,14 +94,16 @@ public class AppGeoPackageService {
 
             GpkgField srsIdField = aField.get(9);
 
-
-            // Getting layer name
-            layer.setName((String) tableNameField.getValue());
+            String layerName = (String) tableNameField.getValue();
+            layer.setName(layerName);
 
             // Getting data type
             if("features".equals(dataTypeField.getValue()))
             {
-                layer.setType(GpkgLayer.Type.FEATURES);
+                if(!tmConfigEditableLayer.isEditableLayer(layerName))
+                    layer.setType(GpkgLayer.Type.FEATURES);
+                else
+                    layer.setType(GpkgLayer.Type.EDITABLE);
             } else if("tiles".equals(dataTypeField.getValue()))
             {
                 layer.setType(GpkgLayer.Type.TILES);
