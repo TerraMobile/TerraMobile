@@ -47,7 +47,7 @@ public class AppGeoPackageService {
         // ------------------------------------------------------------------------
         // TODO: alter temporary file name to dynamic file name as from user action when him acquire online GeoPackege from one server.
 
-        String gpkgFilePath=appPath+"/rapideye-andadina.gpkg";
+        String gpkgFilePath=appPath+"/terramobile_tasks.gpkg";
 
         return gpkgFilePath;
     }
