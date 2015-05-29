@@ -27,6 +27,7 @@ import org.osmdroid.views.overlay.TilesOverlay;
 import java.io.File;
 import java.util.ArrayList;
 
+import br.org.funcate.jgpkg.exception.QueryException;
 import br.org.funcate.jgpkg.service.GeoPackageService;
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.controller.activity.MainActivity;
@@ -58,28 +59,17 @@ public class AppGeoPackageService {
      * @return ArrayList<GpkgLayer> listLayers, the list Layers
      * @throws Exception
      */
-    public static ArrayList<GpkgLayer> getLayers(Context context) throws InvalidGeopackageException {
+    public static ArrayList<GpkgLayer> getLayers(Context context) throws InvalidGeopackageException, QueryException {
 
         String gpkgFilePath = getGpkgFilePath(context);
-        GeoPackage gpkg=null;
-
-        try {
-            gpkg = GeoPackageService.readGPKG(context, gpkgFilePath);
-        }catch (Exception e){
-
-        }
+        GeoPackage gpkg = GeoPackageService.readGPKG(context, gpkgFilePath);
 
         if(!gpkg.isGPKGValid(true))
         {
             throw new InvalidGeopackageException("Invalid GeoPackage file.");
         }
 
-        ArrayList<ArrayList<GpkgField>> fields=null;
-        try{
-            fields = GeoPackageService.getGpkgFieldsContents(gpkg, null);
-        }catch (Exception e){
-
-        }
+        ArrayList<ArrayList<GpkgField>> fields = GeoPackageService.getGpkgFieldsContents(gpkg, null,"");
         ArrayList<GpkgLayer> listLayers=new ArrayList<GpkgLayer>();
         GpkgLayer layer;
 
