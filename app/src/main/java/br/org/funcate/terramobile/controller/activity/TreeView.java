@@ -136,6 +136,7 @@ public class TreeView {
                 }
                 case EDITABLE:{
                     childOnlineLayers.add(l);
+                    break;
                 }
                 case ONLINE:{
                     // TODO: this type layer not implemented yet.

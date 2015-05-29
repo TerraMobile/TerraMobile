@@ -3,6 +3,8 @@ package br.org.funcate.terramobile.controller.activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.view.View;
+import android.widget.CheckBox;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,6 +19,7 @@ import org.osmdroid.tileprovider.util.SimpleRegisterReceiver;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.TilesOverlay;
 
+import br.org.funcate.dynamicforms.util.PositionUtilities;
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.configuration.ViewContextParameters;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
@@ -25,108 +28,85 @@ import br.org.funcate.terramobile.model.tilesource.MapTileGeoPackageProvider;
 /**
  * Created by Andre Carvalho on 27/04/15.
  */
-public class MenuMapController implements View.OnClickListener {
+public class MenuMapController {
 
-    private GpkgLayer child;
     private final Context context;
+    private final int INDEX_BASE_LAYER=0;
+    private int lastIndexDrawOrder;
 
-    public MenuMapController(Context context, GpkgLayer child) {
-        this.child=child;
+    public MenuMapController(Context context) {
         this.context=context;
+        this.lastIndexDrawOrder = 1;
     }
 
-    @Override
-    public void onClick(View v) {
-        storeSelectedItem(v);
-        exec();
-        return;
-    }
+    public void addBaseLayer(GpkgLayer child) {
 
-    private void exec() {
-        try{
-            switch (child.getLayerType()){
-                case TILES:{// base
-                    loadTiles();
-                    break;
-                }
-                case FEATURES:{// collect
-
-                    break;
-                }
-                case EDITABLE:{// editable
-
-                    break;
-                }
-                case ONLINE:{// online
-
-                    break;
-                }
-            }
-        } catch (Exception e) {
-            Toast.makeText(context, "Fail on read layer: " + e.getMessage(), Toast.LENGTH_LONG).show();
-        }
-    }
-
-    private void storeSelectedItem(View v) {
-        ViewContextParameters par = ((MainActivity) context).getParameters();
-        try {
-            if (v.isSelected()) {
-                par.removeLayer(child);
-                v.setSelected(false);
-                v.setBackgroundColor(Color.BLACK);
-                ((TextView) v).setTextColor(Color.WHITE);
-            } else {
-                par.addLayer(child);
-                v.setSelected(true);
-                v.setBackgroundColor(Color.WHITE);
-                ((TextView) v).setTextColor(Color.BLACK);
-            }
-
-        }catch (Exception e){
-            Toast.makeText(context, e.getMessage(),
-                    Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    public void loadTiles() {
         if(child.getGeoPackage().isGPKGValid(true)) {
-            createGeoPackageTileSourceOverlay();
+
+            MapView mapView = (MapView) ((MainActivity) context).findViewById(R.id.mapview);
+            mapView.setMaxZoomLevel(18);
+            mapView.setBuiltInZoomControls(true);
+            mapView.setMultiTouchControls(true);
+
+            System.out.println("Overlay size:" + mapView.getOverlayManager().size());
+
+/*        OnlineTileSourceBase mapQuestTileSource = TileSourceFactory.MAPQUESTOSM;
+        String tileSourcePath = mapQuestTileSource.OSMDROID_PATH.getAbsolutePath() + "/";*/
+
+            final MapTileProviderBasic tileProvider = new MapTileProviderBasic(context);
+
+            final ITileSource tileSource = new XYTileSource("Mapnik", ResourceProxy.string.mapnik, 1, 18, 256, ".png", new String[] {"http://tile.openstreetmap.org/"});
+
+            MapTileModuleProviderBase moduleProvider = new MapTileGeoPackageProvider(tileSource, child.getLayerName(), child.getGeoPackage());
+            SimpleRegisterReceiver simpleReceiver = new SimpleRegisterReceiver(context);
+            MapTileProviderArray tileProviderArray = new MapTileProviderArray(tileSource, simpleReceiver, new MapTileModuleProviderBase[] { moduleProvider });
+
+/*        tileProvider.setTileSource(tileSource);*/
+            final TilesOverlay tilesOverlay = new TilesOverlay(tileProviderArray, context);
+            tilesOverlay.setLoadingBackgroundColor(Color.TRANSPARENT);
+            mapView.getOverlays().add(INDEX_BASE_LAYER,tilesOverlay);
+            this.lastIndexDrawOrder++;
+            child.setIndexOverlay(this.lastIndexDrawOrder);
+            //mapView.getOverlayManager().overlaysReversed();
+            //mapView.getTileProvider().clearTileCache();
+            tileProvider.setTileRequestCompleteHandler(new SimpleInvalidationHandler(mapView));
+            mapView.setTileSource(tileSource);
+            mapView.setUseDataConnection(false); //  letting osmdroid know you would use it in offline mode, keeps the mapView from loading online tiles using network connection.*/
+            mapView.invalidate();
         }else {
             Toast.makeText(context, "Invalid GeoPackage file.", Toast.LENGTH_SHORT).show();
         }
         return;
     }
 
-    private void createGeoPackageTileSourceOverlay() {
-
+    public void removeBaseLayer() {
         MapView mapView = (MapView) ((MainActivity) context).findViewById(R.id.mapview);
-        mapView.setMaxZoomLevel(18);
-        mapView.setBuiltInZoomControls(true);
-        mapView.setMultiTouchControls(true);
+        mapView.getOverlays().remove(INDEX_BASE_LAYER);
+        return;
+    }
 
+    public void addVectorLayer(GpkgLayer child) {
 
-        System.out.println("Overlay size:" + mapView.getOverlayManager().size());
+        //MapView mapView = (MapView) ((MainActivity) context).findViewById(R.id.mapview);
+        //mapView.getOverlays().add(this.lastIndexDrawOrder,tilesOverlay);
 
-/*        OnlineTileSourceBase mapQuestTileSource = TileSourceFactory.MAPQUESTOSM;
-        String tileSourcePath = mapQuestTileSource.OSMDROID_PATH.getAbsolutePath() + "/";*/
+        child.setIndexOverlay(this.lastIndexDrawOrder);
+        this.lastIndexDrawOrder++;
+    }
 
-        final MapTileProviderBasic tileProvider = new MapTileProviderBasic(context);
+    public void removeVectorLayer(GpkgLayer child) {
+        int location = child.getIndexOverlay();
+        this.lastIndexDrawOrder--;
+        MapView mapView = (MapView) ((MainActivity) context).findViewById(R.id.mapview);
+        mapView.getOverlays().remove(location);
+        return;
+    }
 
-        final ITileSource tileSource = new XYTileSource("Mapnik", ResourceProxy.string.mapnik, 1, 18, 256, ".png", new String[] {"http://tile.openstreetmap.org/"});
+    public void addEditableLayer(GpkgLayer child) {
+        return;
+    }
 
-        MapTileModuleProviderBase moduleProvider = new MapTileGeoPackageProvider(tileSource, child.getLayerName(), child.getGeoPackage());
-        SimpleRegisterReceiver simpleReceiver = new SimpleRegisterReceiver(context);
-        MapTileProviderArray tileProviderArray = new MapTileProviderArray(tileSource, simpleReceiver, new MapTileModuleProviderBase[] { moduleProvider });
-
-/*        tileProvider.setTileSource(tileSource);*/
-        final TilesOverlay tilesOverlay = new TilesOverlay(tileProviderArray, context);
-        tilesOverlay.setLoadingBackgroundColor(Color.TRANSPARENT);
-        mapView.getOverlays().add(tilesOverlay);
-        //mapView.getOverlayManager().overlaysReversed();
-        //mapView.getTileProvider().clearTileCache();
-        tileProvider.setTileRequestCompleteHandler(new SimpleInvalidationHandler(mapView));
-        mapView.setTileSource(tileSource);
-        mapView.setUseDataConnection(false); //  letting osmdroid know you would use it in offline mode, keeps the mapView from loading online tiles using network connection.*/
-        mapView.invalidate();
+    public void removeEditableLayer(GpkgLayer child) {
+        return;
     }
 }

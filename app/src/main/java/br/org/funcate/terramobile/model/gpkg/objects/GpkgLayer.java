@@ -10,6 +10,7 @@ public class GpkgLayer{
     private String layerName;
     private AppLayer layerType;
     private GeoPackage geoPackage;
+    private int indexOverlay;
 
     public GpkgLayer() {
     }
@@ -40,5 +41,13 @@ public class GpkgLayer{
 
     public void setGeoPackage(GeoPackage geoPackage) {
         this.geoPackage = geoPackage;
+    }
+
+    public int getIndexOverlay() {
+        return indexOverlay;
+    }
+
+    public void setIndexOverlay(int indexOverlay) {
+        this.indexOverlay = indexOverlay;
     }
 }
