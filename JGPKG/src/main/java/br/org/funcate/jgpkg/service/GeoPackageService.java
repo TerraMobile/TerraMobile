@@ -1,35 +1,27 @@
 package br.org.funcate.jgpkg.service;
 
-import java.io.File;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import android.content.Context;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.augtech.geoapi.geopackage.GeoPackage;
+import com.augtech.geoapi.geopackage.GpkgField;
+import com.augtech.geoapi.geopackage.GpkgTable;
+import com.augtech.geoapi.geopackage.ICursor;
+import com.augtech.geoapi.geopackage.ISQLDatabase;
+import com.augtech.geoapi.geopackage.table.GpkgContents;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.geometry.BoundingBox;
 
-import android.content.Context;
-import android.os.Environment;
-import android.support.v4.util.ArrayMap;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import com.augtech.geoapi.geopackage.GeoPackage;
+import br.org.funcate.extended.model.TMConfigEditableLayer;
 import br.org.funcate.geopackage.AndroidSQLDatabase;
-
-
-import com.augtech.geoapi.geopackage.GpkgField;
-
-import com.augtech.geoapi.geopackage.ICursor;
-import com.augtech.geoapi.geopackage.ISQLDatabase;
-import com.augtech.geoapi.geopackage.GeoPackage;
-import com.augtech.geoapi.geopackage.GpkgTable;
-import com.augtech.geoapi.geopackage.table.GpkgContents;
 
 public class GeoPackageService {
 
@@ -87,7 +79,7 @@ public class GeoPackageService {
             throw new Exception("Invalid GeoPackage file.");
         }
 
-        List<SimpleFeature> features = gpkg.getTiles(tableName,"");
+        List<SimpleFeature> features = gpkg.getTiles(tableName, "");
 
         return features;
     }
@@ -158,18 +150,34 @@ public class GeoPackageService {
         return (GpkgContents) getGpkgTable(gpkg,gpkgTableName);
     }
 
+    public static TMConfigEditableLayer getTMConfigEditableLayer(GeoPackage gpkg) throws Exception {
+
+        String tableName = "tm_layer_form";
+        String[] columns = new String[2];
+        columns[0] = "pkg_layer_identify";
+        columns[1] = "tm_form";
+
+        TMConfigEditableLayer tmConfigEditableLayer=new TMConfigEditableLayer();
+        ICursor c = gpkg.getDatabase().doQuery(tableName,columns,null);
+        while (c.moveToNext()){
+            String id=c.getString(0);
+            String json=c.getString(1);
+            tmConfigEditableLayer.addConfigLayer(id,json);
+        }
+        return tmConfigEditableLayer;
+    }
+
     public static ArrayList<ArrayList<GpkgField>> getGpkgFieldsContents(GeoPackage gpkg, String[] columns) throws Exception {
 
         GpkgContents contents = getGpkgContents(gpkg);
         ICursor c = contents.query(gpkg, columns, null);
-        GpkgField field;
         int len= columns.length;
         ArrayList<ArrayList<GpkgField>> records=new ArrayList<ArrayList<GpkgField>>();
 
         while (c.moveToNext()){
             ArrayList<GpkgField> aRecord=new ArrayList<GpkgField>(len);
             for (int i = 0; i < len; i++) {
-                field = contents.getField(columns[i]);
+                GpkgField field = (contents.getField(columns[i])).clone();
                 field.setValue(c.getString(i));
                 aRecord.add(field);
             }
