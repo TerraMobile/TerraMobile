@@ -63,4 +63,8 @@
     <!-- Error messages -->
     <string name="server_not_available">Sorry, there\'s no web server available</string>
     <string name="app_not_available">Sorry, there\'s no web browser available</string>
+    <string name="title_activity_download_task">DownloadTask</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
 </resources>
