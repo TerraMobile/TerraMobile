@@ -44,7 +44,7 @@ public class MenuMapController implements View.OnClickListener {
 
     private void exec() {
         try{
-            switch (child.getLayerType()){
+            switch (child.getType()){
                 case TILES:{// base
                     loadTiles();
                     break;
@@ -114,7 +114,7 @@ public class MenuMapController implements View.OnClickListener {
 
         final ITileSource tileSource = new XYTileSource("Mapnik", ResourceProxy.string.mapnik, 1, 18, 256, ".png", new String[] {"http://tile.openstreetmap.org/"});
 
-        MapTileModuleProviderBase moduleProvider = new MapTileGeoPackageProvider(tileSource, child.getLayerName(), child.getGeoPackage());
+        MapTileModuleProviderBase moduleProvider = new MapTileGeoPackageProvider(tileSource, child.getName(), child.getGeoPackage());
         SimpleRegisterReceiver simpleReceiver = new SimpleRegisterReceiver(context);
         MapTileProviderArray tileProviderArray = new MapTileProviderArray(tileSource, simpleReceiver, new MapTileModuleProviderBase[] { moduleProvider });
 

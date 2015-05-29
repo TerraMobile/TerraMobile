@@ -220,7 +220,7 @@ public class MainActivity extends FragmentActivity {
     private void showTestRaster() {
 
         try {
-            GpkgLayer layer = treeView.getLayerByName("inpe_geoeye_2013_mosaico");
+            GpkgLayer layer = treeView.getLayerByName("rapideyeandadina");
             AppGeoPackageService.createGeoPackageTileSourceOverlay(layer, MainActivity.this);
 
         } catch (TerraMobileException e) {

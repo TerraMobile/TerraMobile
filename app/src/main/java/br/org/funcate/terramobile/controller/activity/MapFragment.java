@@ -172,7 +172,6 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants{
             String[] url= {"http://tile.openstreetmap.org/"};
             final ITileSource tileSource = new XYTileSource("Mapnik", ResourceProxy.string.mapnik, 1, 18, 256, ".png", url);
             mMapView.setTileSource(tileSource);
-
         } catch (final IllegalArgumentException ignore) {
         }
     }
