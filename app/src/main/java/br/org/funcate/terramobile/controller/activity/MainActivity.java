@@ -1,5 +1,6 @@
 package br.org.funcate.terramobile.controller.activity;
 
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -14,7 +15,6 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -47,6 +47,7 @@ import br.org.funcate.dynamicforms.util.PositionUtilities;
 import br.org.funcate.dynamicforms.util.Utilities;
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.configuration.ViewContextParameters;
+import br.org.funcate.terramobile.controller.activity.settings.SettingsActivity;
 import br.org.funcate.terramobile.model.exception.DownloadException;
 import br.org.funcate.terramobile.model.exception.TerraMobileException;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
@@ -84,9 +85,6 @@ public class MainActivity extends FragmentActivity {
         setContentView(R.layout.activity_main);
 
         PreferenceManager.setDefaultValues(this, R.xml.settings, false);
-
-
-        File f = getDatabasePath("MyPrefsFile.xml");
 
         treeView = new TreeView(MainActivity.this);
 
@@ -187,10 +185,10 @@ public class MainActivity extends FragmentActivity {
                     File appPath = ResourceUtil.getDirectory(getResources().getString(R.string.app_workspace_dir));
                     String tempURL = getResources().getString(R.string.gpkg_url);
                     String destinationFilePath = appPath.getPath();
-                    new DownloadTask(destinationFilePath, true).execute(tempURL);
+                    new DownloadTask(destinationFilePath, true, this).execute(tempURL);
                 }
                 else{
-                    Toast.makeText(this, "Conecte-se à internet", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, R.string.no_connection, Toast.LENGTH_LONG).show();
                 }
                 return true;
             case R.id.acquire_new_point:
@@ -331,195 +329,11 @@ public class MainActivity extends FragmentActivity {
         progressDialog.show();
     }
 
-    /**
-     * This AsyncTask receives the data from the server
-     */
-    class DownloadTask extends AsyncTask<String, String, Boolean> {
-
-        private String unzipDestinationFilePath;
-        private String downloadDestinationFilePath;
-
-        private DownloadException exception;
-
-        private boolean overwrite;
-
-        public DownloadTask(String unzipDestinationFilePath, boolean overwrite) {
-            this.unzipDestinationFilePath = unzipDestinationFilePath;
-            this.downloadDestinationFilePath = unzipDestinationFilePath + "/" + getResources().getString(R.string.destination_file_path);
-            this.overwrite = overwrite;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            showProgressDialog();
-        }
-
-        protected Boolean doInBackground(String... urlToDownload) {
-            if (urlToDownload[0].isEmpty()) {
-                exception = new DownloadException("Missing URL to be downloaded.");
-                return false;
-            }
-
-            if (downloadDestinationFilePath.isEmpty()) {
-                exception = new DownloadException("Missing destination path to download to.");
-                return false;
-            }
-
-            try {
-                try {
-                    File file = new File(downloadDestinationFilePath);
-
-                    if (!file.exists()) {
-                        file.createNewFile();
-                    } else {
-                        if (overwrite) {
-                            file.delete();
-                        } else {
-                            return true;
-                        }
-                    }
-                    URL url = new URL(urlToDownload[0]);
-
-                    URLConnection urlConnection = url.openConnection();
-                    urlConnection.connect();
-
-                    int totalSize = urlConnection.getContentLength();
-
-                    InputStream inputStream = new BufferedInputStream(url.openStream());
-
-                    OutputStream fileOutput = new FileOutputStream(file);
-
-                    byte buffer[] = new byte[1024];
-
-                    int bufferLength;
-
-                    long total = 0;
-
-//                    if(android.os.Debug.isDebuggerConnected()) android.os.Debug.waitForDebugger(); Para debugar é preciso colocar um breakpoint nessa linha
-
-                    while ((bufferLength = inputStream.read(buffer)) != -1) {
-                        total += bufferLength;
-                        publishProgress("" + (int) ((total * 100) / totalSize), getResources().getString(R.string.downloding));
-
-                        fileOutput.write(buffer, 0, bufferLength);
-                    }
-                    fileOutput.flush();
-
-                    fileOutput.close();
-
-                    this.unzip(new File(downloadDestinationFilePath), new File(unzipDestinationFilePath));
-
-                    return true;
-
-                } catch (IOException e) {
-                    throw new DownloadException("Error downloading file: " + urlToDownload[0], e);
-                }
-
-            } catch (DownloadException e) {
-                exception = e;
-            }
-            if(progressDialog != null && progressDialog.isShowing())
-                progressDialog.dismiss();
-            return false;
-        }
-
-        /**
-         * Count the number of files on a zip
-         * @param zipFile Zip file
-         * @return The number of files on the zip archive
-         */
-        private long countZipFiles(File zipFile){
-            ZipInputStream zis = null;
-            try {
-                zis = new ZipInputStream(
-                        new BufferedInputStream(new FileInputStream(zipFile)));
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-            long totalFiles = 0;
-            try {
-                while (zis.getNextEntry() != null) {
-                    totalFiles++;
-                }
-                zis.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return  totalFiles;
-        }
-
-        /**
-         * Unzip an archive
-         * @param zipFile Zip archive
-         * @param targetDirectory Directory to unzip the files
-         * @throws IOException
-         */
-        public void unzip(File zipFile, File targetDirectory) throws IOException {
-            ZipInputStream zis = new ZipInputStream(
-                    new BufferedInputStream(new FileInputStream(zipFile)));
-            try {
-                ZipEntry ze;
-                int count;
-                byte[] buffer = new byte[8192];
-                int numFiles = 0;
-                long totalFiles = countZipFiles(zipFile);
-
-                while ((ze = zis.getNextEntry()) != null) {
-                    numFiles++;
-
-                    File file = new File(targetDirectory, ze.getName());
-                    File dir = ze.isDirectory() ? file : file.getParentFile();
-                    if (!dir.isDirectory() && !dir.mkdirs())
-                        throw new FileNotFoundException("Failed to ensure directory: " +
-                                dir.getAbsolutePath());
-                    if (ze.isDirectory())
-                        continue;
-                    FileOutputStream fout = new FileOutputStream(file);
-                    try {
-                        long total = 0;
-                        long totalZipSize = ze.getCompressedSize();
-                        while ((count = zis.read(buffer)) != -1) {
-                            total += count;
-                            publishProgress("" + (int) ((total * 100) / totalZipSize), getResources().getString(R.string.decompressing)+"\n"+getResources().getString(R.string.file) + " " + numFiles + "/" + totalFiles);
-                                    fout.write(buffer, 0, count);
-                        }
-                    } finally {
-                        fout.close();
-                    }
-                }
-            } finally {
-                zis.close();
-            }
-        }
-
-        @Override
-        protected void onPostExecute(Boolean aBoolean) {
-            treeView.refreshTreeView();
-            if(progressDialog != null && progressDialog.isShowing()) {
-                if (aBoolean) {
-                    progressDialog.dismiss();
-                    Toast.makeText(MainActivity.this, R.string.download_success, Toast.LENGTH_LONG).show();
-                } else {
-                    progressDialog.dismiss();
-                    Toast.makeText(MainActivity.this, R.string.download_failed, Toast.LENGTH_LONG).show();
-                }
-            }
-            else{
-                Toast.makeText(MainActivity.this, R.string.download_failed, Toast.LENGTH_LONG).show();
-            }
-        }
-
-        @Override
-        protected void onProgressUpdate(String... values) {
-            if(progressDialog != null && progressDialog.isShowing()) {
-                progressDialog.setProgress(Integer.parseInt(values[0]));
-                progressDialog.setMessage(values[1]);
-            }
-        }
-
-        public DownloadException getException() {
-            return exception;
-        }
+    public ProgressDialog getProgressDialog() {
+        return progressDialog;
     }
 
+    public TreeView getTreeView() {
+        return treeView;
+    }
 }

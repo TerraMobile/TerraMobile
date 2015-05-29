@@ -1,17 +1,11 @@
-package br.org.funcate.terramobile.controller.activity;
+package br.org.funcate.terramobile.controller.activity.settings;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
-
-import java.io.File;
 
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.model.Settings;
@@ -36,10 +30,6 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
             settings.setUrl("");
             settingsDAO.insert(settings);
         }
-    }
-
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
     }
 
     @Override

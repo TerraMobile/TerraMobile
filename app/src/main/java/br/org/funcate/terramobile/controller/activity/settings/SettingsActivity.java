@@ -1,9 +1,8 @@
-package br.org.funcate.terramobile.controller.activity;
+package br.org.funcate.terramobile.controller.activity.settings;
 
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 
 /**
