@@ -10,10 +10,13 @@ import android.content.res.Resources;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import br.org.funcate.jgpkg.exception.QueryException;
 import br.org.funcate.terramobile.R;
-import br.org.funcate.terramobile.model.gpkg.objects.AppLayer;
+import br.org.funcate.terramobile.model.exception.InvalidGeopackageException;
+import br.org.funcate.terramobile.model.exception.TerraMobileException;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
 import br.org.funcate.terramobile.model.tilesource.AppGeoPackageService;
+import br.org.funcate.terramobile.util.DevUtil;
 import br.org.funcate.terramobile.util.ResourceUtil;
 import br.org.funcate.terramobile.view.MenuAdapter;
 
@@ -64,20 +67,20 @@ public class TreeView {
         GpkgLayer grpItem;
 //        for (int i = 0; i < l; i++) {
         grpItem=new GpkgLayer();
-        grpItem.setLayerName(grp[0]);
-        grpItem.setLayerType(AppLayer.TILES);
+        grpItem.setName(grp[0]);
+        grpItem.setType(GpkgLayer.Type.TILES);
         grpItem.setGeoPackage(null);
         groupItem.add(grpItem);
 
         grpItem=new GpkgLayer();
-        grpItem.setLayerName(grp[1]);
-        grpItem.setLayerType(AppLayer.EDITABLE);
+        grpItem.setName(grp[1]);
+        grpItem.setType(GpkgLayer.Type.EDITABLE);
         grpItem.setGeoPackage(null);
         groupItem.add(grpItem);
 
         grpItem=new GpkgLayer();
-        grpItem.setLayerName(grp[2]);
-        grpItem.setLayerType(AppLayer.FEATURES);
+        grpItem.setName(grp[2]);
+        grpItem.setType(GpkgLayer.Type.FEATURES);
         grpItem.setGeoPackage(null);
         groupItem.add(grpItem);
 //        }
@@ -102,13 +105,13 @@ public class TreeView {
 //        childItem.add(childTools);
 
         // get list layers from GeoPackage
-        AppGeoPackageService appGeoPackageService = new AppGeoPackageService(this.context);
         ArrayList<GpkgLayer> layers = null;
         try {
-            layers = appGeoPackageService.getLayers();
-        } catch (Exception e) {
+            layers = AppGeoPackageService.getLayers(this.context);
+        } catch (InvalidGeopackageException e) {
             System.out.print("Fail on load layers :" + e.getMessage());
-            populateDefaultNotFoundLayer();
+        } catch (QueryException e) {
+            System.out.print("Fail on load layers :" + e.getMessage());
         }
 
         if (null == layers || layers.size()==0) {
@@ -121,11 +124,11 @@ public class TreeView {
 
             GpkgLayer l = layersIterator.next();
 
-            AppLayer type=l.getLayerType();
+            GpkgLayer.Type type=l.getType();
 
             if(null==type) continue;
 
-            switch (l.getLayerType()){
+            switch (l.getType()){
                 case FEATURES:{
                     childCollectLayers.add(l);
                     break;
@@ -172,8 +175,8 @@ public class TreeView {
     private GpkgLayer getNotFoundMenuLayerItem() {
         GpkgLayer lnf = new GpkgLayer();
         lnf.setGeoPackage(null);
-        lnf.setLayerName(this.context.getResources().getString(R.string.data_not_found));
-        lnf.setLayerType(AppLayer.INVALID);
+        lnf.setName(this.context.getResources().getString(R.string.data_not_found));
+        lnf.setType(GpkgLayer.Type.INVALID);
         return lnf;
     }
 
@@ -191,4 +194,21 @@ public class TreeView {
         childItem.add(childCollectLayers);
         childItem.add(childOnlineLayers);
     }
+    public GpkgLayer getLayerByName(String layerName) throws TerraMobileException {
+        if(DevUtil.isNull(layerName))
+        {
+            throw new TerraMobileException("Invalid layer name.");
+        }
+
+        for(int i = 0; i < childItem.size(); i++) {
+            ArrayList<GpkgLayer> layers = childItem.get(i);
+            for (int j = 0; j < layers.size(); j++) {
+                if (layerName.equalsIgnoreCase(layers.get(j).getName())) {
+                    return layers.get(j);
+                }
+            }
+        }
+        throw new TerraMobileException("Requested layer not found");
+    }
+
 }

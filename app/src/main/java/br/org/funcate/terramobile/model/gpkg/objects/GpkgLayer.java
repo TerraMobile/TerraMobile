@@ -2,15 +2,26 @@ package br.org.funcate.terramobile.model.gpkg.objects;
 
 import com.augtech.geoapi.geopackage.GeoPackage;
 
+import org.osmdroid.util.BoundingBoxE6;
+
 /**
  * Created by Andre Carvalho on 29/04/15.
  */
 public class GpkgLayer{
 
-    private String layerName;
-    private AppLayer layerType;
+    public enum Type {
+        // Editable: layer
+        // TilES: base layer
+        // Features: gathering layer
+        FEATURES, TILES, EDITABLE, ONLINE, INVALID
+    }
+
+    private String name;
+    private Type type;
     private GeoPackage geoPackage;
     private int indexOverlay;
+    private BoundingBoxE6 box;
+    private Integer srsId;
 
     public GpkgLayer() {
     }
@@ -19,20 +30,20 @@ public class GpkgLayer{
         this.geoPackage=geoPackage;
     }
 
-    public String getLayerName() {
-        return layerName;
+    public String getName() {
+        return name;
     }
 
-    public void setLayerName(String layerName) {
-        this.layerName = layerName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public AppLayer getLayerType() {
-        return layerType;
+    public Type getType() {
+        return type;
     }
 
-    public void setLayerType(AppLayer layerType) {
-        this.layerType = layerType;
+    public void setType(Type type) {
+        this.type = type;
     }
 
     public GeoPackage getGeoPackage() {
@@ -49,5 +60,22 @@ public class GpkgLayer{
 
     public void setIndexOverlay(int indexOverlay) {
         this.indexOverlay = indexOverlay;
+    }
+
+    public BoundingBoxE6 getBox()
+    {
+        return box;
+    }
+
+    public void setBox(BoundingBoxE6 box) {
+        this.box = box;
+    }
+
+    public Integer getSrsId() {
+        return srsId;
+    }
+
+    public void setSrsId(Integer srsId) {
+        this.srsId = srsId;
     }
 }

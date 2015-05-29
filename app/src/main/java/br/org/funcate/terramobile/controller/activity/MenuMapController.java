@@ -57,7 +57,7 @@ public class MenuMapController {
 
             final ITileSource tileSource = new XYTileSource("Mapnik", ResourceProxy.string.mapnik, 1, 18, 256, ".png", new String[] {"http://tile.openstreetmap.org/"});
 
-            MapTileModuleProviderBase moduleProvider = new MapTileGeoPackageProvider(tileSource, child.getLayerName(), child.getGeoPackage());
+            MapTileModuleProviderBase moduleProvider = new MapTileGeoPackageProvider(tileSource, child.getName(), child.getGeoPackage());
             SimpleRegisterReceiver simpleReceiver = new SimpleRegisterReceiver(context);
             MapTileProviderArray tileProviderArray = new MapTileProviderArray(tileSource, simpleReceiver, new MapTileModuleProviderBase[] { moduleProvider });
 
