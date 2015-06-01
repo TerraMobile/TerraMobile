@@ -204,10 +204,6 @@ public class TreeView {
         }
         throw new TerraMobileException("Requested layer not found");
     }
-<<<<<<< HEAD
-}
-=======
-
 
     public GpkgLayer getSelectedEditableLayer() {
         return selectedEditableLayer;
@@ -216,7 +212,4 @@ public class TreeView {
     public void setSelectedEditableLayer(GpkgLayer selectedEditableLayer) {
         this.selectedEditableLayer = selectedEditableLayer;
     }
-
-
 }
->>>>>>> c1f5136653cc16b729621b4ed66846143db155f7
