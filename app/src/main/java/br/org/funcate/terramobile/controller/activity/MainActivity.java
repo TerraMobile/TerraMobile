@@ -47,7 +47,9 @@ import br.org.funcate.dynamicforms.util.PositionUtilities;
 import br.org.funcate.dynamicforms.util.Utilities;
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.configuration.ViewContextParameters;
+import br.org.funcate.terramobile.controller.activity.settings.CredentialsFragment;
 import br.org.funcate.terramobile.controller.activity.settings.SettingsActivity;
+import br.org.funcate.terramobile.controller.activity.settings.SettingsFragment;
 import br.org.funcate.terramobile.model.exception.DownloadException;
 import br.org.funcate.terramobile.model.exception.TerraMobileException;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
@@ -67,6 +69,8 @@ public class MainActivity extends FragmentActivity {
 
     // Progress bar
     private ProgressDialog progressDialog;
+
+    private ListPackageFragment listPackageFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -165,6 +169,8 @@ public class MainActivity extends FragmentActivity {
         // Handle action buttons
         switch(item.getItemId()) {
             case R.id.download_geo_package:
+//              listPackageFragment = new ListPackageFragment();
+//              listPackageFragment.show(getFragmentManager(), "packageList");
                 ConnectivityManager cm = (ConnectivityManager)this.getSystemService(this.CONNECTIVITY_SERVICE);
 
                 int wifi = ConnectivityManager.TYPE_WIFI;
@@ -178,7 +184,7 @@ public class MainActivity extends FragmentActivity {
                     new DownloadTask(destinationFilePath, true, this).execute(tempURL);
                 }
                 else{
-                    Toast.makeText(this, R.string.no_connection, Toast.LENGTH_LONG).show();
+                    Message.showMessage(this, R.drawable.error, getResources().getString(R.string.error), getResources().getString(R.string.no_connection));
                 }
                 return true;
             case R.id.acquire_new_point:
@@ -273,13 +279,20 @@ public class MainActivity extends FragmentActivity {
     /**
      * Shows a progress bar with the download progress
      */
-    protected void showProgressDialog() {
+    protected void showProgressDialog(String message) {
         progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage(getResources().getString(R.string.downloding));
+        progressDialog.setMessage(message);
         progressDialog.setIndeterminate(false);
         progressDialog.setMax(100);
         progressDialog.setProgress(0);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+    }
+
+    protected void showLoadingDialog(String message) {
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage(message);
         progressDialog.setCancelable(false);
         progressDialog.show();
     }
@@ -290,5 +303,9 @@ public class MainActivity extends FragmentActivity {
 
     public TreeView getTreeView() {
         return treeView;
+    }
+
+    public ListPackageFragment getListPackageFragment() {
+        return listPackageFragment;
     }
 }
