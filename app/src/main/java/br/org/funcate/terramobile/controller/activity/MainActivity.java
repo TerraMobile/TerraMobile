@@ -65,16 +65,6 @@ public class MainActivity extends FragmentActivity {
 
     private ViewContextParameters parameters=new ViewContextParameters();
 
-    // this members is used in dynamic form process.
-    private static final String USE_MAPCENTER_POSITION = "USE_MAPCENTER_POSITION";
-    private static final int FORM_RETURN_CODE = 669;
-    private double latitude;
-    private double longitude;
-    private double elevation;
-    private double[] gpsLocation;
-    private final int RETURNCODE_DETAILACTIVITY = 665;
-    // --------------------------------------------
-
     // Progress bar
     private ProgressDialog progressDialog;
 
@@ -229,54 +219,19 @@ public class MainActivity extends FragmentActivity {
     }
 
     private void startForm() {
-        // TODO: this name provided from the configuration of the "collect layer" in database.
-        String sectionName = "terramobile";
-        String selectedItemName = "crop features";
-
-        checkPositionCoordinates();
+        // This id is provided from the selected point, if one it is selected.
+        long selectedPointID = 123543;
 
         // insert note and then work on it
         try {
-            JSONObject sectionObject = TagsManager.getInstance(MainActivity.this).getSectionByName(sectionName);
-            String sectionObjectString = sectionObject.toString();
-
-            long noteId = 123543;// fake number. remove this in future.
-
-            // launch form activity
-           /* Intent formIntent = new Intent(MainActivity.this, FormActivity.class);
-            formIntent.putExtra(LibraryConstants.DATABASE_ID, noteId);
-            formIntent.putExtra(LibraryConstants.PREFS_KEY_FORM_NAME, sectionName);
-            formIntent.putExtra(LibraryConstants.LATITUDE, latitude);
-            formIntent.putExtra(LibraryConstants.LONGITUDE, longitude);
-            formIntent.putExtra(LibraryConstants.ELEVATION, elevation);
-            startActivityForResult(formIntent, FORM_RETURN_CODE);*/
-
             Intent formIntent = new Intent(MainActivity.this, FragmentDetailActivity.class);
-            formIntent.putExtra(LibraryConstants.DATABASE_ID, noteId);
-            formIntent.putExtra(FormUtilities.ATTR_FORMNAME, selectedItemName);
-            formIntent.putExtra(FormUtilities.ATTR_SECTIONOBJECTSTR, sectionObjectString);
-            formIntent.putExtra(LibraryConstants.LONGITUDE, longitude);
-            formIntent.putExtra(LibraryConstants.LATITUDE, latitude);
-            startActivityForResult(formIntent, RETURNCODE_DETAILACTIVITY);
-
+            formIntent.putExtra(LibraryConstants.DATABASE_ID, selectedPointID);
+            // The form name attribute, provided by JSON, shall be the same name of the editable layer.
+            formIntent.putExtra(FormUtilities.ATTR_FORMNAME, treeView.getSelectedEditableLayer().getName());
+            startActivity(formIntent);
 
         } catch (Exception e) {
             Utilities.messageDialog(MainActivity.this, "falhou ao abrir formulário de coleta de dados." + e.getMessage(), null);
-        }
-    }
-
-    private void checkPositionCoordinates() {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean useMapCenterPosition = preferences.getBoolean(USE_MAPCENTER_POSITION, false);
-        if (useMapCenterPosition || gpsLocation == null) {
-            double[] mapCenter = PositionUtilities.getMapCenterFromPreferences(preferences, true, true);
-            latitude = mapCenter[1];
-            longitude = mapCenter[0];
-            elevation = 0.0;
-        } else {
-            latitude = gpsLocation[1];
-            longitude = gpsLocation[0];
-            elevation = gpsLocation[2];
         }
     }
 

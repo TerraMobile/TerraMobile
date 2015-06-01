@@ -18,10 +18,13 @@
 package br.org.funcate.dynamicforms;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.view.KeyEvent;
 import android.view.View;
@@ -35,6 +38,7 @@ import java.util.List;
 
 import br.org.funcate.dynamicforms.constraints.Constraints;
 import br.org.funcate.dynamicforms.util.LibraryConstants;
+import br.org.funcate.dynamicforms.util.PositionUtilities;
 import br.org.funcate.dynamicforms.util.Utilities;
 
 import static br.org.funcate.dynamicforms.FormUtilities.TAG_IS_RENDER_LABEL;
@@ -56,9 +60,22 @@ public class FragmentDetailActivity extends FragmentActivity {
     private double elevation = -9999.0;
     private long noteId;
 
+    // this members is used in dynamic form process.
+    private static final String USE_MAPCENTER_POSITION = "USE_MAPCENTER_POSITION";
+    private double[] gpsLocation;
+    // --------------------------------------------
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        String defaultSectionName = "terramobile";
+        try {
+            sectionObject = TagsManager.getInstance(getApplicationContext()).getSectionByName(defaultSectionName);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        sectionObjectString = sectionObject.toString();
 
         // don't permit rotation
         int currentOrientation = getResources().getConfiguration().orientation;
@@ -214,7 +231,6 @@ public class FragmentDetailActivity extends FragmentActivity {
         }
 
         // finally store data
-        String sectionObjectString = sectionObject.toString();
         long timestamp = System.currentTimeMillis();
 
         if (renderingLabel == null) {
@@ -244,25 +260,18 @@ public class FragmentDetailActivity extends FragmentActivity {
         return super.onKeyDown(keyCode, event);
     }
 
-
-/*    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        // force to exit through the exit button, in order to avoid losing info
-        switch (keyCode) {
-            case KeyEvent.KEYCODE_BACK:
-                FragmentDetail currentFragment = (FragmentDetail) getSupportFragmentManager().findFragmentById(R.id.detailFragment);
-                if (currentFragment != null) {
-                    try {
-                        currentFragment.storeFormItems(false);
-                    } catch (Exception e) {
-                        //GPLog.error(this, null, e);
-                        Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-                    }
-                    JSONObject returnSectionObject = currentFragment.getSectionObject();
-                    Intent intent = getIntent();
-                    intent.putExtra(FormUtilities.ATTR_SECTIONOBJECTSTR, returnSectionObject.toString());
-                    setResult(Activity.RESULT_OK, intent);
-                }
+    private void checkPositionCoordinates() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean useMapCenterPosition = preferences.getBoolean(USE_MAPCENTER_POSITION, false);
+        if (useMapCenterPosition || gpsLocation == null) {
+            double[] mapCenter = PositionUtilities.getMapCenterFromPreferences(preferences, true, true);
+            latitude = mapCenter[1];
+            longitude = mapCenter[0];
+            elevation = 0.0;
+        } else {
+            latitude = gpsLocation[1];
+            longitude = gpsLocation[0];
+            elevation = gpsLocation[2];
         }
-        return super.onKeyDown(keyCode, event);
-    }*/
+    }
 }
