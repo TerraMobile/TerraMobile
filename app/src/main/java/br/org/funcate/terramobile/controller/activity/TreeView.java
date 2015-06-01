@@ -1,18 +1,17 @@
 package br.org.funcate.terramobile.controller.activity;
 
 import android.content.Context;
-import android.widget.ExpandableListAdapter;
+import android.content.res.Resources;
 import android.widget.ExpandableListView;
 import android.widget.Toast;
-
-import android.content.res.Resources;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import br.org.funcate.jgpkg.exception.QueryException;
 import br.org.funcate.terramobile.R;
+import br.org.funcate.terramobile.model.exception.InvalidGeopackageException;
 import br.org.funcate.terramobile.model.exception.TerraMobileException;
-import br.org.funcate.terramobile.model.gpkg.objects.AppLayer;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
 import br.org.funcate.terramobile.model.tilesource.AppGeoPackageService;
 import br.org.funcate.terramobile.util.DevUtil;
@@ -30,6 +29,7 @@ public class TreeView {
     private Context context;
     private Resources resources;
     private MenuAdapter mMenuAdapter;
+    private GpkgLayer selectedEditableLayer;
 
     public TreeView(Context context){
         this.context=context;
@@ -50,7 +50,7 @@ public class TreeView {
 
         mMenuAdapter = new MenuAdapter(this.context, groupItem, childItem);
         mDrawerList.setAdapter(mMenuAdapter);
-
+        selectedEditableLayer=null;
     }
 
     public void refreshTreeView(){
@@ -64,20 +64,20 @@ public class TreeView {
         String[] grp= ResourceUtil.getStringArrayResource(this.resources, R.array.menu_groups);
         GpkgLayer grpItem;
         grpItem=new GpkgLayer();
-        grpItem.setLayerName(grp[0]);
-        grpItem.setLayerType(AppLayer.TILES);
+        grpItem.setName(grp[0]);
+        grpItem.setType(GpkgLayer.Type.TILES);
         grpItem.setGeoPackage(null);
         groupItem.add(grpItem);
 
         grpItem=new GpkgLayer();
-        grpItem.setLayerName(grp[1]);
-        grpItem.setLayerType(AppLayer.EDITABLE);
+        grpItem.setName(grp[1]);
+        grpItem.setType(GpkgLayer.Type.EDITABLE);
         grpItem.setGeoPackage(null);
         groupItem.add(grpItem);
 
         grpItem=new GpkgLayer();
-        grpItem.setLayerName(grp[2]);
-        grpItem.setLayerType(AppLayer.FEATURES);
+        grpItem.setName(grp[2]);
+        grpItem.setType(GpkgLayer.Type.FEATURES);
         grpItem.setGeoPackage(null);
         groupItem.add(grpItem);
     }
@@ -102,9 +102,10 @@ public class TreeView {
         ArrayList<GpkgLayer> layers = null;
         try {
             layers = AppGeoPackageService.getLayers(this.context);
-        } catch (Exception e) {
+        } catch (InvalidGeopackageException e) {
             System.out.print("Fail on load layers :" + e.getMessage());
-            populateDefaultNotFoundLayer();
+        } catch (QueryException e) {
+            System.out.print("Fail on load layers :" + e.getMessage());
         }
 
         if (null == layers || layers.size()==0) {
@@ -117,11 +118,11 @@ public class TreeView {
 
             GpkgLayer l = layersIterator.next();
 
-            AppLayer type=l.getLayerType();
+            GpkgLayer.Type type=l.getType();
 
             if(null==type) continue;
 
-            switch (l.getLayerType()){
+            switch (l.getType()){
                 case FEATURES:{
                     childCollectLayers.add(l);
                     break;
@@ -132,6 +133,7 @@ public class TreeView {
                 }
                 case EDITABLE:{
                     childOnlineLayers.add(l);
+                    break;
                 }
                 case ONLINE:{
                     // TODO: this type layer not implemented yet.
@@ -167,8 +169,8 @@ public class TreeView {
     private GpkgLayer getNotFoundMenuLayerItem() {
         GpkgLayer lnf = new GpkgLayer();
         lnf.setGeoPackage(null);
-        lnf.setLayerName(this.context.getResources().getString(R.string.data_not_found));
-        lnf.setLayerType(AppLayer.INVALID);
+        lnf.setName(this.context.getResources().getString(R.string.data_not_found));
+        lnf.setType(GpkgLayer.Type.INVALID);
         return lnf;
     }
 
@@ -195,11 +197,26 @@ public class TreeView {
         for(int i = 0; i < childItem.size(); i++) {
             ArrayList<GpkgLayer> layers = childItem.get(i);
             for (int j = 0; j < layers.size(); j++) {
-                if (layerName.equalsIgnoreCase(layers.get(j).getLayerName())) {
+                if (layerName.equalsIgnoreCase(layers.get(j).getName())) {
                     return layers.get(j);
                 }
             }
         }
         throw new TerraMobileException("Requested layer not found");
     }
+<<<<<<< HEAD
 }
+=======
+
+
+    public GpkgLayer getSelectedEditableLayer() {
+        return selectedEditableLayer;
+    }
+
+    public void setSelectedEditableLayer(GpkgLayer selectedEditableLayer) {
+        this.selectedEditableLayer = selectedEditableLayer;
+    }
+
+
+}
+>>>>>>> c1f5136653cc16b729621b4ed66846143db155f7
