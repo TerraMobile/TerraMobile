@@ -41,10 +41,6 @@
             android:name=".controller.activity.settings.SettingsActivity"
             android:label="@string/title_activity_settings" >
         </activity>
-        <activity
-            android:name=".controller.activity.DownloadTask"
-            android:label="@string/title_activity_download_task" >
-        </activity>
     </application>
 
 </manifest>

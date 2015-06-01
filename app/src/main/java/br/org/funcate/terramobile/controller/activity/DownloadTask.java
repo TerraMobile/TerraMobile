@@ -42,7 +42,7 @@ public class DownloadTask extends AsyncTask<String, String, Boolean> {
 
     @Override
     protected void onPreExecute() {
-        mainActivity.showProgressDialog();
+        mainActivity.showProgressDialog(mainActivity.getResources().getString(R.string.downloding));
     }
 
     protected Boolean doInBackground(String... urlToDownload) {
@@ -189,14 +189,14 @@ public class DownloadTask extends AsyncTask<String, String, Boolean> {
         if(mainActivity.getProgressDialog() != null && mainActivity.getProgressDialog().isShowing()) {
             if (aBoolean) {
                 mainActivity.getProgressDialog().dismiss();
-                Toast.makeText(mainActivity, R.string.download_success, Toast.LENGTH_LONG).show();
+                Message.showMessage(mainActivity, R.drawable.success, mainActivity.getResources().getString(R.string.success), mainActivity.getResources().getString(R.string.download_success));
             } else {
                 mainActivity.getProgressDialog().dismiss();
-                Toast.makeText(mainActivity, R.string.download_failed, Toast.LENGTH_LONG).show();
+                Message.showMessage(mainActivity, R.drawable.error, mainActivity.getResources().getString(R.string.error), mainActivity.getResources().getString(R.string.download_failed));
             }
         }
         else{
-            Toast.makeText(mainActivity, R.string.download_failed, Toast.LENGTH_LONG).show();
+            Message.showMessage(mainActivity, R.drawable.error, mainActivity.getResources().getString(R.string.error), mainActivity.getResources().getString(R.string.download_failed));
         }
     }
 

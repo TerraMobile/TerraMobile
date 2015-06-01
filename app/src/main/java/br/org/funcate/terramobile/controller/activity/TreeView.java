@@ -62,9 +62,7 @@ public class TreeView {
 
     private void setGroupData() {
         String[] grp= ResourceUtil.getStringArrayResource(this.resources, R.array.menu_groups);
-//        int l=grp.length;
         GpkgLayer grpItem;
-//        for (int i = 0; i < l; i++) {
         grpItem=new GpkgLayer();
         grpItem.setLayerName(grp[0]);
         grpItem.setLayerType(AppLayer.TILES);
@@ -82,12 +80,9 @@ public class TreeView {
         grpItem.setLayerType(AppLayer.FEATURES);
         grpItem.setGeoPackage(null);
         groupItem.add(grpItem);
-//        }
     }
 
     private void setChildGroupData() {
-
-//        ArrayList<TerraMobileMenuItem> childTools = new ArrayList<TerraMobileMenuItem>();
         ArrayList<GpkgLayer> childBaseLayers = new ArrayList<GpkgLayer>();
         ArrayList<GpkgLayer> childCollectLayers = new ArrayList<GpkgLayer>();
         ArrayList<GpkgLayer> childOnlineLayers = new ArrayList<GpkgLayer>();
@@ -207,5 +202,4 @@ public class TreeView {
         }
         throw new TerraMobileException("Requested layer not found");
     }
-
 }
