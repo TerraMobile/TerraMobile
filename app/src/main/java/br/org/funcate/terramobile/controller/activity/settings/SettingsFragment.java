@@ -46,8 +46,8 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                 SettingsFragment settingsFragment = (SettingsFragment) getActivity().getFragmentManager().findFragmentByTag("settings");
                 SharedPreferences sharedPreferences = settingsFragment.getPreferenceManager().getSharedPreferences();
                 SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putString("url", String.valueOf(settings.getUrl()));
-                editor.commit();
+                editor.putString("url", settings.getUrl());
+                editor.apply();
             }
         }
         return super.onPreferenceTreeClick(preferenceScreen, preference);
@@ -59,7 +59,6 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         Settings settings;
         if (settingsDAO.getById(1) != null) {
             settings = settingsDAO.getById(1);
-            settings.setId(1);
             if (key.equals("url")) {
                 settings.setUrl(sharedPreferences.getString(key, ""));
             } else if (key.equals("userName")) {

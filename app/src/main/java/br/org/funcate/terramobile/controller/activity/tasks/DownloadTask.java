@@ -1,7 +1,6 @@
-package br.org.funcate.terramobile.controller.activity;
+package br.org.funcate.terramobile.controller.activity.tasks;
 
 import android.os.AsyncTask;
-import android.widget.Toast;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -17,6 +16,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import br.org.funcate.terramobile.R;
+import br.org.funcate.terramobile.controller.activity.MainActivity;
+import br.org.funcate.terramobile.util.Message;
 import br.org.funcate.terramobile.model.exception.DownloadException;
 
 /**
@@ -42,7 +43,7 @@ public class DownloadTask extends AsyncTask<String, String, Boolean> {
 
     @Override
     protected void onPreExecute() {
-        mainActivity.showProgressDialog(mainActivity.getResources().getString(R.string.downloding));
+        mainActivity.showProgressDialog(mainActivity.getResources().getString(R.string.downloading));
     }
 
     protected Boolean doInBackground(String... urlToDownload) {
@@ -90,7 +91,7 @@ public class DownloadTask extends AsyncTask<String, String, Boolean> {
 
                 while ((bufferLength = inputStream.read(buffer)) != -1) {
                     total += bufferLength;
-                    publishProgress("" + (int) ((total * 100) / totalSize), mainActivity.getResources().getString(R.string.downloding));
+                    publishProgress("" + (int) ((total * 100) / totalSize), mainActivity.getResources().getString(R.string.downloading));
 
                     fileOutput.write(buffer, 0, bufferLength);
                 }
@@ -189,14 +190,14 @@ public class DownloadTask extends AsyncTask<String, String, Boolean> {
         if(mainActivity.getProgressDialog() != null && mainActivity.getProgressDialog().isShowing()) {
             if (aBoolean) {
                 mainActivity.getProgressDialog().dismiss();
-                Message.showMessage(mainActivity, R.drawable.success, mainActivity.getResources().getString(R.string.success), mainActivity.getResources().getString(R.string.download_success));
+                Message.showSuccessMessage(mainActivity, R.string.success, R.string.download_success);
             } else {
                 mainActivity.getProgressDialog().dismiss();
-                Message.showMessage(mainActivity, R.drawable.error, mainActivity.getResources().getString(R.string.error), mainActivity.getResources().getString(R.string.download_failed));
+                Message.showErrorMessage(mainActivity, R.string.error, R.string.download_failed);
             }
         }
         else{
-            Message.showMessage(mainActivity, R.drawable.error, mainActivity.getResources().getString(R.string.error), mainActivity.getResources().getString(R.string.download_failed));
+            Message.showErrorMessage(mainActivity, R.string.error, R.string.download_failed);
         }
     }
 

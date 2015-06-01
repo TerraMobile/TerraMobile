@@ -21,7 +21,6 @@ import br.org.funcate.terramobile.controller.activity.MenuMapController;
 import br.org.funcate.terramobile.controller.activity.TreeView;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
 
-@SuppressWarnings("unchecked")
 public class MenuAdapter extends BaseExpandableListAdapter implements View.OnClickListener {
 
 	public ArrayList<GpkgLayer> groupItem;

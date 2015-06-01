@@ -1,12 +1,10 @@
 package br.org.funcate.terramobile.controller.activity;
 
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.net.ConnectivityManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -26,18 +24,7 @@ import android.widget.Toast;
 
 import org.json.JSONObject;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 import br.org.funcate.dynamicforms.FormUtilities;
 import br.org.funcate.dynamicforms.FragmentDetailActivity;
@@ -47,13 +34,12 @@ import br.org.funcate.dynamicforms.util.PositionUtilities;
 import br.org.funcate.dynamicforms.util.Utilities;
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.configuration.ViewContextParameters;
-import br.org.funcate.terramobile.controller.activity.settings.CredentialsFragment;
 import br.org.funcate.terramobile.controller.activity.settings.SettingsActivity;
-import br.org.funcate.terramobile.controller.activity.settings.SettingsFragment;
-import br.org.funcate.terramobile.model.exception.DownloadException;
+import br.org.funcate.terramobile.controller.activity.tasks.DownloadTask;
 import br.org.funcate.terramobile.model.exception.TerraMobileException;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
 import br.org.funcate.terramobile.model.tilesource.AppGeoPackageService;
+import br.org.funcate.terramobile.util.Message;
 import br.org.funcate.terramobile.util.ResourceUtil;
 
 public class MainActivity extends FragmentActivity {
@@ -194,7 +180,7 @@ public class MainActivity extends FragmentActivity {
                     new DownloadTask(destinationFilePath, true, this).execute(tempURL);
                 }
                 else{
-                    Message.showMessage(this, R.drawable.error, getResources().getString(R.string.error), getResources().getString(R.string.no_connection));
+                    Message.showErrorMessage(this, R.string.error, R.string.no_connection);
                 }
                 return true;
             case R.id.acquire_new_point:
@@ -324,7 +310,7 @@ public class MainActivity extends FragmentActivity {
     /**
      * Shows a progress bar with the download progress
      */
-    protected void showProgressDialog(String message) {
+    public void showProgressDialog(String message) {
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage(message);
         progressDialog.setIndeterminate(false);
@@ -335,7 +321,7 @@ public class MainActivity extends FragmentActivity {
         progressDialog.show();
     }
 
-    protected void showLoadingDialog(String message) {
+    public void showLoadingDialog(String message) {
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage(message);
         progressDialog.setCancelable(false);

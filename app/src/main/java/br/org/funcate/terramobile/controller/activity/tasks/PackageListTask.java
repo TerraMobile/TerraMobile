@@ -1,4 +1,4 @@
-package br.org.funcate.terramobile.controller.activity;
+package br.org.funcate.terramobile.controller.activity.tasks;
 
 import android.net.ConnectivityManager;
 import android.os.AsyncTask;
@@ -21,6 +21,8 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 import br.org.funcate.terramobile.R;
+import br.org.funcate.terramobile.controller.activity.MainActivity;
+import br.org.funcate.terramobile.util.Message;
 
 /**
  * This AsyncTask receives the data from the server
@@ -91,9 +93,12 @@ public class PackageListTask extends AsyncTask<String, String, JSONObject> {
                     String pkg = json.getString("pkg"); // TODO: Change the array item name
                     aLItems.add(pkg);
                 }
-                mainActivity.getListPackageFragment().setListItems(aLItems);
+                if(!aLItems.isEmpty())
+                    mainActivity.getListPackageFragment().setListItems(aLItems);
+                else
+                    Message.showErrorMessage(mainActivity, R.string.error, R.string.projects_not_found);
             } else
-                Message.showMessage(mainActivity, R.drawable.error, mainActivity.getResources().getString(R.string.error), "Projects not found");
+                Message.showErrorMessage(mainActivity, R.string.error, R.string.projects_not_found);
         } catch (JSONException e) {
             e.printStackTrace();
         }
