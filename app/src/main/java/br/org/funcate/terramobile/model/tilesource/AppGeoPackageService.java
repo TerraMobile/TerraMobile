@@ -51,7 +51,11 @@ public class AppGeoPackageService {
         // ------------------------------------------------------------------------
         String gpkgFilePath=appPath+"/terramobile_demo.gpkg";
 
-        return gpkgFilePath;
+        File file = new File(gpkgFilePath);
+        if(file.exists())
+            return gpkgFilePath;
+        else
+            return null;
     }
 
     /**
@@ -62,6 +66,8 @@ public class AppGeoPackageService {
     public static ArrayList<GpkgLayer> getLayers(Context context) throws InvalidGeopackageException, QueryException {
 
         String gpkgFilePath = getGpkgFilePath(context);
+        if(gpkgFilePath == null)
+            return null;
         GeoPackage gpkg = GeoPackageService.readGPKG(context, gpkgFilePath);
 
         if(!gpkg.isGPKGValid(true))
@@ -130,8 +136,8 @@ public class AppGeoPackageService {
 
             listLayers.add(layer);
             }
-
         gpkg.close();
+
         return listLayers;
     }
 
