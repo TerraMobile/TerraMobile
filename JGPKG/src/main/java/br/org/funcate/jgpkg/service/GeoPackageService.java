@@ -161,24 +161,31 @@ public class GeoPackageService {
         return (GpkgContents) getGpkgTable(gpkg,gpkgTableName);
     }
 
-
-
-
-
-    public static TMConfigEditableLayer getTMConfigEditableLayer(GeoPackage gpkg) throws Exception {
+    /**
+     * Load the configuration to create form to editable layer.
+     * @param gpkg, the GeoPackage reference
+     * @return The id of the editable layer and the JSON configuration into TMConfigEditableLayer object
+     * @throws Exception
+     */
+    public static TMConfigEditableLayer getTMConfigEditableLayer(GeoPackage gpkg) throws QueryException {
 
         String tableName = "tm_layer_form";
         String[] columns = new String[2];
-        columns[0] = "pkg_layer_identify";
+        columns[0] = "gpkg_layer_identify";
         columns[1] = "tm_form";
 
         TMConfigEditableLayer tmConfigEditableLayer=new TMConfigEditableLayer();
-        ICursor c = gpkg.getDatabase().doQuery(tableName,columns,null);
-        while (c.moveToNext()){
-            String id=c.getString(0);
-            String json=c.getString(1);
-            tmConfigEditableLayer.addConfigLayer(id,json);
+        try {
+            ICursor c = gpkg.getDatabase().doQuery(tableName, columns, null);
+            while (c.moveToNext()) {
+                String id = c.getString(0);
+                String json = c.getString(1);
+                tmConfigEditableLayer.addConfigLayer(id, json);
+            }
+        }catch (Exception e) {
+            throw new QueryException(e.getMessage());
         }
+
         return tmConfigEditableLayer;
     }
 
@@ -198,14 +205,12 @@ public class GeoPackageService {
         }
 
         ICursor c = contents.query(gpkg, columns, whereClause);
-        int len= columns.length;
         ArrayList<ArrayList<GpkgField>> records=new ArrayList<ArrayList<GpkgField>>();
         while (c.moveToNext()){
             ArrayList<GpkgField> aRecord=new ArrayList<GpkgField>(c.getColumnCount());
             for (int i = 0; i < c.getColumnCount(); i++) {
-                GpkgField field = contents.getField(c.getColumnName(i));
+                GpkgField field = (contents.getField(c.getColumnName(i))).clone();
                 field.setValue(getCursorValue(c, i, field.getFieldType()));
-                String type = field.getFieldType();
                 aRecord.add(field);
             }
             records.add(aRecord);

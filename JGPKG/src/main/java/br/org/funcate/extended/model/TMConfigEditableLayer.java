@@ -20,8 +20,11 @@ public class TMConfigEditableLayer {
     }
 
     public String getConfigLayer(String identify) {
-        this.configLayer.get(identify);
-        return null;
+        return this.configLayer.get(identify);
+    }
+
+    public boolean isEditableLayer(String identify) {
+        return this.configLayer.containsKey(identify);
     }
 
 }
