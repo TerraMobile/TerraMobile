@@ -115,24 +115,28 @@ public class GeoPackageService {
         return tile;
     }
 
-    public static Map<String, Integer> getTileTableMaxMin(GeoPackage gpkg, String tableName, String tableType) throws Exception {
+    public static Map<String, Integer> getTilesBounds(GeoPackage gpkg, String tableName, String tableType, Integer zoomLevel) throws Exception {
         if (!gpkg.isGPKGValid(true)) {
             throw new Exception("Invalid GeoPackage file.");
         }
 
-        ICursor icursor = gpkg.getUserTable(tableName, tableType).query(gpkg, new String[]{"max(zoom_level), min(zoom_level), max(tile_row), min(tile_row), max(tile_column), min(tile_column)"}, "");
+        ICursor icursor = gpkg.getUserTable(tableName, tableType).query(gpkg, new String[]{"max(tile_row), min(tile_row), max(tile_column), min(tile_column)"}, "zoom_level="+zoomLevel.intValue());
 
         Map<String, Integer> ranges = new HashMap<String, Integer>();
 
         if (icursor.moveToNext()) {
+/*
             int minZoomLevel = icursor.getInt(icursor.getColumnIndex("min(zoom_level)"));
             int maxZoomLevel = icursor.getInt(icursor.getColumnIndex("max(zoom_level)"));
+*/
             int minTileRow = icursor.getInt(icursor.getColumnIndex("min(tile_row)"));
             int maxTileRow = icursor.getInt(icursor.getColumnIndex("max(tile_row)"));
             int minTileColumn = icursor.getInt(icursor.getColumnIndex("min(tile_column)"));
             int maxTileColumn = icursor.getInt(icursor.getColumnIndex("max(tile_column)"));
+/*
             ranges.put("minZoomLevel", minZoomLevel);
             ranges.put("maxZoomLevel", maxZoomLevel);
+*/
             ranges.put("minTileRow", minTileRow);
             ranges.put("maxTileRow", maxTileRow);
             ranges.put("minTileColumn", minTileColumn);
