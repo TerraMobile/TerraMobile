@@ -56,15 +56,24 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         SettingsDAO settingsDAO = new SettingsDAO(getActivity());
-        Settings settings;
-        if (settingsDAO.getById(1) != null) {
-            settings = settingsDAO.getById(1);
-            if (key.equals("url")) {
-                settings.setUrl(sharedPreferences.getString(key, ""));
+        Settings settings = settingsDAO.getById(1);
+        if (settings != null) {
+            if (key.equals("url")) { //TODO: Create a dialogFragment for the validate works correctly
+                String url = sharedPreferences.getString(key, "http://");
+                if(url != null){
+                    url = url.trim();
+                    if(url.endsWith("/"))
+                        url = url.substring(0, url.length() - 1);
+                }
+                settings.setUrl(url);
             } else if (key.equals("userName")) {
-                settings.setUserName(sharedPreferences.getString(key, ""));
+                String userName = sharedPreferences.getString(key, "");
+                if(userName != null)
+                    settings.setUserName(userName.trim());
             } else if (key.equals("password")) {
-                settings.setPassword(sharedPreferences.getString(key, ""));
+                String password = sharedPreferences.getString(key, "");
+                if(password != null)
+                    settings.setPassword(password.trim());
             }
             settingsDAO.update(settings);
         }
@@ -78,8 +87,24 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        getPreferenceScreen()
+                .getSharedPreferences()
+                .registerOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
     public void onPause() {
         super.onPause();
+        getPreferenceScreen()
+                .getSharedPreferences()
+                .unregisterOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
         getPreferenceScreen()
                 .getSharedPreferences()
                 .unregisterOnSharedPreferenceChangeListener(this);

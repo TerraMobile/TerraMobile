@@ -69,4 +69,7 @@
     <string name="success">Success</string>
 
     <string name="projects_not_found">No projects were found</string>
+    <string name="connection_failed">Connection failed!</string>
+    <string name="not_logged">You have to authenticate first</string>
+    <string name="loading_prj_list">Loading project list…</string>
 </resources>

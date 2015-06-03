@@ -208,11 +208,7 @@ public class TestActivity extends Activity implements JGPKGTestInterface {
 	    String state = Environment.getExternalStorageState();
 	    if (Environment.MEDIA_MOUNTED.equals(state)) {
 	        return true;
-	    } else if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
-	        return true;
-	    } else {
-	    	return false;
-	    }
+	    } else return Environment.MEDIA_MOUNTED_READ_ONLY.equals(state);
 	}
 	/** Check can read/write to SD card
 	 * 

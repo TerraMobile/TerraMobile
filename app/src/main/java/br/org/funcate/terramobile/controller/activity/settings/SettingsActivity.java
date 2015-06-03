@@ -12,16 +12,21 @@ public class SettingsActivity extends PreferenceActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        if(getActionBar() != null)
+            getActionBar().setDisplayHomeAsUpEnabled(true);
         getFragmentManager().beginTransaction().replace(android.R.id.content, new SettingsFragment(), "settings").commit();
     }
 
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        // DON'T DELETE THIS METHOD
         return super.onCreateOptionsMenu(menu);
     }
 
-    @Override
+    /**
+     * Logo's click listener
+     * @param item
+     * @return
+     */
     public boolean onOptionsItemSelected(MenuItem item) {
         finish(); // Finish the activity after touch the logo
         return super.onOptionsItemSelected(item);

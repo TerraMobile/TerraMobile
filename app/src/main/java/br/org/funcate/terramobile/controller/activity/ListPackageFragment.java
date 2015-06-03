@@ -17,6 +17,9 @@ import java.util.ArrayList;
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.controller.activity.tasks.DownloadTask;
 import br.org.funcate.terramobile.controller.activity.tasks.PackageListTask;
+import br.org.funcate.terramobile.model.Settings;
+import br.org.funcate.terramobile.model.db.dao.SettingsDAO;
+import br.org.funcate.terramobile.util.Message;
 import br.org.funcate.terramobile.util.ResourceUtil;
 
 /**
@@ -27,30 +30,34 @@ import br.org.funcate.terramobile.util.ResourceUtil;
 public class ListPackageFragment extends DialogFragment{
     private ListView lVPackage;
 
-    private ArrayAdapter arrayAdapter;
-//    private Settings settings;
+    private ArrayAdapter<String> arrayAdapter;
+
+    private Settings settings;
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         LayoutInflater inflater = LayoutInflater.from(getActivity());
         final View v = inflater.inflate(R.layout.fragment_list_package, null);
 
-        lVPackage = (ListView)v.findViewById(R.id.lVPackage);
+        this.lVPackage = (ListView)v.findViewById(R.id.lVPackage);
 
-        this.arrayAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1);
-//        SettingsDAO settingsDAO = new SettingsDAO(getActivity());
-//        this.settings = settingsDAO.getById(1);
-//        new PackageListTask((MainActivity)this.getActivity()).execute(settings.getUrl() + "/listProjects");
-        new PackageListTask((MainActivity)this.getActivity()).execute("http://192.168.3.101/packages.json");
+        this.arrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1);
 
+        SettingsDAO settingsDAO = new SettingsDAO(getActivity());
+        this.settings = settingsDAO.getById(1);
+        if(this.settings != null)
+            new PackageListTask((MainActivity)this.getActivity()).execute(this.settings.getUrl() + "/getlistfiles/userName");
+        else
+            Message.showErrorMessage(getActivity(), R.string.error, R.string.not_logged);
         lVPackage.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 File appPath = ResourceUtil.getDirectory(getResources().getString(R.string.app_workspace_dir));
                 String destinationFilePath = appPath.getPath();
-//                String prjName = lVPackage.getItemAtPosition(position).toString(); // Package name to concatenate with the server url
-//                if(settings != null)
-//                    new DownloadTask(destinationFilePath, true, (MainActivity) getActivity()).execute(settings.getUrl() + "/getProject/" + prjName);
-                new DownloadTask(destinationFilePath, true, (MainActivity) getActivity()).execute(getResources().getString(R.string.gpkg_url));
+                String prjName = lVPackage.getItemAtPosition(position).toString(); // Package name to concatenate with the server url
+                if(settings != null)
+                    new DownloadTask(destinationFilePath+"/"+prjName, destinationFilePath, true, (MainActivity) getActivity()).execute(settings.getUrl()+"/getprojects/userName/"+prjName);
+                else
+                    Message.showErrorMessage(getActivity(), R.string.error, R.string.not_logged);
             }
         });
 
@@ -68,7 +75,7 @@ public class ListPackageFragment extends DialogFragment{
                 create();
     }
 
-    public void setListItems(ArrayList arrayList) {
+    public void setListItems(ArrayList<String> arrayList) {
         arrayAdapter.addAll(arrayList);
         lVPackage.setAdapter(arrayAdapter);
     }

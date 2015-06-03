@@ -17,14 +17,13 @@ import java.util.zip.ZipInputStream;
 
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.controller.activity.MainActivity;
-import br.org.funcate.terramobile.util.Message;
 import br.org.funcate.terramobile.model.exception.DownloadException;
+import br.org.funcate.terramobile.util.Message;
 
 /**
- * This AsyncTask receives the data from the server
+ * This AsyncTask downloads a geopackage from the server
  */
 public class DownloadTask extends AsyncTask<String, String, Boolean> {
-
     private String unzipDestinationFilePath;
     private String downloadDestinationFilePath;
 
@@ -34,19 +33,21 @@ public class DownloadTask extends AsyncTask<String, String, Boolean> {
 
     public MainActivity mainActivity;
 
-    public DownloadTask(String unzipDestinationFilePath, boolean overwrite, MainActivity mainActivity) {
+    public DownloadTask(String downloadDestinationFilePath, String unzipDestinationFilePath, boolean overwrite, MainActivity mainActivity) {
         this.mainActivity = mainActivity;
         this.unzipDestinationFilePath = unzipDestinationFilePath;
-        this.downloadDestinationFilePath = unzipDestinationFilePath + "/" + mainActivity.getResources().getString(R.string.destination_file_path);
+        this.downloadDestinationFilePath = downloadDestinationFilePath;
         this.overwrite = overwrite;
     }
 
     @Override
     protected void onPreExecute() {
-        mainActivity.showProgressDialog(mainActivity.getResources().getString(R.string.downloading));
+        mainActivity.showProgressDialog(mainActivity.getString(R.string.downloading));
     }
 
     protected Boolean doInBackground(String... urlToDownload) {
+        if(android.os.Debug.isDebuggerConnected())
+            android.os.Debug.waitForDebugger();
         if (urlToDownload[0].isEmpty()) {
             exception = new DownloadException("Missing URL to be downloaded.");
             return false;
@@ -60,7 +61,6 @@ public class DownloadTask extends AsyncTask<String, String, Boolean> {
         try {
             try {
                 File file = new File(downloadDestinationFilePath);
-
                 if (!file.exists()) {
                     file.createNewFile();
                 } else {
@@ -71,42 +71,33 @@ public class DownloadTask extends AsyncTask<String, String, Boolean> {
                     }
                 }
                 URL url = new URL(urlToDownload[0]);
-
                 URLConnection urlConnection = url.openConnection();
                 urlConnection.connect();
 
                 int totalSize = urlConnection.getContentLength();
 
                 InputStream inputStream = new BufferedInputStream(url.openStream());
-
                 OutputStream fileOutput = new FileOutputStream(file);
 
                 byte buffer[] = new byte[1024];
 
                 int bufferLength;
-
                 long total = 0;
-
-//                    if(android.os.Debug.isDebuggerConnected()) android.os.Debug.waitForDebugger(); Para debugar é preciso colocar um breakpoint nessa linha
-
+//                if(android.os.Debug.isDebuggerConnected()) android.os.Debug.waitForDebugger(); Para debugar é preciso colocar um breakpoint nessa linha
                 while ((bufferLength = inputStream.read(buffer)) != -1) {
                     total += bufferLength;
                     publishProgress("" + (int) ((total * 100) / totalSize), mainActivity.getResources().getString(R.string.downloading));
-
                     fileOutput.write(buffer, 0, bufferLength);
                 }
                 fileOutput.flush();
-
                 fileOutput.close();
 
                 this.unzip(new File(downloadDestinationFilePath), new File(unzipDestinationFilePath));
 
                 return true;
-
             } catch (IOException e) {
                 throw new DownloadException("Error downloading file: " + urlToDownload[0], e);
             }
-
         } catch (DownloadException e) {
             exception = e;
         }
@@ -130,10 +121,12 @@ public class DownloadTask extends AsyncTask<String, String, Boolean> {
         }
         long totalFiles = 0;
         try {
-            while (zis.getNextEntry() != null) {
-                totalFiles++;
+            if(zis != null) {
+                while (zis.getNextEntry() != null) {
+                    totalFiles++;
+                }
+                zis.close();
             }
-            zis.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
