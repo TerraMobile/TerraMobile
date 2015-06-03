@@ -27,6 +27,7 @@ import org.osmdroid.views.overlay.TilesOverlay;
 import java.io.File;
 import java.util.ArrayList;
 
+import br.org.funcate.extended.model.TMConfigEditableLayer;
 import br.org.funcate.jgpkg.exception.QueryException;
 import br.org.funcate.jgpkg.service.GeoPackageService;
 import br.org.funcate.terramobile.R;
@@ -46,10 +47,15 @@ public class AppGeoPackageService {
         File appPath = ResourceUtil.getDirectory(context.getResources().getString(R.string.app_workspace_dir));
         // ------------------------------------------------------------------------
         // TODO: alter temporary file name to dynamic file name as from user action when him acquire online GeoPackege from one server.
+        //gpkgFilePath=this.context.getCurrentGeoPackageName();
+        // ------------------------------------------------------------------------
+        String gpkgFilePath=appPath+"/terramobile_demo.gpkg";
 
-        String gpkgFilePath=appPath+"/terramobile_tasks.gpkg";
-
-        return gpkgFilePath;
+        File file = new File(gpkgFilePath);
+        if(file.exists())
+            return gpkgFilePath;
+        else
+            return null;
     }
 
     /**
@@ -60,15 +66,17 @@ public class AppGeoPackageService {
     public static ArrayList<GpkgLayer> getLayers(Context context) throws InvalidGeopackageException, QueryException {
 
         String gpkgFilePath = getGpkgFilePath(context);
-
+        if(gpkgFilePath == null)
+            return null;
         GeoPackage gpkg = GeoPackageService.readGPKG(context, gpkgFilePath);
+
         if(!gpkg.isGPKGValid(true))
         {
             throw new InvalidGeopackageException("Invalid GeoPackage file.");
         }
 
-        ArrayList<ArrayList<GpkgField>> fields;
-        fields = GeoPackageService.getGpkgFieldsContents(gpkg, null, "");
+        ArrayList<ArrayList<GpkgField>> fields = GeoPackageService.getGpkgFieldsContents(gpkg, null,"");
+        TMConfigEditableLayer tmConfigEditableLayer = GeoPackageService.getTMConfigEditableLayer(gpkg);
         ArrayList<GpkgLayer> listLayers=new ArrayList<GpkgLayer>();
         GpkgLayer layer;
 
@@ -92,14 +100,16 @@ public class AppGeoPackageService {
 
             GpkgField srsIdField = aField.get(9);
 
-
-            // Getting layer name
-            layer.setName((String) tableNameField.getValue());
+            String layerName = (String) tableNameField.getValue();
+            layer.setName(layerName);
 
             // Getting data type
             if("features".equals(dataTypeField.getValue()))
             {
-                layer.setType(GpkgLayer.Type.FEATURES);
+                if(!tmConfigEditableLayer.isEditableLayer(layerName))
+                    layer.setType(GpkgLayer.Type.FEATURES);
+                else
+                    layer.setType(GpkgLayer.Type.EDITABLE);
             } else if("tiles".equals(dataTypeField.getValue()))
             {
                 layer.setType(GpkgLayer.Type.TILES);
@@ -126,8 +136,8 @@ public class AppGeoPackageService {
 
             listLayers.add(layer);
             }
-
         gpkg.close();
+
         return listLayers;
     }
 

@@ -17,15 +17,9 @@ public class DataBase extends SQLiteOpenHelper {
 	
 	/* String to create the table settings */
 	private String createSettings;
-	
 
 	private String dropTableSettings = "drop table if exists SETTINGS";
 
-	/**
-	 * Class constructor
-	 * 
-	 * @param context
-	 */
 	public DataBase(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
 	}

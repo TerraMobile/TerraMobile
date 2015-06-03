@@ -3,7 +3,6 @@ package br.org.funcate.terramobile.controller.activity.settings;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -17,7 +16,7 @@ import br.org.funcate.terramobile.model.Settings;
 import br.org.funcate.terramobile.model.db.dao.SettingsDAO;
 
 /**
- * DialogFragment to show the user's credentials form on the settings
+ * DialogFragment to show the user's credentials form on the settings menu
  *
  * Created by marcelo on 5/25/15.
  */
@@ -25,18 +24,6 @@ public class CredentialsFragment extends DialogFragment{
     private EditText eTUserName;
     private EditText eTPassword;
     private EditText eTRetypePassword;
-    private Button btnSave;
-    private Button btnCancel;
-
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        this.getDialog().setTitle(R.string.credentials);
-        return super.onCreateView(inflater, container, savedInstanceState);
-    }
-
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-    }
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         LayoutInflater inflater = LayoutInflater.from(getActivity());
@@ -46,8 +33,8 @@ public class CredentialsFragment extends DialogFragment{
         eTPassword = (EditText) v.findViewById(R.id.passwordCredentials);
         eTRetypePassword = (EditText) v.findViewById(R.id.retypePasswordCredentials);
 
-        btnSave = (Button)v.findViewById(R.id.btnSave);
-        btnCancel = (Button) v.findViewById(R.id.btnCancel);
+        Button btnSave = (Button) v.findViewById(R.id.btnSave);
+        Button btnCancel = (Button) v.findViewById(R.id.btnCancel);
 
         SettingsDAO settingsDAO = new SettingsDAO(getActivity());
         Settings settings = settingsDAO.getById(1);
@@ -80,7 +67,9 @@ public class CredentialsFragment extends DialogFragment{
 
         return new AlertDialog.Builder(getActivity())
                 .setView(v)
-                .setCancelable(true).create();
+                .setTitle(R.string.credentials)
+                .setCancelable(true)
+                .create();
     }
 
     private boolean validateFields(){

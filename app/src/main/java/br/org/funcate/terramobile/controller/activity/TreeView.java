@@ -1,11 +1,9 @@
 package br.org.funcate.terramobile.controller.activity;
 
 import android.content.Context;
-import android.widget.ExpandableListAdapter;
+import android.content.res.Resources;
 import android.widget.ExpandableListView;
 import android.widget.Toast;
-
-import android.content.res.Resources;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -31,6 +29,7 @@ public class TreeView {
     private Context context;
     private Resources resources;
     private MenuAdapter mMenuAdapter;
+    private GpkgLayer selectedEditableLayer;
 
     public TreeView(Context context){
         this.context=context;
@@ -51,7 +50,7 @@ public class TreeView {
 
         mMenuAdapter = new MenuAdapter(this.context, groupItem, childItem);
         mDrawerList.setAdapter(mMenuAdapter);
-
+        selectedEditableLayer=null;
     }
 
     public void refreshTreeView(){
@@ -63,9 +62,7 @@ public class TreeView {
 
     private void setGroupData() {
         String[] grp= ResourceUtil.getStringArrayResource(this.resources, R.array.menu_groups);
-//        int l=grp.length;
         GpkgLayer grpItem;
-//        for (int i = 0; i < l; i++) {
         grpItem=new GpkgLayer();
         grpItem.setName(grp[0]);
         grpItem.setType(GpkgLayer.Type.TILES);
@@ -83,12 +80,9 @@ public class TreeView {
         grpItem.setType(GpkgLayer.Type.FEATURES);
         grpItem.setGeoPackage(null);
         groupItem.add(grpItem);
-//        }
     }
 
     private void setChildGroupData() {
-
-//        ArrayList<TerraMobileMenuItem> childTools = new ArrayList<TerraMobileMenuItem>();
         ArrayList<GpkgLayer> childBaseLayers = new ArrayList<GpkgLayer>();
         ArrayList<GpkgLayer> childCollectLayers = new ArrayList<GpkgLayer>();
         ArrayList<GpkgLayer> childOnlineLayers = new ArrayList<GpkgLayer>();
@@ -139,6 +133,7 @@ public class TreeView {
                 }
                 case EDITABLE:{
                     childOnlineLayers.add(l);
+                    break;
                 }
                 case ONLINE:{
                     // TODO: this type layer not implemented yet.
@@ -210,4 +205,11 @@ public class TreeView {
         throw new TerraMobileException("Requested layer not found");
     }
 
+    public GpkgLayer getSelectedEditableLayer() {
+        return selectedEditableLayer;
+    }
+
+    public void setSelectedEditableLayer(GpkgLayer selectedEditableLayer) {
+        this.selectedEditableLayer = selectedEditableLayer;
+    }
 }

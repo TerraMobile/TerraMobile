@@ -9,12 +9,13 @@
     <!-- Gather data -->
 
     <!-- Sync data -->
-    <string name="downloding">Downloading files...</string>
-    <string name="decompressing">Decompressing...</string>
+    <string name="downloading">Downloading files…</string>
+    <string name="decompressing">Decompressing…</string>
     <string name="download_success">Files downloaded successfully!</string>
     <string name="download_failed">Download failed!</string>
     <string name="file">File</string>
     <string name="no_connection">Connect to the internet</string>
+    <string name="available_projects">Available projects</string>
     <!-- Settings -->
     <string name="title_activity_settings">Settings</string>
     <string name="test_raster_data">Test Raster Data</string>
@@ -35,7 +36,6 @@
     <string name="errorPasswordsMatch">Passwords doesn\'t match</string>
     <string name="btnSave">Save</string>
     <string name="btnCancel">Cancel</string>
-
     <!-- Drawer -->
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
@@ -65,6 +65,11 @@
     <string name="app_not_available">Sorry, there\'s no web browser available</string>
     <string name="title_activity_download_task">DownloadTask</string>
 
-    <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
+    <string name="error">Error</string>
+    <string name="success">Success</string>
+
+    <string name="projects_not_found">No projects were found</string>
+    <string name="connection_failed">Connection failed!</string>
+    <string name="not_logged">You have to authenticate first</string>
+    <string name="loading_prj_list">Loading project list…</string>
 </resources>

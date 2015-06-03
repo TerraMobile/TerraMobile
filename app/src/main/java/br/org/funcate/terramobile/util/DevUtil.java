@@ -8,10 +8,6 @@ import br.org.funcate.terramobile.model.exception.TerraMobileException;
 public class DevUtil {
     public static boolean isNull(String str)
     {
-        if(str==null)
-        {
-            return true;
-        }
-        return false;
+        return str == null;
     }
 }

@@ -1,12 +1,12 @@
 package br.org.funcate.terramobile.controller.activity;
 
-import android.app.Dialog;
+import android.app.ActionBar;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.net.ConnectivityManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -26,19 +26,6 @@ import android.widget.Toast;
 
 import org.json.JSONObject;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-
 import br.org.funcate.dynamicforms.FormUtilities;
 import br.org.funcate.dynamicforms.FragmentDetailActivity;
 import br.org.funcate.dynamicforms.TagsManager;
@@ -48,15 +35,16 @@ import br.org.funcate.dynamicforms.util.Utilities;
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.configuration.ViewContextParameters;
 import br.org.funcate.terramobile.controller.activity.settings.SettingsActivity;
-import br.org.funcate.terramobile.model.exception.DownloadException;
 import br.org.funcate.terramobile.model.exception.TerraMobileException;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
 import br.org.funcate.terramobile.model.tilesource.AppGeoPackageService;
-import br.org.funcate.terramobile.util.ResourceUtil;
+import br.org.funcate.terramobile.util.Message;
 
 public class MainActivity extends FragmentActivity {
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
+
+    private ActionBar actionBar;
 
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
@@ -78,11 +66,13 @@ public class MainActivity extends FragmentActivity {
     // Progress bar
     private ProgressDialog progressDialog;
 
+    private ListPackageFragment listPackageFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
+        actionBar = getActionBar();
 
         PreferenceManager.setDefaultValues(this, R.xml.settings, false);
 
@@ -95,16 +85,12 @@ public class MainActivity extends FragmentActivity {
         // set a custom shadow that overlays the action_bar content when the drawer opens
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
 
-        // enable ActionBar app icon to behave as action to toggle nav drawer
-        //getActionBar().setDisplayHomeAsUpEnabled(true);
-        //getActionBar().setHomeButtonEnabled(true);
-
-        int ActionBarTitleID = getResources().getSystem().getIdentifier("action_bar_title", "id", "android");
+        int ActionBarTitleID = Resources.getSystem().getIdentifier("action_bar_title", "id", "android");
         TextView ActionBarTextView = (TextView) this.findViewById(ActionBarTitleID);
         ActionBarTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                 getResources().getDimension(R.dimen.title_text_size));
 
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         // ActionBarDrawerToggle ties together the proper interactions
         // between the sliding drawer and the action bar app icon
@@ -116,12 +102,12 @@ public class MainActivity extends FragmentActivity {
                 R.string.drawer_close  //"close drawer" description for accessibility
         ) {
             public void onDrawerClosed(View view) {
-                getActionBar().setTitle(mTitle);
+                actionBar.setTitle(mTitle);
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             }
 
             public void onDrawerOpened(View drawerView) {
-                getActionBar().setTitle(mDrawerTitle);
+                actionBar.setTitle(mDrawerTitle);
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             }
         };
@@ -137,7 +123,6 @@ public class MainActivity extends FragmentActivity {
         this.finish();
         System.exit(0);
         return;
-
     }
 
     public ViewContextParameters getParameters(){
@@ -169,26 +154,20 @@ public class MainActivity extends FragmentActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         // The action bar home/up action should open or close the drawer.
         // ActionBarDrawerToggle will take care of this.
-        if (mDrawerToggle.onOptionsItemSelected(item)) {
+        if (mDrawerToggle.onOptionsItemSelected(item))
             return true;
-        }
         // Handle action buttons
         switch(item.getItemId()) {
             case R.id.download_geo_package:
-                ConnectivityManager cm = (ConnectivityManager)this.getSystemService(this.CONNECTIVITY_SERVICE);
-
+                ConnectivityManager cm = (ConnectivityManager)this.getSystemService(CONNECTIVITY_SERVICE);
                 int wifi = ConnectivityManager.TYPE_WIFI;
                 int mobile = ConnectivityManager.TYPE_MOBILE;
-
-                if (cm.getNetworkInfo(mobile).isConnected() ||
-                        cm.getNetworkInfo(wifi).isConnected()) {
-                    File appPath = ResourceUtil.getDirectory(getResources().getString(R.string.app_workspace_dir));
-                    String tempURL = getResources().getString(R.string.gpkg_url);
-                    String destinationFilePath = appPath.getPath();
-                    new DownloadTask(destinationFilePath, true, this).execute(tempURL);
+                if (cm.getNetworkInfo(mobile).isConnected() || cm.getNetworkInfo(wifi).isConnected()) {
+                    listPackageFragment = new ListPackageFragment();
+                    listPackageFragment.show(getFragmentManager(), "packageList");
                 }
                 else{
-                    Toast.makeText(this, R.string.no_connection, Toast.LENGTH_LONG).show();
+                    Message.showErrorMessage(this, R.string.error, R.string.no_connection);
                 }
                 return true;
             case R.id.acquire_new_point:
@@ -209,8 +188,8 @@ public class MainActivity extends FragmentActivity {
                 this.finish();
                 System.exit(0);
                 break;
-        default:
-            return super.onOptionsItemSelected(item);
+            default:
+                return super.onOptionsItemSelected(item);
         }
         return true;
     }
@@ -293,7 +272,7 @@ public class MainActivity extends FragmentActivity {
     @Override
     public void setTitle(CharSequence title) {
         mTitle = title;
-        getActionBar().setTitle(mTitle);
+        actionBar.setTitle(mTitle);
     }
 
     /**
@@ -318,13 +297,20 @@ public class MainActivity extends FragmentActivity {
     /**
      * Shows a progress bar with the download progress
      */
-    protected void showProgressDialog() {
+    public void showProgressDialog(String message) {
         progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage(getResources().getString(R.string.downloding));
+        progressDialog.setMessage(message);
         progressDialog.setIndeterminate(false);
         progressDialog.setMax(100);
         progressDialog.setProgress(0);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+    }
+
+    public void showLoadingDialog(String message) {
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage(message);
         progressDialog.setCancelable(false);
         progressDialog.show();
     }
@@ -335,5 +321,9 @@ public class MainActivity extends FragmentActivity {
 
     public TreeView getTreeView() {
         return treeView;
+    }
+
+    public ListPackageFragment getListPackageFragment() {
+        return listPackageFragment;
     }
 }

@@ -8,5 +8,5 @@ public interface JGPKGTestInterface {
 	 * 
 	 * @param msg
 	 */
-	public void testComplete(String msg);
+	void testComplete(String msg);
 }
