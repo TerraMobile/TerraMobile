@@ -73,14 +73,17 @@ public class CredentialsFragment extends DialogFragment{
     }
 
     private boolean validateFields(){
+        eTUserName.setText(eTUserName.getText().toString().trim());
         if(eTUserName.getText().toString().isEmpty()){
             eTUserName.setError(getResources().getString(R.string.error_user_name));
             return false;
         }
+        eTPassword.setText(eTPassword.getText().toString().trim());
         if(eTPassword.getText().toString().isEmpty()){
             eTPassword.setError(getResources().getString(R.string.error_password));
             return false;
         }
+        eTRetypePassword.setText(eTRetypePassword.getText().toString().trim());
         if(eTRetypePassword.getText().toString().isEmpty()){
             eTRetypePassword.setError(getResources().getString(R.string.error_retype_password));
             return false;
