@@ -74,4 +74,5 @@
     <string name="connection_failed">Connection failed!</string>
     <string name="not_logged">You have to authenticate first</string>
     <string name="loading_prj_list">Loading project list…</string>
+    <string name="ok">OK</string>
 </resources>
