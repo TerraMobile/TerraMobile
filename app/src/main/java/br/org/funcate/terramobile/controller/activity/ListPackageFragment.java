@@ -63,7 +63,7 @@ public class ListPackageFragment extends DialogFragment{
 
         return new AlertDialog.Builder(
                 getActivity()).
-                setNegativeButton(R.string.btn_save,new DialogInterface.OnClickListener() {
+                setNegativeButton(R.string.ok,new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick (DialogInterface dialog,int which){
                         dismiss();

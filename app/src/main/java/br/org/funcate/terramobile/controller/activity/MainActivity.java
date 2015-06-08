@@ -120,12 +120,12 @@ public class MainActivity extends FragmentActivity {
             settings.setId(1);
             settings.setUserName("");
             settings.setPassword("");
-            settings.setUrl("http://192.168.3.103:8080/TerraMobileServer/tmserver/projectservices/");
+            settings.setUrl("http://192.168.3.103:8080/TerraMobileServer/tmserver/projectservices");
             settingsDAO.insert(settings);
         }
         else{
             settings = settingsDAO.getById(1);
-            settings.setUrl("http://192.168.3.103:8080/TerraMobileServer/tmserver/projectservices/");
+            settings.setUrl("http://192.168.3.103:8080/TerraMobileServer/tmserver/projectservices");
             settingsDAO.update(settings);
         }
         /** Test */

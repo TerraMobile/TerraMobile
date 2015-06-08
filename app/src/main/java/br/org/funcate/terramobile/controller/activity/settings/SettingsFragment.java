@@ -43,16 +43,12 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         SettingsDAO settingsDAO = new SettingsDAO(getActivity());
         Settings settings = settingsDAO.getById(1);
         if (settings != null) {
-            if (key.equals("serverURL")) { //TODO: Create a dialogFragment for the validate works correctly
+            if (key.equals("serverURL")) {
                 settings.setUrl(sharedPreferences.getString(key, ""));
             } else if (key.equals("userName")) {
-                String userName = sharedPreferences.getString(key, "");
-                if(userName != null)
-                    settings.setUserName(userName.trim());
+                settings.setUserName(sharedPreferences.getString(key, ""));
             } else if (key.equals("password")) {
-                String password = sharedPreferences.getString(key, "");
-                if(password != null)
-                    settings.setPassword(password.trim());
+                settings.setPassword(sharedPreferences.getString(key, ""));
             }
             settingsDAO.update(settings);
         }
