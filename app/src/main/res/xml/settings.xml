@@ -4,15 +4,9 @@
         <Preference android:title="@string/credentials"
             android:key="credentials">
         </Preference>
-        <EditTextPreference
-            android:key="url"
-            android:title="@string/eTURLServer"
-            android:selectAllOnFocus="true"
-            android:inputType="textUri"
-            android:hint="@string/hintURLServer"
-            android:singleLine="true"
-            android:defaultValue="http://"
-            android:maxLines="1" />
+        <Preference android:title="@string/server_url"
+            android:key="server_url">
+        </Preference>
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/map_preferences">
     </PreferenceCategory>

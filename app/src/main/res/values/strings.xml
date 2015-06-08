@@ -24,18 +24,20 @@
     <string name="map_preferences">Map preferences</string>
     <!-- Sync preferences -->
     <string name="credentials">Credentials</string>
-    <string name="eTURLServer">Set the server URL</string>
-    <string name="hintURLServer">Enter the URL</string>
+    <string name="hint_url_server">Enter the URL</string>
     <!-- credentials -->
-    <string name="hintUserNameCredentials">User name</string>
-    <string name="hintPasswordCredentials">Password</string>
-    <string name="hintRetypePasswordCredentials">Retype password</string>
-    <string name="errorUserName">Enter the user name</string>
-    <string name="errorPassword">Enter the password</string>
-    <string name="errorRetypePassword">Retype the password</string>
-    <string name="errorPasswordsMatch">Passwords doesn\'t match</string>
-    <string name="btnSave">Save</string>
-    <string name="btnCancel">Cancel</string>
+    <string name="hint_user_name_credentials">User name</string>
+    <string name="hint_password_credentials">Password</string>
+    <string name="hint_retype_password_credentials">Retype password</string>
+    <string name="error_user_name">Enter the user name</string>
+    <string name="error_password">Enter the password</string>
+    <string name="error_retype_password">Retype the password</string>
+    <string name="error_passwords_match">Passwords doesn\'t match</string>
+    <string name="btn_save">Save</string>
+    <string name="btn_cancel">Cancel</string>
+    <!-- Server URL -->
+    <string name="hint_server_url">Enter the server URL</string>
+    <string name="server_url">Set the server URL</string>
     <!-- Drawer -->
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>

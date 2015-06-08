@@ -21,15 +21,6 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.settings);
-        SettingsDAO settingsDAO = new SettingsDAO(getActivity());
-        if(settingsDAO.getById(1) == null){
-            Settings settings = new Settings();
-            settings.setId(1);
-            settings.setUserName("");
-            settings.setPassword("");
-            settings.setUrl("");
-            settingsDAO.insert(settings);
-        }
     }
 
     @Override
@@ -39,16 +30,10 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
             credentialsFragment.setCancelable(true);
             credentialsFragment.show(getActivity().getFragmentManager(), "credentials");
         }
-        if(preference.getKey().equalsIgnoreCase("url")) {
-            SettingsDAO settingsDAO = new SettingsDAO(getActivity());
-            Settings settings = settingsDAO.getById(1);
-            if (settings != null) {
-                SettingsFragment settingsFragment = (SettingsFragment) getActivity().getFragmentManager().findFragmentByTag("settings");
-                SharedPreferences sharedPreferences = settingsFragment.getPreferenceManager().getSharedPreferences();
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putString("url", settings.getUrl());
-                editor.apply();
-            }
+        if(preference.getKey().equalsIgnoreCase("server_url")) {
+            ServerURLFragment serverURLFragment = new ServerURLFragment();
+            serverURLFragment.setCancelable(true);
+            serverURLFragment.show(getActivity().getFragmentManager(), "serverURL");
         }
         return super.onPreferenceTreeClick(preferenceScreen, preference);
     }
@@ -58,14 +43,8 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         SettingsDAO settingsDAO = new SettingsDAO(getActivity());
         Settings settings = settingsDAO.getById(1);
         if (settings != null) {
-            if (key.equals("url")) { //TODO: Create a dialogFragment for the validate works correctly
-                String url = sharedPreferences.getString(key, "http://");
-                if(url != null){
-                    url = url.trim();
-                    if(url.endsWith("/"))
-                        url = url.substring(0, url.length() - 1);
-                }
-                settings.setUrl(url);
+            if (key.equals("serverURL")) { //TODO: Create a dialogFragment for the validate works correctly
+                settings.setUrl(sharedPreferences.getString(key, ""));
             } else if (key.equals("userName")) {
                 String userName = sharedPreferences.getString(key, "");
                 if(userName != null)

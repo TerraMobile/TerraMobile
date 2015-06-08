@@ -35,6 +35,8 @@ import br.org.funcate.dynamicforms.util.Utilities;
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.configuration.ViewContextParameters;
 import br.org.funcate.terramobile.controller.activity.settings.SettingsActivity;
+import br.org.funcate.terramobile.model.Settings;
+import br.org.funcate.terramobile.model.db.dao.SettingsDAO;
 import br.org.funcate.terramobile.model.exception.TerraMobileException;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
 import br.org.funcate.terramobile.model.tilesource.AppGeoPackageService;
@@ -73,6 +75,24 @@ public class MainActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         actionBar = getActionBar();
+
+        /** Test */
+        SettingsDAO settingsDAO = new SettingsDAO(this);
+        Settings settings;
+        if(settingsDAO.getById(1) == null){
+            settings = new Settings();
+            settings.setId(1);
+            settings.setUserName("");
+            settings.setPassword("");
+            settings.setUrl("http://192.168.3.103:8080/TerraMobileServer/tmserver/projectservices/");
+            settingsDAO.insert(settings);
+        }
+        else{
+            settings = settingsDAO.getById(1);
+            settings.setUrl("http://192.168.3.103:8080/TerraMobileServer/tmserver/projectservices/");
+            settingsDAO.update(settings);
+        }
+        /** Test */
 
         PreferenceManager.setDefaultValues(this, R.xml.settings, false);
 
