@@ -15,6 +15,7 @@ import br.org.funcate.terramobile.model.exception.TerraMobileException;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
 import br.org.funcate.terramobile.model.tilesource.AppGeoPackageService;
 import br.org.funcate.terramobile.util.DevUtil;
+import br.org.funcate.terramobile.util.Message;
 import br.org.funcate.terramobile.util.ResourceUtil;
 import br.org.funcate.terramobile.view.MenuAdapter;
 
@@ -103,9 +104,9 @@ public class TreeView {
         try {
             layers = AppGeoPackageService.getLayers(this.context);
         } catch (InvalidGeopackageException e) {
-            Message.showMessage((MainActivity)this.context, R.drawable.error, this.context.getResources().getString(R.string.failure_title_msg), e.getMessage());
+            Message.showErrorMessage((MainActivity) this.context, R.string.failure_title_msg, e.getMessage());
         } catch (QueryException e) {
-            Message.showMessage((MainActivity)this.context, R.drawable.error, this.context.getResources().getString(R.string.failure_title_msg), e.getMessage());
+            Message.showErrorMessage((MainActivity)this.context, R.string.failure_title_msg, e.getMessage());
         }
 
         if (null == layers || layers.size()==0) {

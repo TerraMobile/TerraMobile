@@ -17,9 +17,9 @@
  */
 package br.org.funcate.dynamicforms.views;
 
+import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v4.app.Fragment;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
@@ -125,7 +125,7 @@ public class GDateView extends View implements GView {
                 int day = c.get(Calendar.DAY_OF_MONTH);
 
                 FormDatePickerFragment newFragment = new FormDatePickerFragment(year, month, day, button);
-                newFragment.show(fragment.getFragmentManager(), "datePicker");
+                //newFragment.show(fragment.getFragmentManager(), "datePicker");
             }
         });
         button.setEnabled(!readonly);

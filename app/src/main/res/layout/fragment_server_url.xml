@@ -6,45 +6,22 @@
     <EditText
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/userNameCredentials"
-        android:inputType="textEmailAddress"
+        android:id="@+id/serverURL"
+        android:inputType="textUri"
         android:ems="10"
-        android:hint="@string/hint_user_name_credentials"
-        android:layout_alignLeft="@+id/passwordCredentials" />
-
-    <EditText
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:inputType="textPassword"
-        android:ems="10"
-        android:hint="@string/hint_password_credentials"
-        android:id="@+id/passwordCredentials"
-        android:layout_gravity="center_vertical"
-        android:layout_below="@+id/userNameCredentials"
-        android:layout_centerHorizontal="true" />
-
-    <EditText
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:inputType="textPassword"
-        android:ems="10"
-        android:hint="@string/hint_retype_password_credentials"
-        android:id="@+id/retypePasswordCredentials"
-        android:layout_gravity="center_vertical"
-        android:layout_below="@+id/passwordCredentials"
-        android:layout_centerHorizontal="true" />
+        android:hint="@string/hint_server_url" />
     <View
         android:id="@+id/horizontalLine"
         android:layout_width="match_parent"
         android:layout_height="1dip"
         android:background="?android:attr/dividerHorizontal"
-        android:layout_below="@+id/retypePasswordCredentials"
+        android:layout_below="@+id/serverURL"
         android:layout_centerHorizontal="true" />
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_below="@+id/retypePasswordCredentials">
+        android:layout_below="@+id/serverURL">
         <Button
             android:layout_width="0dp"
             android:layout_height="match_parent"

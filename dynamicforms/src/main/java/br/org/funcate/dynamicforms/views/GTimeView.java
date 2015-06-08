@@ -126,7 +126,7 @@ public class GTimeView extends View implements GView {
 
                 FormTimePickerFragment newFragment = new FormTimePickerFragment();
                 newFragment.setAttributes(hourOfDay, minute, true, button);
-                newFragment.show(fragment.getFragmentManager(), "timePicker");
+                //newFragment.show(fragment.getFragmentManager(), "timePicker");
             }
         });
         button.setEnabled(!readonly);

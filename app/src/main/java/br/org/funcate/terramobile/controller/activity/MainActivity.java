@@ -2,12 +2,13 @@ package br.org.funcate.terramobile.controller.activity;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.ActionBar;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.net.ConnectivityManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -53,19 +54,22 @@ import br.org.funcate.dynamicforms.views.GView;
 import br.org.funcate.jgpkg.exception.QueryException;
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.configuration.ViewContextParameters;
-import br.org.funcate.terramobile.controller.activity.settings.CredentialsFragment;
 import br.org.funcate.terramobile.controller.activity.settings.SettingsActivity;
 import br.org.funcate.terramobile.controller.activity.settings.SettingsFragment;
 import br.org.funcate.terramobile.model.Project;
 import br.org.funcate.terramobile.model.exception.DownloadException;
+import br.org.funcate.terramobile.model.Settings;
+import br.org.funcate.terramobile.model.db.dao.SettingsDAO;
 import br.org.funcate.terramobile.model.exception.TerraMobileException;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
 import br.org.funcate.terramobile.model.tilesource.AppGeoPackageService;
-import br.org.funcate.terramobile.util.ResourceUtil;
+import br.org.funcate.terramobile.util.Message;
 
 public class MainActivity extends FragmentActivity {
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
+
+    private ActionBar actionBar;
 
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
@@ -91,20 +95,40 @@ public class MainActivity extends FragmentActivity {
             try {
                 AppGeoPackageService.storeData(this,extras);
             }catch (TerraMobileException tme) {
-                Message.showMessage(this, R.drawable.error, getResources().getString(R.string.error), tme.getMessage());
+                //Message.showMessage(this, R.drawable.error, getResources().getString(R.string.error), tme.getMessage());
+                Message.showErrorMessage(this, R.string.error, R.string.missing_form_data);
             }catch (QueryException qe) {
-                Message.showMessage(this, R.drawable.error, getResources().getString(R.string.error), qe.getMessage());
+                //Message.showMessage(this, R.drawable.error, getResources().getString(R.string.error), qe.getMessage());
+                Message.showErrorMessage(this, R.string.error, R.string.error_while_storing_form_data);
             }
         }else {
-            Message.showMessage(this, R.drawable.error, getResources().getString(R.string.error), getResources().getString(R.string.cancel_form_data));
+            Message.showErrorMessage(this, R.string.error, R.string.cancel_form_data);
         }
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
+        actionBar = getActionBar();
+
+        /** Test */
+        SettingsDAO settingsDAO = new SettingsDAO(this);
+        Settings settings;
+        if(settingsDAO.getById(1) == null){
+            settings = new Settings();
+            settings.setId(1);
+            settings.setUserName("");
+            settings.setPassword("");
+            settings.setUrl("http://192.168.3.103:8080/TerraMobileServer/tmserver/projectservices/");
+            settingsDAO.insert(settings);
+        }
+        else{
+            settings = settingsDAO.getById(1);
+            settings.setUrl("http://192.168.3.103:8080/TerraMobileServer/tmserver/projectservices/");
+            settingsDAO.update(settings);
+        }
+        /** Test */
 
         PreferenceManager.setDefaultValues(this, R.xml.settings, false);
 
@@ -125,16 +149,12 @@ public class MainActivity extends FragmentActivity {
         // set a custom shadow that overlays the action_bar content when the drawer opens
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
 
-        // enable ActionBar app icon to behave as action to toggle nav drawer
-        //getActionBar().setDisplayHomeAsUpEnabled(true);
-        //getActionBar().setHomeButtonEnabled(true);
-
-        int ActionBarTitleID = getResources().getSystem().getIdentifier("action_bar_title", "id", "android");
+        int ActionBarTitleID = Resources.getSystem().getIdentifier("action_bar_title", "id", "android");
         TextView ActionBarTextView = (TextView) this.findViewById(ActionBarTitleID);
         ActionBarTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                 getResources().getDimension(R.dimen.title_text_size));
 
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         // ActionBarDrawerToggle ties together the proper interactions
         // between the sliding drawer and the action bar app icon
@@ -146,12 +166,12 @@ public class MainActivity extends FragmentActivity {
                 R.string.drawer_close  //"close drawer" description for accessibility
         ) {
             public void onDrawerClosed(View view) {
-                getActionBar().setTitle(mTitle);
+                actionBar.setTitle(mTitle);
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             }
 
             public void onDrawerOpened(View drawerView) {
-                getActionBar().setTitle(mDrawerTitle);
+                actionBar.setTitle(mDrawerTitle);
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             }
         };
@@ -167,7 +187,6 @@ public class MainActivity extends FragmentActivity {
         this.finish();
         System.exit(0);
         return;
-
     }
 
     public ViewContextParameters getParameters(){
@@ -199,28 +218,20 @@ public class MainActivity extends FragmentActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         // The action bar home/up action should open or close the drawer.
         // ActionBarDrawerToggle will take care of this.
-        if (mDrawerToggle.onOptionsItemSelected(item)) {
+        if (mDrawerToggle.onOptionsItemSelected(item))
             return true;
-        }
         // Handle action buttons
         switch(item.getItemId()) {
             case R.id.download_geo_package:
-//              listPackageFragment = new ListPackageFragment();
-//              listPackageFragment.show(getFragmentManager(), "packageList");
-                ConnectivityManager cm = (ConnectivityManager)this.getSystemService(this.CONNECTIVITY_SERVICE);
-
+                ConnectivityManager cm = (ConnectivityManager)this.getSystemService(CONNECTIVITY_SERVICE);
                 int wifi = ConnectivityManager.TYPE_WIFI;
                 int mobile = ConnectivityManager.TYPE_MOBILE;
-
-                if (cm.getNetworkInfo(mobile).isConnected() ||
-                        cm.getNetworkInfo(wifi).isConnected()) {
-                    File appPath = ResourceUtil.getDirectory(getResources().getString(R.string.app_workspace_dir));
-                    String tempURL = getResources().getString(R.string.gpkg_url);
-                    String destinationFilePath = appPath.getPath();
-                    new DownloadTask(destinationFilePath, true, this).execute(tempURL);
+                if (cm.getNetworkInfo(mobile).isConnected() || cm.getNetworkInfo(wifi).isConnected()) {
+                    listPackageFragment = new ListPackageFragment();
+                    listPackageFragment.show(getFragmentManager(), "packageList");
                 }
                 else{
-                    Message.showMessage(this, R.drawable.error, getResources().getString(R.string.error), getResources().getString(R.string.no_connection));
+                    Message.showErrorMessage(this, R.string.error, R.string.no_connection);
                 }
                 return true;
             case R.id.acquire_new_point:
@@ -241,8 +252,8 @@ public class MainActivity extends FragmentActivity {
                 this.finish();
                 System.exit(0);
                 break;
-        default:
-            return super.onOptionsItemSelected(item);
+            default:
+                return super.onOptionsItemSelected(item);
         }
         return true;
     }
@@ -273,7 +284,8 @@ public class MainActivity extends FragmentActivity {
             startActivityForResult(formIntent, FORM_COLLECT_DATA);
 
         } catch (Exception e) {
-            Message.showMessage(MainActivity.this, R.drawable.error, this.getResources().getString(R.string.error), this.getResources().getString(R.string.error_start_form));
+            Message.showErrorMessage(MainActivity.this, R.string.failure_title_msg, R.string.error_start_form);
+
         }
     }
 
@@ -290,7 +302,7 @@ public class MainActivity extends FragmentActivity {
     @Override
     public void setTitle(CharSequence title) {
         mTitle = title;
-        getActionBar().setTitle(mTitle);
+        actionBar.setTitle(mTitle);
     }
 
     /**
@@ -315,7 +327,7 @@ public class MainActivity extends FragmentActivity {
     /**
      * Shows a progress bar with the download progress
      */
-    protected void showProgressDialog(String message) {
+    public void showProgressDialog(String message) {
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage(message);
         progressDialog.setIndeterminate(false);
@@ -326,7 +338,7 @@ public class MainActivity extends FragmentActivity {
         progressDialog.show();
     }
 
-    protected void showLoadingDialog(String message) {
+    public void showLoadingDialog(String message) {
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage(message);
         progressDialog.setCancelable(false);

@@ -19,6 +19,7 @@ package br.org.funcate.dynamicforms;
 
 import android.app.TimePickerDialog;
 import android.content.Context;
+
 import android.support.v4.app.Fragment;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -42,6 +43,7 @@ import br.org.funcate.dynamicforms.constraints.Constraints;
 import br.org.funcate.dynamicforms.constraints.MandatoryConstraint;
 import br.org.funcate.dynamicforms.constraints.RangeConstraint;
 import br.org.funcate.dynamicforms.util.Utilities;
+import br.org.funcate.dynamicforms.util.MultipleChoiceDialog;
 import br.org.funcate.dynamicforms.views.GBooleanView;
 import br.org.funcate.dynamicforms.views.GComboView;
 import br.org.funcate.dynamicforms.views.GDateView;
@@ -381,7 +383,7 @@ public class FormUtilities {
     }
 
     /**
-     * Adds a MultipleChoiceDialog to the supplied mainView.
+     * Adds a {@link MultipleChoiceDialog} to the supplied mainView.
      *
      * @param context               the context.
      * @param mainView              the main view to which to add the new widget to.

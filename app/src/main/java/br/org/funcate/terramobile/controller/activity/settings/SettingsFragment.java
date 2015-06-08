@@ -21,15 +21,6 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.settings);
-        SettingsDAO settingsDAO = new SettingsDAO(getActivity());
-        if(settingsDAO.getById(1) == null){
-            Settings settings = new Settings();
-            settings.setId(1);
-            settings.setUserName("");
-            settings.setPassword("");
-            settings.setUrl("");
-            settingsDAO.insert(settings);
-        }
     }
 
     @Override
@@ -39,16 +30,10 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
             credentialsFragment.setCancelable(true);
             credentialsFragment.show(getActivity().getFragmentManager(), "credentials");
         }
-        if(preference.getKey().equalsIgnoreCase("url")) {
-            SettingsDAO settingsDAO = new SettingsDAO(getActivity());
-            Settings settings = settingsDAO.getById(1);
-            if (settings != null) {
-                SettingsFragment settingsFragment = (SettingsFragment) getActivity().getFragmentManager().findFragmentByTag("settings");
-                SharedPreferences sharedPreferences = settingsFragment.getPreferenceManager().getSharedPreferences();
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putString("url", String.valueOf(settings.getUrl()));
-                editor.commit();
-            }
+        if(preference.getKey().equalsIgnoreCase("server_url")) {
+            ServerURLFragment serverURLFragment = new ServerURLFragment();
+            serverURLFragment.setCancelable(true);
+            serverURLFragment.show(getActivity().getFragmentManager(), "serverURL");
         }
         return super.onPreferenceTreeClick(preferenceScreen, preference);
     }
@@ -56,16 +41,18 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         SettingsDAO settingsDAO = new SettingsDAO(getActivity());
-        Settings settings;
-        if (settingsDAO.getById(1) != null) {
-            settings = settingsDAO.getById(1);
-            settings.setId(1);
-            if (key.equals("url")) {
+        Settings settings = settingsDAO.getById(1);
+        if (settings != null) {
+            if (key.equals("serverURL")) { //TODO: Create a dialogFragment for the validate works correctly
                 settings.setUrl(sharedPreferences.getString(key, ""));
             } else if (key.equals("userName")) {
-                settings.setUserName(sharedPreferences.getString(key, ""));
+                String userName = sharedPreferences.getString(key, "");
+                if(userName != null)
+                    settings.setUserName(userName.trim());
             } else if (key.equals("password")) {
-                settings.setPassword(sharedPreferences.getString(key, ""));
+                String password = sharedPreferences.getString(key, "");
+                if(password != null)
+                    settings.setPassword(password.trim());
             }
             settingsDAO.update(settings);
         }
@@ -79,8 +66,24 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        getPreferenceScreen()
+                .getSharedPreferences()
+                .registerOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
     public void onPause() {
         super.onPause();
+        getPreferenceScreen()
+                .getSharedPreferences()
+                .unregisterOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
         getPreferenceScreen()
                 .getSharedPreferences()
                 .unregisterOnSharedPreferenceChangeListener(this);

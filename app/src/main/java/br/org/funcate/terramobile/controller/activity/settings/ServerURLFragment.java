@@ -5,9 +5,9 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -20,18 +20,14 @@ import br.org.funcate.terramobile.model.db.dao.SettingsDAO;
  *
  * Created by marcelo on 5/25/15.
  */
-public class CredentialsFragment extends DialogFragment{
-    private EditText eTUserName;
-    private EditText eTPassword;
-    private EditText eTRetypePassword;
+public class ServerURLFragment extends DialogFragment{
+    private EditText eTServerURL;
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         LayoutInflater inflater = LayoutInflater.from(getActivity());
-        final View v = inflater.inflate(R.layout.fragment_credentials, null);
+        final View v = inflater.inflate(R.layout.fragment_server_url, null);
 
-        eTUserName = (EditText) v.findViewById(R.id.userNameCredentials);
-        eTPassword = (EditText) v.findViewById(R.id.passwordCredentials);
-        eTRetypePassword = (EditText) v.findViewById(R.id.retypePasswordCredentials);
+        eTServerURL = (EditText) v.findViewById(R.id.serverURL);
 
         Button btnSave = (Button) v.findViewById(R.id.btnSave);
         Button btnCancel = (Button) v.findViewById(R.id.btnCancel);
@@ -39,8 +35,7 @@ public class CredentialsFragment extends DialogFragment{
         SettingsDAO settingsDAO = new SettingsDAO(getActivity());
         Settings settings = settingsDAO.getById(1);
         if (settings != null) {
-            eTUserName.setText(settings.getUserName());
-            eTPassword.setText(settings.getPassword());
+            eTServerURL.setText(settings.getUrl());
         }
 
         btnSave.setOnClickListener(new View.OnClickListener() {
@@ -50,8 +45,7 @@ public class CredentialsFragment extends DialogFragment{
                     SettingsFragment settingsFragment = (SettingsFragment) getActivity().getFragmentManager().findFragmentByTag("settings");
                     SharedPreferences sharedPreferences = settingsFragment.getPreferenceManager().getSharedPreferences();
                     SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putString("userName", eTUserName.getText().toString());
-                    editor.putString("password", eTPassword.getText().toString());
+                    editor.putString("serverURL", eTServerURL.getText().toString());
                     editor.apply();
                     dismiss();
                 }
@@ -67,29 +61,19 @@ public class CredentialsFragment extends DialogFragment{
 
         return new AlertDialog.Builder(getActivity())
                 .setView(v)
-                .setTitle(R.string.credentials)
+                .setTitle(R.string.server_url)
                 .setCancelable(true)
                 .create();
     }
 
     private boolean validateFields(){
-        if(eTUserName.getText().toString().isEmpty()){
-            eTUserName.setError(getResources().getString(R.string.error_user_name));
+        eTServerURL.setText(eTServerURL.getText().toString().trim());
+        if(Patterns.WEB_URL.matcher(eTServerURL.getText().toString().trim()).matches()){
+            return true;
+        }
+        else {
+            eTServerURL.setError("Invalid URL");
             return false;
         }
-        if(eTPassword.getText().toString().isEmpty()){
-            eTPassword.setError(getResources().getString(R.string.error_password));
-            return false;
-        }
-        if(eTRetypePassword.getText().toString().isEmpty()){
-            eTRetypePassword.setError(getResources().getString(R.string.error_retype_password));
-            return false;
-        }
-        if(!eTPassword.getText().toString().equals(eTRetypePassword.getText().toString())){
-            eTPassword.setError(getResources().getString(R.string.error_passwords_match));
-            eTRetypePassword.setError(getResources().getString(R.string.error_passwords_match));
-            return false;
-        }
-        return true;
     }
 }

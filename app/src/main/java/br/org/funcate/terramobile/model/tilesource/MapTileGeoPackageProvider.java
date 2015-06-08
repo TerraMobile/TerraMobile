@@ -3,6 +3,7 @@ package br.org.funcate.terramobile.model.tilesource;
 import android.graphics.drawable.Drawable;
 
 import com.augtech.geoapi.geopackage.GeoPackage;
+import com.augtech.geoapi.geopackage.GpkgTable;
 
 import org.osmdroid.tileprovider.MapTile;
 import org.osmdroid.tileprovider.MapTileRequestState;
@@ -15,6 +16,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 import br.org.funcate.jgpkg.service.GeoPackageService;
@@ -44,6 +47,7 @@ public class MapTileGeoPackageProvider extends MapTileModuleProviderBase {
     private final AtomicReference<ITileSource> mTileSource = new AtomicReference<ITileSource>();
     private String mLayerName = null;
     private GeoPackage mGeoPackage = null;
+    private Map<Integer, Map<String, Integer>> tilesBoundsByZoomLevel = null;
 
     // ===========================================================
     // Constructors
@@ -119,9 +123,17 @@ public class MapTileGeoPackageProvider extends MapTileModuleProviderBase {
                 return null;
             }
 
+
             final MapTile tile = pState.getMapTile();
 
+
+
                 try {
+
+                    if(!isValidTileForTileSource(tile.getX(), tile.getY(), tile.getZoomLevel()))
+                    {
+                        return null;
+                    }
 
                     System.out.println("Reaching tile X: " + tile.getX() + " Y: " + tile.getY() + " Z: " +  tile.getZoomLevel());
                     byte[] b = getTileFromGPKG(tile.getX(), tile.getY(), tile.getZoomLevel());
@@ -152,6 +164,47 @@ public class MapTileGeoPackageProvider extends MapTileModuleProviderBase {
 
             // If we get here then there is no file in the file cache
             return null;
+        }
+
+        private boolean isValidTileForTileSource(int col, int row, int level)
+        {
+            if(tilesBoundsByZoomLevel==null)
+            {
+                tilesBoundsByZoomLevel = new HashMap<Integer, Map<String, Integer>>();
+            }
+
+            Map<String, Integer> currentZoomLevelBounds = tilesBoundsByZoomLevel.get(level);
+            if(currentZoomLevelBounds==null)
+            {
+                try {
+                    //currentZoomLevelBounds=GeoPackageService.getTilesBounds(mGeoPackage, mLayerName, GpkgTable.TABLE_TYPE_TILES,level);
+                    tilesBoundsByZoomLevel.put(level,currentZoomLevelBounds);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return false;
+                }
+            }
+            int minTileRow = currentZoomLevelBounds.get("minTileRow");
+            int maxTileRow = currentZoomLevelBounds.get("maxTileRow");
+
+            int minTileCol = currentZoomLevelBounds.get("minTileCol");
+            int maxTileCol = currentZoomLevelBounds.get("maxTileCol");
+
+
+            if((row>=minTileRow)
+                    &&(row<=maxTileRow)
+                    &&(col>=minTileCol)
+                    &&(col<=maxTileCol))
+            {
+
+                System.out.println("VALID TILE: col: " + col + " row: " + row + " lv: " + level);
+                return true;
+            }
+            else
+            {
+                System.out.println("INVALID TILE: col: " + col + " row: " + row + " lv: " + level);
+                return false;
+            }
         }
 
         private byte[] getTileFromGPKG(int col, int row, int level) throws Exception {

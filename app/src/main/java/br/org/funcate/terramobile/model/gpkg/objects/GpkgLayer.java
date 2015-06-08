@@ -15,7 +15,7 @@ public class GpkgLayer{
 
     public enum Type {
         // Editable: layer
-        // TilES: base layer
+        // Tiles: base layer
         // Features: gathering layer
         FEATURES, TILES, EDITABLE, ONLINE, INVALID
     }

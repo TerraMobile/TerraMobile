@@ -82,7 +82,7 @@ public class AppGeoPackageService {
      */
     public static ArrayList<GpkgLayer> getLayers(Context context) throws InvalidGeopackageException, QueryException {
 
-        Project prj=((MainActivity)context).getProject();
+        Project prj=((MainActivity) context).getProject();
 
         if(prj==null) {
             throw new InvalidGeopackageException(context.getResources().getString(R.string.missing_geopackage_file));
@@ -160,8 +160,8 @@ public class AppGeoPackageService {
 
             listLayers.add(layer);
         }
-
         gpkg.close();
+
         return listLayers;
     }
 

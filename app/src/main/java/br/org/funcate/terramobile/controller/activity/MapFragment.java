@@ -198,8 +198,8 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants{
     }
 
     public void drawCross(ImageView drawingImageView) {
-        Bitmap bitmap = Bitmap.createBitmap((int) getActivity().getWindowManager()
-                .getDefaultDisplay().getWidth(), (int) getActivity().getWindowManager()
+        Bitmap bitmap = Bitmap.createBitmap(getActivity().getWindowManager()
+                .getDefaultDisplay().getWidth(), getActivity().getWindowManager()
                 .getDefaultDisplay().getHeight(), Bitmap.Config.ARGB_8888);
 
         Canvas canvas = new Canvas(bitmap);
