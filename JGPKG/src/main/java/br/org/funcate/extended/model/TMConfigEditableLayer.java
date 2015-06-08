@@ -9,22 +9,21 @@ import java.util.ArrayList;
  */
 public class TMConfigEditableLayer {
 
-    private ArrayMap<String,String> configLayer;
+    private ArrayMap<String,String> config;
 
     public TMConfigEditableLayer() {
-        this.configLayer=new ArrayMap<String,String>();
+        this.config =new ArrayMap<String,String>();
     }
 
-    public void addConfigLayer(String identify, String JSON) {
-        this.configLayer.put(identify,JSON);
+    public void addConfig(String identify, String JSON) {
+        this.config.put(identify, JSON);
     }
 
-    public String getConfigLayer(String identify) {
-        return this.configLayer.get(identify);
+    public String getConfig(String identify) {
+        return this.config.get(identify);
     }
 
-    public boolean isEditableLayer(String identify) {
-        return this.configLayer.containsKey(identify);
+    public boolean isEditable(String identify) {
+        return this.config.containsKey(identify);
     }
-
 }

@@ -2,8 +2,9 @@ package br.org.funcate.jgpkg.service;
 
 
 import java.io.File;
-import java.util.Date;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import android.content.Context;
@@ -13,16 +14,14 @@ import com.augtech.geoapi.geopackage.GpkgField;
 import com.augtech.geoapi.geopackage.GpkgTable;
 import com.augtech.geoapi.geopackage.ICursor;
 import com.augtech.geoapi.geopackage.ISQLDatabase;
+import com.augtech.geoapi.geopackage.table.FeaturesTable;
 import com.augtech.geoapi.geopackage.table.GpkgContents;
 
 import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.geometry.BoundingBox;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -176,13 +175,51 @@ public class GeoPackageService {
             while (c.moveToNext()) {
                 String id = c.getString(0);
                 String json = c.getString(1);
-                tmConfigEditableLayer.addConfigLayer(id, json);
+                tmConfigEditableLayer.addConfig(id, json);
             }
         }catch (Exception e) {
             throw new QueryException(e.getMessage());
         }
 
         return tmConfigEditableLayer;
+    }
+
+    public static ArrayList<GpkgField> getLayerFields(GeoPackage gpkg, String gpkgTableName){
+
+        ArrayList<GpkgField> fields = new ArrayList<GpkgField>();
+
+        FeaturesTable userTable = (FeaturesTable) gpkg.getUserTable(gpkgTableName, GpkgTable.TABLE_TYPE_FEATURES);
+
+        Collection<GpkgField> cFields = userTable.getFields();
+
+        Iterator<GpkgField> it = cFields.iterator();
+
+        while (it.hasNext()) {
+            fields.add(it.next());
+        }
+
+        return fields;
+    }
+
+    public static SimpleFeatureType getLayerFeatureType(GeoPackage gpkg, String gpkgTableName) throws QueryException {
+
+        FeaturesTable userTable = (FeaturesTable) gpkg.getUserTable(gpkgTableName, GpkgTable.TABLE_TYPE_FEATURES);
+        SimpleFeatureType featureType=null;
+        try {
+            featureType = userTable.getSchema();
+        }catch (Exception e){
+            throw new QueryException(e.getMessage());
+        }
+
+        return featureType;
+    }
+
+    public static void writeLayerFeature(GeoPackage gpkg, SimpleFeature feature) throws QueryException {
+        try {
+            gpkg.insertFeature(feature);
+        }catch (Exception e){
+            throw new QueryException(e.getMessage());
+        }
     }
 
     public static ArrayList<ArrayList<GpkgField>> getGpkgFieldsContents(GeoPackage gpkg, String[] columns, String whereClause) throws QueryException {
