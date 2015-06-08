@@ -334,6 +334,15 @@ public interface LibraryConstants {
     String DATABASE_ID = "DATABASE_ID";
 
     /**
+     * Key for selected point identifier.
+     */
+    String SELECTED_POINT_ID = "SELECTED_POINT_ID";
+
+    /**
+     * Key for result form collect data.
+     */
+    String FORM_KEYS = "keys";
+    /**
      * The name of the db to put mapsforge extracted data in
      */
     String MAPSFORGE_EXTRACTED_DB_NAME = "mapsforge_extracted.sqlite";

@@ -103,9 +103,9 @@ public class TreeView {
         try {
             layers = AppGeoPackageService.getLayers(this.context);
         } catch (InvalidGeopackageException e) {
-            System.out.print("Fail on load layers :" + e.getMessage());
+            Message.showMessage((MainActivity)this.context, R.drawable.error, this.context.getResources().getString(R.string.failure_title_msg), e.getMessage());
         } catch (QueryException e) {
-            System.out.print("Fail on load layers :" + e.getMessage());
+            Message.showMessage((MainActivity)this.context, R.drawable.error, this.context.getResources().getString(R.string.failure_title_msg), e.getMessage());
         }
 
         if (null == layers || layers.size()==0) {

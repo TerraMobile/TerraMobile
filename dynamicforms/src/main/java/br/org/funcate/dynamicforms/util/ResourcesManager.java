@@ -133,7 +133,7 @@ public class ResourcesManager implements Serializable {
         return applicationLabel;
     }
 
-    private ResourcesManager(Context context) throws Exception {
+/*    private ResourcesManager(Context context) throws Exception {
         Context appContext = context.getApplicationContext();
         ApplicationInfo appInfo = appContext.getApplicationInfo();
 
@@ -145,7 +145,7 @@ public class ResourcesManager implements Serializable {
         }
         applicationLabel = applicationLabel.toLowerCase();
 
-        /*
+        *//*
          * take care to create all the folders needed
          *
          * The default structure is:
@@ -159,7 +159,7 @@ public class ResourcesManager implements Serializable {
          *    |          `--- tags.json
          *    |
          *    `-- mapsdir
-         */
+         *//*
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(appContext);
 
         String cantCreateSdcardmsg = appContext.getResources().getString(R.string.cantcreate_sdcard);
@@ -174,9 +174,9 @@ public class ResourcesManager implements Serializable {
             // checks
             // the folder doesn't exist for some reason, fallback on default
             String state = Environment.getExternalStorageState();
-/*            if (GPLog.LOG_HEAVY) {
+*//*            if (GPLog.LOG_HEAVY) {
                 Log.i("RESOURCESMANAGER", state);
-            }*/
+            }*//*
             boolean mExternalStorageAvailable;
             boolean mExternalStorageWriteable;
             if (Environment.MEDIA_MOUNTED.equals(state)) {
@@ -190,11 +190,11 @@ public class ResourcesManager implements Serializable {
 
             if (mExternalStorageAvailable && mExternalStorageWriteable) {
                 if (customFolderPath.equals("internal")) {
-                    /*
+                    *//*
                      * the user folder doesn't exist, but is "internal":
                      * - use internal app memory
                      * - set sdcard anyways to the external folder for maps use
-                     */
+                     *//*
                     useInternalMemory = true;
                     applicationSupportFolder = appContext.getDir(applicationLabel, Context.MODE_PRIVATE);
                     sdcardDir = Environment.getExternalStorageDirectory();
@@ -203,11 +203,11 @@ public class ResourcesManager implements Serializable {
                     applicationSupportFolder = new File(sdcardDir, applicationLabel);
                 }
             } else if (useInternalMemory) {
-                /*
+                *//*
                  * no external storage available:
                  * - use internal memory
                  * - set sdcard for maps inside the space
-                 */
+                 *//*
                 applicationSupportFolder = appContext.getDir(applicationLabel, Context.MODE_PRIVATE);
                 sdcardDir = applicationSupportFolder;
             } else {
@@ -230,13 +230,13 @@ public class ResourcesManager implements Serializable {
                 throw new IOException(msgFormat);
             }
         }
-/*        if (GPLog.LOG_HEAVY) {
+*//*        if (GPLog.LOG_HEAVY) {
             Log.i("RESOURCESMANAGER", "Application support folder exists: " + applicationSupportFolder.exists());
-        }*/
+        }*//*
 
-        /*
+        *//*
          * get the database file
-         */
+         *//*
         String databasePath = preferences.getString(PREFS_KEY_DATABASE_TO_LOAD, "asdasdpoipoi");
         databaseFile = new File(databasePath);
         if (databaseFile.getParentFile() == null || !databaseFile.getParentFile().exists()) {
@@ -272,6 +272,24 @@ public class ResourcesManager implements Serializable {
         Editor editor = preferences.edit();
         editor.putString(LibraryConstants.PREFS_KEY_CUSTOM_EXTERNALSTORAGE, sdcardDir.getAbsolutePath());
         editor.putString(LibraryConstants.PREFS_KEY_CUSTOM_MAPSFOLDER, mapsDir.getAbsolutePath());
+        editor.commit();
+    }*/
+
+    private ResourcesManager(Context context) throws Exception {
+        Context appContext = context.getApplicationContext();
+        String cantCreateSdcardmsg = appContext.getResources().getString(R.string.cantcreate_sdcard);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(appContext);
+
+        tempDir = new File(applicationSupportFolder, PATH_TEMP);
+        if (!tempDir.exists())
+            if (!tempDir.mkdir()) {
+                String msgFormat = Utilities.format(cantCreateSdcardmsg, tempDir.getAbsolutePath());
+                messageDialog(appContext, msgFormat, null);
+                tempDir = sdcardDir;
+            }
+
+        Editor editor = preferences.edit();
+        editor.putString(LibraryConstants.PREFS_KEY_CUSTOM_EXTERNALSTORAGE, sdcardDir.getAbsolutePath());
         editor.commit();
     }
 

@@ -333,26 +333,18 @@ public class FragmentDetail extends Fragment {
                     if (text != null)
                         FormUtilities.update(formItems, key, text);
                 } catch (JSONException e) {
-                    Toast.makeText(getActivity().getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-                    //GPLog.error(this, e.getLocalizedMessage(), e);
-                    e.printStackTrace();
+                    throw new Exception(e.getMessage());
                 }
             }
         }
 
-        FragmentList listFragment = (FragmentList) getFragmentManager().findFragmentById(R.id.listFragment);
-        if (listFragment != null) {
-            FormUtilities.updateExtras(formItems, listFragment.getLatitude(), listFragment.getLongitude());
+        FragmentActivity activity = getActivity();
+        if (activity instanceof FragmentDetailActivity) {
+            // case of portrait mode
+            FragmentDetailActivity fragmentDetailActivity = (FragmentDetailActivity) activity;
+            FormUtilities.updateExtras(formItems, fragmentDetailActivity.getLatitude(), fragmentDetailActivity.getLongitude());
         } else {
-            FragmentActivity activity = getActivity();
-            if (activity instanceof FragmentDetailActivity) {
-                // case of portrait mode
-                FragmentDetailActivity fragmentDetailActivity = (FragmentDetailActivity) activity;
-                FormUtilities
-                        .updateExtras(formItems, fragmentDetailActivity.getLatitude(), fragmentDetailActivity.getLongitude());
-            } else {
-                throw new RuntimeException("Fragmentlist not available"); //$NON-NLS-1$
-            }
+            throw new RuntimeException("Fragmentlist not available"); //$NON-NLS-1$
         }
 
         return null;

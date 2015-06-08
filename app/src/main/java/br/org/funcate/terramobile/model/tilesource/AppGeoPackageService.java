@@ -5,13 +5,21 @@ package br.org.funcate.terramobile.model.tilesource;
  */
 import android.content.Context;
 import android.graphics.Color;
+import android.os.Bundle;
 
-import com.augtech.geoapi.geometry.BoundingBoxImpl;
+import com.augtech.geoapi.feature.SimpleFeatureImpl;
+import com.augtech.geoapi.feature.type.GeometryTypeImpl;
+import com.augtech.geoapi.feature.type.SimpleFeatureTypeImpl;
+import com.augtech.geoapi.geopackage.DateUtil;
 import com.augtech.geoapi.geopackage.GeoPackage;
 import com.augtech.geoapi.geopackage.GpkgField;
 
-import org.opengis.geometry.BoundingBox;
-import org.opengis.geometry.Envelope;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.FeatureType;
+import org.opengis.feature.type.GeometryType;
+import org.opengis.geometry.Geometry;
+import org.opengis.geometry.primitive.Point;
 import org.osmdroid.ResourceProxy;
 import org.osmdroid.tileprovider.MapTileProviderArray;
 import org.osmdroid.tileprovider.MapTileProviderBasic;
@@ -26,13 +34,19 @@ import org.osmdroid.views.overlay.TilesOverlay;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
+import br.org.funcate.dynamicforms.util.LibraryConstants;
 import br.org.funcate.extended.model.TMConfigEditableLayer;
 import br.org.funcate.jgpkg.exception.QueryException;
 import br.org.funcate.jgpkg.service.GeoPackageService;
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.controller.activity.MainActivity;
+import br.org.funcate.terramobile.controller.activity.TreeView;
+import br.org.funcate.terramobile.model.Project;
 import br.org.funcate.terramobile.model.exception.InvalidGeopackageException;
+import br.org.funcate.terramobile.model.exception.TerraMobileException;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
 import br.org.funcate.terramobile.util.ResourceUtil;
 
@@ -43,15 +57,22 @@ public class AppGeoPackageService {
 
     }
 
-    private static String getGpkgFilePath(Context context) {
-        File appPath = ResourceUtil.getDirectory(context.getResources().getString(R.string.app_workspace_dir));
-        // ------------------------------------------------------------------------
-        // TODO: alter temporary file name to dynamic file name as from user action when him acquire online GeoPackege from one server.
-        //gpkgFilePath=this.context.getCurrentGeoPackageName();
-        // ------------------------------------------------------------------------
-        String gpkgFilePath=appPath+"/terramobile_demo.gpkg";
+    public static File getGpkgFile(Context context) {
+        File directory = ResourceUtil.getDirectory(context.getResources().getString(R.string.app_workspace_dir));
+        ArrayList<File> gpkgFiles= ResourceUtil.getGeoPackageFiles(directory, context.getResources().getString(R.string.geopackage_extension));
 
-        return gpkgFilePath;
+        File gpkgFile=null;
+        if(gpkgFiles.size()>0){// now, using the first geopackage on list
+            gpkgFile=gpkgFiles.get(0);
+        }
+
+        if(gpkgFiles.size()>1) {// if exist more than one item on the list...
+            // TODO: show the geopackage files list to that user select one.
+            /*for(File gpkg : gpkgFiles) {
+                gpkgFile=gpkg;
+            }*/
+        }
+        return gpkgFile;
     }
 
     /**
@@ -61,15 +82,20 @@ public class AppGeoPackageService {
      */
     public static ArrayList<GpkgLayer> getLayers(Context context) throws InvalidGeopackageException, QueryException {
 
-        String gpkgFilePath = getGpkgFilePath(context);
-        GeoPackage gpkg = GeoPackageService.readGPKG(context, gpkgFilePath);
+        Project prj=((MainActivity)context).getProject();
+
+        if(prj==null) {
+            throw new InvalidGeopackageException(context.getResources().getString(R.string.missing_geopackage_file));
+        }
+
+        GeoPackage gpkg = GeoPackageService.readGPKG(context, prj.getFilePath());
 
         if(!gpkg.isGPKGValid(true))
         {
             throw new InvalidGeopackageException("Invalid GeoPackage file.");
         }
 
-        ArrayList<ArrayList<GpkgField>> fields = GeoPackageService.getGpkgFieldsContents(gpkg, null,"");
+        ArrayList<ArrayList<GpkgField>> fields = GeoPackageService.getGpkgFieldsContents(gpkg, null, "");
         TMConfigEditableLayer tmConfigEditableLayer = GeoPackageService.getTMConfigEditableLayer(gpkg);
         ArrayList<GpkgLayer> listLayers=new ArrayList<GpkgLayer>();
         GpkgLayer layer;
@@ -100,10 +126,14 @@ public class AppGeoPackageService {
             // Getting data type
             if("features".equals(dataTypeField.getValue()))
             {
-                if(!tmConfigEditableLayer.isEditableLayer(layerName))
+                if(!tmConfigEditableLayer.isEditable(layerName))
                     layer.setType(GpkgLayer.Type.FEATURES);
-                else
+                else {
                     layer.setType(GpkgLayer.Type.EDITABLE);
+                    layer.setJSON(tmConfigEditableLayer.getConfig(layerName));
+                    layer.setFields(GeoPackageService.getLayerFields(gpkg, layerName));
+                    layer.setFeatureType(GeoPackageService.getLayerFeatureType(gpkg, layerName));
+                }
             } else if("tiles".equals(dataTypeField.getValue()))
             {
                 layer.setType(GpkgLayer.Type.TILES);
@@ -129,7 +159,7 @@ public class AppGeoPackageService {
             layer.setSrsId((Integer) srsIdField.getValue());
 
             listLayers.add(layer);
-            }
+        }
 
         gpkg.close();
         return listLayers;
@@ -168,10 +198,86 @@ public class AppGeoPackageService {
         mapView.setUseDataConnection(false); //  letting osmdroid know you would use it in offline mode, keeps the mapView from loading online tiles using network connection.*/
         mapView.invalidate();
     }
-/*
-    public ArrayList<String> getAttributes() {
 
-        return null;
-    }*/
+    public static void storeData(Context context, Bundle formData) throws TerraMobileException, QueryException {
+        ArrayList<String> keys = formData.getStringArrayList(LibraryConstants.FORM_KEYS);
+        TreeView tv = ((MainActivity)context).getTreeView();
+        if(keys==null || keys.isEmpty()){
+            throw new TerraMobileException(context.getString(R.string.missing_form_data));
+        }else {
+            SimpleFeature feature = makeSimpleFeature(formData, tv);
+            GeoPackageService.writeLayerFeature(tv.getSelectedEditableLayer().getGeoPackage(), feature);
+        }
+    }
+
+    private static SimpleFeature makeSimpleFeature(Bundle formData, TreeView tv) {
+
+        ArrayList<GpkgField> fields = tv.getSelectedEditableLayer().getFields();
+        String tableName = tv.getSelectedEditableLayer().getName();
+        SimpleFeatureType ft = tv.getSelectedEditableLayer().getFeatureType();
+        String columns="";
+        String values="";
+        List<Object> attributeValues = null;
+        SimpleFeatureImpl feature = new SimpleFeatureImpl(null, attributeValues, ft);
+
+        for (int i = 0,len = fields.size(); i < len; i++) {
+            GpkgField field = fields.get(i);
+            String key = field.getFieldName();
+            String type = field.getFieldType();
+
+            columns += ((columns.equals(""))?(""):(",")) + key;
+            values += ((values.equals(""))?(""):(","));
+
+            if("DOUBLE".equalsIgnoreCase(type))
+            {
+                Double d=formData.getDouble(key);
+                values += d.toString();
+                feature.setAttribute(key, d);
+            } else if("TEXT".equalsIgnoreCase(type))
+            {
+                String s=formData.getString(key);
+                values += "'"+s+"'";
+                feature.setAttribute(key, s);
+            } else if("INTEGER".equalsIgnoreCase(type))
+            {
+                Integer in= formData.getInt(key);
+                values += in.toString();
+                feature.setAttribute(key, in);
+            } else if("BOOLEAN".equalsIgnoreCase(type))
+            {
+                Boolean b= formData.getBoolean(key);
+                values += b.toString();
+                feature.setAttribute(key, b);
+            } else if("BYTE".equalsIgnoreCase(type))
+            {
+                byte[] blob = formData.getByteArray(key);
+                // see how to insert a byte array inside sqlite table
+                feature.setAttribute(key, blob);
+            } else if("DATE".equalsIgnoreCase(type))
+            {
+                String date = formData.getString(key);
+                Date dt = DateUtil.deserializeDateTime(date);
+                values += "date("+dt.toString()+")";
+                feature.setAttribute(key, dt);
+            } else if("TIME".equalsIgnoreCase(type))
+            {
+                String date = formData.getString(key);
+                Date dt = DateUtil.deserializeDateTime(date);
+                values += "time("+dt.toString()+")";
+                feature.setAttribute(key, dt);
+            } else if("DATETIME".equalsIgnoreCase(type))
+            {
+                String date = formData.getString(key);
+                Date dt = DateUtil.deserializeDateTime(date);
+                values += "datetime("+dt.toString()+")";
+                feature.setAttribute(key, dt);
+            }
+
+        }
+
+        String sql="INSERT INTO "+tableName+" ("+columns+") values("+values+")";
+
+        return feature;
+    }
 
 }

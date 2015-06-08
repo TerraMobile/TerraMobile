@@ -7,10 +7,12 @@ import android.util.TypedValue;
 import com.vividsolutions.jts.util.CollectionUtil;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
+import br.org.funcate.dynamicforms.FormActivity;
 import br.org.funcate.terramobile.R;
 
 /**
@@ -67,5 +69,27 @@ public class ResourceUtil {
         File file = new File(path);
         file.mkdirs();
         return file;
+    }
+
+    /**
+     * Get the files list from app working directory.
+     * @param directory, The reference to working directory.
+     * @param extension, the default file extension to identify a GeoPackage database file.
+     * @return The list of files filtered using the extension.
+     */
+    public static ArrayList<File> getGeoPackageFiles(File directory, final String extension) {
+        if (directory==null || !directory.isDirectory()) return null;
+        ArrayList<File> files=new ArrayList<File>();
+        FileFilter filter = new FileFilter() {
+            @Override
+            public boolean accept(File pathname) {
+                if(pathname.isDirectory() || pathname.isHidden()) return false;
+                return pathname.getName().endsWith(extension);
+            }
+        };
+
+        File[] theFiles = directory.listFiles(filter);
+        for(File file : theFiles) files.add(file);
+        return files;
     }
 }

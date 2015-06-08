@@ -58,7 +58,7 @@ import br.org.funcate.dynamicforms.util.Utilities;
  * <p/>
  * <p>
  * The activity returns the id of the image inserted in the database, that can be
- * retrieved through the {@link LibraryConstants#DATABASE_ID} key from
+ * retrieved through the {@link LibraryConstants#SELECTED_POINT_ID} key from
  * the bundle.
  * </p>
  *
@@ -95,7 +95,7 @@ public class CameraActivity extends Activity {
                     imageSaveFolder = new File(imageSaveFolderTmp);
                 }
                 imageName = extras.getString(LibraryConstants.PREFS_KEY_CAMERA_IMAGENAME);
-                noteId = extras.getLong(LibraryConstants.DATABASE_ID);
+                noteId = extras.getLong(LibraryConstants.SELECTED_POINT_ID);
                 lon = extras.getDouble(LibraryConstants.LONGITUDE);
                 lat = extras.getDouble(LibraryConstants.LATITUDE);
                 elevation = extras.getDouble(LibraryConstants.ELEVATION);
@@ -164,7 +164,7 @@ public class CameraActivity extends Activity {
 
                     long imageId = imagesDbHelper.addImage(lon, lat, elevation, azimuth, currentDate.getTime(), imageFile.getName(),
                             imageAndThumbnailArray[0], imageAndThumbnailArray[1], noteId);
-                    intent.putExtra(LibraryConstants.DATABASE_ID, imageId);
+                    intent.putExtra(LibraryConstants.SELECTED_POINT_ID, imageId);
                     intent.putExtra(LibraryConstants.OBJECT_EXISTS, true);
 
                     // delete the file after insertion in db

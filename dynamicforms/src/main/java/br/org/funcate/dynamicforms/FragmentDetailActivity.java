@@ -18,6 +18,7 @@
 package br.org.funcate.dynamicforms;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -26,6 +27,7 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.util.ArrayMap;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Toast;
@@ -34,16 +36,36 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import br.org.funcate.dynamicforms.constraints.Constraints;
+import br.org.funcate.dynamicforms.exceptions.CollectFormException;
 import br.org.funcate.dynamicforms.util.LibraryConstants;
 import br.org.funcate.dynamicforms.util.PositionUtilities;
 import br.org.funcate.dynamicforms.util.Utilities;
 
+import static br.org.funcate.dynamicforms.FormUtilities.ATTR_SECTIONNAME;
 import static br.org.funcate.dynamicforms.FormUtilities.TAG_IS_RENDER_LABEL;
 import static br.org.funcate.dynamicforms.FormUtilities.TAG_KEY;
+import static br.org.funcate.dynamicforms.FormUtilities.TAG_SIZE;
+import static br.org.funcate.dynamicforms.FormUtilities.TAG_TYPE;
+import static br.org.funcate.dynamicforms.FormUtilities.TAG_URL;
 import static br.org.funcate.dynamicforms.FormUtilities.TAG_VALUE;
+import static br.org.funcate.dynamicforms.FormUtilities.TYPE_BOOLEAN;
+import static br.org.funcate.dynamicforms.FormUtilities.TYPE_CONNECTEDSTRINGCOMBO;
+import static br.org.funcate.dynamicforms.FormUtilities.TYPE_DATE;
+import static br.org.funcate.dynamicforms.FormUtilities.TYPE_DOUBLE;
+import static br.org.funcate.dynamicforms.FormUtilities.TYPE_INTEGER;
+import static br.org.funcate.dynamicforms.FormUtilities.TYPE_LABEL;
+import static br.org.funcate.dynamicforms.FormUtilities.TYPE_LABELWITHLINE;
+import static br.org.funcate.dynamicforms.FormUtilities.TYPE_PICTURES;
+import static br.org.funcate.dynamicforms.FormUtilities.TYPE_STRING;
+import static br.org.funcate.dynamicforms.FormUtilities.TYPE_STRINGAREA;
+import static br.org.funcate.dynamicforms.FormUtilities.TYPE_STRINGCOMBO;
+import static br.org.funcate.dynamicforms.FormUtilities.TYPE_STRINGMULTIPLECHOICE;
+import static br.org.funcate.dynamicforms.FormUtilities.TYPE_TIME;
 
 /**
  * Fragment detail view activity.
@@ -58,7 +80,7 @@ public class FragmentDetailActivity extends FragmentActivity {
     private double longitude;
     private double latitude;
     private double elevation = -9999.0;
-    private long noteId;
+    private long pointId;
 
     // this members is used in dynamic form process.
     private static final String USE_MAPCENTER_POSITION = "USE_MAPCENTER_POSITION";
@@ -69,14 +91,6 @@ public class FragmentDetailActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        String defaultSectionName = "terramobile";
-        try {
-            sectionObject = TagsManager.getInstance(getApplicationContext()).getSectionByName(defaultSectionName);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        sectionObjectString = sectionObject.toString();
-
         // don't permit rotation
         int currentOrientation = getResources().getConfiguration().orientation;
         if (currentOrientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -85,24 +99,30 @@ public class FragmentDetailActivity extends FragmentActivity {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
 
-        if (savedInstanceState != null) {
+        checkPositionCoordinates();
+
+        /*if (savedInstanceState != null) {
             formName = savedInstanceState.getString(FormUtilities.ATTR_FORMNAME);
-        }
+        }*/
+        String tags="";
+        String defaultSectionName = "terramobile";
+
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
         if (extras != null) {
-            noteId = extras.getLong(LibraryConstants.DATABASE_ID);
+            pointId = extras.getLong(LibraryConstants.SELECTED_POINT_ID);
             formName = extras.getString(FormUtilities.ATTR_FORMNAME);
-            sectionObjectString = extras.getString(FormUtilities.ATTR_SECTIONOBJECTSTR);
-            try {
-                sectionObject = new JSONObject(sectionObjectString);
-                sectionName = sectionObject.getString("sectionname");
-            } catch (JSONException e) {
-                //GPLog.error(this, null, e);
-                Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-            }
-            longitude = extras.getDouble(LibraryConstants.LONGITUDE);
-            latitude = extras.getDouble(LibraryConstants.LATITUDE);
+            tags = extras.getString(FormUtilities.ATTR_JSON_TAGS);
+        }
+
+        try {
+            sectionObject = TagsManager.getInstance(tags).getSectionByName(defaultSectionName);
+            sectionObjectString = sectionObject.toString();
+            sectionName = sectionObject.getString(ATTR_SECTIONNAME);
+        } catch (JSONException e) {
+            Toast.makeText(getApplicationContext(), "Incorrect form configuration.", Toast.LENGTH_LONG).show();
+            System.out.println("Failure on load JSON form from database.");
+            this.finish();
         }
 
         setContentView(R.layout.details_activity_layout);
@@ -144,7 +164,7 @@ public class FragmentDetailActivity extends FragmentActivity {
     }
 
     public long getNoteId() {
-        return noteId;
+        return pointId;
     }
 
     /**
@@ -181,72 +201,79 @@ public class FragmentDetailActivity extends FragmentActivity {
 
         // extract and check constraints
         List<String> availableFormNames = TagsManager.getFormNames4Section(sectionObject);
-        String renderingLabel = null;
+        Bundle formData = null;
+
         for (String formName : availableFormNames) {
             JSONObject formObject = TagsManager.getForm4Name(formName, sectionObject);
-
             JSONArray formItemsArray = TagsManager.getFormItems(formObject);
 
             int length = formItemsArray.length();
-            String value = null;
+            formData = new Bundle(length);
+            ArrayList<String> keys = new ArrayList<String>(length);
+
+            String key = "";
+            String value = "";
+            String type = "";
+            boolean insertKey=true;
+
             for (int i = 0; i < length; i++) {
                 JSONObject jsonObject = formItemsArray.getJSONObject(i);
 
-                String key = "-";
                 if (jsonObject.has(TAG_KEY))
                     key = jsonObject.getString(TAG_KEY).trim();
 
                 if (jsonObject.has(TAG_VALUE)) {
                     value = jsonObject.getString(TAG_VALUE).trim();
                 }
-                if (jsonObject.has(TAG_IS_RENDER_LABEL)) {
-                    String isRenderingLabelStr = jsonObject.getString(TAG_IS_RENDER_LABEL).trim();
-                    boolean isRenderingLabel = Boolean.parseBoolean(isRenderingLabelStr);
-                    if (isRenderingLabel)
-                        renderingLabel = value;
+
+                if (jsonObject.has(TAG_TYPE)) {
+                    type = jsonObject.getString(TAG_TYPE).trim();
                 }
 
-                // inject latitude
-                if (key.equals(LibraryConstants.LATITUDE)) {
-                    String latitudeString = String.valueOf(latitude);
-                    value = latitudeString;
-                    jsonObject.put(TAG_VALUE, latitudeString);
-                }
-                // inject longitude
-                if (key.equals(LibraryConstants.LONGITUDE)) {
-                    String longitudeString = String.valueOf(longitude);
-                    value = longitudeString;
-                    jsonObject.put(TAG_VALUE, longitudeString);
-                }
+                if(!key.equals("") && !value.equals("") && !type.equals("")) {
 
-                Constraints constraints = FormUtilities.handleConstraints(jsonObject, null);
-                if (value == null || !constraints.isValid(value)) {
-                    String constraintDescription = constraints.getDescription();
-                    String validfieldMsg = getString(R.string.form_field_check);
-                    String msg = Utilities.format(validfieldMsg, key, formName, constraintDescription);
-                    Utilities.messageDialog(this, msg, null);
-                    return;
+                    insertKey=true;
+
+                    if (type.equals(TYPE_STRING)) {
+                        formData.putString(key,value);
+                    } else if (type.equals(TYPE_STRINGAREA)) {
+                        formData.putString(key,value);
+                    } else if (type.equals(TYPE_DOUBLE)) {
+                        formData.putDouble(key, new Double(value));
+                    } else if (type.equals(TYPE_INTEGER)) {
+                        formData.putInt(key, new Integer(value));
+                    } else if (type.equals(TYPE_DATE)) {
+                        formData.putString(key, value);
+                    } else if (type.equals(TYPE_TIME)) {
+                        formData.putString(key, value);
+                    } else if (type.equals(TYPE_LABEL)) {
+                        insertKey=false;
+                        //formData.putString(key, value);
+                    } else if (type.equals(TYPE_LABELWITHLINE)) {
+                        insertKey=false;
+                        //formData.putString(key, value);
+                    } else if (type.equals(TYPE_BOOLEAN)) {
+                        formData.putBoolean(key, new Boolean(value));
+                    } else if (type.equals(TYPE_STRINGCOMBO)) {
+                        formData.putString(key,value);
+                    } else if (type.equals(TYPE_CONNECTEDSTRINGCOMBO)) {
+                        formData.putString(key,value);
+                    } else if (type.equals(TYPE_STRINGMULTIPLECHOICE)) {
+                        insertKey=false;
+                        //formData.putString(key,value);
+                    } else if (type.equals(TYPE_PICTURES)) {
+                        // pass the directory where are pictures.
+                        formData.putString(key,value);
+                    }
+
+                    if(insertKey) keys.add(key);
                 }
             }
+            formData.putStringArrayList(LibraryConstants.FORM_KEYS,keys);
         }
 
-        // finally store data
-        long timestamp = System.currentTimeMillis();
-
-        if (renderingLabel == null) {
-            renderingLabel = sectionName;
-        }
-        String[] formDataArray = {//
-                String.valueOf(noteId), //
-                String.valueOf(longitude), //
-                String.valueOf(latitude), //
-                String.valueOf(elevation), //
-                String.valueOf(timestamp), //
-                renderingLabel, //
-                "POI", //
-                sectionObjectString};
         Intent intent = getIntent();
-        intent.putExtra(LibraryConstants.PREFS_KEY_FORM, formDataArray);
+        intent.putExtra(LibraryConstants.PREFS_KEY_FORM, formData);
         setResult(Activity.RESULT_OK, intent);
         finish();
     }

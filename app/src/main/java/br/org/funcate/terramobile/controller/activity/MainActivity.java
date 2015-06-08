@@ -1,5 +1,6 @@
 package br.org.funcate.terramobile.controller.activity;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -13,6 +14,7 @@ import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.util.ArrayMap;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.util.TypedValue;
@@ -36,20 +38,25 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import br.org.funcate.dynamicforms.FormUtilities;
 import br.org.funcate.dynamicforms.FragmentDetailActivity;
 import br.org.funcate.dynamicforms.TagsManager;
+import br.org.funcate.dynamicforms.exceptions.CollectFormException;
 import br.org.funcate.dynamicforms.util.LibraryConstants;
 import br.org.funcate.dynamicforms.util.PositionUtilities;
 import br.org.funcate.dynamicforms.util.Utilities;
+import br.org.funcate.dynamicforms.views.GView;
+import br.org.funcate.jgpkg.exception.QueryException;
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.configuration.ViewContextParameters;
 import br.org.funcate.terramobile.controller.activity.settings.CredentialsFragment;
 import br.org.funcate.terramobile.controller.activity.settings.SettingsActivity;
 import br.org.funcate.terramobile.controller.activity.settings.SettingsFragment;
+import br.org.funcate.terramobile.model.Project;
 import br.org.funcate.terramobile.model.exception.DownloadException;
 import br.org.funcate.terramobile.model.exception.TerraMobileException;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
@@ -67,10 +74,31 @@ public class MainActivity extends FragmentActivity {
 
     private ViewContextParameters parameters=new ViewContextParameters();
 
+    private Project mProject;
+
+    private static int FORM_COLLECT_DATA = 222;
+
     // Progress bar
     private ProgressDialog progressDialog;
 
     private ListPackageFragment listPackageFragment;
+
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK && requestCode == FORM_COLLECT_DATA) {
+            Bundle extras = data.getBundleExtra(LibraryConstants.PREFS_KEY_FORM);
+            try {
+                AppGeoPackageService.storeData(this,extras);
+            }catch (TerraMobileException tme) {
+                Message.showMessage(this, R.drawable.error, getResources().getString(R.string.error), tme.getMessage());
+            }catch (QueryException qe) {
+                Message.showMessage(this, R.drawable.error, getResources().getString(R.string.error), qe.getMessage());
+            }
+        }else {
+            Message.showMessage(this, R.drawable.error, getResources().getString(R.string.error), getResources().getString(R.string.cancel_form_data));
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +107,14 @@ public class MainActivity extends FragmentActivity {
         setContentView(R.layout.activity_main);
 
         PreferenceManager.setDefaultValues(this, R.xml.settings, false);
+
+        File gpkgFile=AppGeoPackageService.getGpkgFile(this);
+
+        if(gpkgFile!=null) {
+            String fileName = gpkgFile.getName();
+            fileName = fileName.substring(0, fileName.length() - 4);
+            mProject = new Project(fileName, gpkgFile.getAbsolutePath());
+        }
 
         treeView = new TreeView(MainActivity.this);
 
@@ -225,19 +261,19 @@ public class MainActivity extends FragmentActivity {
     }
 
     private void startForm() {
-        // This id is provided from the selected point, if one it is selected.
-        long selectedPointID = 123543;
+        // This id is provided from the selected point, if one it is selected otherwise -1 is default.
+        long selectedPointID = -1;
 
-        // insert note and then work on it
         try {
             Intent formIntent = new Intent(MainActivity.this, FragmentDetailActivity.class);
-            formIntent.putExtra(LibraryConstants.DATABASE_ID, selectedPointID);
+            formIntent.putExtra(LibraryConstants.SELECTED_POINT_ID, selectedPointID);
             // The form name attribute, provided by JSON, shall be the same name of the editable layer.
             formIntent.putExtra(FormUtilities.ATTR_FORMNAME, treeView.getSelectedEditableLayer().getName());
-            startActivity(formIntent);
+            formIntent.putExtra(FormUtilities.ATTR_JSON_TAGS, treeView.getSelectedEditableLayer().getJSON());
+            startActivityForResult(formIntent, FORM_COLLECT_DATA);
 
         } catch (Exception e) {
-            Utilities.messageDialog(MainActivity.this, "falhou ao abrir formulário de coleta de dados." + e.getMessage(), null);
+            Message.showMessage(MainActivity.this, R.drawable.error, this.getResources().getString(R.string.error), this.getResources().getString(R.string.error_start_form));
         }
     }
 
@@ -307,5 +343,9 @@ public class MainActivity extends FragmentActivity {
 
     public ListPackageFragment getListPackageFragment() {
         return listPackageFragment;
+    }
+
+    public Project getProject() {
+        return mProject;
     }
 }

@@ -13,6 +13,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -26,6 +27,7 @@ public class DownloadTask extends AsyncTask<String, String, Boolean> {
 
     private String unzipDestinationFilePath;
     private String downloadDestinationFilePath;
+    private ArrayList<String> mFiles;
 
     private DownloadException exception;
 
@@ -98,7 +100,7 @@ public class DownloadTask extends AsyncTask<String, String, Boolean> {
 
                 fileOutput.close();
 
-                this.unzip(new File(downloadDestinationFilePath), new File(unzipDestinationFilePath));
+                mFiles = this.unzip(new File(downloadDestinationFilePath), new File(unzipDestinationFilePath));
 
                 return true;
 
@@ -145,9 +147,12 @@ public class DownloadTask extends AsyncTask<String, String, Boolean> {
      * @param targetDirectory Directory to unzip the files
      * @throws IOException
      */
-    public void unzip(File zipFile, File targetDirectory) throws IOException {
+    public ArrayList<String> unzip(File zipFile, File targetDirectory) throws IOException {
         ZipInputStream zis = new ZipInputStream(
                 new BufferedInputStream(new FileInputStream(zipFile)));
+
+        ArrayList<String> files=new ArrayList<String>();
+
         try {
             ZipEntry ze;
             int count;
@@ -165,6 +170,7 @@ public class DownloadTask extends AsyncTask<String, String, Boolean> {
                             dir.getAbsolutePath());
                 if (ze.isDirectory())
                     continue;
+                files.add(ze.getName());
                 FileOutputStream fout = new FileOutputStream(file);
                 try {
                     long total = 0;
@@ -181,11 +187,15 @@ public class DownloadTask extends AsyncTask<String, String, Boolean> {
         } finally {
             zis.close();
         }
+        return files;
     }
 
     @Override
     protected void onPostExecute(Boolean aBoolean) {
         mainActivity.getTreeView().refreshTreeView();
+        // The project is the last downloaded geopackage file.
+        mainActivity.getProject().setCurrent(mFiles.get(0));
+
         if(mainActivity.getProgressDialog() != null && mainActivity.getProgressDialog().isShowing()) {
             if (aBoolean) {
                 mainActivity.getProgressDialog().dismiss();

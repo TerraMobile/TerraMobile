@@ -124,7 +124,7 @@ public class GPictureView extends View implements GView {
                 String imageName = ImageUtilities.getCameraImageName(null);
                 Intent cameraIntent = new Intent(activity, CameraActivity.class);
                 cameraIntent.putExtra(LibraryConstants.PREFS_KEY_CAMERA_IMAGENAME, imageName);
-                cameraIntent.putExtra(LibraryConstants.DATABASE_ID, noteId);
+                cameraIntent.putExtra(LibraryConstants.SELECTED_POINT_ID, noteId);
                 if (gpsLocation != null) {
                     cameraIntent.putExtra(LibraryConstants.LATITUDE, gpsLocation[1]);
                     cameraIntent.putExtra(LibraryConstants.LONGITUDE, gpsLocation[0]);
@@ -249,7 +249,7 @@ public class GPictureView extends View implements GView {
 
     @Override
     public void setOnActivityResult(Intent data) {
-        long imageId = data.getLongExtra(LibraryConstants.DATABASE_ID, -1);
+        long imageId = data.getLongExtra(LibraryConstants.SELECTED_POINT_ID, -1);
         if (imageId == -1) {
             return;
         }

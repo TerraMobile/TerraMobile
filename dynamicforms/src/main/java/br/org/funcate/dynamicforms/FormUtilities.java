@@ -269,6 +269,10 @@ public class FormUtilities {
      *
      */
     public static final String TAG_URL = "url";
+    /**
+     * Code to pass value between MainActivity and FragmentDetailActivity
+     */
+    public static final String ATTR_JSON_TAGS = "json_tags";
 
     /**
      * Checks if the type is a special one.
@@ -377,7 +381,7 @@ public class FormUtilities {
     }
 
     /**
-     * Adds a {@link MultipleChoiceDialog} to the supplied mainView.
+     * Adds a MultipleChoiceDialog to the supplied mainView.
      *
      * @param context               the context.
      * @param mainView              the main view to which to add the new widget to.

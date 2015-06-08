@@ -125,6 +125,20 @@ public class TagsManager {
     }
 
     /**
+     * Gets the manager singleton.
+     *
+     * @param tags the context to use.
+     * @return the {@link TagsManager} singleton.
+     * @throws Exception if something goes wrong.
+     */
+    public static synchronized TagsManager getInstance(String tags) throws JSONException {
+        if (tagsManager == null) {
+            tagsManager = new TagsManager();
+            tagsManager.getTags(tags);
+        }
+        return tagsManager;
+    }
+    /**
      * Reset the tags manager, forcing a new reread of the tags.
      *
      * @param context the context to use.
@@ -133,6 +147,37 @@ public class TagsManager {
     public static void reset(Context context) throws Exception {
         tagsManager = null;
         getInstance(context);
+    }
+
+    public static void reset(String tags) throws Exception {
+        tagsManager = null;
+        getInstance(tags);
+    }
+
+    /**
+     * Performs the JSON data reading from the memory. Necessary for everything else.
+     *
+     * @param tags, the tags on JSON format
+     * @throws Exception
+     */
+    private void getTags(String tags) throws JSONException {
+
+        if (sectionsMap == null) {
+            sectionsMap = new LinkedHashMap<String, JSONObject>();
+        }
+
+        if (!tags.isEmpty()) {
+            sectionsMap.clear();
+            JSONArray sectionsArrayObj = new JSONArray(tags);
+            int tagsNum = sectionsArrayObj.length();
+            for (int i = 0; i < tagsNum; i++) {
+                JSONObject jsonObject = sectionsArrayObj.getJSONObject(i);
+                if (jsonObject.has(ATTR_SECTIONNAME)) {
+                    String sectionName = jsonObject.get(ATTR_SECTIONNAME).toString();
+                    sectionsMap.put(sectionName, jsonObject);
+                }
+            }
+        }
     }
 
     /**

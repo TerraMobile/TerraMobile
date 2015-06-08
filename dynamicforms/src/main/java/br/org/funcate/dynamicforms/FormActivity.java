@@ -87,7 +87,7 @@ public class FormActivity extends FragmentActivity {
             latitude = extras.getDouble(LibraryConstants.LATITUDE);
             longitude = extras.getDouble(LibraryConstants.LONGITUDE);
             elevation = extras.getDouble(LibraryConstants.ELEVATION);
-            noteId = extras.getLong(LibraryConstants.DATABASE_ID);
+            noteId = extras.getLong(LibraryConstants.SELECTED_POINT_ID);
         }
 
         try {

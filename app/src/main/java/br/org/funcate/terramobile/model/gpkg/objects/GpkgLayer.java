@@ -1,8 +1,12 @@
 package br.org.funcate.terramobile.model.gpkg.objects;
 
 import com.augtech.geoapi.geopackage.GeoPackage;
+import com.augtech.geoapi.geopackage.GpkgField;
 
+import org.opengis.feature.simple.SimpleFeatureType;
 import org.osmdroid.util.BoundingBoxE6;
+
+import java.util.ArrayList;
 
 /**
  * Created by Andre Carvalho on 29/04/15.
@@ -22,6 +26,9 @@ public class GpkgLayer{
     private int indexOverlay;
     private BoundingBoxE6 box;
     private Integer srsId;
+    private String JSON;
+    private ArrayList<GpkgField> fields;
+    private SimpleFeatureType featureType;
 
     public GpkgLayer() {
     }
@@ -77,5 +84,29 @@ public class GpkgLayer{
 
     public void setSrsId(Integer srsId) {
         this.srsId = srsId;
+    }
+
+    public String getJSON() {
+        return JSON;
+    }
+
+    public void setJSON(String JSON) {
+        this.JSON = JSON;
+    }
+
+    public ArrayList<GpkgField> getFields() {
+        return fields;
+    }
+
+    public void setFields(ArrayList<GpkgField> fields) {
+        this.fields = fields;
+    }
+
+    public SimpleFeatureType getFeatureType() {
+        return featureType;
+    }
+
+    public void setFeatureType(SimpleFeatureType featureType) {
+        this.featureType = featureType;
     }
 }
