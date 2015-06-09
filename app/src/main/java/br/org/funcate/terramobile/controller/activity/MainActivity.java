@@ -1,9 +1,11 @@
 package br.org.funcate.terramobile.controller.activity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ActionBar;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -331,10 +333,17 @@ public class MainActivity extends FragmentActivity {
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage(message);
         progressDialog.setIndeterminate(false);
+        progressDialog.setCancelable(false);
+        progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.setMax(100);
         progressDialog.setProgress(0);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        progressDialog.setCancelable(false);
+        progressDialog.setButton(DialogInterface.BUTTON_NEUTRAL, MainActivity.this.getString(R.string.btn_cancel), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                MainActivity.this.getListPackageFragment().getDownloadTask().cancel(true);
+            }
+        });
         progressDialog.show();
     }
 

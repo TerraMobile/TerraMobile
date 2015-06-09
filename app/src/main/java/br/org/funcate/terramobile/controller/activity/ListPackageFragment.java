@@ -34,6 +34,8 @@ public class ListPackageFragment extends DialogFragment{
 
     private Settings settings;
 
+    private DownloadTask downloadTask;
+
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         LayoutInflater inflater = LayoutInflater.from(getActivity());
         final View v = inflater.inflate(R.layout.fragment_list_package, null);
@@ -55,7 +57,7 @@ public class ListPackageFragment extends DialogFragment{
                 String destinationFilePath = appPath.getPath();
                 String prjName = lVPackage.getItemAtPosition(position).toString(); // Package name to concatenate with the server url
                 if(settings != null)
-                    new DownloadTask(destinationFilePath+"/"+prjName, destinationFilePath, true, (MainActivity) getActivity()).execute(settings.getUrl()+"/getprojects/userName/"+prjName);
+                    downloadTask = (DownloadTask) new DownloadTask(destinationFilePath+"/"+prjName, destinationFilePath, true, (MainActivity) getActivity()).execute(settings.getUrl()+"/getprojects/userName/"+prjName);
                 else
                     Message.showErrorMessage(getActivity(), R.string.error, R.string.not_logged);
             }
@@ -78,5 +80,9 @@ public class ListPackageFragment extends DialogFragment{
     public void setListItems(ArrayList<String> arrayList) {
         arrayAdapter.addAll(arrayList);
         lVPackage.setAdapter(arrayAdapter);
+    }
+
+    public DownloadTask getDownloadTask() {
+        return downloadTask;
     }
 }

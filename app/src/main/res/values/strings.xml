@@ -65,4 +65,7 @@
     <string name="not_logged">You have to authenticate first</string>
     <string name="loading_prj_list">Loading project list…</string>
     <string name="ok">OK</string>
+    <string name="yes">yes</string>
+    <string name="no">no</string>
+    <string name="download_cancelled">Download cancelled</string>
 </resources>

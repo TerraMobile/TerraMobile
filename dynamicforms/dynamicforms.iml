@@ -87,12 +87,7 @@
     </content>
     <orderEntry type="jdk" jdkName="Android API 15 Platform (1)" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-<<<<<<< HEAD
-    <orderEntry type="library" exported="" name="support-annotations-21.0.0" level="project" />
     <orderEntry type="library" exported="" name="support-v4-21.0.0" level="project" />
-=======
-    <orderEntry type="library" exported="" name="support-annotations-22.2.0" level="project" />
-    <orderEntry type="library" exported="" name="support-v4-22.2.0" level="project" />
->>>>>>> 2305e0a9603670d411e0001c98b5922289601179
+    <orderEntry type="library" exported="" name="support-annotations-21.0.0" level="project" />
   </component>
 </module>
