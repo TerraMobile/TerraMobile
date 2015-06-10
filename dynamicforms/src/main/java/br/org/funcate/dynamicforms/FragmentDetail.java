@@ -107,8 +107,8 @@ public class FragmentDetail extends Fragment {
                     selectedFormName = listFragment.getSelectedItemName();
                     sectionObject = listFragment.getSectionObject();
                     noteId = listFragment.getNoteId();
-                    longitude = listFragment.getLongitude();
-                    latitude = listFragment.getLatitude();
+/*                    longitude = listFragment.getLongitude();
+                    latitude = listFragment.getLatitude();*/
                 } else {
                     if (activity instanceof FragmentDetailActivity) {
                         // case of portrait mode
@@ -116,8 +116,8 @@ public class FragmentDetail extends Fragment {
                         selectedFormName = fragmentDetailActivity.getFormName();
                         sectionObject = fragmentDetailActivity.getSectionObject();
                         noteId = fragmentDetailActivity.getNoteId();
-                        longitude = fragmentDetailActivity.getLongitude();
-                        latitude = fragmentDetailActivity.getLatitude();
+/*                        longitude = fragmentDetailActivity.getLongitude();
+                        latitude = fragmentDetailActivity.getLatitude();*/
                     }
                 }
             }
@@ -338,14 +338,14 @@ public class FragmentDetail extends Fragment {
             }
         }
 
-        FragmentActivity activity = getActivity();
+/*        FragmentActivity activity = getActivity();
         if (activity instanceof FragmentDetailActivity) {
             // case of portrait mode
             FragmentDetailActivity fragmentDetailActivity = (FragmentDetailActivity) activity;
             FormUtilities.updateExtras(formItems, fragmentDetailActivity.getLatitude(), fragmentDetailActivity.getLongitude());
         } else {
             throw new RuntimeException("Fragmentlist not available"); //$NON-NLS-1$
-        }
+        }*/
 
         return null;
     }
