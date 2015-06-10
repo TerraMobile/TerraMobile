@@ -77,11 +77,7 @@ public class Utilities {
      * @return <code>true</code> if we are on the UI thread.
      */
     public static boolean isInUiThread() {
-        if (Looper.myLooper() == Looper.getMainLooper()) {
-            // UI Thread
-            return true;
-        }
-        return false;
+        return Looper.myLooper() == Looper.getMainLooper();
     }
 
     /**

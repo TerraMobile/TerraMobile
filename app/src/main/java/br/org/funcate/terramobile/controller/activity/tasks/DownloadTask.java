@@ -1,6 +1,7 @@
 package br.org.funcate.terramobile.controller.activity.tasks;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import org.opengis.context.Resource;
 
@@ -20,6 +21,8 @@ import java.util.zip.ZipInputStream;
 
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.controller.activity.MainActivity;
+import br.org.funcate.terramobile.model.Project;
+import br.org.funcate.terramobile.model.db.dao.ProjectDAO;
 import br.org.funcate.terramobile.model.exception.DownloadException;
 import br.org.funcate.terramobile.util.Message;
 
@@ -31,11 +34,11 @@ public class DownloadTask extends AsyncTask<String, String, Boolean> {
     private String downloadDestinationFilePath;
     private ArrayList<String> mFiles;
 
-    private DownloadException exception;
-
     private boolean overwrite;
 
-    public MainActivity mainActivity;
+    private MainActivity mainActivity;
+
+    private File destinationFile;
 
     public DownloadTask(String downloadDestinationFilePath, String unzipDestinationFilePath, boolean overwrite, MainActivity mainActivity) {
         this.mainActivity = mainActivity;
@@ -51,69 +54,87 @@ public class DownloadTask extends AsyncTask<String, String, Boolean> {
     }
 
     protected Boolean doInBackground(String... urlToDownload) {
-        if(android.os.Debug.isDebuggerConnected())
-            android.os.Debug.waitForDebugger();
+        if(android.os.Debug.isDebuggerConnected()) android.os.Debug.waitForDebugger(); // Para debugar é preciso colocar um breakpoint nessa linha
+
         if (urlToDownload[0].isEmpty()) {
-            exception = new DownloadException("Missing URL to be downloaded.");
+            Log.e("URL missing", "Variable urlToDownload[0] is empty");
             return false;
         }
 
         if (downloadDestinationFilePath.isEmpty()) {
-            exception = new DownloadException("Missing destination path to download to.");
+            Log.e("Path missing", "Variable downloadDestinationFilePath is empty");
             return false;
         }
-
+        destinationFile = new File(downloadDestinationFilePath);
         try {
-            try {
-                File file = new File(downloadDestinationFilePath);
-                if (!file.exists()) {
-                    file.createNewFile();
-                } else {
-                    if (overwrite) {
-                        file.delete();
-                    } else {
-                        return true;
-                    }
-                }
-                URL url = new URL(urlToDownload[0]);
-                URLConnection urlConnection = url.openConnection();
-                urlConnection.connect();
+            if (!destinationFile.exists())
+                destinationFile.createNewFile();
+            else {
+                if (overwrite)
+                    destinationFile.delete();
+                else
+                    return true;
+            }
+            URL url = new URL(urlToDownload[0]);
+            URLConnection urlConnection = url.openConnection();
+            urlConnection.connect();
 
-                int totalSize = urlConnection.getContentLength();
+            int totalSize = urlConnection.getContentLength();
 
-                InputStream inputStream = new BufferedInputStream(url.openStream());
-                OutputStream fileOutput = new FileOutputStream(file);
+            InputStream inputStream = new BufferedInputStream(url.openStream());
+            OutputStream fileOutput = new FileOutputStream(destinationFile);
 
-                byte buffer[] = new byte[1024];
+            byte buffer[] = new byte[1024];
 
-                int bufferLength;
-                long total = 0;
-//                if(android.os.Debug.isDebuggerConnected()) android.os.Debug.waitForDebugger(); Para debugar é preciso colocar um breakpoint nessa linha
-                while ((bufferLength = inputStream.read(buffer)) != -1) {
-                    total += bufferLength;
-                    publishProgress("" + (int) ((total * 100) / totalSize), mainActivity.getResources().getString(R.string.downloading));
-                    fileOutput.write(buffer, 0, bufferLength);
+            int bufferLength;
+            long total = 0;
+            while ((bufferLength = inputStream.read(buffer)) != -1) {
+                if (isCancelled()) {
+                    fileOutput.flush();
+                    fileOutput.close();
+                    inputStream.close();
+                    return false;
                 }
                 fileOutput.flush();
                 fileOutput.close();
 
                 String ext = mainActivity.getString(R.string.geopackage_extension);
 
-                if(downloadDestinationFilePath.endsWith(ext))
-                    mFiles.add(downloadDestinationFilePath.substring(downloadDestinationFilePath.lastIndexOf(File.separatorChar)+1,  downloadDestinationFilePath.lastIndexOf(ext)));
+                if (downloadDestinationFilePath.endsWith(ext))
+                    mFiles.add(downloadDestinationFilePath.substring(downloadDestinationFilePath.lastIndexOf(File.separatorChar) + 1, downloadDestinationFilePath.lastIndexOf(ext)));
                 else
                     mFiles = this.unzip(new File(downloadDestinationFilePath), new File(unzipDestinationFilePath));
 
                 return true;
-            } catch (IOException e) {
-                throw new DownloadException("Error downloading file: " + urlToDownload[0], e);
             }
-        } catch (DownloadException e) {
-            exception = e;
+            fileOutput.flush();
+            fileOutput.close();
+            inputStream.close();
+
+            mFiles = this.unzip(new File(downloadDestinationFilePath), new File(unzipDestinationFilePath));
+            return true;
+        }catch (IOException e) {
+            e.printStackTrace();
+            if(destinationFile.exists())
+                destinationFile.delete();
+            return false;
+        }catch (IllegalArgumentException e){
+            e.printStackTrace();
+            if(destinationFile.exists())
+                destinationFile.delete();
+            return false;
         }
-        if(mainActivity.getProgressDialog() != null && mainActivity.getProgressDialog().isShowing())
-            mainActivity.getProgressDialog().dismiss();
-        return false;
+    }
+
+    /**
+     * Called when the cancel button of the ProgressDialog is touched
+     * @param aBoolean
+     */
+    protected void onCancelled(Boolean aBoolean) {
+        super.onCancelled(aBoolean);
+        if(destinationFile.exists())
+            destinationFile.delete();
+        Message.showSuccessMessage(mainActivity, R.string.success, R.string.download_cancelled);
     }
 
     /**
@@ -121,26 +142,25 @@ public class DownloadTask extends AsyncTask<String, String, Boolean> {
      * @param zipFile Zip file
      * @return The number of files on the zip archive
      */
-    private long countZipFiles(File zipFile){
-        ZipInputStream zis = null;
-        try {
-            zis = new ZipInputStream(
-                    new BufferedInputStream(new FileInputStream(zipFile)));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+    private long countZipFiles(File zipFile) {
         long totalFiles = 0;
         try {
-            if(zis != null) {
-                while (zis.getNextEntry() != null) {
+            ZipInputStream zipInputStream = new ZipInputStream(new BufferedInputStream(new FileInputStream(zipFile)));
+            if (zipInputStream != null) {
+                while (zipInputStream.getNextEntry() != null)
                     totalFiles++;
-                }
-                zis.close();
+                zipInputStream.close();
             }
-        } catch (IOException e) {
+            return totalFiles;
+        }catch (FileNotFoundException e) {
+            Log.e("countZipFiles", "File not found");
             e.printStackTrace();
+            return totalFiles;
+        } catch (IOException e) {
+            Log.e("countZipFiles", "input/output error");
+            e.printStackTrace();
+            return totalFiles;
         }
-        return  totalFiles;
     }
 
     /**
@@ -150,44 +170,48 @@ public class DownloadTask extends AsyncTask<String, String, Boolean> {
      * @throws IOException
      */
     public ArrayList<String> unzip(File zipFile, File targetDirectory) throws IOException {
-        ZipInputStream zis = new ZipInputStream(
+        ZipInputStream zipInputStream = new ZipInputStream(
                 new BufferedInputStream(new FileInputStream(zipFile)));
 
         ArrayList<String> files=new ArrayList<String>();
 
         try {
-            ZipEntry ze;
+            ZipEntry zipEntry;
             int count;
             byte[] buffer = new byte[8192];
             int numFiles = 0;
             long totalFiles = countZipFiles(zipFile);
 
-            while ((ze = zis.getNextEntry()) != null) {
+            while ((zipEntry = zipInputStream.getNextEntry()) != null) {
+                if (zipEntry.isDirectory())
+                    continue;
+
                 numFiles++;
 
-                File file = new File(targetDirectory, ze.getName());
-                File dir = ze.isDirectory() ? file : file.getParentFile();
-                if (!dir.isDirectory() && !dir.mkdirs())
-                    throw new FileNotFoundException("Failed to ensure directory: " +
-                            dir.getAbsolutePath());
-                if (ze.isDirectory())
-                    continue;
-                files.add(ze.getName());
-                FileOutputStream fout = new FileOutputStream(file);
-                try {
-                    long total = 0;
-                    long totalZipSize = ze.getCompressedSize();
-                    while ((count = zis.read(buffer)) != -1) {
-                        total += count;
-                        publishProgress("" + (int) ((total * 100) / totalZipSize), mainActivity.getResources().getString(R.string.decompressing)+"\n"+mainActivity.getResources().getString(R.string.file) + " " + numFiles + "/" + totalFiles);
-                        fout.write(buffer, 0, count);
-                    }
-                } finally {
-                    fout.close();
+                File file = new File(targetDirectory, zipEntry.getName());
+                FileOutputStream fileOutputStream = new FileOutputStream(file);
+
+                files.add(zipEntry.getName());
+
+                long total = 0;
+                long totalZipSize = zipEntry.getCompressedSize();
+                while ((count = zipInputStream.read(buffer)) != -1) {
+                    total += count;
+                    publishProgress("" + (int) ((total * 100) / totalZipSize), mainActivity.getResources().getString(R.string.decompressing) + "\n" + mainActivity.getResources().getString(R.string.file) + " " + numFiles + "/" + totalFiles);
+                    fileOutputStream.write(buffer, 0, count);
                 }
+                fileOutputStream.close();
             }
+        }catch (FileNotFoundException e) {
+            Log.e("unzip", "File not found");
+            e.printStackTrace();
+            return null;
+        } catch (IOException e) {
+            Log.e("unzip", "input/output error");
+            e.printStackTrace();
+            return null;
         } finally {
-            zis.close();
+            zipInputStream.close();
         }
         return files;
     }
@@ -202,18 +226,30 @@ public class DownloadTask extends AsyncTask<String, String, Boolean> {
             Message.showErrorMessage(mainActivity, R.string.error, R.string.download_failed);
         }
 
+        String fileName = mFiles.get(0);// The project is the last downloaded geopackage file.
+
+        ProjectDAO projectDAO = new ProjectDAO(mainActivity);
+
+        Project project = new Project();
+        project.setId(null);
+        project.setCurrent(fileName);
+        project.setFilePath(downloadDestinationFilePath);
+        projectDAO.insert(project);
+
+        mainActivity.setProject(project);
+
         if(mainActivity.getProgressDialog() != null && mainActivity.getProgressDialog().isShowing()) {
             if (aBoolean) {
                 mainActivity.getProgressDialog().dismiss();
+                mainActivity.getProjectListFragment().dismiss();
                 Message.showSuccessMessage(mainActivity, R.string.success, R.string.download_success);
             } else {
                 mainActivity.getProgressDialog().dismiss();
                 Message.showErrorMessage(mainActivity, R.string.error, R.string.download_failed);
             }
         }
-        else{
+        else
             Message.showErrorMessage(mainActivity, R.string.error, R.string.download_failed);
-        }
     }
 
     @Override
@@ -222,9 +258,5 @@ public class DownloadTask extends AsyncTask<String, String, Boolean> {
             mainActivity.getProgressDialog().setProgress(Integer.parseInt(values[0]));
             mainActivity.getProgressDialog().setMessage(values[1]);
         }
-    }
-
-    public DownloadException getException() {
-        return exception;
     }
 }

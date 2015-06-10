@@ -53,7 +53,7 @@ public class SettingsDAO {
                     contentValues.put("USER_NAME", settings.getUserName());
                     contentValues.put("PASSWORD", settings.getPassword());
                     contentValues.put("URL", settings.getUrl());
-                    if (db.update("SETTINGS", contentValues, "ID=?", new String[]{String.valueOf(1)}) > 0) {
+                    if (db.update("SETTINGS", contentValues, "ID=?", new String[]{String.valueOf(settings.getId())}) > 0) {
                         db.close();
                         return true;
                     }

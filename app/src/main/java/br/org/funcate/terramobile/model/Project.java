@@ -4,7 +4,7 @@ package br.org.funcate.terramobile.model;
  * Created by Andre Carvalho on 01/06/15.
  */
 public class Project {
-
+    private Integer id;
     private String current;
     private String filePath;
 
@@ -13,7 +13,8 @@ public class Project {
         this.filePath="";
     }
 
-    public Project(String name,String path) {
+    public Project(Integer id, String name,String path) {
+        this.id = id;
         this.current=name;
         this.filePath=path;
     }
@@ -34,5 +35,11 @@ public class Project {
         this.filePath = filePath;
     }
 
+    public Integer getId() {
+        return id;
+    }
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
 }

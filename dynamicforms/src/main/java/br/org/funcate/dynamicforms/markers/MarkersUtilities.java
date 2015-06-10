@@ -93,27 +93,7 @@ public class MarkersUtilities {
                     }
             }
 
-            if (installedPackages.size() > 0) {
-                hasApp = false;
-                // if a list is available, check if the status gps is installed
-               /* for (PackageInfo packageInfo : installedPackages) {
-                    String packageName = packageInfo.packageName;
-                    if (LOG_HOW)
-                        GPLog.addLogEntry("MARKERSUTILITIES", packageName);
-                    if (packageName.startsWith(APP_PACKAGE)) {
-                        hasApp = true;
-                        if (LOG_HOW)
-                            GPLog.addLogEntry("MARKERSUTILITIES", "Found package: " + packageName);
-                        break;
-                    }
-                }*/
-            } else {
-                /*
-                 * if no package list is available, for now try to fire it up anyways.
-                 * This has been a problem for a user on droidx with android 2.2.1.
-                 */
-                hasApp = true;
-            }
+            hasApp = installedPackages.size() <= 0;
         }
         return hasApp;
     }

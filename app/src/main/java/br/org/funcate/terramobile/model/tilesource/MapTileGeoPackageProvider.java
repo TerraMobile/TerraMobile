@@ -177,7 +177,7 @@ public class MapTileGeoPackageProvider extends MapTileModuleProviderBase {
             if(currentZoomLevelBounds==null)
             {
                 try {
-                    //currentZoomLevelBounds=GeoPackageService.getTilesBounds(mGeoPackage, mLayerName, GpkgTable.TABLE_TYPE_TILES,level);
+                    currentZoomLevelBounds=GeoPackageServicecd.getTilesBounds(mGeoPackage, mLayerName, GpkgTable.TABLE_TYPE_TILES,level);
                     tilesBoundsByZoomLevel.put(level,currentZoomLevelBounds);
                 } catch (Exception e) {
                     e.printStackTrace();

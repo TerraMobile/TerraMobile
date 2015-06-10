@@ -17,7 +17,7 @@ import br.org.funcate.terramobile.model.tilesource.AppGeoPackageService;
 import br.org.funcate.terramobile.util.DevUtil;
 import br.org.funcate.terramobile.util.Message;
 import br.org.funcate.terramobile.util.ResourceUtil;
-import br.org.funcate.terramobile.view.MenuAdapter;
+import br.org.funcate.terramobile.view.TreeViewAdapter;
 
 /**
  * Created by Andre Carvalho on 28/04/15.
@@ -29,7 +29,7 @@ public class TreeView {
     private ArrayList<ArrayList<GpkgLayer>> childItem = new ArrayList<ArrayList<GpkgLayer>>();
     private Context context;
     private Resources resources;
-    private MenuAdapter mMenuAdapter;
+    private TreeViewAdapter treeViewAdapter;
     private GpkgLayer selectedEditableLayer;
 
     public TreeView(Context context){
@@ -49,8 +49,8 @@ public class TreeView {
 
         if(mDrawerList==null) return;
 
-        mMenuAdapter = new MenuAdapter(this.context, groupItem, childItem);
-        mDrawerList.setAdapter(mMenuAdapter);
+        treeViewAdapter = new TreeViewAdapter(this.context, groupItem, childItem);
+        mDrawerList.setAdapter(treeViewAdapter);
         selectedEditableLayer=null;
     }
 
@@ -58,7 +58,7 @@ public class TreeView {
         groupItem.clear();
         childItem.clear();
         initTreeView();
-        mMenuAdapter.notifyDataSetChanged();
+        treeViewAdapter.notifyDataSetChanged();
     }
 
     private void setGroupData() {
