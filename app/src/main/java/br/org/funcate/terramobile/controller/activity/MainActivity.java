@@ -1,13 +1,10 @@
 package br.org.funcate.terramobile.controller.activity;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.ActionBar;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.net.ConnectivityManager;
@@ -17,7 +14,6 @@ import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.util.ArrayMap;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.util.TypedValue;
@@ -29,38 +25,18 @@ import android.widget.ExpandableListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.json.JSONObject;
-
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 import br.org.funcate.dynamicforms.FormUtilities;
 import br.org.funcate.dynamicforms.FragmentDetailActivity;
-import br.org.funcate.dynamicforms.TagsManager;
-import br.org.funcate.dynamicforms.exceptions.CollectFormException;
 import br.org.funcate.dynamicforms.util.LibraryConstants;
-import br.org.funcate.dynamicforms.util.PositionUtilities;
-import br.org.funcate.dynamicforms.util.Utilities;
-import br.org.funcate.dynamicforms.views.GView;
 import br.org.funcate.jgpkg.exception.QueryException;
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.configuration.ViewContextParameters;
 import br.org.funcate.terramobile.controller.activity.settings.SettingsActivity;
-import br.org.funcate.terramobile.controller.activity.settings.SettingsFragment;
 import br.org.funcate.terramobile.model.Project;
-import br.org.funcate.terramobile.model.exception.DownloadException;
 import br.org.funcate.terramobile.model.Settings;
+import br.org.funcate.terramobile.model.db.dao.ProjectDAO;
 import br.org.funcate.terramobile.model.db.dao.SettingsDAO;
 import br.org.funcate.terramobile.model.exception.TerraMobileException;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
@@ -87,7 +63,7 @@ public class MainActivity extends FragmentActivity {
     // Progress bar
     private ProgressDialog progressDialog;
 
-    private ListPackageFragment listPackageFragment;
+    private ProjectListFragment projectListFragment;
 
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -137,9 +113,12 @@ public class MainActivity extends FragmentActivity {
         File gpkgFile=AppGeoPackageService.getGpkgFile(this);
 
         if(gpkgFile!=null) {
+            ProjectDAO projectDAO = new ProjectDAO(this);
+
             String fileName = gpkgFile.getName();
             fileName = fileName.substring(0, fileName.length() - 4);
-            mProject = new Project(fileName, gpkgFile.getAbsolutePath());
+
+            mProject = projectDAO.getByCurrent(fileName);
         }
 
         treeView = new TreeView(MainActivity.this);
@@ -199,6 +178,9 @@ public class MainActivity extends FragmentActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.action_bar, menu);
+        MenuItem menuItem = menu.findItem(R.id.project);
+        if(mProject != null)
+            menuItem.setTitle(mProject.getCurrent());
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -224,13 +206,13 @@ public class MainActivity extends FragmentActivity {
             return true;
         // Handle action buttons
         switch(item.getItemId()) {
-            case R.id.download_geo_package:
+            case R.id.project:
                 ConnectivityManager cm = (ConnectivityManager)this.getSystemService(CONNECTIVITY_SERVICE);
                 int wifi = ConnectivityManager.TYPE_WIFI;
                 int mobile = ConnectivityManager.TYPE_MOBILE;
                 if (cm.getNetworkInfo(mobile).isConnected() || cm.getNetworkInfo(wifi).isConnected()) {
-                    listPackageFragment = new ListPackageFragment();
-                    listPackageFragment.show(getFragmentManager(), "packageList");
+                    projectListFragment = new ProjectListFragment();
+                    projectListFragment.show(getFragmentManager(), "packageList");
                 }
                 else{
                     Message.showErrorMessage(this, R.string.error, R.string.no_connection);
@@ -341,7 +323,7 @@ public class MainActivity extends FragmentActivity {
         progressDialog.setButton(DialogInterface.BUTTON_NEUTRAL, MainActivity.this.getString(R.string.btn_cancel), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                MainActivity.this.getListPackageFragment().getDownloadTask().cancel(true);
+                MainActivity.this.getProjectListFragment().getDownloadTask().cancel(true);
             }
         });
         progressDialog.show();
@@ -362,11 +344,15 @@ public class MainActivity extends FragmentActivity {
         return treeView;
     }
 
-    public ListPackageFragment getListPackageFragment() {
-        return listPackageFragment;
+    public ProjectListFragment getProjectListFragment() {
+        return projectListFragment;
     }
 
     public Project getProject() {
         return mProject;
+    }
+
+    public void setProject(Project project) {
+        this.mProject = project;
     }
 }

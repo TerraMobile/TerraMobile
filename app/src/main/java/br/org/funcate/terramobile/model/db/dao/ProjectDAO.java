@@ -6,30 +6,29 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 
-import br.org.funcate.terramobile.model.Settings;
+import br.org.funcate.terramobile.model.Project;
 import br.org.funcate.terramobile.model.db.DataBase;
 
 /**
  * Created by marcelo on 5/26/15.
  */
-public class SettingsDAO {
+public class ProjectDAO {
     private DataBase dataBase;
 
-    public SettingsDAO(Context context) {
+    public ProjectDAO(Context context) {
         this.dataBase = new DataBase(context);
     }
 
-    public boolean insert(Settings settings) {
+    public boolean insert(Project project) {
         try {
             SQLiteDatabase db = dataBase.getWritableDatabase();
             if (db != null) {
-                if (settings != null) {
+                if (project != null) {
                     ContentValues contentValues = new ContentValues();
-                    contentValues.put("ID", settings.getId());
-                    contentValues.put("USER_NAME", settings.getUserName());
-                    contentValues.put("PASSWORD", settings.getPassword());
-                    contentValues.put("URL", settings.getUrl());
-                    if (db.insert("SETTINGS", null, contentValues) != -1) {
+                    contentValues.put("ID", project.getId());
+                    contentValues.put("CURRENT", project.getCurrent());
+                    contentValues.put("FILE_PATH", project.getFilePath());
+                    if (db.insert("PROJECT", null, contentValues) != -1) {
                         db.close();
                         return true;
                     }
@@ -43,17 +42,16 @@ public class SettingsDAO {
         }
     }
 
-    public boolean update(Settings settings) {
+    public boolean update(Project project) {
         SQLiteDatabase db = dataBase.getWritableDatabase();
         try{
             if (db != null) {
-                if (settings != null) {
+                if (project != null) {
                     ContentValues contentValues = new ContentValues();
-                    contentValues.put("ID", settings.getId());
-                    contentValues.put("USER_NAME", settings.getUserName());
-                    contentValues.put("PASSWORD", settings.getPassword());
-                    contentValues.put("URL", settings.getUrl());
-                    if (db.update("SETTINGS", contentValues, "ID=?", new String[]{String.valueOf(settings.getId())}) > 0) {
+                    contentValues.put("ID", project.getId());
+                    contentValues.put("CURRENT", project.getCurrent());
+                    contentValues.put("FILE_PATH", project.getFilePath());
+                    if (db.update("PROJECT", contentValues, "ID=?", new String[]{String.valueOf(project.getId())}) > 0) {
                         db.close();
                         return true;
                     }
@@ -67,23 +65,22 @@ public class SettingsDAO {
         }
     }
 
-    public Settings getById(long id) {
+    public Project getByCurrent(String current) {
         try {
             SQLiteDatabase db = dataBase.getReadableDatabase();
             if(db != null) {
-                Settings settings = null;
-                Cursor cursor = db.query("SETTINGS", new String[]{"ID", "USER_NAME", "PASSWORD", "URL"}, "ID = ?", new String[]{String.valueOf(id)}, null, null, null, null);
+                Project project = null;
+                Cursor cursor = db.query("PROJECT", new String[]{"ID", "CURRENT", "FILE_PATH"}, "CURRENT = ?", new String[]{String.valueOf(current)}, null, null, null, null);
                 if (cursor != null && cursor.getCount() != 0) {
                     cursor.moveToFirst();
-                    settings = new Settings();
-                    settings.setId(cursor.getInt(0));
-                    settings.setUserName(cursor.getString(1));
-                    settings.setPassword(cursor.getString(2));
-                    settings.setUrl(cursor.getString(3));
+                    project = new Project();
+                    project.setId(cursor.getInt(0));
+                    project.setCurrent(cursor.getString(1));
+                    project.setFilePath(cursor.getString(2));
                     cursor.close();
                 }
                 db.close();
-                return settings;
+                return project;
             }
             return null;
         } catch (SQLiteException e) {

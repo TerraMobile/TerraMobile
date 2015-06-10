@@ -21,14 +21,14 @@ import br.org.funcate.terramobile.controller.activity.MenuMapController;
 import br.org.funcate.terramobile.controller.activity.TreeView;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
 
-public class MenuAdapter extends BaseExpandableListAdapter implements View.OnClickListener {
+public class TreeViewAdapter extends BaseExpandableListAdapter implements View.OnClickListener {
 
 	public ArrayList<GpkgLayer> groupItem;
 	public ArrayList<ArrayList<GpkgLayer>> ChildItem;
 	private final Context context;
     private MenuMapController menuMapController;
 
-	public MenuAdapter(Context context, ArrayList<GpkgLayer> grpList, ArrayList<ArrayList<GpkgLayer>> childItem) {
+	public TreeViewAdapter(Context context, ArrayList<GpkgLayer> grpList, ArrayList<ArrayList<GpkgLayer>> childItem) {
 		this.context = context;
 		this.groupItem = grpList;
 		this.ChildItem = childItem;

@@ -20,10 +20,10 @@
         android:icon="@android:drawable/ic_menu_add"
         android:showAsAction="ifRoom|withText" />
 
-    <item android:id="@+id/download_geo_package"
-        android:title="@string/sync_data"
+    <item android:id="@+id/project"
+        android:title="@string/project"
         android:icon="@android:drawable/stat_notify_sync"
-        android:showAsAction="ifRoom|withText" />
+        android:showAsAction="always|withText" />
 
     <item android:id="@+id/test_raster_data"
         android:title="@string/test_raster_data"

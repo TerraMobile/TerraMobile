@@ -86,17 +86,17 @@ public class PackageListTask extends AsyncTask<String, String, JSONObject> {
                     aLItems.add(pkg);
                 }
                 if(!aLItems.isEmpty())
-                    mainActivity.getListPackageFragment().setListItems(aLItems);
+                    mainActivity.getProjectListFragment().setListItems(aLItems);
                 else {
-                    mainActivity.getListPackageFragment().dismiss();
+                    mainActivity.getProjectListFragment().dismiss();
                     Message.showErrorMessage(mainActivity, R.string.error, R.string.projects_not_found);
                 }
             } else {
-                mainActivity.getListPackageFragment().dismiss();
+                mainActivity.getProjectListFragment().dismiss();
                 Message.showErrorMessage(mainActivity, R.string.error, R.string.connection_failed);
             }
         } catch (JSONException e) {
-            mainActivity.getListPackageFragment().dismiss();
+            mainActivity.getProjectListFragment().dismiss();
             Message.showErrorMessage(mainActivity, R.string.error, R.string.connection_failed);
             e.printStackTrace();
         }

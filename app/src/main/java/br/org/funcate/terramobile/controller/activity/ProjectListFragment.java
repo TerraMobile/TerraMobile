@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import java.io.File;
@@ -21,16 +20,17 @@ import br.org.funcate.terramobile.model.Settings;
 import br.org.funcate.terramobile.model.db.dao.SettingsDAO;
 import br.org.funcate.terramobile.util.Message;
 import br.org.funcate.terramobile.util.ResourceUtil;
+import br.org.funcate.terramobile.view.ProjectListAdapter;
 
 /**
  * DialogFragment to shows a list of packages availables to download
  *
  * Created by marcelo on 5/25/15.
  */
-public class ListPackageFragment extends DialogFragment{
-    private ListView lVPackage;
+public class ProjectListFragment extends DialogFragment{
+    private ListView lVProject;
 
-    private ArrayAdapter<String> arrayAdapter;
+    private ProjectListAdapter projectListAdapter;
 
     private Settings settings;
 
@@ -38,24 +38,21 @@ public class ListPackageFragment extends DialogFragment{
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         LayoutInflater inflater = LayoutInflater.from(getActivity());
-        final View v = inflater.inflate(R.layout.fragment_list_package, null);
+        final View v = inflater.inflate(R.layout.fragment_project_list, null);
 
-        this.lVPackage = (ListView)v.findViewById(R.id.lVPackage);
-
-        this.arrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1);
-
+        lVProject = (ListView)v.findViewById(R.id.lVProject);
         SettingsDAO settingsDAO = new SettingsDAO(getActivity());
         this.settings = settingsDAO.getById(1);
         if(this.settings != null)
             new PackageListTask((MainActivity)this.getActivity()).execute(this.settings.getUrl() + "/getlistfiles/userName");
         else
             Message.showErrorMessage(getActivity(), R.string.error, R.string.not_logged);
-        lVPackage.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        lVProject.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 File appPath = ResourceUtil.getDirectory(getResources().getString(R.string.app_workspace_dir));
                 String destinationFilePath = appPath.getPath();
-                String prjName = lVPackage.getItemAtPosition(position).toString(); // Package name to concatenate with the server url
+                String prjName = lVProject.getItemAtPosition(position).toString();
                 if(settings != null)
                     downloadTask = (DownloadTask) new DownloadTask(destinationFilePath+"/"+prjName, destinationFilePath, true, (MainActivity) getActivity()).execute(settings.getUrl()+"/getprojects/userName/"+prjName);
                 else
@@ -78,8 +75,8 @@ public class ListPackageFragment extends DialogFragment{
     }
 
     public void setListItems(ArrayList<String> arrayList) {
-        arrayAdapter.addAll(arrayList);
-        lVPackage.setAdapter(arrayAdapter);
+        this.projectListAdapter = new ProjectListAdapter(getActivity(), R.id.tVProjectName, arrayList);
+        lVProject.setAdapter(projectListAdapter);
     }
 
     public DownloadTask getDownloadTask() {

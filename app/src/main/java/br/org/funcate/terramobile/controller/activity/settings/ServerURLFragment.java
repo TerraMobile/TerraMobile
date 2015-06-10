@@ -68,7 +68,7 @@ public class ServerURLFragment extends DialogFragment{
 
     private boolean validateFields(){
         String url = eTServerURL.getText().toString().trim();
-        if(url.toString().endsWith("/"))
+        if(url.endsWith("/"))
             url.substring(0, url.length() - 1);
         eTServerURL.setText(url.trim());
         if(Patterns.WEB_URL.matcher(eTServerURL.getText().toString().trim()).matches()){
