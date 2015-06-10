@@ -2,6 +2,8 @@ package br.org.funcate.terramobile.controller.activity.tasks;
 
 import android.os.AsyncTask;
 
+import org.opengis.context.Resource;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -40,6 +42,7 @@ public class DownloadTask extends AsyncTask<String, String, Boolean> {
         this.unzipDestinationFilePath = unzipDestinationFilePath;
         this.downloadDestinationFilePath = downloadDestinationFilePath;
         this.overwrite = overwrite;
+        this.mFiles = new ArrayList<String>();
     }
 
     @Override
@@ -94,7 +97,12 @@ public class DownloadTask extends AsyncTask<String, String, Boolean> {
                 fileOutput.flush();
                 fileOutput.close();
 
-                mFiles = this.unzip(new File(downloadDestinationFilePath), new File(unzipDestinationFilePath));
+                String ext = mainActivity.getString(R.string.geopackage_extension);
+
+                if(downloadDestinationFilePath.endsWith(ext))
+                    mFiles.add(downloadDestinationFilePath.substring(downloadDestinationFilePath.lastIndexOf(File.separatorChar)+1,  downloadDestinationFilePath.lastIndexOf(ext)));
+                else
+                    mFiles = this.unzip(new File(downloadDestinationFilePath), new File(unzipDestinationFilePath));
 
                 return true;
             } catch (IOException e) {
@@ -188,7 +196,11 @@ public class DownloadTask extends AsyncTask<String, String, Boolean> {
     protected void onPostExecute(Boolean aBoolean) {
         mainActivity.getTreeView().refreshTreeView();
         // The project is the last downloaded geopackage file.
-        mainActivity.getProject().setCurrent(mFiles.get(0));
+        try {
+            mainActivity.getProject().setCurrent(mFiles.get(0));
+        }catch (Exception e) {
+            Message.showErrorMessage(mainActivity, R.string.error, R.string.download_failed);
+        }
 
         if(mainActivity.getProgressDialog() != null && mainActivity.getProgressDialog().isShowing()) {
             if (aBoolean) {
