@@ -17,7 +17,7 @@ public class DataBase extends SQLiteOpenHelper {
 	
 	/* String to create the table settings */
 	private String createSettings;
-	private String createProjects;
+	private String createProject;
 
 	private String dropTableSettings = "drop table if exists SETTINGS";
 	private String dropTableProject = "drop table if exists PROJECT";
@@ -33,7 +33,7 @@ public class DataBase extends SQLiteOpenHelper {
 		super.onOpen(db);
 		createTables();
 		db.execSQL(createSettings);
-		db.execSQL(createProjects);
+		db.execSQL(createProject);
 	}
 	
 	/**
@@ -44,7 +44,7 @@ public class DataBase extends SQLiteOpenHelper {
 			db.execSQL("PRAGMA foreign_keys=ON;");
 		createTables();
 		db.execSQL(createSettings);
-		db.execSQL(createProjects);
+		db.execSQL(createProject);
 	}
 
 	/**
@@ -62,14 +62,15 @@ public class DataBase extends SQLiteOpenHelper {
 		sBCreateSettings.append("ID integer primary key not null,");
 		sBCreateSettings.append("USER_NAME text,");
 		sBCreateSettings.append("PASSWORD text,");
-		sBCreateSettings.append("URL text);");
+		sBCreateSettings.append("URL text,");
+		sBCreateSettings.append("CURRENT_PROJECT text);");
 		createSettings = sBCreateSettings.toString();
 
 		StringBuilder sBCreateProject = new StringBuilder();
 		sBCreateProject.append("create table if not exists PROJECT (");
 		sBCreateProject.append("ID integer primary key not null,");
-		sBCreateProject.append("CURRENT text not null,");
+		sBCreateProject.append("NAME text not null,");
 		sBCreateProject.append("FILE_PATH text not null);");
-		createProjects = sBCreateProject.toString();
+		createProject = sBCreateProject.toString();
 	}
 }

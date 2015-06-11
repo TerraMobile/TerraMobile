@@ -29,6 +29,7 @@ public class SettingsDAO {
                     contentValues.put("USER_NAME", settings.getUserName());
                     contentValues.put("PASSWORD", settings.getPassword());
                     contentValues.put("URL", settings.getUrl());
+                    contentValues.put("CURRENT_PROJECT", settings.getCurrentProject());
                     if (db.insert("SETTINGS", null, contentValues) != -1) {
                         db.close();
                         return true;
@@ -53,6 +54,7 @@ public class SettingsDAO {
                     contentValues.put("USER_NAME", settings.getUserName());
                     contentValues.put("PASSWORD", settings.getPassword());
                     contentValues.put("URL", settings.getUrl());
+                    contentValues.put("CURRENT_PROJECT", settings.getCurrentProject());
                     if (db.update("SETTINGS", contentValues, "ID=?", new String[]{String.valueOf(settings.getId())}) > 0) {
                         db.close();
                         return true;
@@ -72,7 +74,7 @@ public class SettingsDAO {
             SQLiteDatabase db = dataBase.getReadableDatabase();
             if(db != null) {
                 Settings settings = null;
-                Cursor cursor = db.query("SETTINGS", new String[]{"ID", "USER_NAME", "PASSWORD", "URL"}, "ID = ?", new String[]{String.valueOf(id)}, null, null, null, null);
+                Cursor cursor = db.query("SETTINGS", new String[]{"ID", "USER_NAME", "PASSWORD", "URL", "CURRENT_PROJECT"}, "ID = ?", new String[]{String.valueOf(id)}, null, null, null, null);
                 if (cursor != null && cursor.getCount() != 0) {
                     cursor.moveToFirst();
                     settings = new Settings();
@@ -80,6 +82,7 @@ public class SettingsDAO {
                     settings.setUserName(cursor.getString(1));
                     settings.setPassword(cursor.getString(2));
                     settings.setUrl(cursor.getString(3));
+                    settings.setCurrentProject(cursor.getString(4));
                     cursor.close();
                 }
                 db.close();

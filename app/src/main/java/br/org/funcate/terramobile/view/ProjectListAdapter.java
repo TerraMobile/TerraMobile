@@ -11,6 +11,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import br.org.funcate.terramobile.R;
+import br.org.funcate.terramobile.model.Project;
+import br.org.funcate.terramobile.model.db.dao.ProjectDAO;
 
 /**
  * Created by marcelo on 6/10/15.
@@ -26,19 +28,23 @@ public class ProjectListAdapter extends ArrayAdapter<String> {
         this.projectList = projectList;
     }
 
-
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        if (convertView == null) {
-            LayoutInflater layoutInflater = (LayoutInflater) context
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = layoutInflater.inflate(R.layout.project_item, null);
-        }
+        LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        convertView = layoutInflater.inflate(R.layout.project_item, null);
         TextView tVProject = (TextView) convertView.findViewById(R.id.tVProjectName);
         ImageView iVDownloaded = (ImageView)convertView.findViewById(R.id.iVDownloaded);
-        ImageView iVUpdated = (ImageView)convertView.findViewById(R.id.iVUpdated);
+//        ImageView iVUpdated = (ImageView)convertView.findViewById(R.id.iVUpdated);
 
-        tVProject.setText(projectList.get(position).toString());
+        String projectName = projectList.get(position).toString().substring(0, projectList.get(position).toString().indexOf('.'));
+
+        tVProject.setText(projectName);
+
+        ProjectDAO projectDAO = new ProjectDAO(context);
+
+        Project project = projectDAO.getByName(projectName);
+        if(project != null)
+            iVDownloaded.setImageResource(android.R.drawable.ic_popup_disk_full);
 
         return convertView;
     }

@@ -98,9 +98,15 @@ public class DownloadTask extends AsyncTask<String, String, Boolean> {
             }
             fileOutput.flush();
             fileOutput.close();
-            inputStream.close();
 
-            mFiles = this.unzip(new File(downloadDestinationFilePath), new File(unzipDestinationFilePath));
+
+            String ext = mainActivity.getString(R.string.geopackage_extension);
+
+            if(downloadDestinationFilePath.endsWith(ext))
+                mFiles.add(downloadDestinationFilePath.substring(downloadDestinationFilePath.lastIndexOf(File.separatorChar)+1, downloadDestinationFilePath.lastIndexOf(ext)));
+            else
+                mFiles = this.unzip(new File(downloadDestinationFilePath), new File(unzipDestinationFilePath));
+
             return true;
         }catch (IOException e) {
             e.printStackTrace();
@@ -215,7 +221,7 @@ public class DownloadTask extends AsyncTask<String, String, Boolean> {
 
         Project project = new Project();
         project.setId(null);
-        project.setCurrent(fileName);
+        project.setName(fileName);
         project.setFilePath(downloadDestinationFilePath);
         projectDAO.insert(project);
 

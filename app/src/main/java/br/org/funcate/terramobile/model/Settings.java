@@ -8,6 +8,7 @@ public class Settings {
     private String userName;
     private String password;
     private String url;
+    private String currentProject;
 
     public long getId() {
         return id;
@@ -39,5 +40,13 @@ public class Settings {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public String getCurrentProject() {
+        return currentProject;
+    }
+
+    public void setCurrentProject(String currentProject) {
+        this.currentProject = currentProject;
     }
 }
