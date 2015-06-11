@@ -46,7 +46,7 @@ public class TreeViewAdapter extends BaseExpandableListAdapter implements View.O
         GpkgLayer child = (GpkgLayer) v.getTag();
         try{
             switch (child.getType()){
-                case TILES:{// base
+                case TILES:{// base (matrix)
                     if (((RadioButton) v).isChecked()) {
                         par.addLayer(child);
                         this.menuMapController.addBaseLayer(child);
@@ -56,11 +56,17 @@ public class TreeViewAdapter extends BaseExpandableListAdapter implements View.O
                     }
                     break;
                 }
-                case FEATURES:{// collect
-
+                case FEATURES:{// layer (vector)
+                    if (((RadioButton) v).isChecked()) {
+                        par.addLayer(child);
+                        this.menuMapController.addVectorLayer(child);
+                    } else {
+                        par.removeLayer(child);
+                        this.menuMapController.removeVectorLayer(child);
+                    }
                     break;
                 }
-                case EDITABLE:{// editable
+                case EDITABLE:{// editable (vector)
                     TreeView treeView=((MainActivity) this.context).getTreeView();
                     treeView.setSelectedEditableLayer(child);
                     break;

@@ -8,6 +8,7 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.opengis.feature.simple.SimpleFeature;
 import org.osmdroid.ResourceProxy;
 import org.osmdroid.tileprovider.MapTileProviderArray;
 import org.osmdroid.tileprovider.MapTileProviderBasic;
@@ -19,7 +20,10 @@ import org.osmdroid.tileprovider.util.SimpleRegisterReceiver;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.TilesOverlay;
 
+import java.util.List;
+
 import br.org.funcate.dynamicforms.util.PositionUtilities;
+import br.org.funcate.jgpkg.service.GeoPackageService;
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.configuration.ViewContextParameters;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
@@ -41,7 +45,7 @@ public class MenuMapController {
 
     public void addBaseLayer(GpkgLayer child) {
 
-        if(child.getGeoPackage().isGPKGValid(true)) {
+        if(child.getGeoPackage().isGPKGValid(false)) {
 
             MapView mapView = (MapView) ((MainActivity) context).findViewById(R.id.mapview);
             mapView.setMaxZoomLevel(18);
@@ -89,6 +93,18 @@ public class MenuMapController {
 
         //MapView mapView = (MapView) ((MainActivity) context).findViewById(R.id.mapview);
         //mapView.getOverlays().add(this.lastIndexDrawOrder,tilesOverlay);
+        List<SimpleFeature> features = null;
+        try {
+            features = GeoPackageService.getGeometries(child.getGeoPackage(), child.getName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        int ftSize = features.size();
+        if(ftSize>0){
+            SimpleFeature f = features.get(0);
+            String ftTypeName = f.getFeatureType().getTypeName();
+        }
 
         child.setIndexOverlay(this.lastIndexDrawOrder);
         this.lastIndexDrawOrder++;
