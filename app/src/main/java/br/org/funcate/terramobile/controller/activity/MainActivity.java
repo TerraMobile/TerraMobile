@@ -30,6 +30,7 @@ import org.osmdroid.util.GeoPoint;
 
 import java.io.BufferedInputStream;
 import java.io.File;
+import java.util.ArrayList;
 
 import br.org.funcate.dynamicforms.FormUtilities;
 import br.org.funcate.dynamicforms.FragmentDetailActivity;
@@ -46,6 +47,7 @@ import br.org.funcate.terramobile.model.exception.TerraMobileException;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
 import br.org.funcate.terramobile.model.tilesource.AppGeoPackageService;
 import br.org.funcate.terramobile.util.Message;
+import br.org.funcate.terramobile.util.ResourceUtil;
 
 public class MainActivity extends FragmentActivity {
     private DrawerLayout mDrawerLayout;
@@ -61,6 +63,10 @@ public class MainActivity extends FragmentActivity {
     private ViewContextParameters parameters=new ViewContextParameters();
 
     private Project mProject;
+    private Settings settings;
+
+    private ProjectDAO projectDAO;
+    private SettingsDAO settingsDAO;
 
     private static int FORM_COLLECT_DATA = 222;
 
@@ -94,35 +100,28 @@ public class MainActivity extends FragmentActivity {
         setContentView(R.layout.activity_main);
         actionBar = getActionBar();
 
-        /** Test */
-        SettingsDAO settingsDAO = new SettingsDAO(this);
-        Settings settings;
+        PreferenceManager.setDefaultValues(this, R.xml.settings, false);
+
+        settingsDAO = new SettingsDAO(this);
         if(settingsDAO.getById(1) == null){
             settings = new Settings();
             settings.setId(1);
-            settings.setUserName("");
-            settings.setPassword("");
-            settings.setUrl("http://192.168.3.103:8080/TerraMobileServer/tmserver/projectservices");
+            settings.setUrl("http://192.168.3.103:8080/TerraMobileServer/tmserver/projectservices"); // URL for test
             settingsDAO.insert(settings);
         }
         else{
             settings = settingsDAO.getById(1);
-            settings.setUrl("http://192.168.3.103:8080/TerraMobileServer/tmserver/projectservices");
-            settingsDAO.update(settings);
         }
-        /** Test */
 
-        PreferenceManager.setDefaultValues(this, R.xml.settings, false);
+//        File gpkgFile=AppGeoPackageService.getGpkgFile(this);
 
-        File gpkgFile=AppGeoPackageService.getGpkgFile(this);
+        File directory = ResourceUtil.getDirectory(this.getResources().getString(R.string.app_workspace_dir));
+        ArrayList<File> gpkgFiles= ResourceUtil.getGeoPackageFiles(directory, this.getResources().getString(R.string.geopackage_extension));
 
-        if(gpkgFile!=null) {
-            ProjectDAO projectDAO = new ProjectDAO(this);
-
-            String fileName = gpkgFile.getName();
-            fileName = fileName.substring(0, fileName.length() - 4);
-
-            mProject = projectDAO.getByCurrent(fileName);
+        if(gpkgFiles!=null) {
+            projectDAO = new ProjectDAO(this);
+            if(settings.getCurrentProject() != null)
+                mProject = projectDAO.getByName(settings.getCurrentProject());
         }
 
         treeView = new TreeView(MainActivity.this);
@@ -182,9 +181,11 @@ public class MainActivity extends FragmentActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.action_bar, menu);
+
         MenuItem menuItem = menu.findItem(R.id.project);
         if(mProject != null)
-            menuItem.setTitle(mProject.getCurrent());
+            menuItem.setTitle(mProject.getName());
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -193,6 +194,11 @@ public class MainActivity extends FragmentActivity {
     public boolean onPrepareOptionsMenu(Menu menu) {
         ExpandableListView mDrawerList=treeView.getUIComponent();
         if(mDrawerList==null) return false;
+
+        MenuItem menuItem = menu.findItem(R.id.project);
+        if(mProject != null)
+            menuItem.setTitle(mProject.getName());
+
         // If the nav drawer is open, hide action items related to the content view
         return super.onPrepareOptionsMenu(menu);
     }
@@ -358,5 +364,8 @@ public class MainActivity extends FragmentActivity {
 
     public void setProject(Project project) {
         this.mProject = project;
+        settings.setCurrentProject(project.getName());
+        settingsDAO.update(settings);
+        invalidateOptionsMenu();
     }
 }

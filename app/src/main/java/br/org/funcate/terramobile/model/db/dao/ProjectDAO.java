@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
+import android.util.Log;
 
 import br.org.funcate.terramobile.model.Project;
 import br.org.funcate.terramobile.model.db.DataBase;
@@ -26,7 +27,7 @@ public class ProjectDAO {
                 if (project != null) {
                     ContentValues contentValues = new ContentValues();
                     contentValues.put("ID", project.getId());
-                    contentValues.put("CURRENT", project.getCurrent());
+                    contentValues.put("NAME", project.getName());
                     contentValues.put("FILE_PATH", project.getFilePath());
                     if (db.insert("PROJECT", null, contentValues) != -1) {
                         db.close();
@@ -49,7 +50,7 @@ public class ProjectDAO {
                 if (project != null) {
                     ContentValues contentValues = new ContentValues();
                     contentValues.put("ID", project.getId());
-                    contentValues.put("CURRENT", project.getCurrent());
+                    contentValues.put("NAME", project.getName());
                     contentValues.put("FILE_PATH", project.getFilePath());
                     if (db.update("PROJECT", contentValues, "ID=?", new String[]{String.valueOf(project.getId())}) > 0) {
                         db.close();
@@ -65,24 +66,23 @@ public class ProjectDAO {
         }
     }
 
-    public Project getByCurrent(String current) {
+    public Project getByName(String name) {
         try {
-            SQLiteDatabase db = dataBase.getReadableDatabase();
+            SQLiteDatabase db = dataBase.getWritableDatabase();
+            Project project = null;
             if(db != null) {
-                Project project = null;
-                Cursor cursor = db.query("PROJECT", new String[]{"ID", "CURRENT", "FILE_PATH"}, "CURRENT = ?", new String[]{String.valueOf(current)}, null, null, null, null);
+                Cursor cursor = db.query("PROJECT", new String[]{"ID", "NAME", "FILE_PATH"}, "NAME = ?", new String[]{String.valueOf(name)}, null, null, null, null);
                 if (cursor != null && cursor.getCount() != 0) {
                     cursor.moveToFirst();
                     project = new Project();
                     project.setId(cursor.getInt(0));
-                    project.setCurrent(cursor.getString(1));
+                    project.setName(cursor.getString(1));
                     project.setFilePath(cursor.getString(2));
                     cursor.close();
                 }
                 db.close();
-                return project;
             }
-            return null;
+            return project;
         } catch (SQLiteException e) {
             e.printStackTrace();
             return null;
