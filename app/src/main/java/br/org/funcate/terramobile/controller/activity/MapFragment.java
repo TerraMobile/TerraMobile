@@ -1,7 +1,9 @@
 package br.org.funcate.terramobile.controller.activity;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -18,6 +20,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import org.osmdroid.ResourceProxy;
+import org.osmdroid.bonuspack.overlays.Marker;
 import org.osmdroid.tileprovider.tilesource.ITileSource;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.tileprovider.tilesource.XYTileSource;
@@ -25,8 +28,15 @@ import org.osmdroid.tileprovider.util.CloudmadeUtil;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 
+import br.org.funcate.dynamicforms.FormUtilities;
+import br.org.funcate.dynamicforms.FragmentDetailActivity;
+import br.org.funcate.dynamicforms.util.LibraryConstants;
+import br.org.funcate.jgpkg.exception.QueryException;
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.model.constants.OpenStreetMapConstants;
+import br.org.funcate.terramobile.model.exception.TerraMobileException;
+import br.org.funcate.terramobile.model.tilesource.AppGeoPackageService;
+import br.org.funcate.terramobile.util.Message;
 import br.org.funcate.terramobile.util.ResourceUtil;
 
 /*import org.osmdroid.samplefragments.BaseSampleFragment;
@@ -63,6 +73,9 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants{
     private LayoutInflater inflater;
     private ViewGroup container;
 
+    private Context context;
+    private static int FORM_COLLECT_DATA = 222;
+
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
@@ -97,7 +110,7 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants{
     {
         super.onActivityCreated(savedInstanceState);
 
-        final Context context = this.getActivity();
+        context = this.getActivity();
         final DisplayMetrics dm = context.getResources().getDisplayMetrics();
         // mResourceProxy = new ResourceProxyImpl(getActivity().getApplicationContext());
 
@@ -107,58 +120,11 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants{
         if (CloudmadeUtil.getCloudmadeKey().length() == 0) {
             CloudmadeUtil.retrieveCloudmadeKey(context.getApplicationContext());
         }
-
-/*        this.mCompassOverlay = new CompassOverlay(context, new InternalCompassOrientationProvider(context),
-                mMapView);*/
-/*        this.mLocationOverlay = new MyLocationNewOverlay(context, new GpsMyLocationProvider(context),
-                mMapView);*/
-
-/*        mMinimapOverlay = new MinimapOverlay(getActivity(), mMapView.getTileRequestCompleteHandler());
-		mMinimapOverlay.setWidth(dm.widthPixels / 5);
-		mMinimapOverlay.setHeight(dm.heightPixels / 5);*/
-
-/*		mScaleBarOverlay = new ScaleBarOverlay(context);
-		mScaleBarOverlay.setCentred(true);
-		mScaleBarOverlay.setScaleBarOffset(dm.widthPixels / 2, 10);*/
-
-/*        mRotationGestureOverlay = new RotationGestureOverlay(context, mMapView);
-		mRotationGestureOverlay.setEnabled(false);*/
-
-/*        mMapView.setBuiltInZoomControls(true);
-        mMapView.setMultiTouchControls(true);*/
-        /*mMapView.getOverlays().add(this.mLocationOverlay);*/
-/*        mMapView.getOverlays().add(this.mCompassOverlay);*/
-        /*mMapView.getOverlays().add(this.mMinimapOverlay);*/
-		/*mMapView.getOverlays().add(this.mScaleBarOverlay);*/
-        /*mMapView.getOverlays().add(this.mRotationGestureOverlay);*/
-
-/*        mMapView.getController().setZoom(mPrefs.getInt(PREFS_ZOOM_LEVEL, 1));
-        mMapView.scrollTo(mPrefs.getInt(PREFS_SCROLL_X, 23), mPrefs.getInt(PREFS_SCROLL_Y, 0));*/
-
-        //GeoPoint startPoint = new GeoPoint(48.13, -1.63);
-
-        // GeoPoint defaultPoint = new GeoPoint(48.13, -1.63);
-        // mMapView.getController().animateTo(defaultPoint);
-
-        // mMapView.getController().setCenter(new GeoPoint(48.13, -1.63));
-        //mMapView.getController().setZoom(mPrefs.getInt(PREFS_ZOOM_LEVEL, 10));
-        // mMapView.scrollTo(mPrefs.getInt(PREFS_SCROLL_X, 23), mPrefs.getInt(PREFS_SCROLL_Y, 10));
-
-		/*mLocationOverlay.enableMyLocation();*/
-		/*mCompassOverlay.enableCompass();*/
-
-        //  setHasOptionsMenu(true);
     }
 
     @Override
     public void onPause()
     {
-/*        final SharedPreferences.Editor edit = mPrefs.edit();
-        edit.putString(PREFS_TILE_SOURCE, mMapView.getTileProvider().getTileSource().name());
-        edit.putInt(PREFS_SCROLL_X, mMapView.getScrollX());
-        edit.putInt(PREFS_SCROLL_Y, mMapView.getScrollY());
-        edit.putInt(PREFS_ZOOM_LEVEL, mMapView.getZoomLevel());
-        edit.commit();*/
         super.onPause();
     }
 
@@ -218,15 +184,67 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants{
         canvas.drawLine(centerW, centerH + offset, centerW, centerH - offset, paint);
         canvas.drawLine(centerW + offset, centerH, centerW - offset, centerH, paint);
     }
-    public void addBookmark() {
-/*      GeoPoint loc = (GeoPoint) this.mMapView.getMapCenter();
+
+    public void startForm() {
+
+        GeoPoint point = getCenterMap();
+        addBookmark(point);
+
+        // This id is provided from the selected point, if one it is selected otherwise -1 is default.
+        long selectedPointID = -1;
+
+        try {
+            Intent formIntent = new Intent(context, FragmentDetailActivity.class);
+            formIntent.putExtra(LibraryConstants.SELECTED_POINT_ID, selectedPointID);
+            // The form name attribute, provided by JSON, shall be the same name of the editable layer.
+            formIntent.putExtra(FormUtilities.ATTR_FORMNAME, ((MainActivity) context).getTreeView().getSelectedEditableLayer().getName());
+            formIntent.putExtra(FormUtilities.ATTR_JSON_TAGS, ((MainActivity) context).getTreeView().getSelectedEditableLayer().getJSON());
+            formIntent.putExtra(FormUtilities.TYPE_LATITUDE, point.getLatitude());
+            formIntent.putExtra(FormUtilities.TYPE_LONGITUDE, point.getLongitude());
+            startActivityForResult(formIntent, FORM_COLLECT_DATA);
+
+        } catch (Exception e) {
+            Message.showErrorMessage(((MainActivity) context), R.string.failure_title_msg, R.string.error_start_form);
+
+        }
+    }
+
+    public GeoPoint getCenterMap() {
+        GeoPoint point = (GeoPoint) this.mMapView.getMapCenter();
+        return point;
+    }
+
+    private void addBookmark(GeoPoint point) {
+
         Marker marker = new Marker(this.mMapView);
-        marker.setPosition(new GeoPoint(loc.getLatitude(), loc.getLongitude()));
+        marker.setPosition(new GeoPoint(point.getLatitude(), point.getLongitude()));
         marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
         marker.setIcon(getResources().getDrawable(R.drawable.marker_red));
-        this.mMapView.getOverlays().add(marker);
-        updateMap();*/
+        if(!this.mMapView.getOverlays().add(marker)) {
+            Message.showErrorMessage(((MainActivity) context), R.string.failure_title_msg, R.string.error_start_form);
+        }else {
+            updateMap();
+        }
     }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK && requestCode == FORM_COLLECT_DATA) {
+            Bundle extras = data.getBundleExtra(LibraryConstants.PREFS_KEY_FORM);
+            try {
+                AppGeoPackageService.storeData( context, extras);
+            }catch (TerraMobileException tme) {
+                //Message.showMessage(this, R.drawable.error, getResources().getString(R.string.error), tme.getMessage());
+                Message.showErrorMessage(((MainActivity) context), R.string.error, R.string.missing_form_data);
+            }catch (QueryException qe) {
+                //Message.showMessage(this, R.drawable.error, getResources().getString(R.string.error), qe.getMessage());
+                Message.showErrorMessage(((MainActivity) context), R.string.error, R.string.error_while_storing_form_data);
+            }
+        }else {
+            Message.showErrorMessage(((MainActivity) context), R.string.error, R.string.cancel_form_data);
+        }
+    }
+
     public synchronized void updateMap()
     {
         this.mMapView.invalidate();

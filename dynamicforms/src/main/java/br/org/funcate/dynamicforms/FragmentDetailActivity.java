@@ -76,8 +76,6 @@ public class FragmentDetailActivity extends FragmentActivity {
     private String sectionObjectString;
     private JSONObject sectionObject;
     private String sectionName;
-    private double longitude;
-    private double latitude;
     private double elevation = -9999.0;
     private long pointId;
 
@@ -98,24 +96,42 @@ public class FragmentDetailActivity extends FragmentActivity {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
 
-        checkPositionCoordinates();
+        //checkPositionCoordinates();
 
         /*if (savedInstanceState != null) {
             formName = savedInstanceState.getString(FormUtilities.ATTR_FORMNAME);
         }*/
         String tags="";
-        String defaultSectionName = "terramobile";
+        String defaultSectionName = "terramobile";// TODO: send this value to FormUtilities
 
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
+        Double latitude=0.0;
+        Double longitude=0.0;
         if (extras != null) {
             pointId = extras.getLong(LibraryConstants.SELECTED_POINT_ID);
             formName = extras.getString(FormUtilities.ATTR_FORMNAME);
             tags = extras.getString(FormUtilities.ATTR_JSON_TAGS);
+            latitude = extras.getDouble(FormUtilities.TYPE_LATITUDE);
+            longitude = extras.getDouble(FormUtilities.TYPE_LONGITUDE);
         }
 
         try {
             sectionObject = TagsManager.getInstance(tags).getSectionByName(defaultSectionName);
+
+            if(!sectionObject.has(FormUtilities.GEOJSON_TAG_GEOM)) {
+                JSONObject geojson = new JSONObject();
+                geojson.put(FormUtilities.GEOJSON_TAG_TYPE,FormUtilities.GEOJSON_TYPE_POINT);
+                JSONArray coords = new JSONArray("["+longitude+","+latitude+"]");
+                geojson.put(FormUtilities.GEOJSON_TAG_COORDINATES, coords);
+                sectionObject.put(FormUtilities.GEOJSON_TAG_GEOM, geojson);
+            }else{
+                JSONObject geojson = sectionObject.getJSONObject(FormUtilities.GEOJSON_TAG_GEOM);
+                JSONArray coords = geojson.getJSONArray(FormUtilities.GEOJSON_TAG_COORDINATES);
+                coords.put(0, longitude);
+                coords.put(1,latitude);
+            }
+
             sectionObjectString = sectionObject.toString();
             sectionName = sectionObject.getString(ATTR_SECTIONNAME);
         } catch (JSONException e) {
@@ -148,19 +164,19 @@ public class FragmentDetailActivity extends FragmentActivity {
         return sectionObjectString;
     }
 
-    /**
+/*    *//**
      * @return the latitude.
-     */
+     *//*
     public double getLatitude() {
         return latitude;
     }
 
-    /**
+    *//**
      * @return the longitude.
-     */
+     *//*
     public double getLongitude() {
         return longitude;
-    }
+    }*/
 
     public long getNoteId() {
         return pointId;
@@ -213,7 +229,7 @@ public class FragmentDetailActivity extends FragmentActivity {
             String key = "";
             String value = "";
             String type = "";
-            boolean insertKey=true;
+            boolean insertKey;
 
             for (int i = 0; i < length; i++) {
                 JSONObject jsonObject = formItemsArray.getJSONObject(i);
@@ -268,7 +284,22 @@ public class FragmentDetailActivity extends FragmentActivity {
                     if(insertKey) keys.add(key);
                 }
             }
-            formData.putStringArrayList(LibraryConstants.FORM_KEYS,keys);
+            formData.putStringArrayList(LibraryConstants.FORM_KEYS, keys);
+        }
+
+        JSONObject geojsonGeometry = sectionObject.getJSONObject(FormUtilities.GEOJSON_TAG_GEOM);
+        if(geojsonGeometry.has(FormUtilities.GEOJSON_TAG_TYPE)) {
+            String type = geojsonGeometry.getString(FormUtilities.GEOJSON_TAG_TYPE);
+            JSONArray jsonCoords = geojsonGeometry.getJSONArray(FormUtilities.GEOJSON_TAG_COORDINATES);
+
+            formData.putString(FormUtilities.GEOJSON_TAG_TYPE, type);
+            int coordLen = jsonCoords.length();
+            double[] coords = new double[coordLen];
+
+            for (int i = 0; i < coordLen; i++) {
+                coords[i]=((Double)jsonCoords.get(i)).doubleValue();
+            }
+            formData.putDoubleArray(FormUtilities.GEOJSON_TYPE_POINT,coords);
         }
 
         Intent intent = getIntent();
@@ -286,7 +317,8 @@ public class FragmentDetailActivity extends FragmentActivity {
         return super.onKeyDown(keyCode, event);
     }
 
-    private void checkPositionCoordinates() {
+    // TODO: send this method to MapFragment and implement tool to capture GPS coordinates instead of capture from map center.
+    /*private void checkPositionCoordinates() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean useMapCenterPosition = preferences.getBoolean(USE_MAPCENTER_POSITION, false);
         if (useMapCenterPosition || gpsLocation == null) {
@@ -299,5 +331,5 @@ public class FragmentDetailActivity extends FragmentActivity {
             longitude = gpsLocation[0];
             elevation = gpsLocation[2];
         }
-    }
+    }*/
 }

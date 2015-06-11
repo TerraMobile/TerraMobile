@@ -277,6 +277,17 @@ public class FormUtilities {
     public static final String ATTR_JSON_TAGS = "json_tags";
 
     /**
+     * The following types are part of the geojson inserted in config JSONObject form
+     */
+    public static final String GEOJSON_TAG_GEOM = "geometry";
+    public static final String GEOJSON_TAG_TYPE = "type";
+    public static final String GEOJSON_TAG_COORDINATES = "coordinates";
+    public static final String GEOJSON_TYPE_POINT = "Point";
+    public static final String GEOJSON_TYPE_LINESTRING = "LineString";
+    public static final String GEOJSON_TYPE_POLYGON = "Polygon";
+
+
+    /**
      * Checks if the type is a special one.
      *
      * @param type the type string from the form.

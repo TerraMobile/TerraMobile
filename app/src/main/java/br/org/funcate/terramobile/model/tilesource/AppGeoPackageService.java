@@ -8,18 +8,17 @@ import android.graphics.Color;
 import android.os.Bundle;
 
 import com.augtech.geoapi.feature.SimpleFeatureImpl;
-import com.augtech.geoapi.feature.type.GeometryTypeImpl;
-import com.augtech.geoapi.feature.type.SimpleFeatureTypeImpl;
 import com.augtech.geoapi.geopackage.DateUtil;
 import com.augtech.geoapi.geopackage.GeoPackage;
 import com.augtech.geoapi.geopackage.GpkgField;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.Point;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.FeatureType;
+import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.GeometryType;
-import org.opengis.geometry.Geometry;
-import org.opengis.geometry.primitive.Point;
 import org.osmdroid.ResourceProxy;
 import org.osmdroid.tileprovider.MapTileProviderArray;
 import org.osmdroid.tileprovider.MapTileProviderBasic;
@@ -33,10 +32,12 @@ import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.TilesOverlay;
 
 import java.io.File;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import br.org.funcate.dynamicforms.FormUtilities;
 import br.org.funcate.dynamicforms.util.LibraryConstants;
 import br.org.funcate.extended.model.TMConfigEditableLayer;
 import br.org.funcate.jgpkg.exception.QueryException;
@@ -205,77 +206,86 @@ public class AppGeoPackageService {
         if(keys==null || keys.isEmpty()){
             throw new TerraMobileException(context.getString(R.string.missing_form_data));
         }else {
-            SimpleFeature feature = makeSimpleFeature(formData, tv);
-            GeoPackageService.writeLayerFeature(tv.getSelectedEditableLayer().getGeoPackage(), feature);
+            try {
+                SimpleFeature feature = makeSimpleFeature(formData, tv);
+                GeoPackageService.writeLayerFeature(tv.getSelectedEditableLayer().getGeoPackage(), feature);
+            }catch (Exception e) {
+                int flags = context.getApplicationInfo().flags;
+                if((flags & context.getApplicationInfo().FLAG_DEBUGGABLE) != 0) {
+                    throw new TerraMobileException(e.getMessage());
+                }else {
+                    throw new TerraMobileException(context.getString(R.string.error_while_storing_form_data));
+                }
+            }
         }
     }
 
     private static SimpleFeature makeSimpleFeature(Bundle formData, TreeView tv) {
 
+
         ArrayList<GpkgField> fields = tv.getSelectedEditableLayer().getFields();
-        String tableName = tv.getSelectedEditableLayer().getName();
         SimpleFeatureType ft = tv.getSelectedEditableLayer().getFeatureType();
-        String columns="";
-        String values="";
-        List<Object> attributeValues = null;
+        GeometryType geometryType = ft.getGeometryDescriptor().getType();
+        List<Object> attributeValues = new ArrayList<Object>();
+        List<AttributeType> attributeTypes = new ArrayList<AttributeType>();
         SimpleFeatureImpl feature = new SimpleFeatureImpl(null, attributeValues, ft);
 
-        for (int i = 0,len = fields.size(); i < len; i++) {
+        GeometryFactory factory=new GeometryFactory();
+
+        if(geometryType.getName().toString().equalsIgnoreCase(FormUtilities.GEOJSON_TYPE_POINT) &&
+                formData.getString(FormUtilities.GEOJSON_TAG_TYPE).equalsIgnoreCase(FormUtilities.GEOJSON_TYPE_POINT)) {
+            double[] c = formData.getDoubleArray(FormUtilities.GEOJSON_TYPE_POINT);
+            Coordinate coordinate = new Coordinate(c[0],c[1]);
+            Point point = factory.createPoint(coordinate);
+            feature.setDefaultGeometry(point);
+        }
+
+        for (int i = 0, len = fields.size(); i < len; i++) {
             GpkgField field = fields.get(i);
             String key = field.getFieldName();
             String type = field.getFieldType();
 
-            columns += ((columns.equals(""))?(""):(",")) + key;
-            values += ((values.equals(""))?(""):(","));
-
-            if("DOUBLE".equalsIgnoreCase(type))
-            {
-                Double d=formData.getDouble(key);
-                values += d.toString();
-                feature.setAttribute(key, d);
-            } else if("TEXT".equalsIgnoreCase(type))
-            {
-                String s=formData.getString(key);
-                values += "'"+s+"'";
-                feature.setAttribute(key, s);
-            } else if("INTEGER".equalsIgnoreCase(type))
-            {
-                Integer in= formData.getInt(key);
-                values += in.toString();
-                feature.setAttribute(key, in);
-            } else if("BOOLEAN".equalsIgnoreCase(type))
-            {
-                Boolean b= formData.getBoolean(key);
-                values += b.toString();
-                feature.setAttribute(key, b);
-            } else if("BYTE".equalsIgnoreCase(type))
-            {
+            if ("DOUBLE".equalsIgnoreCase(type)) {
+                Double d = formData.getDouble(key);
+                attributeValues.add(d);
+            } else if ("TEXT".equalsIgnoreCase(type)) {
+                String s = formData.getString(key);
+                attributeValues.add(s);
+            } else if ("INTEGER".equalsIgnoreCase(type)) {
+                Integer in = formData.getInt(key);
+                attributeValues.add(in);
+            } else if ("BOOLEAN".equalsIgnoreCase(type)) {
+                Boolean b = formData.getBoolean(key);
+                attributeValues.add(b);
+            } else if ("BLOB".equalsIgnoreCase(type)) {
                 byte[] blob = formData.getByteArray(key);
+                attributeValues.add(blob);
                 // see how to insert a byte array inside sqlite table
-                feature.setAttribute(key, blob);
-            } else if("DATE".equalsIgnoreCase(type))
-            {
+            } else if ("DATE".equalsIgnoreCase(type)) {
+                String date = formData.getString(key);
+                Date dt = DateUtil.deserializeDate(date);
+                if (dt == null) dt = new Date();
+                attributeValues.add(dt);
+            } else if ("TIME".equalsIgnoreCase(type)) {
+                String date = formData.getString(key);
+                if (!date.equals("")) {
+                    date = "0000-00-00T" + date;
+                }
+                Time dt = DateUtil.deserializeSqlTime(date);
+                if (dt == null) {
+                    dt = new Time(Long.decode(date));
+                }
+                attributeValues.add(dt);
+            } else if ("DATETIME".equalsIgnoreCase(type)) {
                 String date = formData.getString(key);
                 Date dt = DateUtil.deserializeDateTime(date);
-                values += "date("+dt.toString()+")";
-                feature.setAttribute(key, dt);
-            } else if("TIME".equalsIgnoreCase(type))
-            {
-                String date = formData.getString(key);
-                Date dt = DateUtil.deserializeDateTime(date);
-                values += "time("+dt.toString()+")";
-                feature.setAttribute(key, dt);
-            } else if("DATETIME".equalsIgnoreCase(type))
-            {
-                String date = formData.getString(key);
-                Date dt = DateUtil.deserializeDateTime(date);
-                values += "datetime("+dt.toString()+")";
-                feature.setAttribute(key, dt);
+                if (dt == null) dt = new Date();
+                attributeValues.add(dt);
             }
 
+            if(attributeValues.size() > attributeTypes.size()) attributeTypes.add(ft.getType(key));
         }
-
-        String sql="INSERT INTO "+tableName+" ("+columns+") values("+values+")";
+        feature.setAttributes(attributeValues, attributeTypes);
 
         return feature;
     }

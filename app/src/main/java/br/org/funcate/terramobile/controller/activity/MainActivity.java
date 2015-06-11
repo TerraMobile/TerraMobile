@@ -25,6 +25,10 @@ import android.widget.ExpandableListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONObject;
+import org.osmdroid.util.GeoPoint;
+
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.util.ArrayList;
 
@@ -72,7 +76,7 @@ public class MainActivity extends FragmentActivity {
     private ProjectListFragment projectListFragment;
 
 
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+/*    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK && requestCode == FORM_COLLECT_DATA) {
             Bundle extras = data.getBundleExtra(LibraryConstants.PREFS_KEY_FORM);
@@ -88,7 +92,7 @@ public class MainActivity extends FragmentActivity {
         }else {
             Message.showErrorMessage(this, R.string.error, R.string.cancel_form_data);
         }
-    }
+    }*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -227,10 +231,8 @@ public class MainActivity extends FragmentActivity {
             case R.id.acquire_new_point:
                 FragmentManager fm = getSupportFragmentManager();
                 MapFragment fragment = (MapFragment)fm.findFragmentById(R.id.content_frame);
-
-                fragment.addBookmark();
-
-                startForm();
+                // add an bookmark on map and show the related form
+                fragment.startForm();
                 break;
             case R.id.settings:
                 startActivity(new Intent(this, SettingsActivity.class));
@@ -261,7 +263,7 @@ public class MainActivity extends FragmentActivity {
 
     }
 
-    private void startForm() {
+/*    private void startForm(GeoPoint point) {
         // This id is provided from the selected point, if one it is selected otherwise -1 is default.
         long selectedPointID = -1;
 
@@ -271,13 +273,15 @@ public class MainActivity extends FragmentActivity {
             // The form name attribute, provided by JSON, shall be the same name of the editable layer.
             formIntent.putExtra(FormUtilities.ATTR_FORMNAME, treeView.getSelectedEditableLayer().getName());
             formIntent.putExtra(FormUtilities.ATTR_JSON_TAGS, treeView.getSelectedEditableLayer().getJSON());
+            formIntent.putExtra(FormUtilities.TYPE_LATITUDE, point.getLatitude());
+            formIntent.putExtra(FormUtilities.TYPE_LONGITUDE, point.getLongitude());
             startActivityForResult(formIntent, FORM_COLLECT_DATA);
 
         } catch (Exception e) {
             Message.showErrorMessage(MainActivity.this, R.string.failure_title_msg, R.string.error_start_form);
 
         }
-    }
+    }*/
 
     private void insertMapView() {
         // update the action_bar content by replacing fragments
