@@ -3,8 +3,6 @@ package br.org.funcate.terramobile.controller.activity.tasks;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import org.opengis.context.Resource;
-
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -23,7 +21,6 @@ import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.controller.activity.MainActivity;
 import br.org.funcate.terramobile.model.Project;
 import br.org.funcate.terramobile.model.db.dao.ProjectDAO;
-import br.org.funcate.terramobile.model.exception.DownloadException;
 import br.org.funcate.terramobile.util.Message;
 
 /**
@@ -45,7 +42,7 @@ public class DownloadTask extends AsyncTask<String, String, Boolean> {
         this.unzipDestinationFilePath = unzipDestinationFilePath;
         this.downloadDestinationFilePath = downloadDestinationFilePath;
         this.overwrite = overwrite;
-        this.mFiles = new ArrayList<String>();
+        mFiles = new ArrayList<String>();
     }
 
     @Override
@@ -89,23 +86,15 @@ public class DownloadTask extends AsyncTask<String, String, Boolean> {
             int bufferLength;
             long total = 0;
             while ((bufferLength = inputStream.read(buffer)) != -1) {
-                if (isCancelled()) {
+                if(isCancelled()) {
                     fileOutput.flush();
                     fileOutput.close();
                     inputStream.close();
                     return false;
                 }
-                fileOutput.flush();
-                fileOutput.close();
-
-                String ext = mainActivity.getString(R.string.geopackage_extension);
-
-                if (downloadDestinationFilePath.endsWith(ext))
-                    mFiles.add(downloadDestinationFilePath.substring(downloadDestinationFilePath.lastIndexOf(File.separatorChar) + 1, downloadDestinationFilePath.lastIndexOf(ext)));
-                else
-                    mFiles = this.unzip(new File(downloadDestinationFilePath), new File(unzipDestinationFilePath));
-
-                return true;
+                total += bufferLength;
+                publishProgress("" + (int) ((total * 100) / totalSize), mainActivity.getResources().getString(R.string.downloading));
+                fileOutput.write(buffer, 0, bufferLength);
             }
             fileOutput.flush();
             fileOutput.close();
@@ -225,12 +214,6 @@ public class DownloadTask extends AsyncTask<String, String, Boolean> {
     @Override
     protected void onPostExecute(Boolean aBoolean) {
         mainActivity.getTreeView().refreshTreeView();
-        // The project is the last downloaded geopackage file.
-        try {
-            mainActivity.getProject().setCurrent(mFiles.get(0));
-        }catch (Exception e) {
-            Message.showErrorMessage(mainActivity, R.string.error, R.string.download_failed);
-        }
 
         String fileName = mFiles.get(0);// The project is the last downloaded geopackage file.
 
