@@ -5,8 +5,10 @@ import android.graphics.drawable.Drawable;
 import com.augtech.geoapi.geopackage.GeoPackage;
 import com.augtech.geoapi.geopackage.GpkgTable;
 
+import org.osmdroid.tileprovider.BitmapPool;
 import org.osmdroid.tileprovider.MapTile;
 import org.osmdroid.tileprovider.MapTileRequestState;
+import org.osmdroid.tileprovider.ReusableBitmapDrawable;
 import org.osmdroid.tileprovider.constants.OpenStreetMapTileProviderConstants;
 import org.osmdroid.tileprovider.modules.MapTileModuleProviderBase;
 import org.osmdroid.tileprovider.tilesource.BitmapTileSourceBase;
@@ -61,6 +63,7 @@ public class MapTileGeoPackageProvider extends MapTileModuleProviderBase {
         mTileSource.set(pTileSource);
         mLayerName=layerName;
         mGeoPackage=geoPackage;
+        tilesBoundsByZoomLevel=new HashMap<Integer, Map<String, Integer>>();
     }
 
     // ===========================================================
@@ -168,30 +171,40 @@ public class MapTileGeoPackageProvider extends MapTileModuleProviderBase {
 
         private boolean isValidTileForTileSource(int col, int row, int level)
         {
-            if(tilesBoundsByZoomLevel==null)
-            {
-                tilesBoundsByZoomLevel = new HashMap<Integer, Map<String, Integer>>();
-            }
 
-            Map<String, Integer> currentZoomLevelBounds = tilesBoundsByZoomLevel.get(level);
-            if(currentZoomLevelBounds==null)
+            int minTileRow = 0;
+            int maxTileRow = 0;
+
+            int minTileCol = 0;
+            int maxTileCol = 0;
+            boolean isBoundsValid = false;
+
+            synchronized(tilesBoundsByZoomLevel)
             {
-                try {
-                    currentZoomLevelBounds=GeoPackageService.getTilesBounds(mGeoPackage, mLayerName, GpkgTable.TABLE_TYPE_TILES,level);
-                    tilesBoundsByZoomLevel.put(level,currentZoomLevelBounds);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    return false;
+                Map<String, Integer> currentZoomLevelBounds = tilesBoundsByZoomLevel.get(level);
+                if(currentZoomLevelBounds==null)
+                {
+                    try {
+                        currentZoomLevelBounds=GeoPackageService.getTilesBounds(mGeoPackage, mLayerName, GpkgTable.TABLE_TYPE_TILES,level);
+                        tilesBoundsByZoomLevel.put(level,currentZoomLevelBounds);
+                        System.out.println("Getting Bounds of level: " +level + " OBJ: " + this);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        return false;
+                    }
                 }
+                minTileRow = currentZoomLevelBounds.get("minTileRow");
+                maxTileRow = currentZoomLevelBounds.get("maxTileRow");
+                minTileCol = currentZoomLevelBounds.get("minTileColumn");
+                maxTileCol = currentZoomLevelBounds.get("maxTileColumn");
+                isBoundsValid = true;
             }
-            int minTileRow = currentZoomLevelBounds.get("minTileRow");
-            int maxTileRow = currentZoomLevelBounds.get("maxTileRow");
-
-            int minTileCol = currentZoomLevelBounds.get("minTileCol");
-            int maxTileCol = currentZoomLevelBounds.get("maxTileCol");
 
 
-            if((row>=minTileRow)
+
+
+            if(isBoundsValid
+                    &&(row>=minTileRow)
                     &&(row<=maxTileRow)
                     &&(col>=minTileCol)
                     &&(col<=maxTileCol))
@@ -202,7 +215,7 @@ public class MapTileGeoPackageProvider extends MapTileModuleProviderBase {
             }
             else
             {
-                System.out.println("INVALID TILE: col: " + col + " row: " + row + " lv: " + level);
+                //System.out.println("INVALID TILE: col: " + col + " row: " + row + " lv: " + level);
                 return false;
             }
         }
@@ -232,6 +245,17 @@ public class MapTileGeoPackageProvider extends MapTileModuleProviderBase {
                 mWorking.remove(mapTile);
             }
         }
+/*        @Override
+        protected void tileLoaded(final MapTileRequestState pState, final Drawable pDrawable) {
+            // don't return the tile because we'll wait for the fs provider to ask for it
+            // this prevent flickering when a load of delayed downloads complete for tiles
+            // that we might not even be interested in any more
+            removeTileFromQueues(pState.getMapTile());
+            pState.getCallback().mapTileRequestCompleted(pState, pDrawable);
+            // We want to return the Bitmap to the BitmapPool if applicable
+            if (pDrawable instanceof ReusableBitmapDrawable)
+                BitmapPool.getInstance().returnDrawableToPool((ReusableBitmapDrawable) pDrawable);
+        }*/
     }
 }
 
