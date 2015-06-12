@@ -30,8 +30,6 @@ import br.org.funcate.terramobile.view.ProjectListAdapter;
 public class ProjectListFragment extends DialogFragment{
     private ListView lVProject;
 
-    private ProjectListAdapter projectListAdapter;
-
     private Settings settings;
 
     private DownloadTask downloadTask;
@@ -45,8 +43,8 @@ public class ProjectListFragment extends DialogFragment{
         this.settings = settingsDAO.getById(1);
         if(this.settings != null)
             new ProjectListTask((MainActivity)this.getActivity()).execute(this.settings.getUrl() + "/getlistfiles/userName");
-        else
-            Message.showErrorMessage(getActivity(), R.string.error, R.string.not_logged);
+//        else
+//            Message.showErrorMessage(getActivity(), R.string.error, R.string.not_logged);
         lVProject.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -55,8 +53,8 @@ public class ProjectListFragment extends DialogFragment{
                 String prjName = lVProject.getItemAtPosition(position).toString();
                 if(settings != null)
                     downloadTask = (DownloadTask) new DownloadTask(destinationFilePath+"/"+prjName, destinationFilePath, true, (MainActivity) getActivity()).execute(settings.getUrl()+"/getprojects/userName/"+prjName);
-                else
-                    Message.showErrorMessage(getActivity(), R.string.error, R.string.not_logged);
+//                else
+//                    Message.showErrorMessage(getActivity(), R.string.error, R.string.not_logged);
             }
         });
 
@@ -75,7 +73,7 @@ public class ProjectListFragment extends DialogFragment{
     }
 
     public void setListItems(ArrayList<String> arrayList) {
-        this.projectListAdapter = new ProjectListAdapter(getActivity(), R.id.tVProjectName, arrayList);
+        ProjectListAdapter projectListAdapter = new ProjectListAdapter(getActivity(), R.id.tVProjectName, arrayList);
         lVProject.setAdapter(projectListAdapter);
     }
 

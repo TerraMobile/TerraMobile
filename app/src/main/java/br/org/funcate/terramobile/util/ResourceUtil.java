@@ -2,6 +2,7 @@ package br.org.funcate.terramobile.util;
 
 import android.content.res.Resources;
 import android.os.Environment;
+import android.util.Log;
 import android.util.TypedValue;
 
 import com.vividsolutions.jts.util.CollectionUtil;
@@ -91,5 +92,12 @@ public class ResourceUtil {
         File[] theFiles = directory.listFiles(filter);
         for(File file : theFiles) files.add(file);
         return files;
+    }
+
+    public static File getGeoPackageByName(File directory, final String extension, final String fileName){
+        ArrayList<File> files = getGeoPackageFiles(directory, extension);
+        for (File file : files)
+            if(file.getName().equals(fileName)) return file;
+        return null;
     }
 }

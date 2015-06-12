@@ -8,11 +8,13 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.model.Project;
 import br.org.funcate.terramobile.model.db.dao.ProjectDAO;
+import br.org.funcate.terramobile.util.ResourceUtil;
 
 /**
  * Created by marcelo on 6/10/15.
@@ -36,14 +38,12 @@ public class ProjectListAdapter extends ArrayAdapter<String> {
         ImageView iVDownloaded = (ImageView)convertView.findViewById(R.id.iVDownloaded);
 //        ImageView iVUpdated = (ImageView)convertView.findViewById(R.id.iVUpdated);
 
-        String projectName = projectList.get(position).toString().substring(0, projectList.get(position).toString().indexOf('.'));
-
+        String fileName = projectList.get(position).toString();
+        String projectName = fileName.substring(0, fileName.indexOf('.'));
         tVProject.setText(projectName);
 
-        ProjectDAO projectDAO = new ProjectDAO(context);
-
-        Project project = projectDAO.getByName(projectName);
-        if(project != null)
+        File directory = ResourceUtil.getDirectory(context.getResources().getString(R.string.app_workspace_dir));
+        if(ResourceUtil.getGeoPackageByName(directory, context.getResources().getString(R.string.geopackage_extension), fileName) != null)
             iVDownloaded.setImageResource(android.R.drawable.ic_popup_disk_full);
 
         return convertView;
