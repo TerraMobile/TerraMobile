@@ -6,6 +6,7 @@ package br.org.funcate.terramobile.model.tilesource;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.augtech.geoapi.feature.SimpleFeatureImpl;
 import com.augtech.geoapi.geopackage.DateUtil;
@@ -85,11 +86,14 @@ public class AppGeoPackageService {
 
         Project prj=((MainActivity) context).getProject();
 
-        if(prj==null) {
-            throw new InvalidGeopackageException(context.getResources().getString(R.string.missing_geopackage_file));
-        }
+        GeoPackage gpkg = null;
 
-        GeoPackage gpkg = GeoPackageService.readGPKG(context, prj.getFilePath());
+        if(prj!=null)
+             gpkg = GeoPackageService.readGPKG(context, prj.getFilePath());
+        else {
+            Log.i("getLayers", "Project not found");
+            return null;
+        }
 
         if(!gpkg.isGPKGValid(true))
         {

@@ -91,4 +91,13 @@ public class ProjectDAO {
             return null;
         }
     }
+
+    public boolean remove(int id) {
+        SQLiteDatabase db = dataBase.getWritableDatabase();
+        int rows = db.delete("PROJECT", "id = ?", new String[] { String.valueOf(id) });
+        db.close();
+        if(rows != 0)
+            return true;
+        return false;
+    }
 }

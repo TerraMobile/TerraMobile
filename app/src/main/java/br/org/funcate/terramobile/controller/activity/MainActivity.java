@@ -1,7 +1,6 @@
 package br.org.funcate.terramobile.controller.activity;
 
 import android.app.ActionBar;
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -16,6 +15,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -25,17 +25,8 @@ import android.widget.ExpandableListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.json.JSONObject;
-import org.osmdroid.util.GeoPoint;
-
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.util.ArrayList;
 
-import br.org.funcate.dynamicforms.FormUtilities;
-import br.org.funcate.dynamicforms.FragmentDetailActivity;
-import br.org.funcate.dynamicforms.util.LibraryConstants;
-import br.org.funcate.jgpkg.exception.QueryException;
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.configuration.ViewContextParameters;
 import br.org.funcate.terramobile.controller.activity.settings.SettingsActivity;
@@ -113,23 +104,38 @@ public class MainActivity extends FragmentActivity {
             settings = settingsDAO.getById(1);
         }
 
-//        File gpkgFile=AppGeoPackageService.getGpkgFile(this);
-
         File directory = ResourceUtil.getDirectory(this.getResources().getString(R.string.app_workspace_dir));
-        ArrayList<File> gpkgFiles= ResourceUtil.getGeoPackageFiles(directory, this.getResources().getString(R.string.geopackage_extension));
 
-        if(gpkgFiles!=null && !gpkgFiles.isEmpty()) {
+        String fileName = settings.getCurrentProject()+getResources().getString(R.string.geopackage_extension);
+        if(settings.getCurrentProject() != null) {
             projectDAO = new ProjectDAO(this);
-            if(settings.getCurrentProject() != null)
-                mProject = projectDAO.getByName(settings.getCurrentProject());
+            mProject = projectDAO.getByName(settings.getCurrentProject());
+            if(ResourceUtil.getGeoPackageByName(directory, getResources().getString(R.string.geopackage_extension), fileName) != null) {
+                if(mProject == null) {
+                    Project project = new Project();
+                    project.setId(null);
+                    project.setName(fileName);
+                    project.setFilePath(directory.getPath());
+                    projectDAO.insert(project);
+
+                    mProject = projectDAO.getByName(settings.getCurrentProject());
+                }
+            }
+            else{
+                if(mProject != null){
+                    if(projectDAO.remove(mProject.getId())){
+                        Log.i("Remove project","Project removed");
+                    }
+                    else
+                        Log.e("Remove project","Couldn't remove the project");
+                }
+            }
         }
 
-        treeView = new TreeView(MainActivity.this);
+        treeView = new TreeView(this);
 
         mTitle = mDrawerTitle = getTitle();
-
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-
         // set a custom shadow that overlays the action_bar content when the drawer opens
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
 
@@ -139,7 +145,6 @@ public class MainActivity extends FragmentActivity {
                 getResources().getDimension(R.dimen.title_text_size));
 
         actionBar.setDisplayHomeAsUpEnabled(true);
-
         // ActionBarDrawerToggle ties together the proper interactions
         // between the sliding drawer and the action bar app icon
         mDrawerToggle = new ActionBarDrawerToggle(
