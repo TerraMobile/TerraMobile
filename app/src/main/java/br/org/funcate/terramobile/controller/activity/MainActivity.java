@@ -237,9 +237,6 @@ public class MainActivity extends FragmentActivity {
             case R.id.settings:
                 startActivity(new Intent(this, SettingsActivity.class));
                 break;
-            case R.id.test_raster_data:
-                showTestRaster();
-                break;
             case R.id.exit:
                 this.finish();
                 System.exit(0);
@@ -250,18 +247,13 @@ public class MainActivity extends FragmentActivity {
         return true;
     }
 
-    private void showTestRaster() {
-
-        try {
-            GpkgLayer layer = treeView.getLayerByName("rapideyeandadina");
-            AppGeoPackageService.createGeoPackageTileSourceOverlay(layer, MainActivity.this);
-
-        } catch (TerraMobileException e) {
-            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
-            e.printStackTrace();
-        }
-
+    public MapFragment getMapFragment()
+    {
+        FragmentManager fm = getSupportFragmentManager();
+        MapFragment fragment = (MapFragment)fm.findFragmentById(R.id.content_frame);
+        return fragment;
     }
+
 
 /*    private void startForm(GeoPoint point) {
         // This id is provided from the selected point, if one it is selected otherwise -1 is default.

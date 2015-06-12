@@ -247,6 +247,25 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants{
 
     public synchronized void updateMap()
     {
-        this.mMapView.invalidate();
+
+        getActivity().runOnUiThread(new UpdateMapThread(mMapView));
+
     }
+
+    protected class UpdateMapThread implements Runnable
+    {
+        MapView mapView;
+        protected UpdateMapThread(MapView mapView)
+        {
+            this.mapView = mapView;
+        }
+
+        public void run() {
+            if(mapView!=null)
+            {
+                this.mapView.invalidate();
+            }
+        }
+    }
+
 }
