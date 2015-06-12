@@ -118,7 +118,7 @@ public class MainActivity extends FragmentActivity {
         File directory = ResourceUtil.getDirectory(this.getResources().getString(R.string.app_workspace_dir));
         ArrayList<File> gpkgFiles= ResourceUtil.getGeoPackageFiles(directory, this.getResources().getString(R.string.geopackage_extension));
 
-        if(gpkgFiles!=null) {
+        if(gpkgFiles!=null && !gpkgFiles.isEmpty()) {
             projectDAO = new ProjectDAO(this);
             if(settings.getCurrentProject() != null)
                 mProject = projectDAO.getByName(settings.getCurrentProject());

@@ -15,7 +15,7 @@ import java.util.ArrayList;
 
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.controller.activity.tasks.DownloadTask;
-import br.org.funcate.terramobile.controller.activity.tasks.PackageListTask;
+import br.org.funcate.terramobile.controller.activity.tasks.ProjectListTask;
 import br.org.funcate.terramobile.model.Settings;
 import br.org.funcate.terramobile.model.db.dao.SettingsDAO;
 import br.org.funcate.terramobile.util.Message;
@@ -44,7 +44,7 @@ public class ProjectListFragment extends DialogFragment{
         SettingsDAO settingsDAO = new SettingsDAO(getActivity());
         this.settings = settingsDAO.getById(1);
         if(this.settings != null)
-            new PackageListTask((MainActivity)this.getActivity()).execute(this.settings.getUrl() + "/getlistfiles/userName");
+            new ProjectListTask((MainActivity)this.getActivity()).execute(this.settings.getUrl() + "/getlistfiles/userName");
         else
             Message.showErrorMessage(getActivity(), R.string.error, R.string.not_logged);
         lVProject.setOnItemClickListener(new AdapterView.OnItemClickListener() {
