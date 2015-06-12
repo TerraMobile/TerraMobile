@@ -29,6 +29,7 @@ public class ProjectDAO {
                     contentValues.put("ID", project.getId());
                     contentValues.put("NAME", project.getName());
                     contentValues.put("FILE_PATH", project.getFilePath());
+                    contentValues.put("UPDATED", project.isUpdated());
                     if (db.insert("PROJECT", null, contentValues) != -1) {
                         db.close();
                         return true;
@@ -52,6 +53,7 @@ public class ProjectDAO {
                     contentValues.put("ID", project.getId());
                     contentValues.put("NAME", project.getName());
                     contentValues.put("FILE_PATH", project.getFilePath());
+                    contentValues.put("UPDATED", project.isUpdated());
                     if (db.update("PROJECT", contentValues, "ID=?", new String[]{String.valueOf(project.getId())}) > 0) {
                         db.close();
                         return true;
@@ -68,16 +70,17 @@ public class ProjectDAO {
 
     public Project getByName(String name) {
         try {
-            SQLiteDatabase db = dataBase.getWritableDatabase();
+            SQLiteDatabase db = dataBase.getReadableDatabase();
             Project project = null;
             if(db != null) {
-                Cursor cursor = db.query("PROJECT", new String[]{"ID", "NAME", "FILE_PATH"}, "NAME = ?", new String[]{String.valueOf(name)}, null, null, null, null);
+                Cursor cursor = db.query("PROJECT", new String[]{"ID", "NAME", "FILE_PATH", "UPDATED"}, "NAME = ?", new String[]{String.valueOf(name)}, null, null, null, null);
                 if (cursor != null && cursor.getCount() != 0) {
                     cursor.moveToFirst();
                     project = new Project();
                     project.setId(cursor.getInt(0));
                     project.setName(cursor.getString(1));
                     project.setFilePath(cursor.getString(2));
+                    project.setUpdated(cursor.getInt(3));
                     cursor.close();
                 }
                 db.close();

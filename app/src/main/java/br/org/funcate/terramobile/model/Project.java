@@ -7,6 +7,7 @@ public class Project {
     private Integer id;
     private String name;
     private String filePath;
+    private int updated;
 
     public String getName() {
         return this.name;
@@ -30,5 +31,13 @@ public class Project {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public int isUpdated() {
+        return updated;
+    }
+
+    public void setUpdated(int updated) {
+        this.updated = updated;
     }
 }

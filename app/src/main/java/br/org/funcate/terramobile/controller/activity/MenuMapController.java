@@ -2,6 +2,7 @@ package br.org.funcate.terramobile.controller.activity;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.support.v4.app.FragmentManager;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.RadioButton;
@@ -12,6 +13,7 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.osmdroid.ResourceProxy;
 import org.osmdroid.tileprovider.MapTileProviderArray;
 import org.osmdroid.tileprovider.MapTileProviderBasic;
+import org.osmdroid.tileprovider.modules.MapTileDownloader;
 import org.osmdroid.tileprovider.modules.MapTileModuleProviderBase;
 import org.osmdroid.tileprovider.tilesource.ITileSource;
 import org.osmdroid.tileprovider.tilesource.XYTileSource;
@@ -28,6 +30,7 @@ import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.configuration.ViewContextParameters;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
 import br.org.funcate.terramobile.model.tilesource.MapTileGeoPackageProvider;
+import br.org.funcate.terramobile.model.tilesource.MapTileProviderArrayGeoPackage;
 
 /**
  * Created by Andre Carvalho on 27/04/15.
@@ -60,9 +63,9 @@ public class MenuMapController {
             final MapTileProviderBasic tileProvider = new MapTileProviderBasic(context);
 
             final ITileSource tileSource = new XYTileSource("Mapnik", ResourceProxy.string.mapnik, 1, 18, 256, ".png", new String[] {"http://tile.openstreetmap.org/"});
-
             MapTileModuleProviderBase moduleProvider = new MapTileGeoPackageProvider(tileSource, child.getName(), child.getGeoPackage());
             SimpleRegisterReceiver simpleReceiver = new SimpleRegisterReceiver(context);
+
             MapTileProviderArray tileProviderArray = new MapTileProviderArray(tileSource, simpleReceiver, new MapTileModuleProviderBase[] { moduleProvider });
 
 /*        tileProvider.setTileSource(tileSource);*/
