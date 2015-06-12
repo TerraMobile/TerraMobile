@@ -70,7 +70,8 @@ public class DataBase extends SQLiteOpenHelper {
 		sBCreateProject.append("create table if not exists PROJECT (");
 		sBCreateProject.append("ID integer primary key not null,");
 		sBCreateProject.append("NAME text not null,");
-		sBCreateProject.append("FILE_PATH text not null);");
+		sBCreateProject.append("FILE_PATH text not null,");
+        sBCreateProject.append("UPDATED integer);");
 		createProject = sBCreateProject.toString();
 	}
 }

@@ -26,10 +26,10 @@ import br.org.funcate.terramobile.util.Message;
 /**
  * This AsyncTask receives a list of geopackages from the server
  */
-public class PackageListTask extends AsyncTask<String, String, JSONObject> {
+public class ProjectListTask extends AsyncTask<String, String, JSONObject> {
     public MainActivity mainActivity;
 
-    public PackageListTask(MainActivity mainActivity) {
+    public ProjectListTask(MainActivity mainActivity) {
         this.mainActivity = mainActivity;
     }
 
