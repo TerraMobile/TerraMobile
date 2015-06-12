@@ -6,17 +6,29 @@
     android:padding="10dp">
     <TextView
         android:id="@+id/tVProjectName"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textStyle="bold"
         android:textSize="25sp"
-        android:layout_weight="1"/>
+        android:layout_weight="5"/>
     <ImageView
         android:id="@+id/iVDownloaded"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:paddingRight="5dp"
+        android:src="@drawable/not_downloaded" />
     <ImageView
-        android:id="@+id/iVUpdated"
+        android:id="@+id/iVDiskUpdated"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:paddingRight="5dp"
+        />
+        <!-- android:src="@drawable/device_not_updated" -->
+    <ImageView
+        android:id="@+id/iVServerUpdated"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingRight="5dp"
+        />
+    <!-- android:src="@drawable/server_not_updated" -->
 </LinearLayout>

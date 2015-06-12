@@ -68,4 +68,6 @@
     <string name="ok">OK</string>
     <string name="yes">yes</string>
     <string name="no">no</string>
+    <string name="project_removed_successfully">Project removed successfully</string>
+    <string name="error_removing_project">Couldn\'t remove the project</string>
 </resources>

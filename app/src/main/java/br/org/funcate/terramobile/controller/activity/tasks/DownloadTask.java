@@ -215,7 +215,7 @@ public class DownloadTask extends AsyncTask<String, String, Boolean> {
     protected void onPostExecute(Boolean aBoolean) {
         mainActivity.getTreeView().refreshTreeView();
 
-        String fileName = mFiles.get(0);// The project is the last downloaded geopackage file.
+        String fileName = mFiles.get(0);// The project is the last not_downloaded geopackage file.
 
         ProjectDAO projectDAO = new ProjectDAO(mainActivity);
 
