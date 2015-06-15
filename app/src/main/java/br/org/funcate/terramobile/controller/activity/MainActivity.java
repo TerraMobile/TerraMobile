@@ -25,6 +25,13 @@ import android.widget.ExpandableListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.osmdroid.bonuspack.kml.KmlDocument;
+import org.osmdroid.bonuspack.kml.Style;
+import org.osmdroid.bonuspack.overlays.FolderOverlay;
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.Overlay;
+
 import java.io.File;
 
 import br.org.funcate.terramobile.R;
@@ -35,6 +42,7 @@ import br.org.funcate.terramobile.model.Settings;
 import br.org.funcate.terramobile.model.db.dao.ProjectDAO;
 import br.org.funcate.terramobile.model.db.dao.SettingsDAO;
 import br.org.funcate.terramobile.model.exception.TerraMobileException;
+import br.org.funcate.terramobile.model.geomsource.SFSLayer;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
 import br.org.funcate.terramobile.model.tilesource.AppGeoPackageService;
 import br.org.funcate.terramobile.util.Message;
@@ -239,6 +247,9 @@ public class MainActivity extends FragmentActivity {
                 // add an bookmark on map and show the related form
                 fragment.startForm();
                 break;
+            case R.id.test_vector_data:
+                testVectorData();
+                break;
             case R.id.settings:
                 startActivity(new Intent(this, SettingsActivity.class));
                 break;
@@ -364,5 +375,51 @@ public class MainActivity extends FragmentActivity {
         settings.setCurrentProject(project.getName());
         settingsDAO.update(settings);
         invalidateOptionsMenu();
+    }
+
+    private void testVectorData()
+    {
+
+        GpkgLayer layer = null;
+        SFSLayer l = null;
+        try {
+            layer = treeView.getLayerByName("inpe_area_de_estudo_canasat_2000");
+            l = AppGeoPackageService.listFeatures(layer);
+
+
+        } catch (TerraMobileException e) {
+            e.printStackTrace();
+        }
+
+        MapView map = (MapView) findViewById(R.id.mapview);
+        map.setTileSource(TileSourceFactory.MAPNIK);
+        map.setBuiltInZoomControls(true);
+        map.setMultiTouchControls(true);
+
+        Style defaultStyle = new Style(null, 0x901010AA, 1.0f, 0x20AA1010);
+
+        KmlDocument kmlDocument = new KmlDocument();
+        Overlay overlay = l.buildOverlay(map, defaultStyle, null, kmlDocument);
+
+        map.getOverlays().add(overlay);
+
+        map.invalidate();
+
+       // map.zoomToBoundingBox(l.getBoundingBox());
+
+/*        String url = "http://mapsengine.google.com/map/kml?mid=z6IJfj90QEd4.kUUY9FoHFRdE";
+
+        KmlDocument kmlDocument = new KmlDocument();
+
+        kmlDocument.parseKMLUrl(url);
+
+        FolderOverlay kmlOverlay = (FolderOverlay)kmlDocument.mKmlRoot.buildOverlay(map, null, null, kmlDocument);
+
+        map.getOverlays().add(kmlOverlay);
+
+        map.invalidate();
+
+        map.zoomToBoundingBox(kmlDocument.mKmlRoot.getBoundingBox());*/
+
     }
 }

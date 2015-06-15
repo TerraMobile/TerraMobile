@@ -13,14 +13,17 @@ import com.augtech.geoapi.geopackage.DateUtil;
 import com.augtech.geoapi.geopackage.GeoPackage;
 import com.augtech.geoapi.geopackage.GpkgField;
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 
+import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.GeometryType;
 import org.osmdroid.ResourceProxy;
+import org.osmdroid.bonuspack.overlays.Polygon;
 import org.osmdroid.tileprovider.MapTileProviderArray;
 import org.osmdroid.tileprovider.MapTileProviderBasic;
 import org.osmdroid.tileprovider.modules.MapTileModuleProviderBase;
@@ -49,6 +52,7 @@ import br.org.funcate.terramobile.controller.activity.TreeView;
 import br.org.funcate.terramobile.model.Project;
 import br.org.funcate.terramobile.model.exception.InvalidGeopackageException;
 import br.org.funcate.terramobile.model.exception.TerraMobileException;
+import br.org.funcate.terramobile.model.geomsource.SFSLayer;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
 import br.org.funcate.terramobile.util.ResourceUtil;
 
@@ -292,6 +296,26 @@ public class AppGeoPackageService {
         feature.setAttributes(attributeValues, attributeTypes);
 
         return feature;
+    }
+
+    public static SFSLayer listFeatures(GpkgLayer layer)
+    {
+
+        try {
+            List<SimpleFeature> features = GeoPackageService.getGeometries(layer.getGeoPackage(),layer.getName());
+/*            for (int i = 0; i < features.size(); i++) {
+                System.out.println(((Geometry)features.get(i).getDefaultGeometry()).getCoordinates());
+            }
+
+            System.out.println("Features Size: " + features.size());*/
+
+            SFSLayer l = new SFSLayer(features);
+            return l;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }
