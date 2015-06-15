@@ -141,11 +141,9 @@ public class DownloadTask extends AsyncTask<String, String, Boolean> {
         long totalFiles = 0;
         try {
             ZipInputStream zipInputStream = new ZipInputStream(new BufferedInputStream(new FileInputStream(zipFile)));
-            if (zipInputStream != null) {
-                while (zipInputStream.getNextEntry() != null)
-                    totalFiles++;
-                zipInputStream.close();
-            }
+            while (zipInputStream.getNextEntry() != null)
+                totalFiles++;
+            zipInputStream.close();
             return totalFiles;
         }catch (FileNotFoundException e) {
             Log.e("countZipFiles", "File not found");
@@ -215,7 +213,7 @@ public class DownloadTask extends AsyncTask<String, String, Boolean> {
     protected void onPostExecute(Boolean aBoolean) {
         mainActivity.getTreeView().refreshTreeView();
 
-        String fileName = mFiles.get(0);// The project is the last downloaded geopackage file.
+        String fileName = mFiles.get(0);// The project is the last not_downloaded geopackage file.
 
         ProjectDAO projectDAO = new ProjectDAO(mainActivity);
 

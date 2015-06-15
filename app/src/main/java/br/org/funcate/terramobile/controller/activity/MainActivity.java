@@ -210,7 +210,7 @@ public class MainActivity extends FragmentActivity {
 
         MenuItem menuItem = menu.findItem(R.id.project);
         if(mProject != null)
-            menuItem.setTitle(mProject.getName());
+            menuItem.setTitle(mProject.toString());
 
         // If the nav drawer is open, hide action items related to the content view
         return super.onPrepareOptionsMenu(menu);
@@ -372,8 +372,9 @@ public class MainActivity extends FragmentActivity {
 
     public void setProject(Project project) {
         this.mProject = project;
-        settings.setCurrentProject(project.getName());
+        settings.setCurrentProject(project.toString());
         settingsDAO.update(settings);
+        treeView.refreshTreeView();
         invalidateOptionsMenu();
     }
 

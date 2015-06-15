@@ -14,6 +14,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -21,7 +22,9 @@ import java.util.ArrayList;
 
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.controller.activity.MainActivity;
+import br.org.funcate.terramobile.model.Project;
 import br.org.funcate.terramobile.util.Message;
+import br.org.funcate.terramobile.util.ResourceUtil;
 
 /**
  * This AsyncTask receives a list of geopackages from the server
@@ -79,11 +82,19 @@ public class ProjectListTask extends AsyncTask<String, String, JSONObject> {
             mainActivity.getProgressDialog().dismiss();
             if (jsonObject != null) {
                 JSONArray packages = jsonObject.getJSONArray("packages");
-                ArrayList<String> aLItems = new ArrayList<String>();
+                ArrayList<Project> aLItems = new ArrayList<Project>();
                 for (int cont = 0; cont < packages.length(); cont++) {
                     JSONObject json = (JSONObject) packages.get(cont);
                     String pkg = json.getString("pkg");
-                    aLItems.add(pkg);
+
+                    File appPath = ResourceUtil.getDirectory(mainActivity.getResources().getString(R.string.app_workspace_dir));
+                    String destinationFilePath = appPath.getPath()+"/"+pkg;
+
+                    Project project = new Project();
+                    project.setName(pkg);
+                    project.setFilePath(destinationFilePath);
+
+                    aLItems.add(project);
                 }
                 if(!aLItems.isEmpty())
                     mainActivity.getProjectListFragment().setListItems(aLItems);
