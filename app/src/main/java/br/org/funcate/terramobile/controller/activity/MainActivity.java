@@ -385,7 +385,7 @@ public class MainActivity extends FragmentActivity {
         SFSLayer l = null;
         try {
             layer = treeView.getLayerByName("inpe_area_de_estudo_canasat_2000");
-            l = AppGeoPackageService.listFeatures(layer);
+            l = AppGeoPackageService.getFeatures(layer);
 
 
         } catch (TerraMobileException e) {

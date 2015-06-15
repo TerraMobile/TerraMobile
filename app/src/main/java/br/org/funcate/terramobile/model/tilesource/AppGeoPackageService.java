@@ -298,7 +298,7 @@ public class AppGeoPackageService {
         return feature;
     }
 
-    public static SFSLayer listFeatures(GpkgLayer layer)
+    public static SFSLayer getFeatures(GpkgLayer layer)
     {
 
         try {
