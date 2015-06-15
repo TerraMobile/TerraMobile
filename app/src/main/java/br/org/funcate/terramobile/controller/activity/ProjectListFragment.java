@@ -120,7 +120,7 @@ public class ProjectListFragment extends DialogFragment{
                 create();
     }
 
-    public void setListItems(ArrayList<String> arrayList) {
+    public void setListItems(ArrayList<Project> arrayList) {
         ProjectListAdapter projectListAdapter = new ProjectListAdapter(getActivity(), R.id.tVProjectName, arrayList);
         lVProject.setAdapter(projectListAdapter);
     }

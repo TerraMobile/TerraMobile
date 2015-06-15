@@ -141,11 +141,9 @@ public class DownloadTask extends AsyncTask<String, String, Boolean> {
         long totalFiles = 0;
         try {
             ZipInputStream zipInputStream = new ZipInputStream(new BufferedInputStream(new FileInputStream(zipFile)));
-            if (zipInputStream != null) {
-                while (zipInputStream.getNextEntry() != null)
-                    totalFiles++;
-                zipInputStream.close();
-            }
+            while (zipInputStream.getNextEntry() != null)
+                totalFiles++;
+            zipInputStream.close();
             return totalFiles;
         }catch (FileNotFoundException e) {
             Log.e("countZipFiles", "File not found");
