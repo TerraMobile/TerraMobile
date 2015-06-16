@@ -10,6 +10,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.osmdroid.ResourceProxy;
+import org.osmdroid.bonuspack.kml.KmlDocument;
+import org.osmdroid.bonuspack.kml.Style;
 import org.osmdroid.tileprovider.MapTileProviderArray;
 import org.osmdroid.tileprovider.MapTileProviderBasic;
 import org.osmdroid.tileprovider.modules.MapTileDownloader;
@@ -25,7 +27,10 @@ import org.osmdroid.views.overlay.TilesOverlay;
 import br.org.funcate.dynamicforms.util.PositionUtilities;
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.configuration.ViewContextParameters;
+import br.org.funcate.terramobile.model.exception.TerraMobileException;
+import br.org.funcate.terramobile.model.geomsource.SFSLayer;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
+import br.org.funcate.terramobile.model.tilesource.AppGeoPackageService;
 import br.org.funcate.terramobile.model.tilesource.MapTileGeoPackageProvider;
 import br.org.funcate.terramobile.model.tilesource.MapTileProviderArrayGeoPackage;
 
@@ -40,7 +45,7 @@ public class MenuMapController {
 
     public MenuMapController(Context context) {
         this.context=context;
-        this.lastIndexDrawOrder = 1;
+        this.lastIndexDrawOrder = 0;
     }
 
     public void addBaseLayer(GpkgLayer child) {
@@ -101,8 +106,19 @@ public class MenuMapController {
 
     public void addVectorLayer(GpkgLayer child) {
 
-        //MapView mapView = (MapView) ((MainActivity) context).findViewById(R.id.mapview);
-        //mapView.getOverlays().add(this.lastIndexDrawOrder,tilesOverlay);
+
+        SFSLayer l = AppGeoPackageService.getFeatures(child);
+
+        MapView mapView = (MapView) ((MainActivity) context).findViewById(R.id.mapview);
+
+        Style defaultStyle = new Style(null, 0x901010AA, 1.0f, 0x20AA1010);
+
+        KmlDocument kmlDocument = new KmlDocument();
+        Overlay overlay = l.buildOverlay(mapView, defaultStyle, null, kmlDocument);
+
+        mapView.getOverlays().add(overlay);
+
+        mapView.invalidate();
 
         child.setIndexOverlay(this.lastIndexDrawOrder);
         this.lastIndexDrawOrder++;
@@ -113,6 +129,7 @@ public class MenuMapController {
         this.lastIndexDrawOrder--;
         MapView mapView = (MapView) ((MainActivity) context).findViewById(R.id.mapview);
         mapView.getOverlays().remove(location);
+        mapView.invalidate();
         return;
     }
 
