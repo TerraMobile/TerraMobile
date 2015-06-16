@@ -19,20 +19,26 @@ import br.org.funcate.terramobile.configuration.ViewContextParameters;
 import br.org.funcate.terramobile.controller.activity.MainActivity;
 import br.org.funcate.terramobile.controller.activity.MenuMapController;
 import br.org.funcate.terramobile.controller.activity.TreeView;
+import br.org.funcate.terramobile.model.Project;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
+import br.org.funcate.terramobile.util.Message;
 
 public class TreeViewAdapter extends BaseExpandableListAdapter implements View.OnClickListener {
 
-	public ArrayList<GpkgLayer> groupItem;
-	public ArrayList<ArrayList<GpkgLayer>> ChildItem;
-	private final Context context;
+    public ArrayList<GpkgLayer> groupItem;
+    public ArrayList<ArrayList<GpkgLayer>> ChildItem;
+    private final Context context;
     private MenuMapController menuMapController;
+    private ArrayList<RadioButton> baseLayerRBList;
+    private ArrayList<RadioButton> editableLayerRBList;
 
-	public TreeViewAdapter(Context context, ArrayList<GpkgLayer> grpList, ArrayList<ArrayList<GpkgLayer>> childItem) {
-		this.context = context;
-		this.groupItem = grpList;
-		this.ChildItem = childItem;
+    public TreeViewAdapter(Context context, ArrayList<GpkgLayer> grpList, ArrayList<ArrayList<GpkgLayer>> childItem) {
+        this.context = context;
+        this.groupItem = grpList;
+        this.ChildItem = childItem;
         this.menuMapController = new MenuMapController(this.context);
+        baseLayerRBList = new ArrayList<RadioButton>();
+        editableLayerRBList = new ArrayList<RadioButton>();
     }
 
     @Override
@@ -42,17 +48,20 @@ public class TreeViewAdapter extends BaseExpandableListAdapter implements View.O
     }
 
     private void exec(View v) {
-        ViewContextParameters par = ((MainActivity) context).getParameters();
         GpkgLayer child = (GpkgLayer) v.getTag();
         try{
             switch (child.getType()){
                 case TILES:{// base
-                    if (((RadioButton) v).isChecked()) {
-                        par.addLayer(child);
+                    for (int count = 0; count < baseLayerRBList.size(); count++) {
+                        RadioButton radioButton = baseLayerRBList.get(count);
+                        radioButton.setChecked(false);
+                    }
+                    RadioButton rBChildBaseLayer = (RadioButton) v;
+                    if (!rBChildBaseLayer.isChecked()) {
+                        if(menuMapController.getBaseLayer() != null)
+                            this.menuMapController.removeBaseLayer();
                         this.menuMapController.addBaseLayer(child);
-                    } else {
-                        par.removeLayer(child);
-                        this.menuMapController.removeBaseLayer();
+                        rBChildBaseLayer.setChecked(true);
                     }
                     break;
                 }
@@ -63,6 +72,16 @@ public class TreeViewAdapter extends BaseExpandableListAdapter implements View.O
                 case EDITABLE:{// editable
                     TreeView treeView=((MainActivity) this.context).getTreeView();
                     treeView.setSelectedEditableLayer(child);
+                    for (int count = 0; count < editableLayerRBList.size(); count++) {
+                        RadioButton radioButton = editableLayerRBList.get(count);
+                        radioButton.setChecked(false);
+                    }
+                    RadioButton rBChildGatheringLayer = (RadioButton) v;
+                    if (!rBChildGatheringLayer.isChecked()) {
+//                        menuMapController.removeEditableLayer();
+//                        menuMapController.addEditableLayer(child);
+                        rBChildGatheringLayer.setChecked(true);
+                    }
                     break;
                 }
                 case ONLINE:{// online
@@ -71,19 +90,19 @@ public class TreeViewAdapter extends BaseExpandableListAdapter implements View.O
                 }
             }
         } catch (Exception e) {
-            Toast.makeText(context, "Fail on read layer: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            Message.showErrorMessage(((MainActivity)context), R.string.error,"Failed on change the layer");
         }
     }
 
-	@Override
-	public Object getChild(int groupPosition, int childPosition) {
-		return null;
-	}
+    @Override
+    public Object getChild(int groupPosition, int childPosition) {
+        return null;
+    }
 
-	@Override
-	public long getChildId(int groupPosition, int childPosition) {
-		return 0;
-	}
+    @Override
+    public long getChildId(int groupPosition, int childPosition) {
+        return 0;
+    }
 
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded,
@@ -111,8 +130,7 @@ public class TreeViewAdapter extends BaseExpandableListAdapter implements View.O
 
     @Override
     public View getChildView(int groupPosition, int childPosition,
-                             boolean isLastChild, View convertView, final ViewGroup parent) {
-
+                             boolean isLastChild, View convertView, ViewGroup parent) {
         ArrayList<GpkgLayer> children = ChildItem.get(groupPosition);
         final GpkgLayer child = children.get(childPosition);
         LayoutInflater layoutInflater = (LayoutInflater) context
@@ -130,6 +148,7 @@ public class TreeViewAdapter extends BaseExpandableListAdapter implements View.O
                 radioButton.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                         context.getResources().getDimension(R.dimen.child_text_size));
                 radioButton.setOnClickListener(this);
+                baseLayerRBList.add(radioButton);
                 break;
             case FEATURES:
                 convertView = layoutInflater.inflate(R.layout.child_item_layers, null);
@@ -150,6 +169,7 @@ public class TreeViewAdapter extends BaseExpandableListAdapter implements View.O
                 radioButton.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                         context.getResources().getDimension(R.dimen.child_text_size));
                 radioButton.setOnClickListener(this);
+                editableLayerRBList.add(radioButton);
                 break;
             case INVALID:
                 convertView = layoutInflater.inflate(R.layout.child_item_invalid_layers, null);
@@ -165,46 +185,46 @@ public class TreeViewAdapter extends BaseExpandableListAdapter implements View.O
     }
 
     @Override
-	public int getChildrenCount(int groupPosition) {
-		return (ChildItem.get(groupPosition)).size();
-	}
+    public int getChildrenCount(int groupPosition) {
+        return (ChildItem.get(groupPosition)).size();
+    }
 
-	@Override
-	public Object getGroup(int groupPosition) {
-		return null;
-	}
+    @Override
+    public Object getGroup(int groupPosition) {
+        return null;
+    }
 
-	@Override
-	public int getGroupCount() {
-		return groupItem.size();
-	}
+    @Override
+    public int getGroupCount() {
+        return groupItem.size();
+    }
 
-	@Override
-	public void onGroupCollapsed(int groupPosition) {
+    @Override
+    public void onGroupCollapsed(int groupPosition) {
 /*        String s=this.context.getString(R.string.app_name);
         ((MainActivity) this.context).setTitle(s.subSequence(0,s.length()));*/
         super.onGroupCollapsed(groupPosition);
-	}
+    }
 
-	@Override
-	public void onGroupExpanded(int groupPosition) {
+    @Override
+    public void onGroupExpanded(int groupPosition) {
 /*        String s=groupItem.get(groupPosition);
         ((MainActivity) this.context).setTitle(s.subSequence(0,s.length()));*/
-		super.onGroupExpanded(groupPosition);
-	}
+        super.onGroupExpanded(groupPosition);
+    }
 
-	@Override
-	public long getGroupId(int groupPosition) {
-		return 0;
-	}
+    @Override
+    public long getGroupId(int groupPosition) {
+        return 0;
+    }
 
-	@Override
-	public boolean hasStableIds() {
-		return false;
-	}
+    @Override
+    public boolean hasStableIds() {
+        return false;
+    }
 
-	@Override
-	public boolean isChildSelectable(int groupPosition, int childPosition) {
-		return false;
-	}
+    @Override
+    public boolean isChildSelectable(int groupPosition, int childPosition) {
+        return false;
+    }
 }

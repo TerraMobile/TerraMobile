@@ -34,7 +34,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="br.org.funcate.dynamicforms.FormActivity" />
+        <activity android:name="br.org.funcate.dynamicforms.FormActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden">
+        </activity>
         <activity android:name="br.org.funcate.dynamicforms.FragmentDetailActivity" />
         <activity android:name="br.org.funcate.dynamicforms.camera.CameraActivity" />
         <activity

@@ -19,6 +19,7 @@ import org.osmdroid.tileprovider.tilesource.XYTileSource;
 import org.osmdroid.tileprovider.util.SimpleInvalidationHandler;
 import org.osmdroid.tileprovider.util.SimpleRegisterReceiver;
 import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.Overlay;
 import org.osmdroid.views.overlay.TilesOverlay;
 
 import br.org.funcate.dynamicforms.util.PositionUtilities;
@@ -86,6 +87,16 @@ public class MenuMapController {
         MapView mapView = (MapView) ((MainActivity) context).findViewById(R.id.mapview);
         mapView.getOverlays().remove(INDEX_BASE_LAYER);
         return;
+    }
+
+    public Overlay getBaseLayer() {
+        try {
+            MapView mapView = (MapView) ((MainActivity) context).findViewById(R.id.mapview);
+            return mapView.getOverlays().get(INDEX_BASE_LAYER);
+        }
+        catch (IndexOutOfBoundsException e){
+            return null;
+        }
     }
 
     public void addVectorLayer(GpkgLayer child) {

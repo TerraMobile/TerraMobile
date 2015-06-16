@@ -51,7 +51,7 @@ public class TestActivity extends Activity implements JGPKGTestInterface {
 		super.onCreate(savedInstanceState);
 		thisActivity = this;
 		setContentView(R.layout.activity_main);
-		statusText = (TextView) findViewById(R.id.statusText);
+//		statusText = (TextView) findViewById(R.id.statusText);
 
         createBaseTileSource();
 

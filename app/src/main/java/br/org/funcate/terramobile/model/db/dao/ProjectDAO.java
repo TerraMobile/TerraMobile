@@ -7,6 +7,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.util.Log;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import br.org.funcate.terramobile.model.Project;
 import br.org.funcate.terramobile.model.db.DataBase;
 
@@ -99,5 +102,24 @@ public class ProjectDAO {
         if(rows != 0)
             return true;
         return false;
+    }
+
+    public Project getFirstProject() {
+        String selectQuery = "select * from project";
+
+        SQLiteDatabase db = dataBase.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        Project project = null;
+        if (cursor.moveToFirst()) {
+            project = new Project();
+            project.setId(cursor.getInt(0));
+            project.setName(cursor.getString(1));
+            project.setFilePath(cursor.getString(2));
+            project.setUpdated(cursor.getInt(3));
+        }
+        cursor.close();
+        db.close();
+        return project;
     }
 }

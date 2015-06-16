@@ -12,18 +12,28 @@
     <string name="missing_form_data">Missing data from gathering form.</string>
     <string name="cancel_form_data">Canceled data collection form.</string>
     <!-- Sync data -->
-    <string name="available_projects">Available projects</string>
+    <!-- List project -->
     <string name="no_connection">Connect to the internet</string>
+    <string name="loading_prj_list">Loading project list…</string>
+    <string name="available_projects">Available projects</string>
+    <string name="projects_not_found">No projects were found</string>
+    <string name="close">Close</string>
+    <string name="connection_failed">Connection failed!</string>
+    <string name="not_logged">You have to authenticate first</string>
+    <!-- Remove project -->
+    <string name="project_remove_title">Remove project</string>
+    <string name="project_remove_confirm">Do you want to remove the project from the device?</string>
+    <string name="project_removed_successfully">Project removed successfully</string>
+    <string name="error_removing_project">Couldn\'t remove the project</string>
+    <!-- Download -->
     <string name="downloading">Downloading files…</string>
     <string name="file">File</string>
     <string name="decompressing">Decompressing…</string>
     <string name="download_success">Files downloaded successfully!</string>
     <string name="download_failed">Download failed!</string>
     <string name="download_cancelled">Download cancelled</string>
-    <string name="loading_prj_list">Loading project list…</string>
-    <string name="projects_not_found">No projects were found</string>
-    <string name="connection_failed">Connection failed!</string>
-    <string name="not_logged">You have to authenticate first</string>
+    <string name="project_download_confirm">The existing data will be overwritten. Would you like to continue?</string>
+    <string name="project_overwrite_title">Overwrite project</string>
     <!-- Settings -->
     <string name="title_activity_settings">Settings</string>
     <string name="test_raster_data">Test Raster Data</string>
@@ -64,10 +74,8 @@
     <!-- Message window title -->
     <string name="error">Error</string>
     <string name="success">Success</string>
-
+    <!-- Confirm -->
     <string name="ok">OK</string>
-    <string name="yes">yes</string>
-    <string name="no">no</string>
-    <string name="project_removed_successfully">Project removed successfully</string>
-    <string name="error_removing_project">Couldn\'t remove the project</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 </resources>

@@ -38,26 +38,25 @@ public class ProjectListAdapter extends ArrayAdapter<Project> {
         LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         convertView = layoutInflater.inflate(R.layout.project_item, null);
         TextView tVProject = (TextView) convertView.findViewById(R.id.tVProjectName);
-        ImageView iVDownloaded = (ImageView)convertView.findViewById(R.id.iVDownloaded);
+        ImageView iVDownloaded = (ImageView) convertView.findViewById(R.id.iVDownloaded);
 //        ImageView iVUpdated = (ImageView)convertView.findViewById(R.id.iVUpdated);
 
         Project project = (Project) projectList.get(position);
-
-        final String projectName = project.toString().substring(0, project.toString().indexOf('.'));
+        final String projectName = project.toString().endsWith(context.getString(R.string.geopackage_extension)) ? project.toString().substring(0, project.toString().indexOf('.')) : project.toString();
 
         tVProject.setText(projectName);
 
         RadioButton rBCurrentProject = (RadioButton) convertView.findViewById(R.id.rBCurrentProject);
         rBCurrentProject.setTag(project);
 
-        Project currentProject = ((MainActivity)context).getProject();
-        if(currentProject != null && currentProject.toString().equals(projectName)) {
-            rBCurrentProject.setEnabled(true);
+        Project currentProject = ((MainActivity) context).getProject();
+        if (currentProject != null && currentProject.toString().equals(projectName)) {
             rBCurrentProject.setChecked(true);
+            rBCurrentProject.setEnabled(true);
         }
 
         File directory = ResourceUtil.getDirectory(context.getResources().getString(R.string.app_workspace_dir));
-        if(ResourceUtil.getGeoPackageByName(directory, context.getResources().getString(R.string.geopackage_extension), project.toString()) != null) {
+        if (ResourceUtil.getGeoPackageByName(directory, context.getResources().getString(R.string.geopackage_extension), project.toString()) != null) {
             rBCurrentProject.setEnabled(true);
             iVDownloaded.setImageResource(R.drawable.downloaded);
         }
@@ -71,14 +70,13 @@ public class ProjectListAdapter extends ArrayAdapter<Project> {
                     radioButton.setChecked(false);
                 }
                 RadioButton rBNewCurrentProject = (RadioButton) v;
-                if(!rBNewCurrentProject.isChecked()) {
+                if (!rBNewCurrentProject.isChecked()) {
                     rBNewCurrentProject.setChecked(true);
 
                     Project newCurrentProject = (Project) rBNewCurrentProject.getTag();
                     newCurrentProject.setName(projectName);
                     ((MainActivity) context).setProject(newCurrentProject);
                 }
-
             }
         });
 
