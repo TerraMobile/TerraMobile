@@ -24,6 +24,8 @@ import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Overlay;
 import org.osmdroid.views.overlay.TilesOverlay;
 
+import java.util.HashMap;
+
 import br.org.funcate.dynamicforms.util.PositionUtilities;
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.configuration.ViewContextParameters;
@@ -33,6 +35,7 @@ import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
 import br.org.funcate.terramobile.model.tilesource.AppGeoPackageService;
 import br.org.funcate.terramobile.model.tilesource.MapTileGeoPackageProvider;
 import br.org.funcate.terramobile.model.tilesource.MapTileProviderArrayGeoPackage;
+import br.org.funcate.terramobile.util.Util;
 
 /**
  * Created by Andre Carvalho on 27/04/15.
@@ -110,8 +113,11 @@ public class MenuMapController {
         SFSLayer l = AppGeoPackageService.getFeatures(child);
 
         MapView mapView = (MapView) ((MainActivity) context).findViewById(R.id.mapview);
+        HashMap<String, Integer> colorMap= Util.getRandomColor();
 
-        Style defaultStyle = new Style(null, 0x901010AA, 1.0f, 0x20AA1010);
+        int contourColor = Color.rgb(colorMap.get("r"),colorMap.get("g"), colorMap.get("b"));
+        int fillColor = Color.argb(80, colorMap.get("r"),colorMap.get("g"), colorMap.get("b"));
+        Style defaultStyle = new Style(null, contourColor, 1.0f, fillColor);
 
         KmlDocument kmlDocument = new KmlDocument();
         Overlay overlay = l.buildOverlay(mapView, defaultStyle, null, kmlDocument);
