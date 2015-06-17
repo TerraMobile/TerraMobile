@@ -66,11 +66,12 @@ public class TreeViewAdapter extends BaseExpandableListAdapter implements View.O
                     break;
                 }
                 case FEATURES:{// collect
+
                     if (((CheckBox) v).isChecked()) {
-                        par.addLayer(child);
+                        /*par.addLayer(child);*/
                         this.menuMapController.addVectorLayer(child);
                     } else {
-                        par.removeLayer(child);
+                        /*par.removeLayer(child);*/
                         this.menuMapController.removeVectorLayer(child);
                     }
                     break;
