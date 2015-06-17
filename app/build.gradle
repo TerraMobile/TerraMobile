@@ -30,7 +30,7 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile project(':JGPKG')
     compile project(':dynamicforms')
-    compile project(':OSMBonusPack')
+    compile files('libs/osmbonuspack_v5.1.jar')
     compile 'com.android.support:support-v4:22.2.0'
     compile 'org.osmdroid:osmdroid-android:4.3'
 }
