@@ -78,6 +78,7 @@ public class FragmentDetailActivity extends FragmentActivity {
     private String sectionName;
     private double elevation = -9999.0;
     private long pointId;
+    private String workingDirectory;
 
     // this members is used in dynamic form process.
     private static final String USE_MAPCENTER_POSITION = "USE_MAPCENTER_POSITION";
@@ -114,6 +115,7 @@ public class FragmentDetailActivity extends FragmentActivity {
             tags = extras.getString(FormUtilities.ATTR_JSON_TAGS);
             latitude = extras.getDouble(FormUtilities.TYPE_LATITUDE);
             longitude = extras.getDouble(FormUtilities.TYPE_LONGITUDE);
+            workingDirectory = extras.getString(FormUtilities.MAIN_APP_WORKING_DIRECTORY);
         }
 
         try {
@@ -218,8 +220,8 @@ public class FragmentDetailActivity extends FragmentActivity {
         List<String> availableFormNames = TagsManager.getFormNames4Section(sectionObject);
         Bundle formData = null;
 
-        for (String formName : availableFormNames) {
-            JSONObject formObject = TagsManager.getForm4Name(formName, sectionObject);
+        for (String formNameIt : availableFormNames) {
+            JSONObject formObject = TagsManager.getForm4Name(formNameIt, sectionObject);
             JSONArray formItemsArray = TagsManager.getFormItems(formObject);
 
             int length = formItemsArray.length();
@@ -315,6 +317,10 @@ public class FragmentDetailActivity extends FragmentActivity {
                 return true;
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    public String getWorkingDirectory() {
+        return workingDirectory;
     }
 
     // TODO: send this method to MapFragment and implement tool to capture GPS coordinates instead of capture from map center.

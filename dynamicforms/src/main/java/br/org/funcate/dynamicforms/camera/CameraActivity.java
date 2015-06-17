@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import br.org.funcate.dynamicforms.FormUtilities;
 import br.org.funcate.dynamicforms.R;
 import br.org.funcate.dynamicforms.images.ImageUtilities;
 import br.org.funcate.dynamicforms.sensors.OrientationSensor;
@@ -76,6 +77,11 @@ public class CameraActivity extends Activity {
     private int lastImageMediastoreId;
     private long noteId = -1;
     private OrientationSensor orientationSensor;
+    private String workingDirectory;
+
+    public String getWorkingDirectory() {
+        return workingDirectory;
+    }
 
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
@@ -87,6 +93,7 @@ public class CameraActivity extends Activity {
         Bundle extras = getIntent().getExtras();
         File imageSaveFolder = null;
         try {
+            workingDirectory = extras.getString(FormUtilities.MAIN_APP_WORKING_DIRECTORY);
             imageSaveFolder = ResourcesManager.getInstance(this).getTempDir();
             String imageName;
             if (extras != null) {
@@ -153,7 +160,8 @@ public class CameraActivity extends Activity {
             Intent intent = getIntent();
             File imageFile = new File(imageFilePath);
             if (imageFile.exists()) {
-
+                intent.putExtra(LibraryConstants.OBJECT_EXISTS, true);
+                intent.putExtra(FormUtilities.PHOTO_COMPLETE_PATH, imageFile.getAbsolutePath());
               /*  try {
                     byte[][] imageAndThumbnailArray = ImageUtilities.getImageAndThumbnailFromPath(imageFilePath, 5);
 
@@ -178,7 +186,6 @@ public class CameraActivity extends Activity {
             }
 
             setResult(Activity.RESULT_OK, intent);
-
 
             finish();
         }
