@@ -31,17 +31,14 @@ public class DownloadTask extends AsyncTask<String, String, Boolean> {
     private String downloadDestinationFilePath;
     private ArrayList<String> mFiles;
 
-    private boolean overwrite;
-
     private MainActivity mainActivity;
 
     private File destinationFile;
 
-    public DownloadTask(String downloadDestinationFilePath, String unzipDestinationFilePath, boolean overwrite, MainActivity mainActivity) {
+    public DownloadTask(String downloadDestinationFilePath, String unzipDestinationFilePath, MainActivity mainActivity) {
         this.mainActivity = mainActivity;
         this.unzipDestinationFilePath = unzipDestinationFilePath;
         this.downloadDestinationFilePath = downloadDestinationFilePath;
-        this.overwrite = overwrite;
         mFiles = new ArrayList<String>();
     }
 
@@ -67,10 +64,8 @@ public class DownloadTask extends AsyncTask<String, String, Boolean> {
             if (!destinationFile.exists())
                 destinationFile.createNewFile();
             else {
-                if (overwrite)
-                    destinationFile.delete();
-                else
-                    return true;
+                destinationFile.delete();
+                destinationFile.createNewFile();
             }
             URL url = new URL(urlToDownload[0]);
             URLConnection urlConnection = url.openConnection();
@@ -141,11 +136,9 @@ public class DownloadTask extends AsyncTask<String, String, Boolean> {
         long totalFiles = 0;
         try {
             ZipInputStream zipInputStream = new ZipInputStream(new BufferedInputStream(new FileInputStream(zipFile)));
-            if (zipInputStream != null) {
-                while (zipInputStream.getNextEntry() != null)
-                    totalFiles++;
-                zipInputStream.close();
-            }
+            while (zipInputStream.getNextEntry() != null)
+                totalFiles++;
+            zipInputStream.close();
             return totalFiles;
         }catch (FileNotFoundException e) {
             Log.e("countZipFiles", "File not found");
@@ -215,17 +208,17 @@ public class DownloadTask extends AsyncTask<String, String, Boolean> {
     protected void onPostExecute(Boolean aBoolean) {
         mainActivity.getTreeView().refreshTreeView();
 
-        String fileName = mFiles.get(0);// The project is the last downloaded geopackage file.
+        String projectName = mFiles.get(0);// The project is the last not_downloaded geopackage file.
 
         ProjectDAO projectDAO = new ProjectDAO(mainActivity);
 
         Project project = new Project();
         project.setId(null);
-        project.setName(fileName);
+        project.setName(projectName);
         project.setFilePath(downloadDestinationFilePath);
         projectDAO.insert(project);
 
-        mainActivity.setProject(project);
+        mainActivity.setProject(projectDAO.getByName(projectName));
 
         if(mainActivity.getProgressDialog() != null && mainActivity.getProgressDialog().isShowing()) {
             if (aBoolean) {

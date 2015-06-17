@@ -1,7 +1,6 @@
 package br.org.funcate.terramobile.controller.activity;
 
 import android.app.ActionBar;
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -16,6 +15,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -25,17 +25,15 @@ import android.widget.ExpandableListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.json.JSONObject;
-import org.osmdroid.util.GeoPoint;
+import org.osmdroid.bonuspack.kml.KmlDocument;
+import org.osmdroid.bonuspack.kml.Style;
+import org.osmdroid.bonuspack.overlays.FolderOverlay;
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.Overlay;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.util.ArrayList;
 
-import br.org.funcate.dynamicforms.FormUtilities;
-import br.org.funcate.dynamicforms.FragmentDetailActivity;
-import br.org.funcate.dynamicforms.util.LibraryConstants;
-import br.org.funcate.jgpkg.exception.QueryException;
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.configuration.ViewContextParameters;
 import br.org.funcate.terramobile.controller.activity.settings.SettingsActivity;
@@ -44,6 +42,7 @@ import br.org.funcate.terramobile.model.Settings;
 import br.org.funcate.terramobile.model.db.dao.ProjectDAO;
 import br.org.funcate.terramobile.model.db.dao.SettingsDAO;
 import br.org.funcate.terramobile.model.exception.TerraMobileException;
+import br.org.funcate.terramobile.model.geomsource.SFSLayer;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
 import br.org.funcate.terramobile.model.tilesource.AppGeoPackageService;
 import br.org.funcate.terramobile.util.Message;
@@ -113,23 +112,38 @@ public class MainActivity extends FragmentActivity {
             settings = settingsDAO.getById(1);
         }
 
-//        File gpkgFile=AppGeoPackageService.getGpkgFile(this);
-
         File directory = ResourceUtil.getDirectory(this.getResources().getString(R.string.app_workspace_dir));
-        ArrayList<File> gpkgFiles= ResourceUtil.getGeoPackageFiles(directory, this.getResources().getString(R.string.geopackage_extension));
 
-        if(gpkgFiles!=null && !gpkgFiles.isEmpty()) {
+        String fileName = settings.getCurrentProject()+getResources().getString(R.string.geopackage_extension);
+        if(settings.getCurrentProject() != null) {
             projectDAO = new ProjectDAO(this);
-            if(settings.getCurrentProject() != null)
-                mProject = projectDAO.getByName(settings.getCurrentProject());
+            mProject = projectDAO.getByName(settings.getCurrentProject());
+            if(ResourceUtil.getGeoPackageByName(directory, getResources().getString(R.string.geopackage_extension), fileName) != null) {
+                if(mProject == null) {
+                    Project project = new Project();
+                    project.setId(null);
+                    project.setName(fileName);
+                    project.setFilePath(directory.getPath());
+                    projectDAO.insert(project);
+
+                    mProject = projectDAO.getByName(settings.getCurrentProject());
+                }
+            }
+            else{
+                if(mProject != null){
+                    if(projectDAO.remove(mProject.getId())){
+                        Log.i("Remove project","Project removed");
+                    }
+                    else
+                        Log.e("Remove project","Couldn't remove the project");
+                }
+            }
         }
 
-        treeView = new TreeView(MainActivity.this);
+        treeView = new TreeView(this);
 
         mTitle = mDrawerTitle = getTitle();
-
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-
         // set a custom shadow that overlays the action_bar content when the drawer opens
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
 
@@ -139,7 +153,6 @@ public class MainActivity extends FragmentActivity {
                 getResources().getDimension(R.dimen.title_text_size));
 
         actionBar.setDisplayHomeAsUpEnabled(true);
-
         // ActionBarDrawerToggle ties together the proper interactions
         // between the sliding drawer and the action bar app icon
         mDrawerToggle = new ActionBarDrawerToggle(
@@ -183,8 +196,7 @@ public class MainActivity extends FragmentActivity {
         inflater.inflate(R.menu.action_bar, menu);
 
         MenuItem menuItem = menu.findItem(R.id.project);
-        if(mProject != null)
-            menuItem.setTitle(mProject.getName());
+        menuItem.setTitle(mProject != null ? mProject.getName() : "Project");
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -196,8 +208,7 @@ public class MainActivity extends FragmentActivity {
         if(mDrawerList==null) return false;
 
         MenuItem menuItem = menu.findItem(R.id.project);
-        if(mProject != null)
-            menuItem.setTitle(mProject.getName());
+        menuItem.setTitle(mProject != null?mProject.toString():"Project");
 
         // If the nav drawer is open, hide action items related to the content view
         return super.onPrepareOptionsMenu(menu);
@@ -234,11 +245,11 @@ public class MainActivity extends FragmentActivity {
                 // add an bookmark on map and show the related form
                 fragment.startForm();
                 break;
+            case R.id.test_vector_data:
+                testVectorData();
+                break;
             case R.id.settings:
                 startActivity(new Intent(this, SettingsActivity.class));
-                break;
-            case R.id.test_raster_data:
-                showTestRaster();
                 break;
             case R.id.exit:
                 this.finish();
@@ -250,18 +261,13 @@ public class MainActivity extends FragmentActivity {
         return true;
     }
 
-    private void showTestRaster() {
-
-        try {
-            GpkgLayer layer = treeView.getLayerByName("rapideyeandadina");
-            AppGeoPackageService.createGeoPackageTileSourceOverlay(layer, MainActivity.this);
-
-        } catch (TerraMobileException e) {
-            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
-            e.printStackTrace();
-        }
-
+    public MapFragment getMapFragment()
+    {
+        FragmentManager fm = getSupportFragmentManager();
+        MapFragment fragment = (MapFragment)fm.findFragmentById(R.id.content_frame);
+        return fragment;
     }
+
 
 /*    private void startForm(GeoPoint point) {
         // This id is provided from the selected point, if one it is selected otherwise -1 is default.
@@ -364,8 +370,55 @@ public class MainActivity extends FragmentActivity {
 
     public void setProject(Project project) {
         this.mProject = project;
-        settings.setCurrentProject(project.getName());
+        settings.setCurrentProject(project!=null?project.toString():null);
         settingsDAO.update(settings);
+        treeView.refreshTreeView();
         invalidateOptionsMenu();
+    }
+
+    private void testVectorData()
+    {
+
+        GpkgLayer layer = null;
+        SFSLayer l = null;
+        try {
+            layer = treeView.getLayerByName("inpe_area_de_estudo_canasat_2000");
+            l = AppGeoPackageService.getFeatures(layer);
+
+
+        } catch (TerraMobileException e) {
+            e.printStackTrace();
+        }
+
+        MapView map = (MapView) findViewById(R.id.mapview);
+        map.setTileSource(TileSourceFactory.MAPNIK);
+        map.setBuiltInZoomControls(true);
+        map.setMultiTouchControls(true);
+
+        Style defaultStyle = new Style(null, 0x901010AA, 1.0f, 0x20AA1010);
+
+        KmlDocument kmlDocument = new KmlDocument();
+        Overlay overlay = l.buildOverlay(map, defaultStyle, null, kmlDocument);
+
+        map.getOverlays().add(overlay);
+
+        map.invalidate();
+
+       // map.zoomToBoundingBox(l.getBoundingBox());
+
+/*        String url = "http://mapsengine.google.com/map/kml?mid=z6IJfj90QEd4.kUUY9FoHFRdE";
+
+        KmlDocument kmlDocument = new KmlDocument();
+
+        kmlDocument.parseKMLUrl(url);
+
+        FolderOverlay kmlOverlay = (FolderOverlay)kmlDocument.mKmlRoot.buildOverlay(map, null, null, kmlDocument);
+
+        map.getOverlays().add(kmlOverlay);
+
+        map.invalidate();
+
+        map.zoomToBoundingBox(kmlDocument.mKmlRoot.getBoundingBox());*/
+
     }
 }

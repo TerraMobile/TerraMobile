@@ -40,4 +40,9 @@ public class Project {
     public void setUpdated(int updated) {
         this.updated = updated;
     }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }

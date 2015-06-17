@@ -12,7 +12,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *//*
+
 package br.org.funcate.terramobile.controller.activity;
 
 import android.app.Activity;
@@ -33,11 +34,13 @@ import br.org.funcate.jgpkg.service.GeoPackageService;
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.test.JGPKGTestInterface;
 //import com.augtech.geoapi.geopackage.GpkgTEST;
+*/
 /** The main Activity for running test cases
  *
  * @author Augmented Technologies Ltd.
  *
- */
+ *//*
+
 public class TestActivity extends Activity implements JGPKGTestInterface {
 
 	static final String LOG_TAG = "GeoPackage Client";
@@ -51,7 +54,7 @@ public class TestActivity extends Activity implements JGPKGTestInterface {
 		super.onCreate(savedInstanceState);
 		thisActivity = this;
 		setContentView(R.layout.activity_main);
-		statusText = (TextView) findViewById(R.id.statusText);
+//		statusText = (TextView) findViewById(R.id.statusText);
 
         createBaseTileSource();
 
@@ -67,7 +70,8 @@ public class TestActivity extends Activity implements JGPKGTestInterface {
         mapView.getController().setZoom(2);
 
 
-    /*    MapView mapView = (MapView) findViewById(R.id.mapview);
+    */
+/*    MapView mapView = (MapView) findViewById(R.id.mapview);
         mapView.setMaxZoomLevel(20);
         mapView.setBuiltInZoomControls(true);
         mapView.setMultiTouchControls(true);
@@ -86,16 +90,26 @@ public class TestActivity extends Activity implements JGPKGTestInterface {
         tileProvider.setTileRequestCompleteHandler(new SimpleInvalidationHandler(mapView));
 
         mapView.setTileSource(tileSource);
-        mapView.setUseDataConnection(false); //  letting osmdroid know you would use it in offline mode, keeps the mapView from loading online tiles using network connection.*/
+        mapView.setUseDataConnection(false); //  letting osmdroid know you would use it in offline mode, keeps the mapView from loading online tiles using network connection.*//*
+
     }
 
     private void createGeoPackageTileSourceOverlay()
     {
 
- /*       MapView mapView = (MapView) findViewById(R.id.mapview);
-*//*    mapView.getOverlayManager().get(0).onTouchEvent())*//*
-*//*        OnlineTileSourceBase mapQuestTileSource = TileSourceFactory.MAPQUESTOSM;
+ */
+/*       MapView mapView = (MapView) findViewById(R.id.mapview);
+*//*
+*/
+/*    mapView.getOverlayManager().get(0).onTouchEvent())*//*
+*/
+/*
+*//*
+*/
+/*        OnlineTileSourceBase mapQuestTileSource = TileSourceFactory.MAPQUESTOSM;
         String tileSourcePath = mapQuestTileSource.OSMDROID_PATH.getAbsolutePath() + "/";*//*
+*/
+/*
 
         final MapTileProviderBasic tileProvider = new MapTileProviderBasic(getApplicationContext());
 
@@ -105,7 +119,11 @@ public class TestActivity extends Activity implements JGPKGTestInterface {
         SimpleRegisterReceiver simpleReceiver = new SimpleRegisterReceiver(getApplicationContext());
         MapTileProviderArrayGeoPackage tileProviderArray = new MapTileProviderArrayGeoPackage(tileSource, simpleReceiver, new MapTileModuleProviderBase[] { moduleProvider }, mapView);
 
-*//*        tileProvider.setTileSource(tileSource);*//*
+*//*
+*/
+/*        tileProvider.setTileSource(tileSource);*//*
+*/
+/*
         final TilesOverlay tilesOverlay = new TilesOverlay(tileProviderArray, this.getApplicationContext());
         tilesOverlay.setLoadingBackgroundColor(Color.TRANSPARENT);
         mapView.getOverlays().add(tilesOverlay);
@@ -114,7 +132,10 @@ public class TestActivity extends Activity implements JGPKGTestInterface {
         tileProvider.setTileRequestCompleteHandler(new SimpleInvalidationHandler(mapView));
         mapView.setTileSource(tileSource);
         mapView.setUseDataConnection(false); //  letting osmdroid know you would use it in offline mode, keeps the mapView from loading online tiles using network connection.*//*
-        mapView.invalidate();*/
+*/
+/*
+        mapView.invalidate();*//*
+
     }
 
 	private View.OnClickListener testCreateClick = new View.OnClickListener() {
@@ -200,28 +221,34 @@ public class TestActivity extends Activity implements JGPKGTestInterface {
 	}
 
 
-	/** Do we have write access to the local SD card?
+	*/
+/** Do we have write access to the local SD card?
 	 * 
 	 * @return True if we can read from storage
-	 */
+	 *//*
+
 	public static boolean isStorageAvailable() {
 	    String state = Environment.getExternalStorageState();
 	    if (Environment.MEDIA_MOUNTED.equals(state)) {
 	        return true;
 	    } else return Environment.MEDIA_MOUNTED_READ_ONLY.equals(state);
 	}
-	/** Check can read/write to SD card
+	*/
+/** Check can read/write to SD card
 	 * 
 	 * @return True if we can
-	 */
+	 *//*
+
 	public static boolean isStorageWriteable() {
 	    String state = Environment.getExternalStorageState();
 	    return Environment.MEDIA_MOUNTED.equals(state);
 	}
-	/** Get a directory on extenal storage (SD card etc), ensuring it exists
+	*/
+/** Get a directory on extenal storage (SD card etc), ensuring it exists
 	 * 
 	 * @return a new File representing the chosen directory
-	 */
+	 *//*
+
 	public static File getDirectory(String directory) {
 		if (directory==null) return null;
 		String path = Environment.getExternalStorageDirectory().toString();
@@ -235,3 +262,4 @@ public class TestActivity extends Activity implements JGPKGTestInterface {
 
 
 }
+*/

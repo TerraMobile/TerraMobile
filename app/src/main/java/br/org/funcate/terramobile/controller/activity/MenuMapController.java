@@ -9,6 +9,8 @@ import com.augtech.geoapi.geometry.BoundingBoxImpl;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.geometry.BoundingBox;
 import org.osmdroid.ResourceProxy;
+import org.osmdroid.bonuspack.kml.KmlDocument;
+import org.osmdroid.bonuspack.kml.Style;
 import org.osmdroid.tileprovider.MapTileProviderArray;
 import org.osmdroid.tileprovider.MapTileProviderBasic;
 import org.osmdroid.tileprovider.modules.MapTileModuleProviderBase;
@@ -18,14 +20,20 @@ import org.osmdroid.tileprovider.util.SimpleInvalidationHandler;
 import org.osmdroid.tileprovider.util.SimpleRegisterReceiver;
 import org.osmdroid.util.BoundingBoxE6;
 import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.Overlay;
 import org.osmdroid.views.overlay.TilesOverlay;
 
 import java.util.List;
 
 import br.org.funcate.jgpkg.service.GeoPackageService;
 import br.org.funcate.terramobile.R;
+import br.org.funcate.terramobile.configuration.ViewContextParameters;
+import br.org.funcate.terramobile.model.exception.TerraMobileException;
+import br.org.funcate.terramobile.model.geomsource.SFSLayer;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
+import br.org.funcate.terramobile.model.tilesource.AppGeoPackageService;
 import br.org.funcate.terramobile.model.tilesource.MapTileGeoPackageProvider;
+import br.org.funcate.terramobile.model.tilesource.MapTileProviderArrayGeoPackage;
 
 /**
  * Created by Andre Carvalho on 27/04/15.
@@ -38,7 +46,7 @@ public class MenuMapController {
 
     public MenuMapController(Context context) {
         this.context=context;
-        this.lastIndexDrawOrder = 1;
+        this.lastIndexDrawOrder = 0;
     }
 
     public void addBaseLayer(GpkgLayer child) {
@@ -61,8 +69,8 @@ public class MenuMapController {
             MapTileModuleProviderBase moduleProvider = new MapTileGeoPackageProvider(tileSource, child.getName(), child.getGeoPackage());
             SimpleRegisterReceiver simpleReceiver = new SimpleRegisterReceiver(context);
 
-            MapTileProviderArray tileProviderArray = new MapTileProviderArray(tileSource, simpleReceiver, new MapTileModuleProviderBase[] { moduleProvider });
-
+            //MapTileProviderArray tileProviderArray = new MapTileProviderArray(tileSource, simpleReceiver, new MapTileModuleProviderBase[] { moduleProvider });
+            MapTileProviderArray tileProviderArray = new MapTileProviderArrayGeoPackage(tileSource, simpleReceiver, new MapTileModuleProviderBase[] { moduleProvider }, ((MainActivity) this.context).getMapFragment());
 /*        tileProvider.setTileSource(tileSource);*/
             final TilesOverlay tilesOverlay = new TilesOverlay(tileProviderArray, context);
             tilesOverlay.setLoadingBackgroundColor(Color.TRANSPARENT);
@@ -87,28 +95,30 @@ public class MenuMapController {
         return;
     }
 
+    public Overlay getBaseLayer() {
+        try {
+            MapView mapView = (MapView) ((MainActivity) context).findViewById(R.id.mapview);
+            return mapView.getOverlays().get(INDEX_BASE_LAYER);
+        }
+        catch (IndexOutOfBoundsException e){
+            return null;
+        }
+    }
+
     public void addVectorLayer(GpkgLayer child) {
 
+        SFSLayer l = AppGeoPackageService.getFeatures(child);
+
         MapView mapView = (MapView) ((MainActivity) context).findViewById(R.id.mapview);
-        BoundingBoxE6 bbox = mapView.getBoundingBox();
-        BoundingBox bbox1 = new BoundingBoxImpl(bbox.getLatNorthE6(),bbox.getLonEastE6(),bbox.getLatSouthE6(),bbox.getLonWestE6());
 
-        List<SimpleFeature> features = null;
-        try {
-            features = GeoPackageService.getGeometries(child.getGeoPackage(), child.getName(), bbox1);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Style defaultStyle = new Style(null, 0x901010AA, 1.0f, 0x20AA1010);
 
-        /*MapView mapView = (MapView) ((MainActivity) context).findViewById(R.id.mapview);
+        KmlDocument kmlDocument = new KmlDocument();
+        Overlay overlay = l.buildOverlay(mapView, defaultStyle, null, kmlDocument);
 
-        GeometrySource geometrySource = new GeometrySource(child);// features = GeoPackageService.getGeometries(child.getGeoPackage(), child.getName());
+        mapView.getOverlays().add(overlay);
 
-        MapGeometryGeoPackageProvider geometryProvider = new MapGeometryGeoPackageProvider(geometrySource, child.getName(), child.getGeoPackage());
-        // org.osmdroid.bonuspack.overlay.GpkgGeometryOverlay
-        GpkgGeometryOverlay gpkgGeometryOverlay = new GpkgGeometryOverlay(geometryProvider, context);
-
-        mapView.getOverlays().add(this.lastIndexDrawOrder, gpkgGeometryOverlay);*/
+        mapView.invalidate();
 
         child.setIndexOverlay(this.lastIndexDrawOrder);
         this.lastIndexDrawOrder++;
@@ -119,6 +129,7 @@ public class MenuMapController {
         this.lastIndexDrawOrder--;
         MapView mapView = (MapView) ((MainActivity) context).findViewById(R.id.mapview);
         mapView.getOverlays().remove(location);
+        mapView.invalidate();
         return;
     }
 

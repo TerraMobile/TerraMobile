@@ -17,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import org.osmdroid.ResourceProxy;
@@ -27,6 +28,7 @@ import org.osmdroid.tileprovider.tilesource.XYTileSource;
 import org.osmdroid.tileprovider.util.CloudmadeUtil;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.MyLocationOverlay;
 
 import java.io.File;
 
@@ -75,6 +77,14 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants{
     private LayoutInflater inflater;
     private ViewGroup container;
 
+    private MyLocationOverlay  myLocationoverlay;
+    private ImageButton gpsLocation;
+    private ImageButton zoomIn;
+    private ImageButton zoomOut;
+
+
+
+
     private Context context;
     private static int FORM_COLLECT_DATA = 222;
 
@@ -93,6 +103,36 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants{
         drawingImageView = (ImageView) v.findViewById(R.id.DrawingImageView);
         drawCross(drawingImageView);
         configureMapView(mMapView);
+
+        gpsLocation = (ImageButton) v.findViewById(R.id.Gps);
+        gpsLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showGpsLocation(context);
+            }
+        });
+
+
+        zoomIn = (ImageButton) v.findViewById(R.id.ZoomIn);
+        zoomIn.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                ZoomIn();
+            }
+        });
+
+        zoomOut = (ImageButton) v.findViewById(R.id.ZoomOut);
+        zoomOut.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                ZoomOut();
+            }
+        });
+
 
         super.onCreate(savedInstanceState);
 
@@ -159,7 +199,6 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants{
 
         mapView.getController().animateTo(gPt);
         mapView.setMaxZoomLevel(maxZoomLevel);
-        mapView.setBuiltInZoomControls(builtInZoomControls);
         mapView.setMultiTouchControls(multiTouchControls);
 
         mapView.getController().setZoom(initialZoomLevel);
@@ -224,12 +263,44 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants{
         marker.setPosition(new GeoPoint(point.getLatitude(), point.getLongitude()));
         marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
         marker.setIcon(getResources().getDrawable(R.drawable.marker_red));
+        marker.setDraggable(true);
         if(!this.mMapView.getOverlays().add(marker)) {
             Message.showErrorMessage(((MainActivity) context), R.string.failure_title_msg, R.string.error_start_form);
         }else {
             updateMap();
         }
     }
+
+    public void showGpsLocation(Context context){
+        myLocationoverlay = new MyLocationOverlay(context, this.mMapView);
+        myLocationoverlay.enableMyLocation();
+        myLocationoverlay.disableCompass();
+        myLocationoverlay.enableFollowLocation();
+        myLocationoverlay.setDrawAccuracyEnabled(true);
+        myLocationoverlay.runOnFirstFix(new Runnable() {
+            public void run() {
+                if (myLocationoverlay.getMyLocation() != null) {
+                    // go to MyLocation
+                    mMapView.getController().animateTo(myLocationoverlay
+                            .getMyLocation());
+                    myLocationoverlay.disableFollowLocation();
+                } else {
+
+                    mMapView.getController().animateTo(new GeoPoint(R.dimen.default_map_center_x, R.dimen.default_map_center_y));
+
+                }
+            }
+        });
+    }
+
+    public void ZoomIn(){
+        mMapView.getController().zoomIn();
+    }
+
+    public void ZoomOut(){
+        mMapView.getController().zoomOut();
+    }
+
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -253,6 +324,25 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants{
 
     public synchronized void updateMap()
     {
-        this.mMapView.invalidate();
+
+        getActivity().runOnUiThread(new UpdateMapThread(mMapView));
+
     }
+
+    protected class UpdateMapThread implements Runnable
+    {
+        MapView mapView;
+        protected UpdateMapThread(MapView mapView)
+        {
+            this.mapView = mapView;
+        }
+
+        public void run() {
+            if(mapView!=null)
+            {
+                this.mapView.invalidate();
+            }
+        }
+    }
+
 }
