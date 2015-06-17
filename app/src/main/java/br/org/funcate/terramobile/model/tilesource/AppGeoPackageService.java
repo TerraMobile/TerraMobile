@@ -247,25 +247,26 @@ public class AppGeoPackageService {
 
             if ("DOUBLE".equalsIgnoreCase(type)) {
                 Double d = formData.getDouble(key);
-                attributeValues.add(d);
+                feature.setAttribute(key,d);
             } else if ("TEXT".equalsIgnoreCase(type)) {
                 String s = formData.getString(key);
-                attributeValues.add(s);
+                feature.setAttribute(key,s);
             } else if ("INTEGER".equalsIgnoreCase(type)) {
+                // TODO: using type data from form configuration otherwise field data from database table
                 Integer in = formData.getInt(key);
-                attributeValues.add(in);
+                feature.setAttribute(key,in);
             } else if ("BOOLEAN".equalsIgnoreCase(type)) {
                 Boolean b = formData.getBoolean(key);
-                attributeValues.add(b);
+                feature.setAttribute(key,(b?1:0));// Use Integer data to insert boolean type on database table
             } else if ("BLOB".equalsIgnoreCase(type)) {
-                byte[] blob = formData.getByteArray(key);
-                attributeValues.add(blob);
+                //byte[] blob = formData.getByteArray(key);
+                //feature.setAttribute(key,blob);
                 // see how to insert a byte array inside sqlite table
             } else if ("DATE".equalsIgnoreCase(type)) {
                 String date = formData.getString(key);
                 Date dt = DateUtil.deserializeDate(date);
                 if (dt == null) dt = new Date();
-                attributeValues.add(dt);
+                feature.setAttribute(key,dt);
             } else if ("TIME".equalsIgnoreCase(type)) {
                 String date = formData.getString(key);
                 if (!date.equals("")) {
@@ -275,17 +276,17 @@ public class AppGeoPackageService {
                 if (dt == null) {
                     dt = new Time(Long.decode(date));
                 }
-                attributeValues.add(dt);
+                feature.setAttribute(key,dt);
             } else if ("DATETIME".equalsIgnoreCase(type)) {
                 String date = formData.getString(key);
                 Date dt = DateUtil.deserializeDateTime(date);
                 if (dt == null) dt = new Date();
-                attributeValues.add(dt);
+                feature.setAttribute(key,dt);
             }
 
             if(attributeValues.size() > attributeTypes.size()) attributeTypes.add(ft.getType(key));
         }
-        feature.setAttributes(attributeValues, attributeTypes);
+        //feature.setAttributes(attributeValues, attributeTypes);
 
         return feature;
     }

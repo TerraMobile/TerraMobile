@@ -2,35 +2,30 @@ package br.org.funcate.terramobile.controller.activity;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.support.v4.app.FragmentManager;
-import android.view.View;
-import android.widget.CheckBox;
-import android.widget.RadioButton;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import com.augtech.geoapi.geometry.BoundingBoxImpl;
+
 import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.geometry.BoundingBox;
 import org.osmdroid.ResourceProxy;
 import org.osmdroid.tileprovider.MapTileProviderArray;
 import org.osmdroid.tileprovider.MapTileProviderBasic;
-import org.osmdroid.tileprovider.modules.MapTileDownloader;
 import org.osmdroid.tileprovider.modules.MapTileModuleProviderBase;
 import org.osmdroid.tileprovider.tilesource.ITileSource;
 import org.osmdroid.tileprovider.tilesource.XYTileSource;
 import org.osmdroid.tileprovider.util.SimpleInvalidationHandler;
 import org.osmdroid.tileprovider.util.SimpleRegisterReceiver;
+import org.osmdroid.util.BoundingBoxE6;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.TilesOverlay;
 
 import java.util.List;
 
-import br.org.funcate.dynamicforms.util.PositionUtilities;
 import br.org.funcate.jgpkg.service.GeoPackageService;
 import br.org.funcate.terramobile.R;
-import br.org.funcate.terramobile.configuration.ViewContextParameters;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
 import br.org.funcate.terramobile.model.tilesource.MapTileGeoPackageProvider;
-import br.org.funcate.terramobile.model.tilesource.MapTileProviderArrayGeoPackage;
 
 /**
  * Created by Andre Carvalho on 27/04/15.
@@ -94,20 +89,26 @@ public class MenuMapController {
 
     public void addVectorLayer(GpkgLayer child) {
 
-        //MapView mapView = (MapView) ((MainActivity) context).findViewById(R.id.mapview);
-        //mapView.getOverlays().add(this.lastIndexDrawOrder,tilesOverlay);
+        MapView mapView = (MapView) ((MainActivity) context).findViewById(R.id.mapview);
+        BoundingBoxE6 bbox = mapView.getBoundingBox();
+        BoundingBox bbox1 = new BoundingBoxImpl(bbox.getLatNorthE6(),bbox.getLonEastE6(),bbox.getLatSouthE6(),bbox.getLonWestE6());
+
         List<SimpleFeature> features = null;
         try {
-            features = GeoPackageService.getGeometries(child.getGeoPackage(), child.getName());
+            features = GeoPackageService.getGeometries(child.getGeoPackage(), child.getName(), bbox1);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        int ftSize = features.size();
-        if(ftSize>0){
-            SimpleFeature f = features.get(0);
-            String ftTypeName = f.getFeatureType().getTypeName();
-        }
+        /*MapView mapView = (MapView) ((MainActivity) context).findViewById(R.id.mapview);
+
+        GeometrySource geometrySource = new GeometrySource(child);// features = GeoPackageService.getGeometries(child.getGeoPackage(), child.getName());
+
+        MapGeometryGeoPackageProvider geometryProvider = new MapGeometryGeoPackageProvider(geometrySource, child.getName(), child.getGeoPackage());
+        // org.osmdroid.bonuspack.overlay.GpkgGeometryOverlay
+        GpkgGeometryOverlay gpkgGeometryOverlay = new GpkgGeometryOverlay(geometryProvider, context);
+
+        mapView.getOverlays().add(this.lastIndexDrawOrder, gpkgGeometryOverlay);*/
 
         child.setIndexOverlay(this.lastIndexDrawOrder);
         this.lastIndexDrawOrder++;
