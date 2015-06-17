@@ -105,7 +105,7 @@ public class MainActivity extends FragmentActivity {
         if(settingsDAO.getById(1) == null){
             settings = new Settings();
             settings.setId(1);
-            settings.setUrl("http://terrabrasilis.info/TerraMobileServer/tmserver/projectservices"); // URL for test
+            settings.setUrl("http://200.144.100.34:8080/MobileServer/tmserver/projectservices"); // URL for test
             settingsDAO.insert(settings);
         }
         else{

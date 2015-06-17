@@ -56,6 +56,7 @@ public class TreeViewAdapter extends BaseExpandableListAdapter implements View.O
                         RadioButton radioButton = baseLayerRBList.get(count);
                         radioButton.setChecked(false);
                     }
+
                     RadioButton rBChildBaseLayer = (RadioButton) v;
                     if (!rBChildBaseLayer.isChecked()) {
                         if(menuMapController.getBaseLayer() != null)
@@ -150,6 +151,7 @@ public class TreeViewAdapter extends BaseExpandableListAdapter implements View.O
                 radioButton.setTextColor(Color.BLACK);
                 radioButton.setText(child.getName());
                 radioButton.setTag(child);
+                radioButton.setChecked(child.getOsmOverLayer()!=null);
                 radioButton.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                         context.getResources().getDimension(R.dimen.child_text_size));
                 radioButton.setOnClickListener(this);
@@ -161,6 +163,7 @@ public class TreeViewAdapter extends BaseExpandableListAdapter implements View.O
                 checkBox.setTextColor(Color.BLACK);
                 checkBox.setText(child.getName());
                 checkBox.setTag(child);
+                checkBox.setChecked(child.getOsmOverLayer()!=null);
                 checkBox.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                         context.getResources().getDimension(R.dimen.child_text_size));
                 checkBox.setOnClickListener(this);
