@@ -5,6 +5,7 @@ import com.augtech.geoapi.geopackage.GpkgField;
 
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.osmdroid.util.BoundingBoxE6;
+import org.osmdroid.views.overlay.Overlay;
 
 import java.util.ArrayList;
 
@@ -29,6 +30,7 @@ public class GpkgLayer{
     private String JSON;
     private ArrayList<GpkgField> fields;
     private SimpleFeatureType featureType;
+    private Overlay osmOverLayer;
 
     public GpkgLayer() {
     }
@@ -109,4 +111,13 @@ public class GpkgLayer{
     public void setFeatureType(SimpleFeatureType featureType) {
         this.featureType = featureType;
     }
+
+    public Overlay getOsmOverLayer() {
+        return osmOverLayer;
+    }
+
+    public void setOsmOverLayer(Overlay osmOverLayer) {
+        this.osmOverLayer = osmOverLayer;
+    }
+
 }

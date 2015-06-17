@@ -1,13 +1,10 @@
 package br.org.funcate.terramobile.model.geomsource;
 
 import com.google.gson.JsonObject;
-import com.vividsolutions.jts.geom.Geometry;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.osmdroid.bonuspack.kml.KmlDocument;
 import org.osmdroid.bonuspack.kml.KmlFeature;
-import org.osmdroid.bonuspack.kml.KmlFolder;
-import org.osmdroid.bonuspack.kml.KmlPlacemark;
 import org.osmdroid.bonuspack.kml.Style;
 import org.osmdroid.util.BoundingBoxE6;
 import org.osmdroid.views.MapView;
