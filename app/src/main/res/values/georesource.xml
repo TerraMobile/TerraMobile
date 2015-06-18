@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!--<string name="gpkg_url">http://www3.funcate.org.br/sources/arquivos/terramobile_demo.zip</string>-->
+    <string name="terramobile_url">http://200.144.100.34:8080/MobileServer/tmserver/projectservices</string>
     <string name="app_workspace_dir">GeoPackageTest</string>
     <string name="geopackage_extension">.gpkg</string>
     <item name="default_map_center_x" format="float" type="dimen">-15.1656563</item>
