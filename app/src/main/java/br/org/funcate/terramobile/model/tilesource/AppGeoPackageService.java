@@ -99,7 +99,7 @@ public class AppGeoPackageService {
             return null;
         }
 
-        if(!gpkg.isGPKGValid(true))
+        if(!gpkg.isGPKGValid(false))
         {
             throw new InvalidGeopackageException("Invalid GeoPackage file.");
         }
@@ -303,7 +303,7 @@ public class AppGeoPackageService {
     {
 
         try {
-            List<SimpleFeature> features = GeoPackageService.getGeometries(layer.getGeoPackage(),layer.getName());
+            List<SimpleFeature> features = GeoPackageService.getGeometries(layer.getGeoPackage(),layer.getName(),null);
 /*            for (int i = 0; i < features.size(); i++) {
                 System.out.println(((Geometry)features.get(i).getDefaultGeometry()).getCoordinates());
             }
