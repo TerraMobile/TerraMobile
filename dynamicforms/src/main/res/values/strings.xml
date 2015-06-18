@@ -7,4 +7,5 @@
     <string name="app_name">TerraMobileDynamicForms</string>
     <string name="error_while_storing_form_data">An error occurred while storing the form data.</string>
     <string name="select_dotdot">Select…</string>
+    <string name="tmp_folder_not_found"></string>
 </resources>

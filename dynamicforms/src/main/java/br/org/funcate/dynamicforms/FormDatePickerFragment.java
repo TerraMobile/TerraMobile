@@ -33,20 +33,20 @@ import java.text.DecimalFormat;
  */
 public class FormDatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
 
-    private final int year;
-    private final int month;
-    private final int day;
-    private final TextView dateView;
+    private int year;
+    private int month;
+    private int day;
+    private TextView dateView;
 
     /**
-     * constructor
-     * 
+     * Set attributes.
+     *
      * @param year the year as of Calendar.get(Calendar.YEAR).
      * @param month the month as of Calendar.get(Calendar.MONTH).
      * @param day the day as of Calendar.get(Calendar.DAY).
      * @param dateView the {@link TextView} to update.
      */
-    public FormDatePickerFragment( int year, int month, int day, TextView dateView ) {
+    public void setAttributes( int year, int month, int day, TextView dateView ) {
         this.year = year;
         this.month = month;
         this.day = day;

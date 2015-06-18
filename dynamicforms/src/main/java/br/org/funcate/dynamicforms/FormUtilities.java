@@ -65,6 +65,9 @@ import br.org.funcate.dynamicforms.views.GView;
 @SuppressWarnings("nls")
 public class FormUtilities {
 
+    public static final String PHOTO_COMPLETE_PATH = "PHOTO_COMPLETE_PATH";
+
+    public static final String MAIN_APP_WORKING_DIRECTORY = "MAIN_APP_WORKING_DIRECTORY";
     /**
      *
      */
@@ -555,6 +558,23 @@ public class FormUtilities {
                 if (objKey.equals(key)) {
                     itemObject.put(TAG_VALUE, value);
                 }
+            }
+        }
+    }
+
+    /**
+     * Updates a form item array with the given type picture and the respective value.
+     *
+     * @param formItemsArray the array to update.
+     * @param value          the new value to use.
+     * @throws JSONException if something goes wrong.
+     */
+    public static void updatePicture(JSONArray formItemsArray, String value) throws JSONException {
+        int length = formItemsArray.length();
+        for (int i = 0; i < length; i++) {
+            JSONObject itemObject = formItemsArray.getJSONObject(i);
+            if (itemObject.has(TAG_TYPE) && TYPE_PICTURES.equals(itemObject.getString(TAG_TYPE))) {
+                itemObject.put(TAG_VALUE, value);
             }
         }
     }

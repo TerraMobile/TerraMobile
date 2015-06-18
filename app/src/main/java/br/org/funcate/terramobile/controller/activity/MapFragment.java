@@ -30,6 +30,8 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.MyLocationOverlay;
 
+import java.io.File;
+
 import br.org.funcate.dynamicforms.FormUtilities;
 import br.org.funcate.dynamicforms.FragmentDetailActivity;
 import br.org.funcate.dynamicforms.util.LibraryConstants;
@@ -227,7 +229,6 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants{
     public void startForm() {
 
         GeoPoint point = getCenterMap();
-        addBookmark(point);
 
         // This id is provided from the selected point, if one it is selected otherwise -1 is default.
         long selectedPointID = -1;
@@ -240,6 +241,9 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants{
             formIntent.putExtra(FormUtilities.ATTR_JSON_TAGS, ((MainActivity) context).getTreeView().getSelectedEditableLayer().getJSON());
             formIntent.putExtra(FormUtilities.TYPE_LATITUDE, point.getLatitude());
             formIntent.putExtra(FormUtilities.TYPE_LONGITUDE, point.getLongitude());
+            File directory = ResourceUtil.getDirectory(this.getResources().getString(R.string.app_workspace_dir));
+
+            formIntent.putExtra(FormUtilities.MAIN_APP_WORKING_DIRECTORY, directory.getAbsolutePath());
             startActivityForResult(formIntent, FORM_COLLECT_DATA);
 
         } catch (Exception e) {
@@ -303,6 +307,8 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants{
         if (resultCode == Activity.RESULT_OK && requestCode == FORM_COLLECT_DATA) {
             Bundle extras = data.getBundleExtra(LibraryConstants.PREFS_KEY_FORM);
             try {
+                GeoPoint point = getCenterMap();
+                addBookmark(point);
                 AppGeoPackageService.storeData( context, extras);
             }catch (TerraMobileException tme) {
                 //Message.showMessage(this, R.drawable.error, getResources().getString(R.string.error), tme.getMessage());

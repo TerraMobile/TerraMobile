@@ -69,15 +69,13 @@ public class TreeViewAdapter extends BaseExpandableListAdapter implements View.O
                 case FEATURES:{// collect
 
                     if (((CheckBox) v).isChecked()) {
-                        /*par.addLayer(child);*/
                         this.menuMapController.addVectorLayer(child);
                     } else {
-                        /*par.removeLayer(child);*/
                         this.menuMapController.removeVectorLayer(child);
                     }
                     break;
                 }
-                case EDITABLE:{// editable
+                case EDITABLE:{// editable (vector)
                     TreeView treeView=((MainActivity) this.context).getTreeView();
                     treeView.setSelectedEditableLayer(child);
                     for (int count = 0; count < editableLayerRBList.size(); count++) {

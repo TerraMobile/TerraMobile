@@ -25,7 +25,10 @@ import android.preference.PreferenceManager;
 import java.io.File;
 import java.io.Serializable;
 
+import br.org.funcate.dynamicforms.FormUtilities;
 import br.org.funcate.dynamicforms.R;
+import br.org.funcate.dynamicforms.camera.CameraActivity;
+import br.org.funcate.dynamicforms.exceptions.CollectFormException;
 
 import static br.org.funcate.dynamicforms.util.Utilities.messageDialog;
 
@@ -60,6 +63,11 @@ public class ResourcesManager implements Serializable {
      * The database file for geopap.
      */
     private File databaseFile;
+
+    /**
+     * The base path to reference of the temp images folder.
+     */
+    private String workingAppPath;
 
     /**
      * The basemaps folder.
@@ -273,16 +281,26 @@ public class ResourcesManager implements Serializable {
         String cantCreateSdcardmsg = appContext.getResources().getString(R.string.cantcreate_sdcard);
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(appContext);
 
+        workingAppPath = ((CameraActivity) context).getWorkingDirectory();
+        if(workingAppPath==null || ("").equals(workingAppPath)) {
+            throw new CollectFormException(context.getString(R.string.tmp_folder_not_found));
+        }
+
+        //applicationSupportFolder = appContext.getDir(workingAppPath, Context.MODE_PRIVATE);
+        applicationSupportFolder = new File(workingAppPath);
+        sdcardDir = applicationSupportFolder;
+
         tempDir = new File(applicationSupportFolder, PATH_TEMP);
-        if (!tempDir.exists())
+        if (!tempDir.exists()) {
             if (!tempDir.mkdir()) {
                 String msgFormat = Utilities.format(cantCreateSdcardmsg, tempDir.getAbsolutePath());
                 messageDialog(appContext, msgFormat, null);
                 tempDir = sdcardDir;
             }
+        }
 
         Editor editor = preferences.edit();
-        editor.putString(LibraryConstants.PREFS_KEY_CUSTOM_EXTERNALSTORAGE, sdcardDir.getAbsolutePath());
+        editor.putString(LibraryConstants.PREFS_KEY_CUSTOM_EXTERNALSTORAGE, tempDir.getAbsolutePath());
         editor.commit();
     }
 
@@ -332,5 +350,9 @@ public class ResourcesManager implements Serializable {
      */
     public File getTempDir() {
         return tempDir;
+    }
+
+    public String getWorkingDirectory() {
+        return workingAppPath;
     }
 }

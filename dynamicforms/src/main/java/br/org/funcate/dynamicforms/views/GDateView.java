@@ -124,8 +124,9 @@ public class GDateView extends View implements GView {
                 int month = c.get(Calendar.MONTH);
                 int day = c.get(Calendar.DAY_OF_MONTH);
 
-                FormDatePickerFragment newFragment = new FormDatePickerFragment(year, month, day, button);
-                //newFragment.show(fragment.getFragmentManager(), "datePicker");
+                FormDatePickerFragment newFragment = new FormDatePickerFragment();
+                newFragment.setAttributes(year, month, day, button);
+                newFragment.show(fragment.getFragmentManager(), "datePicker");
             }
         });
         button.setEnabled(!readonly);

@@ -31,12 +31,18 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import br.org.funcate.dynamicforms.FormUtilities;
 import br.org.funcate.dynamicforms.FragmentDetail;
 import br.org.funcate.dynamicforms.R;
 import br.org.funcate.dynamicforms.camera.CameraActivity;
+import br.org.funcate.dynamicforms.exceptions.CollectFormException;
 import br.org.funcate.dynamicforms.images.ImageUtilities;
 import br.org.funcate.dynamicforms.util.LibraryConstants;
 import br.org.funcate.dynamicforms.util.PositionUtilities;
@@ -60,6 +66,8 @@ public class GPictureView extends View implements GView {
     private List<String> addedImages = new ArrayList<String>();
 
     private LinearLayout imageLayout;
+
+    private FragmentDetail mFragmentDetail;
 
     /**
      * @param context  the context to use.
@@ -91,6 +99,8 @@ public class GPictureView extends View implements GView {
     public GPictureView(final long noteId, final FragmentDetail fragmentDetail, AttributeSet attrs, final int requestCode, LinearLayout parentView, String label, String value,
                         String constraintDescription) {
         super(fragmentDetail.getActivity(), attrs);
+
+        mFragmentDetail=fragmentDetail;
 
         _value = value;
 
@@ -125,6 +135,7 @@ public class GPictureView extends View implements GView {
                 Intent cameraIntent = new Intent(activity, CameraActivity.class);
                 cameraIntent.putExtra(LibraryConstants.PREFS_KEY_CAMERA_IMAGENAME, imageName);
                 cameraIntent.putExtra(LibraryConstants.SELECTED_POINT_ID, noteId);
+                cameraIntent.putExtra(FormUtilities.MAIN_APP_WORKING_DIRECTORY, fragmentDetail.getWorkingDirectory());
                 if (gpsLocation != null) {
                     cameraIntent.putExtra(LibraryConstants.LATITUDE, gpsLocation[1]);
                     cameraIntent.putExtra(LibraryConstants.LONGITUDE, gpsLocation[0]);
@@ -249,8 +260,28 @@ public class GPictureView extends View implements GView {
 
     @Override
     public void setOnActivityResult(Intent data) {
-        long imageId = data.getLongExtra(LibraryConstants.SELECTED_POINT_ID, -1);
-        if (imageId == -1) {
+
+        Boolean hasPhoto = data.getBooleanExtra(LibraryConstants.OBJECT_EXISTS, false);
+        if(hasPhoto) {
+            JSONArray form=null;
+            try {
+                form = mFragmentDetail.getSelectedForm();
+            } catch (JSONException jse) {
+                Toast.makeText(getContext(), jse.getMessage(), Toast.LENGTH_LONG).show();
+            }
+            if(form!=null) {
+                String imgPath = data.getStringExtra(FormUtilities.PHOTO_COMPLETE_PATH);
+                //long imageId = data.getLongExtra(LibraryConstants.SELECTED_POINT_ID, -1);
+                try {
+                    FormUtilities.updatePicture(form, imgPath);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+
+        /*if (imageId == -1) {
             return;
         }
         _value = _value + IMAGE_ID_SEPARATOR + imageId;
@@ -259,7 +290,7 @@ public class GPictureView extends View implements GView {
         } catch (Exception e) {
             //GPLog.error(this, null, e);
             Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-        }
+        }*/
     }
 }
 

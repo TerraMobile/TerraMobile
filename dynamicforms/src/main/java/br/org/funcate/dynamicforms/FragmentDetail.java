@@ -81,6 +81,7 @@ public class FragmentDetail extends Fragment {
     private long noteId = -1;
     private double longitude;
     private double latitude;
+    private String workingDirectory;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -116,6 +117,7 @@ public class FragmentDetail extends Fragment {
                         selectedFormName = fragmentDetailActivity.getFormName();
                         sectionObject = fragmentDetailActivity.getSectionObject();
                         noteId = fragmentDetailActivity.getNoteId();
+                        workingDirectory = fragmentDetailActivity.getWorkingDirectory();
 /*                        longitude = fragmentDetailActivity.getLongitude();
                         latitude = fragmentDetailActivity.getLatitude();*/
                     }
@@ -292,6 +294,16 @@ public class FragmentDetail extends Fragment {
         return sectionObject;
     }
 
+    public JSONArray getSelectedForm() throws JSONException {
+        if (selectedFormName == null) {
+            return null;
+        }
+        JSONObject form4Name = TagsManager.getForm4Name(selectedFormName, sectionObject);
+        JSONArray formItems = TagsManager.getFormItems(form4Name);
+
+        return formItems;
+    }
+
     /**
      * Setter for the form.
      *
@@ -312,14 +324,11 @@ public class FragmentDetail extends Fragment {
      * @throws Exception if something goes wrong.
      */
     public String storeFormItems(boolean doConstraintsCheck) throws Exception {
-        if (selectedFormName == null) {
-            return null;
-        }
-        JSONObject form4Name = TagsManager.getForm4Name(selectedFormName, sectionObject);
-        JSONArray formItems = TagsManager.getFormItems(form4Name);
+        JSONArray formItems = getSelectedForm();
 
         // update the items
         for (String key : keyList) {
+
             Constraints constraints = key2ConstraintsMap.get(key);
 
             GView view = key2WidgetMap.get(key);
@@ -348,6 +357,10 @@ public class FragmentDetail extends Fragment {
         }*/
 
         return null;
+    }
+
+    public String getWorkingDirectory() {
+        return workingDirectory;
     }
 
 }
