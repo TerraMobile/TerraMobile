@@ -99,7 +99,7 @@ public class AppGeoPackageService {
             return null;
         }
 
-        if(!gpkg.isGPKGValid(true))
+        if(!gpkg.isGPKGValid(false))
         {
             throw new InvalidGeopackageException("Invalid GeoPackage file.");
         }
