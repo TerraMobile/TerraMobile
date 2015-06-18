@@ -1,13 +1,15 @@
 package br.org.funcate.terramobile.view;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
@@ -16,16 +18,24 @@ import java.util.ArrayList;
 
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.controller.activity.MainActivity;
+import br.org.funcate.terramobile.controller.activity.tasks.DownloadTask;
 import br.org.funcate.terramobile.model.Project;
+import br.org.funcate.terramobile.model.Settings;
+import br.org.funcate.terramobile.model.db.dao.ProjectDAO;
+import br.org.funcate.terramobile.model.db.dao.SettingsDAO;
+import br.org.funcate.terramobile.util.Message;
 import br.org.funcate.terramobile.util.ResourceUtil;
+import br.org.funcate.terramobile.util.Util;
 
 /**
  * Created by marcelo on 6/10/15.
  */
-public class ProjectListAdapter extends ArrayAdapter<Project> {
+public class ProjectListAdapter extends ArrayAdapter<Project> implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener{
     private Context context;
 
     private ArrayList projectList;
+
+    private DownloadTask downloadTask;
 
     public ProjectListAdapter(Context context, int textViewResourceId, ArrayList<Project> projectList) {
         super(context, textViewResourceId, projectList);
@@ -37,6 +47,10 @@ public class ProjectListAdapter extends ArrayAdapter<Project> {
     public View getView(int position, View convertView, final ViewGroup parent) {
         LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         convertView = layoutInflater.inflate(R.layout.project_item, null);
+
+        ((ListView)parent).setOnItemClickListener(this);
+        ((ListView)parent).setOnItemLongClickListener(this);
+
         TextView tVProject = (TextView) convertView.findViewById(R.id.tVProjectName);
         ImageView iVDownloaded = (ImageView) convertView.findViewById(R.id.iVDownloaded);
 //        ImageView iVUpdated = (ImageView)convertView.findViewById(R.id.iVUpdated);
@@ -56,7 +70,8 @@ public class ProjectListAdapter extends ArrayAdapter<Project> {
         }
 
         File directory = ResourceUtil.getDirectory(context.getResources().getString(R.string.app_workspace_dir));
-        if (ResourceUtil.getGeoPackageByName(directory, context.getResources().getString(R.string.geopackage_extension), project.toString()) != null) {
+        File projectFile = ResourceUtil.getGeoPackageByName(directory, context.getResources().getString(R.string.geopackage_extension), project.toString());
+        if(projectFile != null){
             rBCurrentProject.setEnabled(true);
             iVDownloaded.setImageResource(R.drawable.downloaded);
         }
@@ -81,5 +96,109 @@ public class ProjectListAdapter extends ArrayAdapter<Project> {
         });
 
         return convertView;
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        File projectPath = ResourceUtil.getDirectory(context.getString(R.string.app_workspace_dir));
+        final String destinationFilePath = projectPath.getPath();
+
+        Project project = (Project) parent.getItemAtPosition(position);
+        final String prjName = project.toString();
+
+        SettingsDAO settingsDAO = new SettingsDAO(context);
+        final Settings settings = settingsDAO.getById(1);
+
+        if (ResourceUtil.getGeoPackageByName(projectPath, context.getResources().getString(R.string.geopackage_extension), project.toString()) != null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(
+                    context);
+            builder.setTitle(context.getString(R.string.project_remove_title));
+            builder.setMessage(context.getString(R.string.project_download_confirm));
+            builder.setCancelable(false);
+            builder.setPositiveButton(R.string.yes,
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            if (Util.isConnected(context)) {
+                                if (settings != null)
+                                    downloadTask = (DownloadTask) new DownloadTask(destinationFilePath + "/" + prjName, destinationFilePath, (MainActivity) context).execute(settings.getUrl() + "/getprojects/userName/" + prjName);
+//                              else
+//                                   Message.showErrorMessage(context, R.string.error, R.string.not_logged);
+                            } else
+                                Message.showErrorMessage((MainActivity) context, R.string.error, R.string.no_connection);
+                        }
+                    });
+            builder.setNegativeButton(R.string.no,
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }
+                    });
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
+        }
+        else {
+            if (settings != null)
+                downloadTask = (DownloadTask) new DownloadTask(destinationFilePath + "/" + prjName, destinationFilePath, (MainActivity) context).execute(settings.getUrl() + "/getprojects/userName/" + prjName);
+//                else
+//                    Message.showErrorMessage(context, R.string.error, R.string.not_logged);
+        }
+    }
+
+    @Override
+    public boolean onItemLongClick(final AdapterView<?> parent, View view, final int position, long id) {
+        String prjName = parent.getItemAtPosition(position).toString();
+        File directory = ResourceUtil.getDirectory(context.getResources().getString(R.string.app_workspace_dir));
+        File file = ResourceUtil.getGeoPackageByName(directory, context.getString(R.string.geopackage_extension), prjName);
+        if (file != null){
+            AlertDialog.Builder builder = new AlertDialog.Builder(
+                    context);
+            builder.setTitle(context.getString(R.string.project_remove_title));
+            builder.setMessage(context.getString(R.string.project_remove_confirm));
+            builder.setCancelable(false);
+            builder.setPositiveButton(R.string.yes,
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            String fileName = parent.getItemAtPosition(position).toString();
+                            String projectName = fileName.substring(0, fileName.indexOf('.'));
+                            File directory = ResourceUtil.getDirectory(context.getResources().getString(R.string.app_workspace_dir));
+                            File file = ResourceUtil.getGeoPackageByName(directory, context.getString(R.string.geopackage_extension), fileName);
+                            ProjectDAO projectDAO = new ProjectDAO(context);
+                            Project project = projectDAO.getByName(projectName);
+                            if (project != null && file != null) {
+                                if (projectDAO.remove(project.getId())) {
+                                    if (file.delete()) {
+                                        if (((MainActivity) context).getProject().toString().equals(projectName)) {
+                                            if (ResourceUtil.getGeoPackageFiles(directory, context.getString(R.string.geopackage_extension)).size() > 0)
+                                                ((MainActivity) context).setProject(projectDAO.getFirstProject());
+                                            else
+                                                ((MainActivity) context).setProject(null);
+                                        }
+                                        Message.showSuccessMessage((MainActivity)context, R.string.success, R.string.project_removed_successfully);
+                                        ((ProjectListAdapter) parent.getAdapter()).notifyDataSetChanged();
+                                    } else {
+                                        Message.showSuccessMessage((MainActivity)context, R.string.success, R.string.error_removing_project);
+                                        projectDAO.insert(project);
+                                    }
+                                } else
+                                    Message.showSuccessMessage((MainActivity)context, R.string.success, R.string.error_removing_project);
+                            } else
+                                Message.showSuccessMessage((MainActivity)context, R.string.success, R.string.error_removing_project);
+
+                        }
+                    });
+            builder.setNegativeButton(R.string.no,
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }
+                    });
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
+        }
+        return false;
+    }
+
+    public DownloadTask getDownloadTask() {
+        return downloadTask;
     }
 }

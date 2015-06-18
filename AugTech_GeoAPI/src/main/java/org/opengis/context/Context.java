@@ -15,11 +15,11 @@
  */
 package org.opengis.context;
 
+import com.vividsolutions.jts.geom.Geometry;
+
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
-
-import com.vividsolutions.jts.geom.Geometry;
 
 /** This class is the overall container class for the context document
  * 

@@ -15,11 +15,11 @@
  */
 package com.augtech.geoapi.context;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.opengis.context.Content;
 import org.opengis.context.Operation;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /** An implementation of the {@link Operation} class for 
  * storing offering operations.

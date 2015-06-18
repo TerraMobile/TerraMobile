@@ -15,7 +15,6 @@
  */
 package org.opengis.context;
 
-import java.net.URI;
 import java.util.Map;
 
 /** Definition of the operation either to get the information or 

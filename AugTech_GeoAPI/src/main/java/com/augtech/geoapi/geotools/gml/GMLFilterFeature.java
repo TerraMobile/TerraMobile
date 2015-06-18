@@ -16,8 +16,11 @@
  */
 package com.augtech.geoapi.geotools.gml;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.augtech.geoapi.feature.NameImpl;
+import com.augtech.geoapi.feature.SimpleFeatureImpl;
+import com.augtech.geoapi.feature.type.AttributeTypeImpl;
+import com.augtech.geoapi.feature.type.SimpleFeatureTypeImpl;
+import com.vividsolutions.jts.geom.Geometry;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -27,11 +30,8 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.XMLFilterImpl;
 
-import com.augtech.geoapi.feature.NameImpl;
-import com.augtech.geoapi.feature.SimpleFeatureImpl;
-import com.augtech.geoapi.feature.type.AttributeTypeImpl;
-import com.augtech.geoapi.feature.type.SimpleFeatureTypeImpl;
-import com.vividsolutions.jts.geom.Geometry;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**

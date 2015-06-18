@@ -17,9 +17,9 @@
  */
 package br.org.funcate.dynamicforms.views;
 
-import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.app.Fragment;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
@@ -33,8 +33,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import br.org.funcate.dynamicforms.R;
 import br.org.funcate.dynamicforms.FormDatePickerFragment;
+import br.org.funcate.dynamicforms.R;
 import br.org.funcate.dynamicforms.util.TimeUtilities;
 
 import static br.org.funcate.dynamicforms.FormUtilities.COLON;

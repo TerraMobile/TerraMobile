@@ -15,6 +15,18 @@
  */
 package com.augtech.geoapi.feature;
 
+import com.augtech.geoapi.feature.type.AttributeTypeImpl;
+import com.augtech.geoapi.feature.type.SimpleFeatureTypeImpl;
+import com.augtech.geoapi.geometry.BoundingBoxImpl;
+import com.augtech.geoapi.geometry.OSMTile;
+import com.vividsolutions.jts.geom.Geometry;
+
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.AttributeType;
+import org.opengis.feature.type.Name;
+import org.opengis.geometry.BoundingBox;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -26,18 +38,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
-
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.AttributeType;
-import org.opengis.feature.type.Name;
-import org.opengis.geometry.BoundingBox;
-
-import com.augtech.geoapi.feature.type.AttributeTypeImpl;
-import com.augtech.geoapi.feature.type.SimpleFeatureTypeImpl;
-import com.augtech.geoapi.geometry.BoundingBoxImpl;
-import com.augtech.geoapi.geometry.OSMTile;
-import com.vividsolutions.jts.geom.Geometry;
 
 /** The base collection for storing all of awila's geographically
  * based features. Uses a {@link CopyOnWriteArrayList} to ensure their is no

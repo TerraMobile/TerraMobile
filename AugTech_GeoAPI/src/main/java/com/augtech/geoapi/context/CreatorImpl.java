@@ -15,12 +15,12 @@
  */
 package com.augtech.geoapi.context;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.opengis.context.Creator;
 import org.opengis.context.CreatorApplication;
 import org.opengis.context.CreatorDisplay;
+
+import java.util.HashMap;
+import java.util.Map;
 /**
  * 
  * @author Augmented Technologies Ltd.

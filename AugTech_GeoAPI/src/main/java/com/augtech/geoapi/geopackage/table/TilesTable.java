@@ -15,19 +15,6 @@
  */
 package com.augtech.geoapi.geopackage.table;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.logging.Level;
-
-import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.AttributeType;
-import org.opengis.feature.type.GeometryType;
-import org.opengis.geometry.BoundingBox;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
 import com.augtech.geoapi.feature.NameImpl;
 import com.augtech.geoapi.feature.type.AttributeTypeImpl;
 import com.augtech.geoapi.feature.type.GeometryDescriptorImpl;
@@ -41,6 +28,19 @@ import com.augtech.geoapi.geopackage.GpkgRecords;
 import com.augtech.geoapi.geopackage.GpkgTable;
 import com.augtech.geoapi.referncing.CoordinateReferenceSystemImpl;
 import com.vividsolutions.jts.geom.Geometry;
+
+import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.AttributeType;
+import org.opengis.feature.type.GeometryType;
+import org.opengis.geometry.BoundingBox;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Level;
 
 
 public class TilesTable extends GpkgTable {

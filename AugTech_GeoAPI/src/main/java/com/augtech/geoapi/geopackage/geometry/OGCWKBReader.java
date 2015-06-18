@@ -36,8 +36,6 @@
  */
 package com.augtech.geoapi.geopackage.geometry;
 
-import java.io.IOException;
-
 import com.augtech.geoapi.geopackage.GeoPackage;
 import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.Geometry;
@@ -58,6 +56,8 @@ import com.vividsolutions.jts.io.InStream;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKBConstants;
 import com.vividsolutions.jts.io.WKBReader;
+
+import java.io.IOException;
 /**
  * Reads a {@link Geometry}from a byte stream in to OGC Well-Known Binary format.
  * Supports use of an {@link InStream}, which allows easy use

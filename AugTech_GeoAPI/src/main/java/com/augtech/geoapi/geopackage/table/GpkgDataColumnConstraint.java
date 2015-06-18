@@ -15,13 +15,13 @@
  */
 package com.augtech.geoapi.geopackage.table;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.augtech.geoapi.geopackage.GeoPackage;
 import com.augtech.geoapi.geopackage.GpkgField;
 import com.augtech.geoapi.geopackage.GpkgRecords;
 import com.augtech.geoapi.geopackage.GpkgTable;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /** Contains data to specify restrictions on basic data type column values.
  * The constraint_name column is referenced by constraint_name column in the 

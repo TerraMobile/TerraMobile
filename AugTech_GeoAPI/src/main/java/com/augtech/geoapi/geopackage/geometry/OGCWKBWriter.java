@@ -36,9 +36,6 @@
  */
 package com.augtech.geoapi.geopackage.geometry;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-
 import com.augtech.geoapi.geopackage.GeoPackage;
 import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.Geometry;
@@ -55,6 +52,9 @@ import com.vividsolutions.jts.io.OutputStreamOutStream;
 import com.vividsolutions.jts.io.WKBConstants;
 import com.vividsolutions.jts.io.WKBWriter;
 import com.vividsolutions.jts.util.Assert;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 /**
  * Writes a {@link Geometry} into ISO/OGC Well-Known Binary format.

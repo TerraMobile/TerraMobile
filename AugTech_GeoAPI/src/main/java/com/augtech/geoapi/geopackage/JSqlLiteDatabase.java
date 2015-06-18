@@ -1,6 +1,9 @@
 package com.augtech.geoapi.geopackage;
 
 
+import com.augtech.geoapi.geopackage.ICursor;
+import com.augtech.geoapi.geopackage.ISQLDatabase;
+
 import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
@@ -12,9 +15,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import com.augtech.geoapi.geopackage.ICursor;
-import com.augtech.geoapi.geopackage.ISQLDatabase;
 
 /** An implementation of ISQLDatabase for the org.sqlite.JDBC driver.
  * The sqlite-jdbc-3.7.2 library must be added to the end project which can be 

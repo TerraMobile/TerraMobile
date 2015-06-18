@@ -15,10 +15,10 @@
  */
 package com.augtech.geoapi.context;
 
+import org.opengis.context.ContextURI;
+
 import java.net.URI;
 import java.net.URISyntaxException;
-
-import org.opengis.context.ContextURI;
 /** An OWS Context specific URI holding mime-type and title information
  * as well as the URI. If an element in the document cannot contain these
  * additional elements then a standard URI is used.

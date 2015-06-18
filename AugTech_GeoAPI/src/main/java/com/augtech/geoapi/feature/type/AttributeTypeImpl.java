@@ -15,14 +15,14 @@
  */
 package com.augtech.geoapi.feature.type;
 
-import java.util.List;
+import com.augtech.geoapi.feature.NameImpl;
 
 import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.util.InternationalString;
 
-import com.augtech.geoapi.feature.NameImpl;
+import java.util.List;
 
 /** Used to define an attribute, including it's name and the 
  * class/ type of data it is.

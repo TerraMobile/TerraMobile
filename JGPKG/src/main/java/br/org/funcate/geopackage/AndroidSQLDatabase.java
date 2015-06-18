@@ -15,10 +15,6 @@
  */
 package br.org.funcate.geopackage;
 
-import java.io.File;
-import java.util.List;
-import java.util.Map;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -26,6 +22,10 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import com.augtech.geoapi.geopackage.ICursor;
 import com.augtech.geoapi.geopackage.ISQLDatabase;
+
+import java.io.File;
+import java.util.List;
+import java.util.Map;
 /** An Android specific implementation of {@link com.augtech.geoapi.geopackage.ISQLDatabase} to
  * interact with the standard Android SQLite database implementation.<p>
  * Other SQLite implementation should utilise similar classes for the actual

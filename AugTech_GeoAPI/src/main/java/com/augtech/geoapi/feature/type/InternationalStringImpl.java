@@ -15,9 +15,9 @@
  */
 package com.augtech.geoapi.feature.type;
 
-import java.util.Locale;
-
 import org.opengis.util.InternationalString;
+
+import java.util.Locale;
 
 public class InternationalStringImpl implements org.opengis.util.InternationalString {
 	private String string;

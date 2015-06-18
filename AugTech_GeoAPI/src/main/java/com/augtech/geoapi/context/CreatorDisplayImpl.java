@@ -15,10 +15,10 @@
  */
 package com.augtech.geoapi.context;
 
+import org.opengis.context.CreatorDisplay;
+
 import java.util.HashMap;
 import java.util.Map;
-
-import org.opengis.context.CreatorDisplay;
 
 /**
  * 

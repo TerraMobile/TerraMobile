@@ -15,12 +15,11 @@
  */
 package com.augtech.geoapi.context.xml;
 
+import org.opengis.context.ContextFilter;
+
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.StringTokenizer;
-
-import org.opengis.context.ContextFilter;
 
 /** A FilterInputStream that enables the buffering of in-line content
  * whilst the Context document is being parsed, enabling HTML, GML etc

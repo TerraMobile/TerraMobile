@@ -15,6 +15,12 @@
  */
 package com.augtech.geoapi.context;
 
+import com.augtech.geoapi.utils.WebRequest;
+
+import org.opengis.context.Content;
+import org.opengis.context.Offering;
+import org.opengis.context.Operation;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -27,12 +33,6 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-
-import org.opengis.context.Content;
-import org.opengis.context.Offering;
-import org.opengis.context.Operation;
-
-import com.augtech.geoapi.utils.WebRequest;
 
 /** A few utilities to aid processing Context Document information
  * 

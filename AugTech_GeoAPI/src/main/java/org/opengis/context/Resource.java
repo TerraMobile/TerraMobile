@@ -15,11 +15,11 @@
  */
 package org.opengis.context;
 
+import com.vividsolutions.jts.geom.Geometry;
+
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
-
-import com.vividsolutions.jts.geom.Geometry;
 
 /** This class describes the resource elements which supply the 
  * information layers used in the Context Document. Resource, 

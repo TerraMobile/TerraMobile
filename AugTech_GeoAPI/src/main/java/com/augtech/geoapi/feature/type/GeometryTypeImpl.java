@@ -15,7 +15,9 @@
  */
 package com.augtech.geoapi.feature.type;
 
-import java.util.List;
+import com.augtech.geoapi.feature.SimpleFeatureImpl;
+import com.augtech.geoapi.referncing.CoordinateReferenceSystemImpl;
+import com.vividsolutions.jts.geom.Geometry;
 
 import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.GeometryType;
@@ -24,9 +26,7 @@ import org.opengis.filter.Filter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.InternationalString;
 
-import com.augtech.geoapi.feature.SimpleFeatureImpl;
-import com.augtech.geoapi.referncing.CoordinateReferenceSystemImpl;
-import com.vividsolutions.jts.geom.Geometry;
+import java.util.List;
 
 /** A special extension of an {@link AttributeTypeImpl} used to define feature geometries
  * <p>

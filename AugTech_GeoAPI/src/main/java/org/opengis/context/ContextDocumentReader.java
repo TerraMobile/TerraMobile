@@ -15,12 +15,12 @@
  */
 package org.opengis.context;
 
-import java.io.InputStream;
-import java.util.Set;
+import com.augtech.geoapi.context.xml.ContextFilterImpl;
 
 import org.xml.sax.helpers.XMLFilterImpl;
 
-import com.augtech.geoapi.context.xml.ContextFilterImpl;
+import java.io.InputStream;
+import java.util.Set;
 /** An interface to read a context document through an XML Parser,
  * such as SAX
  * 

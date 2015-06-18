@@ -15,16 +15,16 @@
  */
 package com.augtech.geoapi.geometry;
 
-import org.opengis.geometry.BoundingBox;
-import org.opengis.geometry.DirectPosition;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.TransformException;
-
 import com.augtech.geoapi.referncing.CoordinateReferenceSystemImpl;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
+
+import org.opengis.geometry.BoundingBox;
+import org.opengis.geometry.DirectPosition;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.TransformException;
 /** Extends the JTS {@link Envelope} to include a spatial reference name,
  * z coordinate and projection methods.<br>
  * <b>Note</b> that if the projection methods {@link #toBounds(CoordinateReferenceSystem)}, 

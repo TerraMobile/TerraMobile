@@ -15,10 +15,10 @@
  */
 package com.augtech.geoapi.context;
 
+import org.opengis.context.Content;
+
 import java.net.URI;
 import java.util.Map;
-
-import org.opengis.context.Content;
 
 /** Content is either in-line content or a URI reference to on-line
  * content that has a specific mime-type.

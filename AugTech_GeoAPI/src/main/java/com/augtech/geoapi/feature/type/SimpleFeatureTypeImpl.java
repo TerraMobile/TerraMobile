@@ -15,11 +15,9 @@
  */
 package com.augtech.geoapi.feature.type;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.augtech.geoapi.feature.NameImpl;
+import com.augtech.geoapi.referncing.CoordinateReferenceSystemImpl;
+import com.vividsolutions.jts.geom.Geometry;
 
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -34,9 +32,11 @@ import org.opengis.filter.Filter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.InternationalString;
 
-import com.augtech.geoapi.feature.NameImpl;
-import com.augtech.geoapi.referncing.CoordinateReferenceSystemImpl;
-import com.vividsolutions.jts.geom.Geometry;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /** An implementation of the GeoAPI {@link SimpleFeatureType}.<p>
  * A FeatureType describes the basic requirements for a set of Features such 

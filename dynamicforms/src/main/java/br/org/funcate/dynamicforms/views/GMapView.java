@@ -19,24 +19,10 @@ package br.org.funcate.dynamicforms.views;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.net.Uri;
 import android.util.AttributeSet;
 import android.view.View;
-import android.view.ViewGroup.LayoutParams;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import java.io.File;
-
-import br.org.funcate.dynamicforms.R;
-import br.org.funcate.dynamicforms.images.ImageUtilities;
-import br.org.funcate.dynamicforms.util.ResourcesManager;
-
-import static br.org.funcate.dynamicforms.FormUtilities.COLON;
-import static br.org.funcate.dynamicforms.FormUtilities.UNDERSCORE;
 
 /**
  * A custom map view.

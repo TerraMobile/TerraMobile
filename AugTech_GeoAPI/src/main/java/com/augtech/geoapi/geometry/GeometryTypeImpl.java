@@ -16,7 +16,7 @@
  */
 package com.augtech.geoapi.geometry;
 
-import java.util.List;
+import com.augtech.geoapi.feature.type.AttributeTypeImpl;
 
 import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.GeometryType;
@@ -25,7 +25,7 @@ import org.opengis.filter.Filter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.InternationalString;
 
-import com.augtech.geoapi.feature.type.AttributeTypeImpl;
+import java.util.List;
 
 /**
  * AttributeType for hold geometry implementations, maintains CRS information.

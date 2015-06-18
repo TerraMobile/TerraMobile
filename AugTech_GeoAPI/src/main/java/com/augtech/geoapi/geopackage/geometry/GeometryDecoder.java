@@ -15,13 +15,13 @@
  */
 package com.augtech.geoapi.geopackage.geometry;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-
 import com.augtech.geoapi.geopackage.GeoPackage;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.ByteOrderValues;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 
 /** An abstract class for processing byte[] data from a GeoPacakge
  * GEOMETRY field into JTS Geometry.

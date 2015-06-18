@@ -15,18 +15,18 @@
  */
 package com.augtech.geoapi.context.xml;
 
-import java.io.InputStream;
-import java.util.HashSet;
-import java.util.Set;
+import com.augtech.geoapi.geotools.gml.GMLFilterDocument;
+import com.augtech.geoapi.geotools.gml.GMLFilterGeometry;
+import com.augtech.geoapi.geotools.gml.GMLHandlerJTS;
+import com.vividsolutions.jts.geom.Geometry;
 
 import org.opengis.context.Context;
 import org.opengis.context.ContextDocumentReader;
 import org.xml.sax.helpers.XMLFilterImpl;
 
-import com.augtech.geoapi.geotools.gml.GMLFilterDocument;
-import com.augtech.geoapi.geotools.gml.GMLFilterGeometry;
-import com.augtech.geoapi.geotools.gml.GMLHandlerJTS;
-import com.vividsolutions.jts.geom.Geometry;
+import java.io.InputStream;
+import java.util.HashSet;
+import java.util.Set;
 /** An implementation of {@link ContextDocumentReader} to process
  * an OWS Context document into a {@link Context} implementation using
  * a SAX Parser. This class uses an amended version of the GeoTools

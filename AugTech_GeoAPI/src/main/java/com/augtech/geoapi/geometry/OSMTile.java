@@ -1,15 +1,15 @@
 package com.augtech.geoapi.geometry;
 
+import com.augtech.geoapi.referncing.CoordinateReferenceSystemImpl;
+import com.vividsolutions.jts.geom.Coordinate;
+
+import org.opengis.geometry.BoundingBox;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import org.opengis.geometry.BoundingBox;
-
-import com.augtech.geoapi.referncing.CoordinateReferenceSystemImpl;
-import com.vividsolutions.jts.geom.Coordinate;
 
 public class OSMTile {
 	/** Standard pixel size for a 256*256 raster at zoom level 18 for a Spherical Mercator

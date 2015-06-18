@@ -15,12 +15,15 @@
  */
 package com.augtech.geoapi.context.xml;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.augtech.geoapi.context.AuthorImpl;
+import com.augtech.geoapi.context.ContentImpl;
+import com.augtech.geoapi.context.ContextURIImpl;
+import com.augtech.geoapi.context.ContextValueImpl;
+import com.augtech.geoapi.context.FolderImpl;
+import com.augtech.geoapi.context.OfferingImpl;
+import com.augtech.geoapi.context.OperationImpl;
+import com.augtech.geoapi.context.ResourceImpl;
+import com.augtech.geoapi.context.StyleSetImpl;
 
 import org.opengis.context.Author;
 import org.opengis.context.Content;
@@ -35,15 +38,12 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.XMLFilterImpl;
 
-import com.augtech.geoapi.context.AuthorImpl;
-import com.augtech.geoapi.context.ContentImpl;
-import com.augtech.geoapi.context.ContextURIImpl;
-import com.augtech.geoapi.context.ContextValueImpl;
-import com.augtech.geoapi.context.FolderImpl;
-import com.augtech.geoapi.context.OfferingImpl;
-import com.augtech.geoapi.context.OperationImpl;
-import com.augtech.geoapi.context.ResourceImpl;
-import com.augtech.geoapi.context.StyleSetImpl;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 /** A SAX XMLFilterImpl specifically for Context Document <Entry>'s
  * 
  * @author Augmented Technologies Ltd.

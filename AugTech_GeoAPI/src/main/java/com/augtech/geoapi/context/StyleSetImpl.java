@@ -15,15 +15,15 @@
  */
 package com.augtech.geoapi.context;
 
+import org.opengis.context.Content;
+import org.opengis.context.StyleSet;
+
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.opengis.context.Content;
-import org.opengis.context.StyleSet;
 
 /**
  * 

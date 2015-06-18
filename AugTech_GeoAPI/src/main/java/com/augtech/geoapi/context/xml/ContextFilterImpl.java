@@ -15,21 +15,13 @@
  */
 package com.augtech.geoapi.context.xml;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.StringReader;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
+import com.augtech.geoapi.context.AuthorImpl;
+import com.augtech.geoapi.context.ContextImpl;
+import com.augtech.geoapi.context.ContextURIImpl;
+import com.augtech.geoapi.context.ContextValueImpl;
+import com.augtech.geoapi.context.CreatorApplicationImpl;
+import com.augtech.geoapi.context.CreatorDisplayImpl;
+import com.vividsolutions.jts.geom.Geometry;
 
 import org.opengis.context.Author;
 import org.opengis.context.Context;
@@ -45,13 +37,21 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.ParserAdapter;
 import org.xml.sax.helpers.XMLFilterImpl;
 
-import com.augtech.geoapi.context.AuthorImpl;
-import com.augtech.geoapi.context.ContextImpl;
-import com.augtech.geoapi.context.ContextURIImpl;
-import com.augtech.geoapi.context.ContextValueImpl;
-import com.augtech.geoapi.context.CreatorApplicationImpl;
-import com.augtech.geoapi.context.CreatorDisplayImpl;
-import com.vividsolutions.jts.geom.Geometry;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.StringReader;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 
 /** A SAX Parser implementation for processing a Context document in
  * to the {@link Context} API classes.

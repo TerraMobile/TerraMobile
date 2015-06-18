@@ -15,23 +15,6 @@
  */
 package com.augtech.geoapi.geopackage.table;
 
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.AttributeType;
-import org.opengis.feature.type.GeometryDescriptor;
-import org.opengis.feature.type.GeometryType;
-import org.opengis.feature.type.Name;
-import org.opengis.geometry.BoundingBox;
-
 import com.augtech.geoapi.feature.NameImpl;
 import com.augtech.geoapi.feature.type.AttributeTypeImpl;
 import com.augtech.geoapi.feature.type.GeometryDescriptorImpl;
@@ -49,6 +32,23 @@ import com.augtech.geoapi.geopackage.table.GpkgDataColumnConstraint.DataColumnCo
 import com.augtech.geoapi.geopackage.table.GpkgExtensions.Extension;
 import com.augtech.geoapi.referncing.CoordinateReferenceSystemImpl;
 import com.vividsolutions.jts.geom.Geometry;
+
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.AttributeType;
+import org.opengis.feature.type.GeometryDescriptor;
+import org.opengis.feature.type.GeometryType;
+import org.opengis.feature.type.Name;
+import org.opengis.geometry.BoundingBox;
+
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
 
 /** An extension to the standard {@link GpkgTable} that provides specific functionality
  * relating to a vector feature table within the GeoPackage as well as an enclosed

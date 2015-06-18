@@ -16,12 +16,12 @@
  */
 package com.augtech.geoapi.feature.type;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.feature.type.PropertyType;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 

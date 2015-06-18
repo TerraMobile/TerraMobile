@@ -2,8 +2,6 @@ package br.org.funcate.extended.model;
 
 import android.support.v4.util.ArrayMap;
 
-import java.util.ArrayList;
-
 /**
  * Created by Andre Carvalho on 28/05/15.
  */

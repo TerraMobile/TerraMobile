@@ -15,6 +15,13 @@
  */
 package com.augtech.geoapi.feature;
 
+import com.augtech.geoapi.geopackage.GeoPackage;
+
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.FeatureType;
+import org.opengis.feature.type.Name;
+
 import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -23,13 +30,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.FeatureType;
-import org.opengis.feature.type.Name;
-
-import com.augtech.geoapi.geopackage.GeoPackage;
 
 /** An abstract class for loading and creating {@link SimpleFeature} from local storage, once 
  * they have been downloaded from the server. This class processes saved data in to a 

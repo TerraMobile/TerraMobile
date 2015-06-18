@@ -15,12 +15,12 @@
  */
 package com.augtech.geoapi.geopackage.table;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.augtech.geoapi.geopackage.GeoPackage;
 import com.augtech.geoapi.geopackage.GpkgField;
 import com.augtech.geoapi.geopackage.GpkgTable;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 

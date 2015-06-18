@@ -15,10 +15,7 @@
  */
 package com.augtech.geoapi.context;
 
-import java.net.URI;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.vividsolutions.jts.geom.Geometry;
 
 import org.opengis.context.Author;
 import org.opengis.context.Context;
@@ -29,7 +26,10 @@ import org.opengis.context.CreatorApplication;
 import org.opengis.context.CreatorDisplay;
 import org.opengis.context.Resource;
 
-import com.vividsolutions.jts.geom.Geometry;
+import java.net.URI;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /** An implementation of the {@link Context} document
  * 

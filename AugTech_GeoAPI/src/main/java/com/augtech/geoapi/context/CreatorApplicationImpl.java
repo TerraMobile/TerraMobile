@@ -15,10 +15,10 @@
  */
 package com.augtech.geoapi.context;
 
+import org.opengis.context.CreatorApplication;
+
 import java.net.URI;
 import java.net.URISyntaxException;
-
-import org.opengis.context.CreatorApplication;
 
 /**
  * 

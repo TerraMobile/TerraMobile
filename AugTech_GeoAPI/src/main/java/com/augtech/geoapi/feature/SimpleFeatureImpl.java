@@ -15,13 +15,11 @@
  */
 package com.augtech.geoapi.feature;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.augtech.geoapi.feature.type.SimpleFeatureTypeImpl;
+import com.augtech.geoapi.geometry.BoundingBoxImpl;
+import com.vividsolutions.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
 
 import org.opengis.feature.GeometryAttribute;
 import org.opengis.feature.IllegalAttributeException;
@@ -35,11 +33,13 @@ import org.opengis.feature.type.Name;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.geometry.BoundingBox;
 
-import com.augtech.geoapi.feature.type.SimpleFeatureTypeImpl;
-import com.augtech.geoapi.geometry.BoundingBoxImpl;
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /** A general implementation of the OGC SimpleFeature which holds attribution,
  *  geometry and user data.

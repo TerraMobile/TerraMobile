@@ -15,12 +15,12 @@
  */
 package com.augtech.geoapi.feature.type;
 
+import com.augtech.geoapi.feature.SimpleFeatureImpl;
+
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.GeometryType;
 import org.opengis.feature.type.Name;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
-import com.augtech.geoapi.feature.SimpleFeatureImpl;
 /** A simple implementation of a Geometry Descriptor used to define the type of Geometry
  * that a {@link SimpleFeatureImpl} would require.
  *  <p>

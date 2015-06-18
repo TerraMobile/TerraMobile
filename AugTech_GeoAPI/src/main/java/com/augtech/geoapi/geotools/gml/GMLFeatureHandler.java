@@ -1,9 +1,9 @@
 package com.augtech.geoapi.geotools.gml;
 
-import java.util.ArrayList;
-
 import org.opengis.feature.simple.SimpleFeature;
 import org.xml.sax.helpers.XMLFilterImpl;
+
+import java.util.ArrayList;
 
 
 

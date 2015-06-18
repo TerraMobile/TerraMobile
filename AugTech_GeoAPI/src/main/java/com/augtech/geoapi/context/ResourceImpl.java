@@ -15,11 +15,7 @@
  */
 package com.augtech.geoapi.context;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.vividsolutions.jts.geom.Geometry;
 
 import org.opengis.context.Author;
 import org.opengis.context.Content;
@@ -31,7 +27,11 @@ import org.opengis.context.Operation;
 import org.opengis.context.Resource;
 import org.opengis.context.StyleSet;
 
-import com.vividsolutions.jts.geom.Geometry;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 /** A Resource (Entry) implementation for storing all Entry details
  * 
  * @author Augmented Technologies Ltd.

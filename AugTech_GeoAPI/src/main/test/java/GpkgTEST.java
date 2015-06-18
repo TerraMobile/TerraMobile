@@ -1,3 +1,28 @@
+import com.augtech.geoapi.feature.FeatureCollection;
+import com.augtech.geoapi.feature.NameImpl;
+import com.augtech.geoapi.feature.loader.GML2_1;
+import com.augtech.geoapi.feature.loader.RasterTile;
+import com.augtech.geoapi.feature.type.AttributeTypeImpl;
+import com.augtech.geoapi.feature.type.GeometryDescriptorImpl;
+import com.augtech.geoapi.feature.type.GeometryTypeImpl;
+import com.augtech.geoapi.feature.type.SimpleFeatureTypeImpl;
+import com.augtech.geoapi.geometry.BoundingBoxImpl;
+import com.augtech.geoapi.geopackage.GeoPackage;
+import com.augtech.geoapi.geopackage.ISQLDatabase;
+import com.augtech.geoapi.geopackage.geometry.StandardGeometryDecoder;
+import com.augtech.geoapi.geopackage.table.FeaturesTable;
+import com.augtech.geoapi.geopackage.table.TilesTable;
+import com.augtech.geoapi.referncing.CoordinateReferenceSystemImpl;
+import com.vividsolutions.jts.geom.Geometry;
+
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.AttributeType;
+import org.opengis.feature.type.GeometryType;
+import org.opengis.feature.type.Name;
+import org.opengis.geometry.BoundingBox;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -9,32 +34,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.AttributeType;
-import org.opengis.feature.type.GeometryType;
-import org.opengis.feature.type.Name;
-import org.opengis.geometry.BoundingBox;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
-import com.augtech.geoapi.feature.FeatureCollection;
-import com.augtech.geoapi.feature.NameImpl;
-import com.augtech.geoapi.feature.loader.GML2_1;
-import com.augtech.geoapi.feature.loader.RasterTile;
-import com.augtech.geoapi.feature.type.AttributeTypeImpl;
-import com.augtech.geoapi.feature.type.GeometryDescriptorImpl;
-import com.augtech.geoapi.feature.type.GeometryTypeImpl;
-import com.augtech.geoapi.feature.type.SimpleFeatureTypeImpl;
-import com.augtech.geoapi.geometry.BoundingBoxImpl;
-import com.augtech.geoapi.geopackage.geometry.StandardGeometryDecoder;
-import com.augtech.geoapi.geopackage.table.FeaturesTable;
-import com.augtech.geoapi.geopackage.table.TilesTable;
-import com.augtech.geoapi.referncing.CoordinateReferenceSystemImpl;
-import com.augtech.geoapi.geopackage.ISQLDatabase;
-import com.augtech.geoapi.geopackage.GeoPackage;
-
-import com.vividsolutions.jts.geom.Geometry;
 
 /** A test layer that utilises some of the Aug-Tech GeoAPI facilities 
  * for loading data and then testing the Java GeoPackage implementation.

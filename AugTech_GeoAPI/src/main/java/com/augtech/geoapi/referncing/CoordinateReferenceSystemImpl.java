@@ -15,8 +15,7 @@
  */
 package com.augtech.geoapi.referncing;
 
-import java.util.Collection;
-import java.util.Set;
+import com.augtech.geoapi.feature.type.GeometryTypeImpl;
 
 import org.opengis.metadata.extent.Extent;
 import org.opengis.referencing.ReferenceIdentifier;
@@ -25,7 +24,8 @@ import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.util.GenericName;
 import org.opengis.util.InternationalString;
 
-import com.augtech.geoapi.feature.type.GeometryTypeImpl;
+import java.util.Collection;
+import java.util.Set;
 
 public class CoordinateReferenceSystemImpl implements CoordinateReferenceSystem {
 	ReferenceIdentifier identifier = null;

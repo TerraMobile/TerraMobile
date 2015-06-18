@@ -15,16 +15,6 @@
  */
 package com.augtech.geoapi.geopackage;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.opengis.geometry.BoundingBox;
-
 import com.augtech.geoapi.geometry.BoundingBoxImpl;
 import com.augtech.geoapi.geopackage.GeoPackage.JavaType;
 import com.augtech.geoapi.geopackage.table.FeatureField;
@@ -35,6 +25,16 @@ import com.augtech.geoapi.geopackage.table.GpkgExtensions;
 import com.augtech.geoapi.geopackage.table.GpkgExtensions.Extension;
 import com.augtech.geoapi.geopackage.table.TilesTable;
 import com.augtech.geoapi.referncing.CoordinateReferenceSystemImpl;
+
+import org.opengis.geometry.BoundingBox;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /** An abstract class to create, query and update a table within the GeoPackage.
  * All system tables extend this class, as do Feature and Tile tables. Implementors

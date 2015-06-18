@@ -16,11 +16,11 @@
  */
 package com.augtech.geoapi.feature.type;
 
-import java.util.Map;
-
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.Name;
+
+import java.util.Map;
 
 /**
  * 

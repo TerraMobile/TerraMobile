@@ -15,17 +15,17 @@
  */
 package com.augtech.geoapi.context;
 
+import org.opengis.context.Content;
+import org.opengis.context.Offering;
+import org.opengis.context.Operation;
+import org.opengis.context.StyleSet;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
-import org.opengis.context.Content;
-import org.opengis.context.Offering;
-import org.opengis.context.Operation;
-import org.opengis.context.StyleSet;
 
 /** An OWS Context Offering
  * 

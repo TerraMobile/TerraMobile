@@ -16,9 +16,9 @@
  */
 package com.augtech.geoapi.geotools.gml;
 
-import java.util.StringTokenizer;
-
 import org.xml.sax.SAXException;
+
+import java.util.StringTokenizer;
 
 
 /**

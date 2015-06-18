@@ -69,6 +69,8 @@ public class DownloadTask extends AsyncTask<String, String, Boolean> {
             }
             URL url = new URL(urlToDownload[0]);
             URLConnection urlConnection = url.openConnection();
+            urlConnection.setConnectTimeout(5000);
+            urlConnection.setReadTimeout(5000);
             urlConnection.connect();
 
             int totalSize = urlConnection.getContentLength();
