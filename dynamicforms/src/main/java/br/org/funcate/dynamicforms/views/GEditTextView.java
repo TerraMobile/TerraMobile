@@ -28,8 +28,8 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import br.org.funcate.dynamicforms.R;
 import br.org.funcate.dynamicforms.FormUtilities;
+import br.org.funcate.dynamicforms.R;
 
 import static br.org.funcate.dynamicforms.FormUtilities.COLON;
 import static br.org.funcate.dynamicforms.FormUtilities.UNDERSCORE;

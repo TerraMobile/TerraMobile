@@ -240,16 +240,8 @@ public class MainActivity extends FragmentActivity {
         // Handle action buttons
         switch(item.getItemId()) {
             case R.id.project:
-                ConnectivityManager cm = (ConnectivityManager)this.getSystemService(CONNECTIVITY_SERVICE);
-                int wifi = ConnectivityManager.TYPE_WIFI;
-                int mobile = ConnectivityManager.TYPE_MOBILE;
-                if (cm.getNetworkInfo(mobile).isConnected() || cm.getNetworkInfo(wifi).isConnected()) {
-                    projectListFragment = new ProjectListFragment();
-                    projectListFragment.show(getFragmentManager(), "packageList");
-                }
-                else{
-                    Message.showErrorMessage(this, R.string.error, R.string.no_connection);
-                }
+                projectListFragment = new ProjectListFragment();
+                projectListFragment.show(getFragmentManager(), "packageList");
                 return true;
             case R.id.acquire_new_point:
                 FragmentManager fm = getSupportFragmentManager();

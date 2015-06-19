@@ -2,7 +2,10 @@ package br.org.funcate.terramobile.util;
 
 
 
+import android.content.Context;
 import android.graphics.ColorMatrix;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 
 import java.util.HashMap;
 import java.util.Random;
@@ -23,5 +26,16 @@ public class Util {
         colorMap.put("b", b);
         return colorMap;
 
+    }
+
+    /**
+     * Ckeck the internet connection
+     * @param context
+     * @return
+     */
+    public static boolean isConnected(Context context){
+        ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        return networkInfo != null && networkInfo.isConnected();
     }
 }

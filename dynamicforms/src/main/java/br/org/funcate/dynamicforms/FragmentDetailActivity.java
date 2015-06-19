@@ -18,15 +18,11 @@
 package br.org.funcate.dynamicforms;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.util.ArrayMap;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Toast;
@@ -36,21 +32,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 
-import br.org.funcate.dynamicforms.constraints.Constraints;
-import br.org.funcate.dynamicforms.exceptions.CollectFormException;
 import br.org.funcate.dynamicforms.util.LibraryConstants;
-import br.org.funcate.dynamicforms.util.PositionUtilities;
 import br.org.funcate.dynamicforms.util.Utilities;
 
 import static br.org.funcate.dynamicforms.FormUtilities.ATTR_SECTIONNAME;
-import static br.org.funcate.dynamicforms.FormUtilities.TAG_IS_RENDER_LABEL;
 import static br.org.funcate.dynamicforms.FormUtilities.TAG_KEY;
-import static br.org.funcate.dynamicforms.FormUtilities.TAG_SIZE;
 import static br.org.funcate.dynamicforms.FormUtilities.TAG_TYPE;
-import static br.org.funcate.dynamicforms.FormUtilities.TAG_URL;
 import static br.org.funcate.dynamicforms.FormUtilities.TAG_VALUE;
 import static br.org.funcate.dynamicforms.FormUtilities.TYPE_BOOLEAN;
 import static br.org.funcate.dynamicforms.FormUtilities.TYPE_CONNECTEDSTRINGCOMBO;
