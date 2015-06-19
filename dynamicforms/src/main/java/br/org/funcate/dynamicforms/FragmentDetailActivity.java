@@ -227,6 +227,7 @@ public class FragmentDetailActivity extends FragmentActivity {
             int length = formItemsArray.length();
             formData = new Bundle(length);
             ArrayList<String> keys = new ArrayList<String>(length);
+            ArrayList<String> types = new ArrayList<String>(length);
 
             String key = "";
             String value = "";
@@ -283,9 +284,14 @@ public class FragmentDetailActivity extends FragmentActivity {
                         formData.putString(key,value);
                     }
 
-                    if(insertKey) keys.add(key);
+                    if(insertKey) {
+                        keys.add(key);
+                        types.add(type);
+                    }
+
                 }
             }
+            formData.putStringArrayList(LibraryConstants.FORM_TYPES, types);
             formData.putStringArrayList(LibraryConstants.FORM_KEYS, keys);
         }
 

@@ -343,6 +343,10 @@ public interface LibraryConstants {
      */
     String FORM_KEYS = "keys";
     /**
+     * Types for columns result form collect data.
+     */
+    String FORM_TYPES = "types";
+    /**
      * The name of the db to put mapsforge extracted data in
      */
     String MAPSFORGE_EXTRACTED_DB_NAME = "mapsforge_extracted.sqlite";

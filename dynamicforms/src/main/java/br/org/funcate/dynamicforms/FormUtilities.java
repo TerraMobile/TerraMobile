@@ -551,6 +551,7 @@ public class FormUtilities {
      * @throws JSONException if something goes wrong.
      */
     public static void update(JSONArray formItemsArray, String key, String value) throws JSONException {
+        if(value==null || value.isEmpty()) return;
         int length = formItemsArray.length();
         for (int i = 0; i < length; i++) {
             JSONObject itemObject = formItemsArray.getJSONObject(i);
@@ -558,6 +559,7 @@ public class FormUtilities {
                 String objKey = itemObject.getString(TAG_KEY).trim();
                 if (objKey.equals(key)) {
                     itemObject.put(TAG_VALUE, value);
+                    return;
                 }
             }
         }
