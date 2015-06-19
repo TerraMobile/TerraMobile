@@ -33,6 +33,7 @@ public class ProjectDAO {
                     contentValues.put("NAME", project.getName());
                     contentValues.put("FILE_PATH", project.getFilePath());
                     contentValues.put("UPDATED", project.isUpdated());
+                    contentValues.put("DOWNLOADED", project.isDownloaded());
                     if (db.insert("PROJECT", null, contentValues) != -1) {
                         db.close();
                         return true;
@@ -57,6 +58,7 @@ public class ProjectDAO {
                     contentValues.put("NAME", project.getName());
                     contentValues.put("FILE_PATH", project.getFilePath());
                     contentValues.put("UPDATED", project.isUpdated());
+                    contentValues.put("DOWNLOADED", project.isDownloaded());
                     if (db.update("PROJECT", contentValues, "ID=?", new String[]{String.valueOf(project.getId())}) > 0) {
                         db.close();
                         return true;
@@ -76,7 +78,7 @@ public class ProjectDAO {
             SQLiteDatabase db = dataBase.getReadableDatabase();
             Project project = null;
             if(db != null) {
-                Cursor cursor = db.query("PROJECT", new String[]{"ID", "NAME", "FILE_PATH", "UPDATED"}, "NAME = ?", new String[]{String.valueOf(name)}, null, null, null, null);
+                Cursor cursor = db.query("PROJECT", new String[]{"ID", "NAME", "FILE_PATH", "UPDATED", "DOWNLOADED"}, "NAME = ?", new String[]{String.valueOf(name)}, null, null, null, null);
                 if (cursor != null && cursor.getCount() != 0) {
                     cursor.moveToFirst();
                     project = new Project();
@@ -84,6 +86,7 @@ public class ProjectDAO {
                     project.setName(cursor.getString(1));
                     project.setFilePath(cursor.getString(2));
                     project.setUpdated(cursor.getInt(3));
+                    project.setDownloaded(cursor.getInt(4));
                     cursor.close();
                 }
                 db.close();
@@ -117,6 +120,7 @@ public class ProjectDAO {
             project.setName(cursor.getString(1));
             project.setFilePath(cursor.getString(2));
             project.setUpdated(cursor.getInt(3));
+            project.setDownloaded(cursor.getInt(4));
         }
         cursor.close();
         db.close();

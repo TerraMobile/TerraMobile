@@ -56,22 +56,22 @@ public class ProjectListAdapter extends ArrayAdapter<Project> implements Adapter
 //        ImageView iVUpdated = (ImageView)convertView.findViewById(R.id.iVUpdated);
 
         Project project = (Project) projectList.get(position);
-        final String projectName = project.toString().endsWith(context.getString(R.string.geopackage_extension)) ? project.toString().substring(0, project.toString().indexOf('.')) : project.toString();
+//        final String projectName = project.toString().endsWith(context.getString(R.string.geopackage_extension)) ? project.toString().substring(0, project.toString().indexOf('.')) : project.toString();
 
-        tVProject.setText(projectName);
+        tVProject.setText(project.toString());
 
         RadioButton rBCurrentProject = (RadioButton) convertView.findViewById(R.id.rBCurrentProject);
         rBCurrentProject.setTag(project);
 
         Project currentProject = ((MainActivity) context).getProject();
-        if (currentProject != null && currentProject.toString().equals(projectName)) {
+        if (currentProject != null && currentProject.toString().equals(project.toString())) {
             rBCurrentProject.setChecked(true);
             rBCurrentProject.setEnabled(true);
         }
 
         File directory = ResourceUtil.getDirectory(context.getResources().getString(R.string.app_workspace_dir));
-        File projectFile = ResourceUtil.getGeoPackageByName(directory, context.getResources().getString(R.string.geopackage_extension), project.toString());
-        if(projectFile != null){
+        File projectFile = ResourceUtil.getGeoPackageByName(directory, context.getResources().getString(R.string.geopackage_extension), project.getName());
+        if(project.isDownloaded() != 0 && projectFile != null){
             rBCurrentProject.setEnabled(true);
             iVDownloaded.setImageResource(R.drawable.downloaded);
         }
@@ -89,7 +89,6 @@ public class ProjectListAdapter extends ArrayAdapter<Project> implements Adapter
                     rBNewCurrentProject.setChecked(true);
 
                     Project newCurrentProject = (Project) rBNewCurrentProject.getTag();
-                    newCurrentProject.setName(projectName);
                     ((MainActivity) context).setProject(newCurrentProject);
                 }
             }
@@ -104,12 +103,12 @@ public class ProjectListAdapter extends ArrayAdapter<Project> implements Adapter
         final String destinationFilePath = projectPath.getPath();
 
         Project project = (Project) parent.getItemAtPosition(position);
-        final String prjName = project.toString();
+        final String fileName = project.getName();
 
         SettingsDAO settingsDAO = new SettingsDAO(context);
         final Settings settings = settingsDAO.getById(1);
 
-        if (ResourceUtil.getGeoPackageByName(projectPath, context.getResources().getString(R.string.geopackage_extension), project.toString()) != null) {
+        if (ResourceUtil.getGeoPackageByName(projectPath, context.getResources().getString(R.string.geopackage_extension), project.getName()) != null) {
             AlertDialog.Builder builder = new AlertDialog.Builder(
                     context);
             builder.setTitle(context.getString(R.string.project_remove_title));
@@ -120,7 +119,7 @@ public class ProjectListAdapter extends ArrayAdapter<Project> implements Adapter
                         public void onClick(DialogInterface dialog, int id) {
                             if (Util.isConnected(context)) {
                                 if (settings != null)
-                                    downloadTask = (DownloadTask) new DownloadTask(destinationFilePath + "/" + prjName, destinationFilePath, (MainActivity) context).execute(settings.getUrl() + "/getprojects/userName/" + prjName);
+                                    downloadTask = (DownloadTask) new DownloadTask(destinationFilePath + "/" + fileName, destinationFilePath, (MainActivity) context).execute(settings.getUrl() + "/getprojects/userName/" + fileName);
 //                              else
 //                                   Message.showErrorMessage(context, R.string.error, R.string.not_logged);
                             } else
@@ -138,7 +137,7 @@ public class ProjectListAdapter extends ArrayAdapter<Project> implements Adapter
         }
         else {
             if (settings != null)
-                downloadTask = (DownloadTask) new DownloadTask(destinationFilePath + "/" + prjName, destinationFilePath, (MainActivity) context).execute(settings.getUrl() + "/getprojects/userName/" + prjName);
+                downloadTask = (DownloadTask) new DownloadTask(destinationFilePath + "/" + fileName, destinationFilePath, (MainActivity) context).execute(settings.getUrl() + "/getprojects/userName/" + fileName);
 //                else
 //                    Message.showErrorMessage(context, R.string.error, R.string.not_logged);
         }
@@ -146,9 +145,11 @@ public class ProjectListAdapter extends ArrayAdapter<Project> implements Adapter
 
     @Override
     public boolean onItemLongClick(final AdapterView<?> parent, View view, final int position, long id) {
-        String prjName = parent.getItemAtPosition(position).toString();
+        Project project = (Project) parent.getItemAtPosition(position);
+        final String projectName = project.toString();
+        final String fileName = project.getName();
         File directory = ResourceUtil.getDirectory(context.getResources().getString(R.string.app_workspace_dir));
-        File file = ResourceUtil.getGeoPackageByName(directory, context.getString(R.string.geopackage_extension), prjName);
+        File file = ResourceUtil.getGeoPackageByName(directory, context.getString(R.string.geopackage_extension), fileName);
         if (file != null){
             AlertDialog.Builder builder = new AlertDialog.Builder(
                     context);
@@ -158,12 +159,10 @@ public class ProjectListAdapter extends ArrayAdapter<Project> implements Adapter
             builder.setPositiveButton(R.string.yes,
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
-                            String fileName = parent.getItemAtPosition(position).toString();
-                            String projectName = fileName.substring(0, fileName.indexOf('.'));
                             File directory = ResourceUtil.getDirectory(context.getResources().getString(R.string.app_workspace_dir));
                             File file = ResourceUtil.getGeoPackageByName(directory, context.getString(R.string.geopackage_extension), fileName);
                             ProjectDAO projectDAO = new ProjectDAO(context);
-                            Project project = projectDAO.getByName(projectName);
+                            Project project = projectDAO.getByName(fileName);
                             if (project != null && file != null) {
                                 if (projectDAO.remove(project.getId())) {
                                     if (file.delete()) {
@@ -201,4 +200,5 @@ public class ProjectListAdapter extends ArrayAdapter<Project> implements Adapter
     public DownloadTask getDownloadTask() {
         return downloadTask;
     }
+
 }

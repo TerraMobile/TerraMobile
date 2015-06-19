@@ -71,6 +71,7 @@ public class DataBase extends SQLiteOpenHelper {
 		sBCreateProject.append("ID integer primary key not null,");
 		sBCreateProject.append("NAME text not null,");
 		sBCreateProject.append("FILE_PATH text not null,");
+		sBCreateProject.append("DOWNLOADED integer NOT NULL,");
         sBCreateProject.append("UPDATED integer);");
 		createProject = sBCreateProject.toString();
 	}

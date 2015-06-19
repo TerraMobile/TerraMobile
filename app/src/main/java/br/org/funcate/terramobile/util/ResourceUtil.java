@@ -94,7 +94,7 @@ public class ResourceUtil {
         return files;
     }
 
-    public static File getGeoPackageByName(File directory, final String extension, final String fileName){
+    public static File getGeoPackageByName(File directory, final String extension, String fileName){
         ArrayList<File> files = getGeoPackageFiles(directory, extension);
         for (File file : files)
             if(file.getName().equals(fileName)) return file;

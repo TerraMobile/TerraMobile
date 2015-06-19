@@ -49,4 +49,8 @@ public class Settings {
     public void setCurrentProject(String currentProject) {
         this.currentProject = currentProject;
     }
+
+    public String getCurrentProjectName(){
+        return currentProject.substring(0, currentProject.indexOf('.'));
+    }
 }
