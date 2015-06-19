@@ -30,6 +30,16 @@
         android:orderInCategory="100"
         android:showAsAction="never" />
 
+    <item android:id="@+id/test_editable_layer"
+        android:title="@string/test_editable_layer"
+        android:orderInCategory="100"
+        android:showAsAction="never" />
+
+    <item android:id="@+id/test_insert_sfs"
+        android:title="@string/test_insert_sfs"
+        android:orderInCategory="100"
+        android:showAsAction="never" />
+
     <item android:id="@+id/settings"
         android:title="@string/settings"
         android:orderInCategory="100"

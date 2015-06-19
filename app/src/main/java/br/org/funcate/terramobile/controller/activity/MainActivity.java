@@ -25,6 +25,13 @@ import android.widget.ExpandableListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.augtech.geoapi.feature.SimpleFeatureImpl;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.Point;
+
+import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.GeometryType;
 import org.osmdroid.bonuspack.kml.KmlDocument;
 import org.osmdroid.bonuspack.kml.Style;
 import org.osmdroid.bonuspack.overlays.FolderOverlay;
@@ -33,7 +40,12 @@ import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Overlay;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
+import br.org.funcate.dynamicforms.images.ImageUtilities;
+import br.org.funcate.jgpkg.exception.QueryException;
+import br.org.funcate.jgpkg.service.GeoPackageService;
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.configuration.ViewContextParameters;
 import br.org.funcate.terramobile.controller.activity.settings.SettingsActivity;
@@ -242,6 +254,12 @@ public class MainActivity extends FragmentActivity {
             case R.id.test_vector_data:
                 testVectorData();
                 break;
+            case R.id.test_editable_layer:
+                testEditableLayer();
+                break;
+            case R.id.test_insert_sfs:
+                testInsertSFS();
+                break;
             case R.id.settings:
                 startActivity(new Intent(this, SettingsActivity.class));
                 break;
@@ -261,27 +279,6 @@ public class MainActivity extends FragmentActivity {
         MapFragment fragment = (MapFragment)fm.findFragmentById(R.id.content_frame);
         return fragment;
     }
-
-
-/*    private void startForm(GeoPoint point) {
-        // This id is provided from the selected point, if one it is selected otherwise -1 is default.
-        long selectedPointID = -1;
-
-        try {
-            Intent formIntent = new Intent(MainActivity.this, FragmentDetailActivity.class);
-            formIntent.putExtra(LibraryConstants.SELECTED_POINT_ID, selectedPointID);
-            // The form name attribute, provided by JSON, shall be the same name of the editable layer.
-            formIntent.putExtra(FormUtilities.ATTR_FORMNAME, treeView.getSelectedEditableLayer().getName());
-            formIntent.putExtra(FormUtilities.ATTR_JSON_TAGS, treeView.getSelectedEditableLayer().getJSON());
-            formIntent.putExtra(FormUtilities.TYPE_LATITUDE, point.getLatitude());
-            formIntent.putExtra(FormUtilities.TYPE_LONGITUDE, point.getLongitude());
-            startActivityForResult(formIntent, FORM_COLLECT_DATA);
-
-        } catch (Exception e) {
-            Message.showErrorMessage(MainActivity.this, R.string.failure_title_msg, R.string.error_start_form);
-
-        }
-    }*/
 
     private void insertMapView() {
         // update the action_bar content by replacing fragments
@@ -368,6 +365,91 @@ public class MainActivity extends FragmentActivity {
         settingsDAO.update(settings);
         treeView.refreshTreeView();
         invalidateOptionsMenu();
+    }
+
+    private void testEditableLayer() {
+        GpkgLayer layer = null;
+        SFSLayer l = null;
+        try {
+            layer = treeView.getLayerByName("field_work_collect_data");
+            l = AppGeoPackageService.getFeatures(layer);
+
+
+        } catch (TerraMobileException e) {
+            e.printStackTrace();
+        }
+
+        MapView map = (MapView) findViewById(R.id.mapview);
+        map.setTileSource(TileSourceFactory.MAPNIK);
+        map.setBuiltInZoomControls(true);
+        map.setMultiTouchControls(true);
+
+        Style defaultStyle = new Style(null, 0x901010AA, 1.0f, 0x20AA1010);
+
+        KmlDocument kmlDocument = new KmlDocument();
+        Overlay overlay = l.buildOverlay(map, defaultStyle, null, kmlDocument);
+
+        map.getOverlays().add(overlay);
+
+        map.invalidate();
+    }
+
+    private void testInsertSFS() {
+        GpkgLayer layer = null;
+        try {
+            layer = treeView.getLayerByName("field_work_collect_data");
+        }catch (TerraMobileException e) {
+            e.printStackTrace();
+        }
+
+        SimpleFeatureType ft = layer.getFeatureType();
+        GeometryType geometryType = ft.getGeometryDescriptor().getType();
+        List<Object> attributeValues = new ArrayList<Object>();
+        SimpleFeatureImpl feature = new SimpleFeatureImpl(null, attributeValues, ft);
+        GeometryFactory factory=new GeometryFactory();
+        Coordinate coordinate = new Coordinate(-45.10,5.20);
+        Point point = factory.createPoint(coordinate);
+        feature.setDefaultGeometry(point);
+
+        feature.setAttribute("location_name", "Teste de insercao");// testar com palavras acentuadas
+        feature.setAttribute("temperature",25.1);
+        feature.setAttribute("soil_ph",6);
+
+        /*
+        String date = formData.getString(key);
+        Date dt = DateUtil.deserializeDate(date);
+        if (dt == null) dt = new Date();
+        feature.setAttribute(key,dt);
+
+        */
+        feature.setAttribute("collect_date",null);
+        feature.setAttribute("termites",null);
+        feature.setAttribute("crop_stage",null);
+        feature.setAttribute("picture",null);
+
+        /*String path = "";
+        if (ImageUtilities.isImagePath(path)) {
+            byte[] blob = ImageUtilities.getImageFromPath(path, 1);
+            feature.setAttribute("picture",blob);
+        }else{
+            feature.setAttribute("picture",null);
+        }*/
+
+        /*
+        location_name" TEXT,
+        "temperature" DOUBLE,
+        "soil_ph" INTEGER,
+        "collect_date" DATE,
+        "termites" INTEGER,
+        "crop_stage" TEXT,
+        "picture" BLOB,
+        */
+        try {
+            GeoPackageService.writeLayerFeature(layer.getGeoPackage(), feature);
+        } catch (QueryException e) {
+            e.printStackTrace();
+        }
+
     }
 
     private void testVectorData()

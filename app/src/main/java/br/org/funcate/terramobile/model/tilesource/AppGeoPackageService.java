@@ -17,6 +17,8 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -42,6 +44,8 @@ import java.util.Date;
 import java.util.List;
 
 import br.org.funcate.dynamicforms.FormUtilities;
+import br.org.funcate.dynamicforms.images.ImageUtilities;
+import br.org.funcate.dynamicforms.util.FileUtilities;
 import br.org.funcate.dynamicforms.util.LibraryConstants;
 import br.org.funcate.extended.model.TMConfigEditableLayer;
 import br.org.funcate.jgpkg.exception.QueryException;
@@ -119,17 +123,35 @@ public class AppGeoPackageService {
                 throw new InvalidGeopackageException("Invalid number of field on GPKG content table. ");
             }
 
-            GpkgField tableNameField = aField.get(0);
-            GpkgField dataTypeField = aField.get(1);
+            String layerName=null;
+            GpkgField dataTypeField = null;
 
-            GpkgField minXField = aField.get(5);
-            GpkgField minYField = aField.get(6);
-            GpkgField maxXField = aField.get(7);
-            GpkgField maxYField = aField.get(8);
+            // To getting bounding box
+            Double minX=null;
+            Double minY=null;
+            Double maxX=null;
+            Double maxY=null;
 
-            GpkgField srsIdField = aField.get(9);
+            for (int j = 0,len = aField.size(); j < len; j++) {
+                GpkgField gpkgColumn = aField.get(j);
+                String fieldname = gpkgColumn.getFieldName();
+                if("table_name".equalsIgnoreCase(fieldname)){
+                    layerName = (String) gpkgColumn.getValue();
+                }else if("data_type".equalsIgnoreCase(fieldname)){
+                    dataTypeField = gpkgColumn;
+                }else if("min_x".equalsIgnoreCase(fieldname)){
+                    minX=(Double) gpkgColumn.getValue();
+                }else if("min_y".equalsIgnoreCase(fieldname)){
+                    minY=(Double) gpkgColumn.getValue();
+                }else if("max_x".equalsIgnoreCase(fieldname)){
+                    maxX=(Double) gpkgColumn.getValue();
+                }else if("max_y".equalsIgnoreCase(fieldname)){
+                    maxY=(Double) gpkgColumn.getValue();
+                }else if("srs_id".equalsIgnoreCase(fieldname)){
+                    layer.setSrsId((Integer) gpkgColumn.getValue());
+                }
+            }
 
-            String layerName = (String) tableNameField.getValue();
             layer.setName(layerName);
 
             // Getting data type
@@ -152,21 +174,8 @@ public class AppGeoPackageService {
                 throw new InvalidGeopackageException("Invalid layer .");
             }
 
-            // Getting bounding box
-
-            Double minX=(Double) minXField.getValue();
-            Double minY=(Double) minYField.getValue();
-            Double maxX=(Double) maxXField.getValue();
-            Double maxY=(Double) maxYField.getValue();
-
-            BoundingBoxE6 bb =new BoundingBoxE6(minX,minY, maxX, maxY);
-
+            BoundingBoxE6 bb =new BoundingBoxE6(minX, minY, maxX, maxY);
             layer.setBox(bb);
-
-            // Getting srs ID
-
-            layer.setSrsId((Integer) srsIdField.getValue());
-
             listLayers.add(layer);
         }
         gpkg.close();
@@ -235,7 +244,6 @@ public class AppGeoPackageService {
         SimpleFeatureType ft = tv.getSelectedEditableLayer().getFeatureType();
         GeometryType geometryType = ft.getGeometryDescriptor().getType();
         List<Object> attributeValues = new ArrayList<Object>();
-        List<AttributeType> attributeTypes = new ArrayList<AttributeType>();
         SimpleFeatureImpl feature = new SimpleFeatureImpl(null, attributeValues, ft);
 
         GeometryFactory factory=new GeometryFactory();
@@ -248,34 +256,47 @@ public class AppGeoPackageService {
             feature.setDefaultGeometry(point);
         }
 
-        for (int i = 0, len = fields.size(); i < len; i++) {
-            GpkgField field = fields.get(i);
-            String key = field.getFieldName();
-            String type = field.getFieldType();
+        ArrayList<String> formKeys = formData.getStringArrayList(LibraryConstants.FORM_KEYS);
+        ArrayList<String> formTypes = formData.getStringArrayList(LibraryConstants.FORM_TYPES);
 
-            if ("DOUBLE".equalsIgnoreCase(type)) {
+        for (int i = 0, len = formKeys.size(); i < len; i++) {
+            String key = formKeys.get(i);
+            GpkgField field = getFieldByName(fields, key);
+            if(field==null) continue;
+            String dbType = field.getFieldType();
+            String formType = formTypes.get(i);
+
+            if ("DOUBLE".equalsIgnoreCase(dbType)) {
                 Double d = formData.getDouble(key);
                 feature.setAttribute(key,d);
-            } else if ("TEXT".equalsIgnoreCase(type)) {
+            } else if ("TEXT".equalsIgnoreCase(dbType)) {
                 String s = formData.getString(key);
                 feature.setAttribute(key,s);
-            } else if ("INTEGER".equalsIgnoreCase(type)) {
-                // TODO: using type data from form configuration otherwise field data from database table
-                Integer in = formData.getInt(key);
-                feature.setAttribute(key,in);
-            } else if ("BOOLEAN".equalsIgnoreCase(type)) {
-                Boolean b = formData.getBoolean(key);
-                feature.setAttribute(key,(b?1:0));// Use Integer data to insert boolean type on database table
-            } else if ("BLOB".equalsIgnoreCase(type)) {
-                //byte[] blob = formData.getByteArray(key);
-                //feature.setAttribute(key,blob);
-                // see how to insert a byte array inside sqlite table
-            } else if ("DATE".equalsIgnoreCase(type)) {
+            } else if ("INTEGER".equalsIgnoreCase(dbType)) {
+
+                if(formType.equalsIgnoreCase(dbType)) {
+                    Integer in = formData.getInt(key);
+                    feature.setAttribute(key, in);
+                }else {
+                    Boolean b = formData.getBoolean(key);
+                    feature.setAttribute(key, b);
+                }
+            } else if ("BLOB".equalsIgnoreCase(dbType)) {
+                if( !key.equals(feature.getFeatureType().getGeometryDescriptor().getName())) {
+                    String path = formData.getString(key);
+                    if (path!=null && ImageUtilities.isImagePath(path)) {
+                        byte[] blob = ImageUtilities.getImageFromPath(path, 1);
+                        feature.setAttribute(key, blob);
+                    }else{
+                        feature.setAttribute(key,null);
+                    }
+                }
+            } else if ("DATE".equalsIgnoreCase(dbType)) {
                 String date = formData.getString(key);
                 Date dt = DateUtil.deserializeDate(date);
                 if (dt == null) dt = new Date();
                 feature.setAttribute(key,dt);
-            } else if ("TIME".equalsIgnoreCase(type)) {
+            } else if ("TIME".equalsIgnoreCase(dbType)) {
                 String date = formData.getString(key);
                 if (!date.equals("")) {
                     date = "0000-00-00T" + date;
@@ -285,18 +306,25 @@ public class AppGeoPackageService {
                     dt = new Time(Long.decode(date));
                 }
                 feature.setAttribute(key,dt);
-            } else if ("DATETIME".equalsIgnoreCase(type)) {
+            } else if ("DATETIME".equalsIgnoreCase(dbType)) {
                 String date = formData.getString(key);
                 Date dt = DateUtil.deserializeDateTime(date);
                 if (dt == null) dt = new Date();
                 feature.setAttribute(key,dt);
             }
-
-            if(attributeValues.size() > attributeTypes.size()) attributeTypes.add(ft.getType(key));
         }
-        //feature.setAttributes(attributeValues, attributeTypes);
-
         return feature;
+    }
+
+    private static GpkgField getFieldByName(ArrayList<GpkgField> fields, String name) {
+        GpkgField field=null;
+        if(fields!=null) {
+            for (int i = 0, len = fields.size(); i < len; i++) {
+                field = fields.get(i);
+                if(name.equals(field.getFieldName())) return field;
+            }
+        }
+        return field;
     }
 
     public static SFSLayer getFeatures(GpkgLayer layer)
