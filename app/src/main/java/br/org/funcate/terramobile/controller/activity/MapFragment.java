@@ -312,9 +312,11 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants{
                 AppGeoPackageService.storeData( context, extras);
             }catch (TerraMobileException tme) {
                 //Message.showMessage(this, R.drawable.error, getResources().getString(R.string.error), tme.getMessage());
+                tme.printStackTrace();
                 Message.showErrorMessage(((MainActivity) context), R.string.error, R.string.missing_form_data);
             }catch (QueryException qe) {
                 //Message.showMessage(this, R.drawable.error, getResources().getString(R.string.error), qe.getMessage());
+                qe.printStackTrace();
                 Message.showErrorMessage(((MainActivity) context), R.string.error, R.string.error_while_storing_form_data);
             }
         }else {
