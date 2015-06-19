@@ -20,13 +20,9 @@ package br.org.funcate.dynamicforms.util;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.content.pm.ApplicationInfo;
-import android.os.Environment;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.Serializable;
 
 import br.org.funcate.dynamicforms.FormUtilities;
@@ -34,9 +30,6 @@ import br.org.funcate.dynamicforms.R;
 import br.org.funcate.dynamicforms.camera.CameraActivity;
 import br.org.funcate.dynamicforms.exceptions.CollectFormException;
 
-import static br.org.funcate.dynamicforms.util.LibraryConstants.PREFS_KEY_CUSTOM_EXTERNALSTORAGE;
-import static br.org.funcate.dynamicforms.util.LibraryConstants.PREFS_KEY_CUSTOM_MAPSFOLDER;
-import static br.org.funcate.dynamicforms.util.LibraryConstants.PREFS_KEY_DATABASE_TO_LOAD;
 import static br.org.funcate.dynamicforms.util.Utilities.messageDialog;
 
 /**

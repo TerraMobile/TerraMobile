@@ -9,6 +9,9 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -25,6 +28,7 @@ import br.org.funcate.terramobile.controller.activity.MainActivity;
 import br.org.funcate.terramobile.model.Project;
 import br.org.funcate.terramobile.util.Message;
 import br.org.funcate.terramobile.util.ResourceUtil;
+import br.org.funcate.terramobile.util.Util;
 
 /**
  * This AsyncTask receives a list of geopackages from the server
@@ -46,25 +50,31 @@ public class ProjectListTask extends AsyncTask<String, String, JSONObject> {
         JSONObject jsonObject;
         String jsonContent;
         try {
-            HttpClient httpClient = new DefaultHttpClient();
-            HttpGet httpGet = new HttpGet(packagesUrl);
-            HttpResponse response = httpClient.execute(httpGet);
+            if(Util.isConnected(mainActivity)){
+                HttpParams httpParams = new BasicHttpParams();
+                HttpConnectionParams.setConnectionTimeout(httpParams, 5000);
+                HttpConnectionParams.setSoTimeout(httpParams, 5000);
 
-            StatusLine statusLine = response.getStatusLine();
-            int statusCode = statusLine.getStatusCode();
-            if (statusCode == 200) {
-                StringBuilder stringBuilder = new StringBuilder();
-                HttpEntity httpEntity = response.getEntity();
-                InputStream content = httpEntity.getContent();
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(content));
-                String line;
-                while ((line = bufferedReader.readLine()) != null)
-                    stringBuilder.append(line);
+                HttpClient httpClient = new DefaultHttpClient(httpParams);
+                HttpGet httpGet = new HttpGet(packagesUrl);
+                HttpResponse response = httpClient.execute(httpGet);
 
-                jsonContent = stringBuilder.toString();
-                jsonObject = new JSONObject(jsonContent);
+                StatusLine statusLine = response.getStatusLine();
+                int statusCode = statusLine.getStatusCode();
+                if (statusCode == 200) {
+                    StringBuilder stringBuilder = new StringBuilder();
+                    HttpEntity httpEntity = response.getEntity();
+                    InputStream content = httpEntity.getContent();
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(content));
+                    String line;
+                    while ((line = bufferedReader.readLine()) != null)
+                        stringBuilder.append(line);
 
-                return jsonObject;
+                    jsonContent = stringBuilder.toString();
+                    jsonObject = new JSONObject(jsonContent);
+
+                    return jsonObject;
+                }
             }
         } catch (ClientProtocolException e) {
             e.printStackTrace();
@@ -80,34 +90,50 @@ public class ProjectListTask extends AsyncTask<String, String, JSONObject> {
     protected void onPostExecute(JSONObject jsonObject) {
         try {
             mainActivity.getProgressDialog().dismiss();
-            if (jsonObject != null) {
-                JSONArray packages = jsonObject.getJSONArray("packages");
-                ArrayList<Project> aLItems = new ArrayList<Project>();
-                for (int cont = 0; cont < packages.length(); cont++) {
-                    JSONObject json = (JSONObject) packages.get(cont);
-                    String pkg = json.getString("pkg");
 
-                    File appPath = ResourceUtil.getDirectory(mainActivity.getResources().getString(R.string.app_workspace_dir));
-                    String destinationFilePath = appPath.getPath()+"/"+pkg;
+            File appPath = ResourceUtil.getDirectory(mainActivity.getString(R.string.app_workspace_dir));
+
+            ArrayList<Project> aLItems = new ArrayList<Project>();
+            ArrayList<File> files = ResourceUtil.getGeoPackageFiles(appPath, mainActivity.getString(R.string.geopackage_extension));
+            if(files != null) {
+                for (File file : files) {
+                    String destinationFilePath = appPath.getPath() + "/" + file.getName();
 
                     Project project = new Project();
-                    project.setName(pkg);
+                    project.setName(file.getName());
                     project.setFilePath(destinationFilePath);
 
                     aLItems.add(project);
                 }
-                if(!aLItems.isEmpty())
-                    mainActivity.getProjectListFragment().setListItems(aLItems);
-                else {
-                    mainActivity.getProjectListFragment().dismiss();
-                    Message.showErrorMessage(mainActivity, R.string.error, R.string.projects_not_found);
+            }
+
+            if (jsonObject != null) {
+                JSONArray packages = jsonObject.getJSONArray("packages");
+                for (int cont = 0; cont < packages.length(); cont++) {
+                    JSONObject json = (JSONObject) packages.get(cont);
+                    String pkg = json.getString("pkg");
+
+                    String destinationFilePath = appPath.getPath() + "/" + pkg;
+
+                    File file = ResourceUtil.getGeoPackageByName(appPath, mainActivity.getString(R.string.geopackage_extension), pkg);
+                    if (file == null) {
+                        Project project = new Project();
+                        project.setName(pkg);
+                        project.setFilePath(destinationFilePath);
+
+                        aLItems.add(project);
+                    }
                 }
-            } else {
+            }
+//             else
+//                Message.showErrorMessage(mainActivity, R.string.error, R.string.connection_failed);
+            if(!aLItems.isEmpty())
+                mainActivity.getProjectListFragment().setListItems(aLItems);
+            else {
                 mainActivity.getProjectListFragment().dismiss();
-                Message.showErrorMessage(mainActivity, R.string.error, R.string.connection_failed);
+                Message.showErrorMessage(mainActivity, R.string.error, R.string.projects_not_found);
             }
         } catch (JSONException e) {
-            mainActivity.getProjectListFragment().dismiss();
             Message.showErrorMessage(mainActivity, R.string.error, R.string.connection_failed);
             e.printStackTrace();
         }
