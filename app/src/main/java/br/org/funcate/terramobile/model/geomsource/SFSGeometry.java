@@ -81,7 +81,7 @@ public class SFSGeometry extends KmlGeometry {
         } else if ("Polygon".equals(geom.getGeometryType())){
             Polygon p = (Polygon) geom;
             return new SFSPolygon(p);
-        } else if ("MultiPoint".equals(geom.getGeometryType()) || "MultiLine".equals(geom.getGeometryType()) || "MultiPolygon".equals(geom.getGeometryType())){
+        } else if ("MultiPoint".equals(geom.getGeometryType()) || "MultiLineString".equals(geom.getGeometryType()) || "MultiPolygon".equals(geom.getGeometryType())){
             return new SFSMultiGeometry(geom);
         } else
             return null;
