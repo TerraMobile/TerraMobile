@@ -249,6 +249,7 @@ public class MainActivity extends FragmentActivity {
                 // add an bookmark on map and show the related form
                 fragment.startForm();
                 break;
+            /*
             case R.id.test_vector_data:
                 testVectorData();
                 break;
@@ -258,6 +259,7 @@ public class MainActivity extends FragmentActivity {
             case R.id.test_insert_sfs:
                 testInsertSFS();
                 break;
+            */
             case R.id.settings:
                 startActivity(new Intent(this, SettingsActivity.class));
                 break;
