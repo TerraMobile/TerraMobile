@@ -9,6 +9,7 @@
     <string name="exit">Exit</string>
     <!-- Gather data -->
     <string name="error_start_form">Failure on starting of the gathering form.</string>
+    <string name="missing_editable_layer">Select one gathering layer.</string>
     <string name="missing_form_data">Missing data from gathering form.</string>
     <string name="cancel_form_data">Canceled data collection form.</string>
     <!-- Sync data -->

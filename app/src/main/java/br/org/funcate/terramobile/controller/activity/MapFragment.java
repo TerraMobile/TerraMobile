@@ -39,6 +39,7 @@ import br.org.funcate.jgpkg.exception.QueryException;
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.model.constants.OpenStreetMapConstants;
 import br.org.funcate.terramobile.model.exception.TerraMobileException;
+import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
 import br.org.funcate.terramobile.model.tilesource.AppGeoPackageService;
 import br.org.funcate.terramobile.util.Message;
 import br.org.funcate.terramobile.util.ResourceUtil;
@@ -232,13 +233,25 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants{
 
         // This id is provided from the selected point, if one it is selected otherwise -1 is default.
         long selectedPointID = -1;
+        GpkgLayer editableLayer=null;
+        try{
+            TreeView tv = ((MainActivity) context).getTreeView();
+            editableLayer = tv.getSelectedEditableLayer();
+            if(editableLayer==null) {
+                Message.showErrorMessage(((MainActivity) context), R.string.failure_title_msg, R.string.missing_editable_layer);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            Message.showErrorMessage(((MainActivity) context), R.string.failure_title_msg, R.string.error_start_form);
+        }
+
 
         try {
             Intent formIntent = new Intent(context, FragmentDetailActivity.class);
             formIntent.putExtra(LibraryConstants.SELECTED_POINT_ID, selectedPointID);
             // The form name attribute, provided by JSON, shall be the same name of the editable layer.
-            formIntent.putExtra(FormUtilities.ATTR_FORMNAME, ((MainActivity) context).getTreeView().getSelectedEditableLayer().getName());
-            formIntent.putExtra(FormUtilities.ATTR_JSON_TAGS, ((MainActivity) context).getTreeView().getSelectedEditableLayer().getJSON());
+            formIntent.putExtra(FormUtilities.ATTR_FORMNAME, editableLayer.getName());
+            formIntent.putExtra(FormUtilities.ATTR_JSON_TAGS, editableLayer.getJSON());
             formIntent.putExtra(FormUtilities.TYPE_LATITUDE, point.getLatitude());
             formIntent.putExtra(FormUtilities.TYPE_LONGITUDE, point.getLongitude());
             File directory = ResourceUtil.getDirectory(this.getResources().getString(R.string.app_workspace_dir));
