@@ -136,10 +136,10 @@ public class MenuMapController {
     }
 
     public void addEditableLayer(GpkgLayer child) {
-        return;
+        addVectorLayer(child);
     }
 
     public void removeEditableLayer(GpkgLayer child) {
-        return;
+        removeVectorLayer(child);
     }
 }
