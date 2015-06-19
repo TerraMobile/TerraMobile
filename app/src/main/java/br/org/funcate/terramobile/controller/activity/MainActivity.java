@@ -126,11 +126,13 @@ public class MainActivity extends FragmentActivity {
 
         File directory = ResourceUtil.getDirectory(this.getResources().getString(R.string.app_workspace_dir));
 
-        String fileName = settings.getCurrentProject()+getResources().getString(R.string.geopackage_extension);
+        String fileName = settings.getCurrentProject();
+
+        String ext = this.getString(R.string.geopackage_extension);
         if(settings.getCurrentProject() != null) {
             projectDAO = new ProjectDAO(this);
             mProject = projectDAO.getByName(settings.getCurrentProject());
-            if(ResourceUtil.getGeoPackageByName(directory, getResources().getString(R.string.geopackage_extension), fileName) != null) {
+            if(ResourceUtil.getGeoPackageByName(directory, ext, fileName) != null) {
                 if(mProject == null) {
                     Project project = new Project();
                     project.setId(null);
@@ -208,7 +210,7 @@ public class MainActivity extends FragmentActivity {
         inflater.inflate(R.menu.action_bar, menu);
 
         MenuItem menuItem = menu.findItem(R.id.project);
-        menuItem.setTitle(mProject != null ? mProject.getName() : "Project");
+        menuItem.setTitle(mProject != null ? mProject.toString() : "Project");
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -361,7 +363,7 @@ public class MainActivity extends FragmentActivity {
 
     public void setProject(Project project) {
         this.mProject = project;
-        settings.setCurrentProject(project!=null?project.toString():null);
+        settings.setCurrentProject(project!=null?project.getName():null);
         settingsDAO.update(settings);
         treeView.refreshTreeView();
         invalidateOptionsMenu();

@@ -95,13 +95,14 @@ public class ProjectListTask extends AsyncTask<String, String, JSONObject> {
 
             ArrayList<Project> aLItems = new ArrayList<Project>();
             ArrayList<File> files = ResourceUtil.getGeoPackageFiles(appPath, mainActivity.getString(R.string.geopackage_extension));
-            if(files != null) {
+            if(!files.isEmpty()) {
                 for (File file : files) {
                     String destinationFilePath = appPath.getPath() + "/" + file.getName();
 
                     Project project = new Project();
                     project.setName(file.getName());
                     project.setFilePath(destinationFilePath);
+                    project.setDownloaded(1);
 
                     aLItems.add(project);
                 }
@@ -120,6 +121,7 @@ public class ProjectListTask extends AsyncTask<String, String, JSONObject> {
                         Project project = new Project();
                         project.setName(pkg);
                         project.setFilePath(destinationFilePath);
+                        project.setDownloaded(0);
 
                         aLItems.add(project);
                     }

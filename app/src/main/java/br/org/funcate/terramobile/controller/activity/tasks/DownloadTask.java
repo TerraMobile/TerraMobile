@@ -100,7 +100,7 @@ public class DownloadTask extends AsyncTask<String, String, Boolean> {
             String ext = mainActivity.getString(R.string.geopackage_extension);
 
             if(downloadDestinationFilePath.endsWith(ext))
-                mFiles.add(downloadDestinationFilePath.substring(downloadDestinationFilePath.lastIndexOf(File.separatorChar)+1, downloadDestinationFilePath.lastIndexOf(ext)));
+                mFiles.add(downloadDestinationFilePath.substring(downloadDestinationFilePath.lastIndexOf(File.separatorChar)+1, downloadDestinationFilePath.length()));
             else
                 mFiles = this.unzip(new File(downloadDestinationFilePath), new File(unzipDestinationFilePath));
 
@@ -115,6 +115,46 @@ public class DownloadTask extends AsyncTask<String, String, Boolean> {
             if(destinationFile.exists())
                 destinationFile.delete();
             return false;
+        }
+    }
+
+    @Override
+    protected void onPostExecute(Boolean aBoolean) {
+        if(android.os.Debug.isDebuggerConnected()) android.os.Debug.waitForDebugger(); // Para debugar é preciso colocar um breakpoint nessa linha
+        mainActivity.getTreeView().refreshTreeView();
+
+        String projectName = mFiles.get(0);// The project is the last not_downloaded geopackage file.
+
+        ProjectDAO projectDAO = new ProjectDAO(mainActivity);
+
+        Project project = new Project();
+        project.setId(null);
+        project.setName(projectName);
+        project.setFilePath(downloadDestinationFilePath);
+        project.setDownloaded(1);
+        projectDAO.insert(project);
+
+        mainActivity.setProject(projectDAO.getByName(projectName));
+
+        if(mainActivity.getProgressDialog() != null && mainActivity.getProgressDialog().isShowing()) {
+            if (aBoolean) {
+                mainActivity.getProgressDialog().dismiss();
+                mainActivity.getProjectListFragment().dismiss();
+                Message.showSuccessMessage(mainActivity, R.string.success, R.string.download_success);
+            } else {
+                mainActivity.getProgressDialog().dismiss();
+                Message.showErrorMessage(mainActivity, R.string.error, R.string.download_failed);
+            }
+        }
+        else
+            Message.showErrorMessage(mainActivity, R.string.error, R.string.download_failed);
+    }
+
+    @Override
+    protected void onProgressUpdate(String... values) {
+        if(mainActivity.getProgressDialog() != null && mainActivity.getProgressDialog().isShowing()) {
+            mainActivity.getProgressDialog().setProgress(Integer.parseInt(values[0]));
+            mainActivity.getProgressDialog().setMessage(values[1]);
         }
     }
 
@@ -181,7 +221,7 @@ public class DownloadTask extends AsyncTask<String, String, Boolean> {
                 File file = new File(targetDirectory, zipEntry.getName());
                 FileOutputStream fileOutputStream = new FileOutputStream(file);
 
-                files.add(zipEntry.getName());
+                files.add(zipEntry.getName()+mainActivity.getString(R.string.geopackage_extension));
 
                 long total = 0;
                 long totalZipSize = zipEntry.getCompressedSize();
@@ -204,43 +244,5 @@ public class DownloadTask extends AsyncTask<String, String, Boolean> {
             zipInputStream.close();
         }
         return files;
-    }
-
-    @Override
-    protected void onPostExecute(Boolean aBoolean) {
-        mainActivity.getTreeView().refreshTreeView();
-
-        String projectName = mFiles.get(0);// The project is the last not_downloaded geopackage file.
-
-        ProjectDAO projectDAO = new ProjectDAO(mainActivity);
-
-        Project project = new Project();
-        project.setId(null);
-        project.setName(projectName);
-        project.setFilePath(downloadDestinationFilePath);
-        projectDAO.insert(project);
-
-        mainActivity.setProject(projectDAO.getByName(projectName));
-
-        if(mainActivity.getProgressDialog() != null && mainActivity.getProgressDialog().isShowing()) {
-            if (aBoolean) {
-                mainActivity.getProgressDialog().dismiss();
-                mainActivity.getProjectListFragment().dismiss();
-                Message.showSuccessMessage(mainActivity, R.string.success, R.string.download_success);
-            } else {
-                mainActivity.getProgressDialog().dismiss();
-                Message.showErrorMessage(mainActivity, R.string.error, R.string.download_failed);
-            }
-        }
-        else
-            Message.showErrorMessage(mainActivity, R.string.error, R.string.download_failed);
-    }
-
-    @Override
-    protected void onProgressUpdate(String... values) {
-        if(mainActivity.getProgressDialog() != null && mainActivity.getProgressDialog().isShowing()) {
-            mainActivity.getProgressDialog().setProgress(Integer.parseInt(values[0]));
-            mainActivity.getProgressDialog().setMessage(values[1]);
-        }
     }
 }

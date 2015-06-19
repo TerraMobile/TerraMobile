@@ -7,6 +7,7 @@ public class Project {
     private Integer id;
     private String name;
     private String filePath;
+    private int downloaded;
     private int updated;
 
     public String getName() {
@@ -43,6 +44,15 @@ public class Project {
 
     @Override
     public String toString() {
-        return name;
+        return name.substring(0, name.indexOf('.'));
     }
+
+    public int isDownloaded() {
+        return downloaded;
+    }
+
+    public void setDownloaded(int downloaded) {
+        this.downloaded = downloaded;
+    }
+
 }

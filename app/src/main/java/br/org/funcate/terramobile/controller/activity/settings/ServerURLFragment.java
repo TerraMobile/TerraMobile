@@ -32,21 +32,24 @@ public class ServerURLFragment extends DialogFragment{
         Button btnSave = (Button) v.findViewById(R.id.btnSave);
         Button btnCancel = (Button) v.findViewById(R.id.btnCancel);
 
-        SettingsDAO settingsDAO = new SettingsDAO(getActivity());
-        Settings settings = settingsDAO.getById(1);
-        if (settings != null) {
+        final SettingsDAO settingsDAO = new SettingsDAO(getActivity());
+        final Settings settings = settingsDAO.getById(1);
+        if (settings != null)
             eTServerURL.setText(settings.getUrl());
-        }
 
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (validateFields()) {
-                    SettingsFragment settingsFragment = (SettingsFragment) getActivity().getFragmentManager().findFragmentByTag("settings");
-                    SharedPreferences sharedPreferences = settingsFragment.getPreferenceManager().getSharedPreferences();
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putString("serverURL", eTServerURL.getText().toString());
-                    editor.apply();
+//                    SettingsFragment settingsFragment = (SettingsFragment) getActivity().getFragmentManager().findFragmentByTag("settings");
+//                    SharedPreferences sharedPreferences = settingsFragment.getPreferenceManager().getSharedPreferences();
+//                    SharedPreferences.Editor editor = sharedPreferences.edit();
+//                    editor.putString("serverURL", eTServerURL.getText().toString());
+//                    editor.apply();
+                    if(settings != null) {
+                        settings.setUrl(eTServerURL.getText().toString());
+                        settingsDAO.update(settings);
+                    }
                     dismiss();
                 }
             }
@@ -71,9 +74,8 @@ public class ServerURLFragment extends DialogFragment{
         if(url.endsWith("/"))
             url.substring(0, url.length() - 1);
         eTServerURL.setText(url.trim());
-        if(Patterns.WEB_URL.matcher(eTServerURL.getText().toString().trim()).matches()){
+        if(Patterns.WEB_URL.matcher(eTServerURL.getText().toString().trim()).matches())
             return true;
-        }
         else {
             eTServerURL.setError("Invalid URL");
             return false;

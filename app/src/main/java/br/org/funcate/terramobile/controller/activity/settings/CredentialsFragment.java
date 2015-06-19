@@ -36,8 +36,8 @@ public class CredentialsFragment extends DialogFragment{
         Button btnSave = (Button) v.findViewById(R.id.btnSave);
         Button btnCancel = (Button) v.findViewById(R.id.btnCancel);
 
-        SettingsDAO settingsDAO = new SettingsDAO(getActivity());
-        Settings settings = settingsDAO.getById(1);
+        final SettingsDAO settingsDAO = new SettingsDAO(getActivity());
+        final Settings settings = settingsDAO.getById(1);
         if (settings != null) {
             eTUserName.setText(settings.getUserName());
             eTPassword.setText(settings.getPassword());
@@ -47,12 +47,15 @@ public class CredentialsFragment extends DialogFragment{
             @Override
             public void onClick(View v) {
                 if (validateFields()) {
-                    SettingsFragment settingsFragment = (SettingsFragment) getActivity().getFragmentManager().findFragmentByTag("settings");
-                    SharedPreferences sharedPreferences = settingsFragment.getPreferenceManager().getSharedPreferences();
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putString("userName", eTUserName.getText().toString());
-                    editor.putString("password", eTPassword.getText().toString());
-                    editor.apply();
+//                    SettingsFragment settingsFragment = (SettingsFragment) getActivity().getFragmentManager().findFragmentByTag("settings");
+//                    SharedPreferences sharedPreferences = settingsFragment.getPreferenceManager().getSharedPreferences();
+//                    SharedPreferences.Editor editor = sharedPreferences.edit();
+//                    editor.putString("userName", eTUserName.getText().toString());
+//                    editor.putString("password", eTPassword.getText().toString());
+//                    editor.apply();
+                    settings.setUserName(eTUserName.getText().toString());
+                    settings.setPassword(eTPassword.getText().toString());
+                    settingsDAO.update(settings);
                     dismiss();
                 }
             }

@@ -1,11 +1,13 @@
 package br.org.funcate.terramobile.controller.activity;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -40,18 +42,11 @@ public class ProjectListFragment extends DialogFragment{
 
         lVProject = (ListView)v.findViewById(R.id.lVProject);
 
-        SettingsDAO settingsDAO = new SettingsDAO(getActivity());
-        Settings settings = settingsDAO.getById(1);
-        if(settings != null)
-            new ProjectListTask((MainActivity)getActivity()).execute(settings.getUrl() + "/getlistfiles/userName");
-//        else
-//            Message.showErrorMessage(getActivity(), R.string.error, R.string.not_logged);
-
         return new AlertDialog.Builder(
                 getActivity()).
-                setNegativeButton(R.string.close,new DialogInterface.OnClickListener() {
+                setNegativeButton(R.string.close, new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick (DialogInterface dialog,int which){
+                    public void onClick(DialogInterface dialog, int which) {
                         dismiss();
                     }
                 }).
@@ -59,6 +54,17 @@ public class ProjectListFragment extends DialogFragment{
                 setCancelable(true).
                 setTitle(R.string.available_projects).
                 create();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        SettingsDAO settingsDAO = new SettingsDAO(getActivity());
+        Settings settings = settingsDAO.getById(1);
+        if(settings != null)
+            new ProjectListTask((MainActivity)getActivity()).execute(settings.getUrl() + "/getlistfiles/userName");
+//        else
+//            Message.showErrorMessage(getActivity(), R.string.error, R.string.not_logged);
     }
 
     public void setListItems(ArrayList<Project> arrayList) {
@@ -69,4 +75,5 @@ public class ProjectListFragment extends DialogFragment{
     public DownloadTask getDownloadTask() {
         return ((ProjectListAdapter)lVProject.getAdapter()).getDownloadTask();
     }
+
 }
