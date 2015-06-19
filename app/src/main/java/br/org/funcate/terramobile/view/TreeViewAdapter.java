@@ -52,10 +52,7 @@ public class TreeViewAdapter extends BaseExpandableListAdapter implements View.O
         try{
             switch (child.getType()){
                 case TILES:{// base
-                    for (int count = 0; count < baseLayerRBList.size(); count++) {
-                        RadioButton radioButton = baseLayerRBList.get(count);
-                        radioButton.setChecked(false);
-                    }
+                    this.unselectAllRadioButtons(baseLayerRBList);
 
                     RadioButton rBChildBaseLayer = (RadioButton) v;
                     if (!rBChildBaseLayer.isChecked()) {
@@ -77,15 +74,15 @@ public class TreeViewAdapter extends BaseExpandableListAdapter implements View.O
                 }
                 case EDITABLE:{// editable (vector)
                     TreeView treeView=((MainActivity) this.context).getTreeView();
+                    GpkgLayer ed = treeView.getSelectedEditableLayer();
+                    if(ed!=null)
+                        this.menuMapController.removeEditableLayer(ed);
                     treeView.setSelectedEditableLayer(child);
-                    for (int count = 0; count < editableLayerRBList.size(); count++) {
-                        RadioButton radioButton = editableLayerRBList.get(count);
-                        radioButton.setChecked(false);
-                    }
+                    this.unselectAllRadioButtons(editableLayerRBList);
+
                     RadioButton rBChildGatheringLayer = (RadioButton) v;
                     if (!rBChildGatheringLayer.isChecked()) {
-//                        menuMapController.removeEditableLayer();
-//                        menuMapController.addEditableLayer(child);
+                        this.menuMapController.addEditableLayer(child);
                         rBChildGatheringLayer.setChecked(true);
                     }
                     break;
@@ -97,6 +94,13 @@ public class TreeViewAdapter extends BaseExpandableListAdapter implements View.O
             }
         } catch (Exception e) {
             Message.showErrorMessage(((MainActivity)context), R.string.error,"Failed on change the layer");
+        }
+    }
+
+    private void unselectAllRadioButtons(ArrayList<RadioButton> radioButtons) {
+        for (int i = 0,len=radioButtons.size(); i < len; i++) {
+            RadioButton radioButton = radioButtons.get(i);
+            radioButton.setChecked(false);
         }
     }
 
