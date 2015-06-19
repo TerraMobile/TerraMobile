@@ -14,6 +14,7 @@ CREATE TABLE "field_work_collect_data" (
 "collect_date" DATE,
 "termites" INTEGER,
 "crop_stage" TEXT,
+"picture" BLOB,
 "geometry" BLOB);
 
 -- Describe FIELD_WORK_PICTURE_DATA
