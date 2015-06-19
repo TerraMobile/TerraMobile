@@ -123,17 +123,35 @@ public class AppGeoPackageService {
                 throw new InvalidGeopackageException("Invalid number of field on GPKG content table. ");
             }
 
-            GpkgField tableNameField = aField.get(0);
-            GpkgField dataTypeField = aField.get(1);
+            String layerName=null;
+            GpkgField dataTypeField = null;
 
-            GpkgField minXField = aField.get(5);
-            GpkgField minYField = aField.get(6);
-            GpkgField maxXField = aField.get(7);
-            GpkgField maxYField = aField.get(8);
+            // To getting bounding box
+            Double minX=null;
+            Double minY=null;
+            Double maxX=null;
+            Double maxY=null;
 
-            GpkgField srsIdField = aField.get(9);
+            for (int j = 0,len = aField.size(); j < len; j++) {
+                GpkgField gpkgColumn = aField.get(j);
+                String fieldname = gpkgColumn.getFieldName();
+                if("table_name".equalsIgnoreCase(fieldname)){
+                    layerName = (String) gpkgColumn.getValue();
+                }else if("data_type".equalsIgnoreCase(fieldname)){
+                    dataTypeField = gpkgColumn;
+                }else if("min_x".equalsIgnoreCase(fieldname)){
+                    minX=(Double) gpkgColumn.getValue();
+                }else if("min_y".equalsIgnoreCase(fieldname)){
+                    minY=(Double) gpkgColumn.getValue();
+                }else if("max_x".equalsIgnoreCase(fieldname)){
+                    maxX=(Double) gpkgColumn.getValue();
+                }else if("max_y".equalsIgnoreCase(fieldname)){
+                    maxY=(Double) gpkgColumn.getValue();
+                }else if("srs_id".equalsIgnoreCase(fieldname)){
+                    layer.setSrsId((Integer) gpkgColumn.getValue());
+                }
+            }
 
-            String layerName = (String) tableNameField.getValue();
             layer.setName(layerName);
 
             // Getting data type
@@ -156,21 +174,8 @@ public class AppGeoPackageService {
                 throw new InvalidGeopackageException("Invalid layer .");
             }
 
-            // Getting bounding box
-
-            Double minX=(Double) minXField.getValue();
-            Double minY=(Double) minYField.getValue();
-            Double maxX=(Double) maxXField.getValue();
-            Double maxY=(Double) maxYField.getValue();
-
-            BoundingBoxE6 bb =new BoundingBoxE6(minX,minY, maxX, maxY);
-
+            BoundingBoxE6 bb =new BoundingBoxE6(minX, minY, maxX, maxY);
             layer.setBox(bb);
-
-            // Getting srs ID
-
-            layer.setSrsId((Integer) srsIdField.getValue());
-
             listLayers.add(layer);
         }
         gpkg.close();
