@@ -239,10 +239,12 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants{
             editableLayer = tv.getSelectedEditableLayer();
             if(editableLayer==null) {
                 Message.showErrorMessage(((MainActivity) context), R.string.failure_title_msg, R.string.missing_editable_layer);
+                return;
             }
         }catch (Exception e){
             e.printStackTrace();
             Message.showErrorMessage(((MainActivity) context), R.string.failure_title_msg, R.string.error_start_form);
+            return;
         }
 
 
@@ -261,7 +263,7 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants{
 
         } catch (Exception e) {
             Message.showErrorMessage(((MainActivity) context), R.string.failure_title_msg, R.string.error_start_form);
-
+            return;
         }
     }
 
