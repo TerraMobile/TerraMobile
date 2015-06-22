@@ -78,10 +78,13 @@ public class ProjectListTask extends AsyncTask<String, String, JSONObject> {
             }
         } catch (ClientProtocolException e) {
             e.printStackTrace();
+            return null;
         } catch (JSONException e) {
             e.printStackTrace();
+            return null;
         } catch (IOException e) {
             e.printStackTrace();
+            return null;
         }
         return null;
     }

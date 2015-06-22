@@ -99,48 +99,48 @@ public class ProjectListAdapter extends ArrayAdapter<Project> implements Adapter
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        File projectPath = ResourceUtil.getDirectory(context.getString(R.string.app_workspace_dir));
-        final String destinationFilePath = projectPath.getPath();
+        if (Util.isConnected(context)) {
+            File projectPath = ResourceUtil.getDirectory(context.getString(R.string.app_workspace_dir));
+            final String destinationFilePath = projectPath.getPath();
 
-        Project project = (Project) parent.getItemAtPosition(position);
-        final String fileName = project.getName();
+            Project project = (Project) parent.getItemAtPosition(position);
+            final String fileName = project.getName();
 
-        SettingsDAO settingsDAO = new SettingsDAO(context);
-        final Settings settings = settingsDAO.getById(1);
+            SettingsDAO settingsDAO = new SettingsDAO(context);
+            final Settings settings = settingsDAO.getById(1);
 
-        if (ResourceUtil.getGeoPackageByName(projectPath, context.getResources().getString(R.string.geopackage_extension), project.getName()) != null) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(
-                    context);
-            builder.setTitle(context.getString(R.string.project_remove_title));
-            builder.setMessage(context.getString(R.string.project_download_confirm));
-            builder.setCancelable(false);
-            builder.setPositiveButton(R.string.yes,
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            if (Util.isConnected(context)) {
+            if (ResourceUtil.getGeoPackageByName(projectPath, context.getResources().getString(R.string.geopackage_extension), project.getName()) != null) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(
+                        context);
+                builder.setTitle(context.getString(R.string.project_remove_title));
+                builder.setMessage(context.getString(R.string.project_download_confirm));
+                builder.setCancelable(false);
+                builder.setPositiveButton(R.string.yes,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
                                 if (settings != null)
                                     downloadTask = (DownloadTask) new DownloadTask(destinationFilePath + "/" + fileName, destinationFilePath, (MainActivity) context).execute(settings.getUrl() + "/getprojects/userName/" + fileName);
 //                              else
 //                                   Message.showErrorMessage(context, R.string.error, R.string.not_logged);
-                            } else
-                                Message.showErrorMessage((MainActivity) context, R.string.error, R.string.no_connection);
-                        }
-                    });
-            builder.setNegativeButton(R.string.no,
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            dialog.cancel();
-                        }
-                    });
-            AlertDialog alertDialog = builder.create();
-            alertDialog.show();
-        }
-        else {
-            if (settings != null)
-                downloadTask = (DownloadTask) new DownloadTask(destinationFilePath + "/" + fileName, destinationFilePath, (MainActivity) context).execute(settings.getUrl() + "/getprojects/userName/" + fileName);
+                            }
+                        });
+                builder.setNegativeButton(R.string.no,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
+            }
+            else {
+                if (settings != null)
+                    downloadTask = (DownloadTask) new DownloadTask(destinationFilePath + "/" + fileName, destinationFilePath, (MainActivity) context).execute(settings.getUrl() + "/getprojects/userName/" + fileName);
 //                else
 //                    Message.showErrorMessage(context, R.string.error, R.string.not_logged);
-        }
+            }
+        } else
+            Message.showErrorMessage((MainActivity) context, R.string.error, R.string.no_connection);
     }
 
     @Override
@@ -172,16 +172,20 @@ public class ProjectListAdapter extends ArrayAdapter<Project> implements Adapter
                                             else
                                                 ((MainActivity) context).setProject(null);
                                         }
-                                        Message.showSuccessMessage((MainActivity)context, R.string.success, R.string.project_removed_successfully);
-                                        ((ProjectListAdapter) parent.getAdapter()).notifyDataSetChanged();
+                                        Message.showSuccessMessage((MainActivity) context, R.string.success, R.string.project_removed_successfully);
+                                        if (!Util.isConnected(context)) {
+                                            ProjectListAdapter.this.remove(project);
+                                            projectList.remove(position);
+                                        }
+                                        notifyDataSetChanged();
                                     } else {
-                                        Message.showSuccessMessage((MainActivity)context, R.string.success, R.string.error_removing_project);
+                                        Message.showSuccessMessage((MainActivity) context, R.string.success, R.string.error_removing_project);
                                         projectDAO.insert(project);
                                     }
                                 } else
-                                    Message.showSuccessMessage((MainActivity)context, R.string.success, R.string.error_removing_project);
+                                    Message.showSuccessMessage((MainActivity) context, R.string.success, R.string.error_removing_project);
                             } else
-                                Message.showSuccessMessage((MainActivity)context, R.string.success, R.string.error_removing_project);
+                                Message.showSuccessMessage((MainActivity) context, R.string.success, R.string.error_removing_project);
 
                         }
                     });

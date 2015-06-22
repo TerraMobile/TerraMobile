@@ -52,7 +52,7 @@ public class ProjectListFragment extends DialogFragment{
                 }).
                 setView(v).
                 setCancelable(true).
-                setTitle(R.string.available_projects).
+                setTitle(Util.isConnected(getActivity()) ? getActivity().getString(R.string.available_projects) : getActivity().getString(R.string.available_projects) + " (" + getActivity().getString(R.string.offline) + ")").
                 create();
     }
 

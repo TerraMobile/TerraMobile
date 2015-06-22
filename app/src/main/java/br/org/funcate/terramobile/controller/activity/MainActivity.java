@@ -61,7 +61,6 @@ import br.org.funcate.terramobile.util.Message;
 import br.org.funcate.terramobile.util.ResourceUtil;
 
 public class MainActivity extends FragmentActivity {
-    private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
 
     private ActionBar actionBar;
@@ -76,7 +75,6 @@ public class MainActivity extends FragmentActivity {
     private Project mProject;
     private Settings settings;
 
-    private ProjectDAO projectDAO;
     private SettingsDAO settingsDAO;
 
     private static int FORM_COLLECT_DATA = 222;
@@ -130,7 +128,7 @@ public class MainActivity extends FragmentActivity {
 
         String ext = this.getString(R.string.geopackage_extension);
         if(settings.getCurrentProject() != null) {
-            projectDAO = new ProjectDAO(this);
+            ProjectDAO projectDAO = new ProjectDAO(this);
             mProject = projectDAO.getByName(settings.getCurrentProject());
             if(ResourceUtil.getGeoPackageByName(directory, ext, fileName) != null) {
                 if(mProject == null) {
@@ -157,7 +155,7 @@ public class MainActivity extends FragmentActivity {
         treeView = new TreeView(this);
 
         mTitle = mDrawerTitle = getTitle();
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         // set a custom shadow that overlays the action_bar content when the drawer opens
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
 
