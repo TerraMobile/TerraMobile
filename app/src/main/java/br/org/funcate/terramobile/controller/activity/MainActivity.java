@@ -387,7 +387,10 @@ public class MainActivity extends FragmentActivity {
         Style defaultStyle = new Style(null, 0x901010AA, 1.0f, 0x20AA1010);
 
         KmlDocument kmlDocument = new KmlDocument();
-        Overlay overlay = l.buildOverlay(map, defaultStyle, null, kmlDocument);
+        Overlay overlay = null;
+        if (l != null) {
+            overlay = l.buildOverlay(map, defaultStyle, null, kmlDocument);
+        }
 
         map.getOverlays().add(overlay);
 

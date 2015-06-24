@@ -56,7 +56,6 @@ public class ProjectListAdapter extends ArrayAdapter<Project> implements Adapter
 //        ImageView iVUpdated = (ImageView)convertView.findViewById(R.id.iVUpdated);
 
         Project project = (Project) projectList.get(position);
-//        final String projectName = project.toString().endsWith(context.getString(R.string.geopackage_extension)) ? project.toString().substring(0, project.toString().indexOf('.')) : project.toString();
 
         tVProject.setText(project.toString());
 
@@ -64,10 +63,8 @@ public class ProjectListAdapter extends ArrayAdapter<Project> implements Adapter
         rBCurrentProject.setTag(project);
 
         Project currentProject = ((MainActivity) context).getProject();
-        if (currentProject != null && currentProject.toString().equals(project.toString())) {
+        if (currentProject != null && currentProject.toString().equals(project.toString()))
             rBCurrentProject.setChecked(true);
-            rBCurrentProject.setEnabled(true);
-        }
 
         File directory = ResourceUtil.getDirectory(context.getResources().getString(R.string.app_workspace_dir));
         File projectFile = ResourceUtil.getGeoPackageByName(directory, context.getResources().getString(R.string.geopackage_extension), project.getName());
@@ -103,7 +100,7 @@ public class ProjectListAdapter extends ArrayAdapter<Project> implements Adapter
             File projectPath = ResourceUtil.getDirectory(context.getString(R.string.app_workspace_dir));
             final String destinationFilePath = projectPath.getPath();
 
-            Project project = (Project) parent.getItemAtPosition(position);
+            final Project project = (Project) parent.getItemAtPosition(position);
             final String fileName = project.getName();
 
             SettingsDAO settingsDAO = new SettingsDAO(context);
@@ -119,7 +116,7 @@ public class ProjectListAdapter extends ArrayAdapter<Project> implements Adapter
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 if (settings != null)
-                                    downloadTask = (DownloadTask) new DownloadTask(destinationFilePath + "/" + fileName, destinationFilePath, (MainActivity) context).execute(settings.getUrl() + "/getprojects/userName/" + fileName);
+                                    downloadTask = (DownloadTask) new DownloadTask(destinationFilePath + "/" + fileName, destinationFilePath, fileName, (MainActivity) context).execute(settings.getUrl() + "/getprojects/userName/" + fileName);
 //                              else
 //                                   Message.showErrorMessage(context, R.string.error, R.string.not_logged);
                             }
@@ -135,7 +132,7 @@ public class ProjectListAdapter extends ArrayAdapter<Project> implements Adapter
             }
             else {
                 if (settings != null)
-                    downloadTask = (DownloadTask) new DownloadTask(destinationFilePath + "/" + fileName, destinationFilePath, (MainActivity) context).execute(settings.getUrl() + "/getprojects/userName/" + fileName);
+                    downloadTask = (DownloadTask) new DownloadTask(destinationFilePath + "/" + fileName, destinationFilePath, fileName, (MainActivity) context).execute(settings.getUrl() + "/getprojects/userName/" + fileName);
 //                else
 //                    Message.showErrorMessage(context, R.string.error, R.string.not_logged);
             }
@@ -169,8 +166,9 @@ public class ProjectListAdapter extends ArrayAdapter<Project> implements Adapter
                                         if (((MainActivity) context).getProject().toString().equals(projectName)) {
                                             if (ResourceUtil.getGeoPackageFiles(directory, context.getString(R.string.geopackage_extension)).size() > 0)
                                                 ((MainActivity) context).setProject(projectDAO.getFirstProject());
-                                            else
+                                            else {
                                                 ((MainActivity) context).setProject(null);
+                                            }
                                         }
                                         Message.showSuccessMessage((MainActivity) context, R.string.success, R.string.project_removed_successfully);
                                         if (!Util.isConnected(context)) {
