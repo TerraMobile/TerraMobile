@@ -97,11 +97,14 @@ public class ProjectListAdapter extends ArrayAdapter<Project> implements Adapter
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         if (Util.isConnected(context)) {
-            File projectPath = ResourceUtil.getDirectory(context.getString(R.string.app_workspace_dir));
-            final String destinationFilePath = projectPath.getPath();
-
             final Project project = (Project) parent.getItemAtPosition(position);
             final String fileName = project.getName();
+
+            File tempPath = ResourceUtil.getDirectory(context.getString(R.string.app_workspace_temp_dir));
+            File projectPath = ResourceUtil.getDirectory(context.getString(R.string.app_workspace_dir));
+
+            final String tempFilePath = tempPath.getPath() + "/" + fileName;
+            final String projectFilePath = projectPath.getPath();
 
             SettingsDAO settingsDAO = new SettingsDAO(context);
             final Settings settings = settingsDAO.getById(1);
@@ -116,7 +119,7 @@ public class ProjectListAdapter extends ArrayAdapter<Project> implements Adapter
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 if (settings != null)
-                                    downloadTask = (DownloadTask) new DownloadTask(destinationFilePath + "/" + fileName, destinationFilePath, fileName, (MainActivity) context).execute(settings.getUrl() + "/getprojects/userName/" + fileName);
+                                    downloadTask = (DownloadTask) new DownloadTask(tempFilePath, projectFilePath, fileName, (MainActivity) context).execute(settings.getUrl() + "/getprojects/userName/" + fileName);
 //                              else
 //                                   Message.showErrorMessage(context, R.string.error, R.string.not_logged);
                             }
@@ -132,7 +135,7 @@ public class ProjectListAdapter extends ArrayAdapter<Project> implements Adapter
             }
             else {
                 if (settings != null)
-                    downloadTask = (DownloadTask) new DownloadTask(destinationFilePath + "/" + fileName, destinationFilePath, fileName, (MainActivity) context).execute(settings.getUrl() + "/getprojects/userName/" + fileName);
+                    downloadTask = (DownloadTask) new DownloadTask(tempFilePath, projectFilePath, fileName, (MainActivity) context).execute(settings.getUrl() + "/getprojects/userName/" + fileName);
 //                else
 //                    Message.showErrorMessage(context, R.string.error, R.string.not_logged);
             }

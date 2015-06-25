@@ -1,6 +1,7 @@
 package br.org.funcate.terramobile.controller.activity.tasks;
 
 import android.os.AsyncTask;
+import android.provider.MediaStore;
 import android.util.Log;
 
 import java.io.BufferedInputStream;
@@ -18,6 +19,7 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import br.org.funcate.dynamicforms.util.FileUtilities;
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.controller.activity.MainActivity;
 import br.org.funcate.terramobile.model.Project;
@@ -25,6 +27,7 @@ import br.org.funcate.terramobile.model.Settings;
 import br.org.funcate.terramobile.model.db.dao.ProjectDAO;
 import br.org.funcate.terramobile.model.db.dao.SettingsDAO;
 import br.org.funcate.terramobile.util.Message;
+import br.org.funcate.terramobile.util.Util;
 
 /**
  * This AsyncTask downloads a geopackage from the server
@@ -68,11 +71,17 @@ public class DownloadTask extends AsyncTask<String, String, Boolean> {
         destinationFile = new File(downloadDestinationFilePath);
         try {
             if (!destinationFile.exists())
-                destinationFile.createNewFile();
+                if(!destinationFile.createNewFile()){
+                    return null;
+                }
             else {
-                destinationFile.delete();
-                destinationFile.createNewFile();
+                if(destinationFile.delete()) {
+                    if(!destinationFile.createNewFile())
+                        return null;
+                }
+                else return null;
             }
+
             URL url = new URL(urlToDownload[0]);
             URLConnection urlConnection = url.openConnection();
             urlConnection.setConnectTimeout(5000);
@@ -96,12 +105,11 @@ public class DownloadTask extends AsyncTask<String, String, Boolean> {
                     return false;
                 }
                 total += bufferLength;
-                publishProgress("" + (int) ((total * 100) / totalSize), mainActivity.getResources().getString(R.string.downloading));
+                publishProgress("" + (int) ((total * 100) / totalSize), mainActivity.getString(R.string.downloading));
                 fileOutput.write(buffer, 0, bufferLength);
             }
             fileOutput.flush();
             fileOutput.close();
-
 
             String ext = mainActivity.getString(R.string.geopackage_extension);
 
@@ -109,6 +117,14 @@ public class DownloadTask extends AsyncTask<String, String, Boolean> {
                 mFiles.add(downloadDestinationFilePath.substring(downloadDestinationFilePath.lastIndexOf(File.separatorChar)+1, downloadDestinationFilePath.length()));
             else
                 mFiles = this.unzip(new File(downloadDestinationFilePath), new File(unzipDestinationFilePath));
+
+            unzipDestinationFilePath += "/" +fileName;
+
+            if(destinationFile.exists()) {
+                publishProgress("99", mainActivity.getString(R.string.copying_file));
+                Util.copyFile(downloadDestinationFilePath, unzipDestinationFilePath);
+                destinationFile.delete();
+            }
 
             return true;
         }catch (IOException e) {
@@ -136,7 +152,7 @@ public class DownloadTask extends AsyncTask<String, String, Boolean> {
         Project project = new Project();
         project.setId(null);
         project.setName(projectName);
-        project.setFilePath(downloadDestinationFilePath);
+        project.setFilePath(unzipDestinationFilePath);
         project.setDownloaded(1);
         projectDAO.insert(project);
 
@@ -171,22 +187,8 @@ public class DownloadTask extends AsyncTask<String, String, Boolean> {
     protected void onCancelled(Boolean aBoolean) {
         super.onCancelled(aBoolean);
         if(destinationFile.exists()) {
-            if(destinationFile.delete()) {
+            if(destinationFile.delete())
                 Message.showSuccessMessage(mainActivity, R.string.success, R.string.download_cancelled);
-                ProjectDAO projectDAO = new ProjectDAO(mainActivity);
-                Project selectedProject = projectDAO.getByName(fileName);
-                if(selectedProject != null) {
-                    projectDAO.remove(selectedProject.getId());
-                    Project project = projectDAO.getFirstProject();
-                    if (project != null) {
-                        if (selectedProject.getName().equals(mainActivity.getProject().getName()))
-                            mainActivity.setProject(project);
-                    }
-                    else
-                        mainActivity.setProject(null);
-                }
-                mainActivity.getProjectListFragment().getProjectListAdapter().notifyDataSetChanged();
-            }
         }
     }
 
@@ -252,6 +254,7 @@ public class DownloadTask extends AsyncTask<String, String, Boolean> {
                     fileOutputStream.write(buffer, 0, count);
                 }
                 fileOutputStream.close();
+                zipFile.delete();
             }
         }catch (FileNotFoundException e) {
             Log.e("unzip", "File not found");
