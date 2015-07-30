@@ -132,12 +132,13 @@ public class MainActivity extends FragmentActivity {
         if(settings.getCurrentProject() != null) {
             projectDAO = new ProjectDAO(this);
             mProject = projectDAO.getByName(settings.getCurrentProject());
-            if(ResourceUtil.getGeoPackageByName(directory, ext, fileName) != null) {
+            File currentProject = ResourceUtil.getGeoPackageByName(directory, ext, fileName);
+            if(currentProject != null) {
                 if(mProject == null) {
                     Project project = new Project();
                     project.setId(null);
                     project.setName(fileName);
-                    project.setFilePath(directory.getPath());
+                    project.setFilePath(currentProject.getPath());
                     projectDAO.insert(project);
 
                     mProject = projectDAO.getByName(settings.getCurrentProject());
