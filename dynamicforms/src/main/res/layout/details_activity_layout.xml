@@ -18,7 +18,8 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_margin="10dp"
-        android:background="@android:drawable/ic_menu_add"
+        android:text="@string/btn_form_save"
+        android:drawableLeft="@android:drawable/ic_menu_add"
         android:onClick="saveClicked" />
 
     <Button
@@ -29,7 +30,8 @@
         android:layout_alignBottom="@+id/saveButton"
         android:layout_margin="10dp"
         android:layout_toRightOf="@+id/saveButton"
-        android:background="@android:drawable/ic_menu_close_clear_cancel"
+        android:text="@string/btn_form_cancel"
+        android:drawableLeft="@android:drawable/ic_menu_close_clear_cancel"
         android:onClick="cancelClicked" />
 
 </LinearLayout>
