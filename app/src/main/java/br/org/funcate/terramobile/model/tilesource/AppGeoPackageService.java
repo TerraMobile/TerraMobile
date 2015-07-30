@@ -9,10 +9,12 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.augtech.geoapi.feature.SimpleFeatureImpl;
+import com.augtech.geoapi.geometry.BoundingBoxImpl;
 import com.augtech.geoapi.geopackage.DateUtil;
 import com.augtech.geoapi.geopackage.GeoPackage;
 import com.augtech.geoapi.geopackage.GpkgField;
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
@@ -24,6 +26,7 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.GeometryType;
+import org.opengis.geometry.BoundingBox;
 import org.osmdroid.ResourceProxy;
 import org.osmdroid.bonuspack.overlays.Polygon;
 import org.osmdroid.tileprovider.MapTileProviderArray;
@@ -174,7 +177,7 @@ public class AppGeoPackageService {
                 throw new InvalidGeopackageException("Invalid layer .");
             }
 
-            BoundingBoxE6 bb =new BoundingBoxE6(minX, minY, maxX, maxY);
+            BoundingBox bb =new BoundingBoxImpl(minX, maxX, minY, maxY);
             layer.setBox(bb);
             listLayers.add(layer);
         }

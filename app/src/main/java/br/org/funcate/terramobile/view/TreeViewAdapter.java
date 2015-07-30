@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -148,6 +149,7 @@ public class TreeViewAdapter extends BaseExpandableListAdapter implements View.O
         TextView childLabel;
         CheckBox checkBox;
         RadioButton radioButton;
+        ImageView extentImage;
         switch (child.getType()) {
             case TILES:
                 convertView = layoutInflater.inflate(R.layout.child_item_base_layers, null);
@@ -160,6 +162,7 @@ public class TreeViewAdapter extends BaseExpandableListAdapter implements View.O
                         context.getResources().getDimension(R.dimen.child_text_size));
                 radioButton.setOnClickListener(this);
                 baseLayerRBList.add(radioButton);
+
                 break;
             case FEATURES:
                 convertView = layoutInflater.inflate(R.layout.child_item_layers, null);
@@ -193,7 +196,32 @@ public class TreeViewAdapter extends BaseExpandableListAdapter implements View.O
                         context.getResources().getDimension(R.dimen.child_text_size));
                 break;
         }
+        //Adding the listener to the zoom to extent image
+        extentImage = (ImageView)convertView.findViewById(R.id.zoomExtent);
+        extentImage.setOnClickListener(extentImageListener);
+        extentImage.setTag(child);
         return convertView;
+    }
+
+    private View.OnClickListener extentImageListener = new View.OnClickListener() {
+        //@Override
+        public void onClick(View v) {
+            if(v.getTag()!=null)
+            {
+                if(v.getTag() instanceof GpkgLayer)
+                {
+                    GpkgLayer layer = (GpkgLayer) v.getTag();
+                    zoomToLayerExtent(layer);
+                }
+            }
+
+
+        }
+    };
+
+    private void zoomToLayerExtent(GpkgLayer layer)
+    {
+        this.menuMapController.panTo(layer.getBox());
     }
 
     @Override
