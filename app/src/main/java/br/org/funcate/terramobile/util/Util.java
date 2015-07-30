@@ -7,6 +7,12 @@ import android.graphics.ColorMatrix;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -37,5 +43,27 @@ public class Util {
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         return networkInfo != null && networkInfo.isConnected();
+    }
+
+    public static void copyFile(String fileOrigin, String fileDestination) {
+        InputStream inStream;
+        OutputStream outStream;
+        try {
+            File origin = new File(fileOrigin);
+            File destination = new File(fileDestination);
+
+            inStream = new FileInputStream(origin);
+            outStream = new FileOutputStream(destination);
+
+            byte[] buffer = new byte[1024];
+
+            int length;
+            while ((length = inStream.read(buffer)) > 0)
+                outStream.write(buffer, 0, length);
+            inStream.close();
+            outStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

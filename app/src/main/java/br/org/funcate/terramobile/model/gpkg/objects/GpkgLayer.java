@@ -4,6 +4,7 @@ import com.augtech.geoapi.geopackage.GeoPackage;
 import com.augtech.geoapi.geopackage.GpkgField;
 
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.geometry.BoundingBox;
 import org.osmdroid.util.BoundingBoxE6;
 import org.osmdroid.views.overlay.Overlay;
 
@@ -25,7 +26,7 @@ public class GpkgLayer{
     private Type type;
     private GeoPackage geoPackage;
     private int indexOverlay;
-    private BoundingBoxE6 box;
+    private BoundingBox box;
     private Integer srsId;
     private String JSON;
     private ArrayList<GpkgField> fields;
@@ -71,12 +72,12 @@ public class GpkgLayer{
         this.indexOverlay = indexOverlay;
     }
 
-    public BoundingBoxE6 getBox()
+    public BoundingBox getBox()
     {
         return box;
     }
 
-    public void setBox(BoundingBoxE6 box) {
+    public void setBox(BoundingBox box) {
         this.box = box;
     }
 

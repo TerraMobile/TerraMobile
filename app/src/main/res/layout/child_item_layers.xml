@@ -9,5 +9,15 @@
         android:layout_height="wrap_content"
         android:text=""
         android:textStyle="bold"
-        android:id="@+id/cBChildLayer" />
+        android:id="@+id/cBChildLayer"
+        android:paddingRight="30dp"/>
+
+    <ImageView
+        android:id="@+id/zoomExtent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingRight="5dp"
+        android:src="@drawable/zoom_extent"
+        android:layout_alignTop="@+id/cBChildLayer"
+        android:layout_alignParentRight="true" />
 </RelativeLayout>

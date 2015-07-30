@@ -61,7 +61,6 @@ import br.org.funcate.terramobile.util.Message;
 import br.org.funcate.terramobile.util.ResourceUtil;
 
 public class MainActivity extends FragmentActivity {
-    private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
 
     private ActionBar actionBar;
@@ -76,7 +75,6 @@ public class MainActivity extends FragmentActivity {
     private Project mProject;
     private Settings settings;
 
-    private ProjectDAO projectDAO;
     private SettingsDAO settingsDAO;
 
     private static int FORM_COLLECT_DATA = 222;
@@ -130,14 +128,15 @@ public class MainActivity extends FragmentActivity {
 
         String ext = this.getString(R.string.geopackage_extension);
         if(settings.getCurrentProject() != null) {
-            projectDAO = new ProjectDAO(this);
+            ProjectDAO projectDAO = new ProjectDAO(this);
             mProject = projectDAO.getByName(settings.getCurrentProject());
-            if(ResourceUtil.getGeoPackageByName(directory, ext, fileName) != null) {
+            File currentProject = ResourceUtil.getGeoPackageByName(directory, ext, fileName);
+            if(currentProject != null) {
                 if(mProject == null) {
                     Project project = new Project();
                     project.setId(null);
                     project.setName(fileName);
-                    project.setFilePath(directory.getPath());
+                    project.setFilePath(currentProject.getPath());
                     projectDAO.insert(project);
 
                     mProject = projectDAO.getByName(settings.getCurrentProject());
@@ -157,7 +156,7 @@ public class MainActivity extends FragmentActivity {
         treeView = new TreeView(this);
 
         mTitle = mDrawerTitle = getTitle();
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         // set a custom shadow that overlays the action_bar content when the drawer opens
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
 
@@ -389,7 +388,10 @@ public class MainActivity extends FragmentActivity {
         Style defaultStyle = new Style(null, 0x901010AA, 1.0f, 0x20AA1010);
 
         KmlDocument kmlDocument = new KmlDocument();
-        Overlay overlay = l.buildOverlay(map, defaultStyle, null, kmlDocument);
+        Overlay overlay = null;
+        if (l != null) {
+            overlay = l.buildOverlay(map, defaultStyle, null, kmlDocument);
+        }
 
         map.getOverlays().add(overlay);
 

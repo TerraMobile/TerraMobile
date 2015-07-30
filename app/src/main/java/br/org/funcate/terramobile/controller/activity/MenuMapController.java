@@ -19,6 +19,7 @@ import org.osmdroid.tileprovider.tilesource.XYTileSource;
 import org.osmdroid.tileprovider.util.SimpleInvalidationHandler;
 import org.osmdroid.tileprovider.util.SimpleRegisterReceiver;
 import org.osmdroid.util.BoundingBoxE6;
+import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Overlay;
 import org.osmdroid.views.overlay.TilesOverlay;
@@ -32,6 +33,7 @@ import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
 import br.org.funcate.terramobile.model.tilesource.AppGeoPackageService;
 import br.org.funcate.terramobile.model.tilesource.MapTileGeoPackageProvider;
 import br.org.funcate.terramobile.model.tilesource.MapTileProviderArrayGeoPackage;
+import br.org.funcate.terramobile.util.GeoUtil;
 import br.org.funcate.terramobile.util.Util;
 
 /**
@@ -141,5 +143,18 @@ public class MenuMapController {
 
     public void removeEditableLayer(GpkgLayer child) {
         removeVectorLayer(child);
+    }
+
+
+    /**
+     * Allows to pan the mapView to the requested BoundingBox and calculating the extent required zoom level to fit on canvas
+     * @param bb Requested BoundingBox to pan
+     */
+    public void panTo(BoundingBox bb)
+    {
+        MapView mapView = (MapView) ((MainActivity) context).findViewById(R.id.mapview);
+        BoundingBoxE6 bbe6 = GeoUtil.convertToBoundingBoxE6(bb);
+        System.out.println(bbe6);
+        mapView.zoomToBoundingBox(bbe6);
     }
 }

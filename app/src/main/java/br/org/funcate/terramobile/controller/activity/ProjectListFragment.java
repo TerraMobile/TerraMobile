@@ -35,6 +35,7 @@ import br.org.funcate.terramobile.view.ProjectListAdapter;
  */
 public class ProjectListFragment extends DialogFragment{
     private ListView lVProject;
+    private ProjectListAdapter projectListAdapter;
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         LayoutInflater inflater = LayoutInflater.from(getActivity());
@@ -52,7 +53,7 @@ public class ProjectListFragment extends DialogFragment{
                 }).
                 setView(v).
                 setCancelable(true).
-                setTitle(R.string.available_projects).
+                setTitle(Util.isConnected(getActivity()) ? getActivity().getString(R.string.available_projects) : getActivity().getString(R.string.available_projects) + " (" + getActivity().getString(R.string.offline) + ")").
                 create();
     }
 
@@ -68,8 +69,12 @@ public class ProjectListFragment extends DialogFragment{
     }
 
     public void setListItems(ArrayList<Project> arrayList) {
-        ProjectListAdapter projectListAdapter = new ProjectListAdapter(getActivity(), R.id.tVProjectName, arrayList);
+        projectListAdapter = new ProjectListAdapter(getActivity(), R.id.tVProjectName, arrayList);
         lVProject.setAdapter(projectListAdapter);
+    }
+
+    public ProjectListAdapter getProjectListAdapter() {
+        return projectListAdapter;
     }
 
     public DownloadTask getDownloadTask() {

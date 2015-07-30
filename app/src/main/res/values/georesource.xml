@@ -2,6 +2,7 @@
 <resources>
     <string name="terramobile_url">http://200.144.100.34:8080/MobileServer/tmserver/projectservices</string>
     <string name="app_workspace_dir">GeoPackageTest</string>
+    <string name="app_workspace_temp_dir">GeoPackageTest/Temp</string>
     <string name="geopackage_extension">.gpkg</string>
     <item name="default_map_center_x" format="float" type="dimen">-15.1656563</item>
     <item name="default_map_center_y" format="float" type="dimen">-47.9116195</item>

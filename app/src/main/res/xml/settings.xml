@@ -8,6 +8,6 @@
             android:key="server_url">
         </Preference>
     </PreferenceCategory>
-    <PreferenceCategory android:title="@string/map_preferences">
-    </PreferenceCategory>
+    <!--<PreferenceCategory android:title="@string/map_preferences">-->
+    <!--</PreferenceCategory>-->
 </PreferenceScreen>
