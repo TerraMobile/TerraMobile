@@ -81,4 +81,6 @@
     <string name="ok">OK</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="offline">Offline</string>
+    <string name="copying_file">Copying file…</string>
 </resources>

@@ -56,7 +56,6 @@ public class ProjectListAdapter extends ArrayAdapter<Project> implements Adapter
 //        ImageView iVUpdated = (ImageView)convertView.findViewById(R.id.iVUpdated);
 
         Project project = (Project) projectList.get(position);
-//        final String projectName = project.toString().endsWith(context.getString(R.string.geopackage_extension)) ? project.toString().substring(0, project.toString().indexOf('.')) : project.toString();
 
         tVProject.setText(project.toString());
 
@@ -64,10 +63,8 @@ public class ProjectListAdapter extends ArrayAdapter<Project> implements Adapter
         rBCurrentProject.setTag(project);
 
         Project currentProject = ((MainActivity) context).getProject();
-        if (currentProject != null && currentProject.toString().equals(project.toString())) {
+        if (currentProject != null && currentProject.toString().equals(project.toString()))
             rBCurrentProject.setChecked(true);
-            rBCurrentProject.setEnabled(true);
-        }
 
         File directory = ResourceUtil.getDirectory(context.getResources().getString(R.string.app_workspace_dir));
         File projectFile = ResourceUtil.getGeoPackageByName(directory, context.getResources().getString(R.string.geopackage_extension), project.getName());
@@ -99,48 +96,51 @@ public class ProjectListAdapter extends ArrayAdapter<Project> implements Adapter
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        File projectPath = ResourceUtil.getDirectory(context.getString(R.string.app_workspace_dir));
-        final String destinationFilePath = projectPath.getPath();
+        if (Util.isConnected(context)) {
+            final Project project = (Project) parent.getItemAtPosition(position);
+            final String fileName = project.getName();
 
-        Project project = (Project) parent.getItemAtPosition(position);
-        final String fileName = project.getName();
+            File tempPath = ResourceUtil.getDirectory(context.getString(R.string.app_workspace_temp_dir));
+            File projectPath = ResourceUtil.getDirectory(context.getString(R.string.app_workspace_dir));
 
-        SettingsDAO settingsDAO = new SettingsDAO(context);
-        final Settings settings = settingsDAO.getById(1);
+            final String tempFilePath = tempPath.getPath() + "/" + fileName;
+            final String projectFilePath = projectPath.getPath();
 
-        if (ResourceUtil.getGeoPackageByName(projectPath, context.getResources().getString(R.string.geopackage_extension), project.getName()) != null) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(
-                    context);
-            builder.setTitle(context.getString(R.string.project_remove_title));
-            builder.setMessage(context.getString(R.string.project_download_confirm));
-            builder.setCancelable(false);
-            builder.setPositiveButton(R.string.yes,
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            if (Util.isConnected(context)) {
+            SettingsDAO settingsDAO = new SettingsDAO(context);
+            final Settings settings = settingsDAO.getById(1);
+
+            if (ResourceUtil.getGeoPackageByName(projectPath, context.getResources().getString(R.string.geopackage_extension), project.getName()) != null) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(
+                        context);
+                builder.setTitle(context.getString(R.string.project_remove_title));
+                builder.setMessage(context.getString(R.string.project_download_confirm));
+                builder.setCancelable(false);
+                builder.setPositiveButton(R.string.yes,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
                                 if (settings != null)
-                                    downloadTask = (DownloadTask) new DownloadTask(destinationFilePath + "/" + fileName, destinationFilePath, (MainActivity) context).execute(settings.getUrl() + "/getprojects/userName/" + fileName);
+                                    downloadTask = (DownloadTask) new DownloadTask(tempFilePath, projectFilePath, fileName, (MainActivity) context).execute(settings.getUrl() + "/getprojects/userName/" + fileName);
 //                              else
 //                                   Message.showErrorMessage(context, R.string.error, R.string.not_logged);
-                            } else
-                                Message.showErrorMessage((MainActivity) context, R.string.error, R.string.no_connection);
-                        }
-                    });
-            builder.setNegativeButton(R.string.no,
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            dialog.cancel();
-                        }
-                    });
-            AlertDialog alertDialog = builder.create();
-            alertDialog.show();
-        }
-        else {
-            if (settings != null)
-                downloadTask = (DownloadTask) new DownloadTask(destinationFilePath + "/" + fileName, destinationFilePath, (MainActivity) context).execute(settings.getUrl() + "/getprojects/userName/" + fileName);
+                            }
+                        });
+                builder.setNegativeButton(R.string.no,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
+            }
+            else {
+                if (settings != null)
+                    downloadTask = (DownloadTask) new DownloadTask(tempFilePath, projectFilePath, fileName, (MainActivity) context).execute(settings.getUrl() + "/getprojects/userName/" + fileName);
 //                else
 //                    Message.showErrorMessage(context, R.string.error, R.string.not_logged);
-        }
+            }
+        } else
+            Message.showErrorMessage((MainActivity) context, R.string.error, R.string.no_connection);
     }
 
     @Override
@@ -169,19 +169,24 @@ public class ProjectListAdapter extends ArrayAdapter<Project> implements Adapter
                                         if (((MainActivity) context).getProject().toString().equals(projectName)) {
                                             if (ResourceUtil.getGeoPackageFiles(directory, context.getString(R.string.geopackage_extension)).size() > 0)
                                                 ((MainActivity) context).setProject(projectDAO.getFirstProject());
-                                            else
+                                            else {
                                                 ((MainActivity) context).setProject(null);
+                                            }
                                         }
-                                        Message.showSuccessMessage((MainActivity)context, R.string.success, R.string.project_removed_successfully);
-                                        ((ProjectListAdapter) parent.getAdapter()).notifyDataSetChanged();
+                                        Message.showSuccessMessage((MainActivity) context, R.string.success, R.string.project_removed_successfully);
+                                        if (!Util.isConnected(context)) {
+                                            ProjectListAdapter.this.remove(project);
+                                            projectList.remove(position);
+                                        }
+                                        notifyDataSetChanged();
                                     } else {
-                                        Message.showSuccessMessage((MainActivity)context, R.string.success, R.string.error_removing_project);
+                                        Message.showSuccessMessage((MainActivity) context, R.string.success, R.string.error_removing_project);
                                         projectDAO.insert(project);
                                     }
                                 } else
-                                    Message.showSuccessMessage((MainActivity)context, R.string.success, R.string.error_removing_project);
+                                    Message.showSuccessMessage((MainActivity) context, R.string.success, R.string.error_removing_project);
                             } else
-                                Message.showSuccessMessage((MainActivity)context, R.string.success, R.string.error_removing_project);
+                                Message.showSuccessMessage((MainActivity) context, R.string.success, R.string.error_removing_project);
 
                         }
                     });
