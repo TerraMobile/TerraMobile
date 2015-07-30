@@ -24,6 +24,7 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.GeometryType;
+import org.opengis.feature.type.Name;
 import org.osmdroid.ResourceProxy;
 import org.osmdroid.bonuspack.overlays.Polygon;
 import org.osmdroid.tileprovider.MapTileProviderArray;
@@ -38,10 +39,13 @@ import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.TilesOverlay;
 
 import java.io.File;
+import java.lang.reflect.Array;
 import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.jar.Attributes;
 
 import br.org.funcate.dynamicforms.FormUtilities;
 import br.org.funcate.dynamicforms.images.ImageUtilities;
@@ -229,7 +233,7 @@ public class AppGeoPackageService {
             }catch (Exception e) {
                 int flags = context.getApplicationInfo().flags;
                 if((flags & context.getApplicationInfo().FLAG_DEBUGGABLE) != 0) {
-                    throw new TerraMobileException(e.getMessage());
+                    throw new TerraMobileException(e.getMessage());// write log here
                 }else {
                     throw new TerraMobileException(context.getString(R.string.error_while_storing_form_data));
                 }
@@ -243,8 +247,10 @@ public class AppGeoPackageService {
         ArrayList<GpkgField> fields = tv.getSelectedEditableLayer().getFields();
         SimpleFeatureType ft = tv.getSelectedEditableLayer().getFeatureType();
         GeometryType geometryType = ft.getGeometryDescriptor().getType();
-        List<Object> attributeValues = new ArrayList<Object>();
-        SimpleFeatureImpl feature = new SimpleFeatureImpl(null, attributeValues, ft);
+        //List<Object> attributeValues = new ArrayList<Object>();
+        Object[] attrs = new Object[fields.size()];
+
+        SimpleFeatureImpl feature = new SimpleFeatureImpl(null, null, ft);
 
         GeometryFactory factory=new GeometryFactory();
 
@@ -253,7 +259,9 @@ public class AppGeoPackageService {
             double[] c = formData.getDoubleArray(FormUtilities.GEOJSON_TYPE_POINT);
             Coordinate coordinate = new Coordinate(c[0],c[1]);
             Point point = factory.createPoint(coordinate);
-            feature.setDefaultGeometry(point);
+            Name geomColName = ft.getGeometryDescriptor().getName();
+            attrs[ft.indexOf(geomColName)]=point;
+            //feature.setDefaultGeometry(point);
         }
 
         ArrayList<String> formKeys = formData.getStringArrayList(LibraryConstants.FORM_KEYS);
@@ -265,37 +273,45 @@ public class AppGeoPackageService {
             if(field==null) continue;
             String dbType = field.getFieldType();
             String formType = formTypes.get(i);
+            int index = ft.indexOf(key);
 
             if ("DOUBLE".equalsIgnoreCase(dbType)) {
                 Double d = formData.getDouble(key);
-                feature.setAttribute(key,d);
+                attrs[index]=d;
+                //feature.setAttribute(key,d);
             } else if ("TEXT".equalsIgnoreCase(dbType)) {
                 String s = formData.getString(key);
-                feature.setAttribute(key,s);
+                attrs[index]=s;
+                //feature.setAttribute(key,s);
             } else if ("INTEGER".equalsIgnoreCase(dbType)) {
 
                 if(formType.equalsIgnoreCase(dbType)) {
                     Integer in = formData.getInt(key);
-                    feature.setAttribute(key, in);
+                    attrs[index]=in;
+                    //feature.setAttribute(key, in);
                 }else {
                     Boolean b = formData.getBoolean(key);
-                    feature.setAttribute(key, b);
+                    attrs[index]=b;
+                    //feature.setAttribute(key, b);
                 }
             } else if ("BLOB".equalsIgnoreCase(dbType)) {
                 if( !key.equals(feature.getFeatureType().getGeometryDescriptor().getName())) {
                     String path = formData.getString(key);
                     if (path!=null && ImageUtilities.isImagePath(path)) {
                         byte[] blob = ImageUtilities.getImageFromPath(path, 1);
-                        feature.setAttribute(key, blob);
+                        attrs[index]=blob;
+                        //feature.setAttribute(key, blob);
                     }else{
-                        feature.setAttribute(key,null);
+                        attrs[index]=null;
+                        //feature.setAttribute(key,null);
                     }
                 }
             } else if ("DATE".equalsIgnoreCase(dbType)) {
                 String date = formData.getString(key);
                 Date dt = DateUtil.deserializeDate(date);
                 if (dt == null) dt = new Date();
-                feature.setAttribute(key,dt);
+                attrs[index]=dt;
+                //feature.setAttribute(key,dt);
             } else if ("TIME".equalsIgnoreCase(dbType)) {
                 String date = formData.getString(key);
                 if (!date.equals("")) {
@@ -305,14 +321,17 @@ public class AppGeoPackageService {
                 if (dt == null) {
                     dt = new Time(Long.decode(date));
                 }
-                feature.setAttribute(key,dt);
+                attrs[index]=dt;
+                //feature.setAttribute(key,dt);
             } else if ("DATETIME".equalsIgnoreCase(dbType)) {
                 String date = formData.getString(key);
                 Date dt = DateUtil.deserializeDateTime(date);
                 if (dt == null) dt = new Date();
-                feature.setAttribute(key,dt);
+                attrs[index]=dt;
+               // feature.setAttribute(key,dt);
             }
         }
+        feature.setAttributes(attrs);
         return feature;
     }
 

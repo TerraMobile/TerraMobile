@@ -321,9 +321,9 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants{
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK && requestCode == FORM_COLLECT_DATA) {
             Bundle extras = data.getBundleExtra(LibraryConstants.PREFS_KEY_FORM);
+            GeoPoint point=null;
             try {
-                GeoPoint point = getCenterMap();
-                addBookmark(point);
+                point = getCenterMap();
                 AppGeoPackageService.storeData( context, extras);
             }catch (TerraMobileException tme) {
                 //Message.showMessage(this, R.drawable.error, getResources().getString(R.string.error), tme.getMessage());
@@ -334,6 +334,8 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants{
                 qe.printStackTrace();
                 Message.showErrorMessage(((MainActivity) context), R.string.error, R.string.error_while_storing_form_data);
             }
+            if(point!=null)
+                addBookmark(point);
         }else {
             Message.showErrorMessage(((MainActivity) context), R.string.error, R.string.cancel_form_data);
         }

@@ -197,12 +197,10 @@ public class FragmentDetailActivity extends FragmentActivity {
     }
 
     private void saveAction() throws Exception {
-        // if in landscape mode store last inserted info, since that fragment has not been stored
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            FragmentDetail detailFragment = (FragmentDetail) getSupportFragmentManager().findFragmentById(R.id.detailFragment);
-            if (detailFragment != null) {
-                detailFragment.storeFormItems(false);
-            }
+
+        FragmentDetail detailFragment = (FragmentDetail) getSupportFragmentManager().findFragmentById(R.id.detailFragment);
+        if (detailFragment != null) {
+            detailFragment.storeFormItems(false);
         }
 
         // extract and check constraints
