@@ -14,9 +14,13 @@ import java.util.ArrayList;
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.controller.activity.tasks.DownloadTask;
 import br.org.funcate.terramobile.controller.activity.tasks.ProjectListTask;
-import br.org.funcate.terramobile.model.Project;
-import br.org.funcate.terramobile.model.Settings;
+import br.org.funcate.terramobile.model.domain.Project;
 import br.org.funcate.terramobile.model.db.dao.SettingsDAO;
+import br.org.funcate.terramobile.model.domain.Setting;
+import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
+import br.org.funcate.terramobile.model.exception.SettingsException;
+import br.org.funcate.terramobile.model.service.SettingsService;
+import br.org.funcate.terramobile.util.Message;
 import br.org.funcate.terramobile.util.Util;
 import br.org.funcate.terramobile.view.ProjectListAdapter;
 
@@ -52,12 +56,13 @@ public class ProjectListFragment extends DialogFragment{
     @Override
     public void onStart() {
         super.onStart();
-        SettingsDAO settingsDAO = new SettingsDAO(getActivity());
-        Settings settings = settingsDAO.getById(1);
-        if(settings != null)
-            new ProjectListTask((MainActivity)getActivity()).execute(settings.getUrl() + "/getlistfiles/userName");
-//        else
-//            Message.showErrorMessage(getActivity(), R.string.error, R.string.not_logged);
+        String terramobileUrl = null;
+
+        terramobileUrl = ((MainActivity)getActivity()).getMainController().getServerURL();
+
+        if(terramobileUrl != null)
+            new ProjectListTask((MainActivity)getActivity()).execute(terramobileUrl + "/getlistfiles/userName");
+
     }
 
     public void setListItems(ArrayList<Project> arrayList) {

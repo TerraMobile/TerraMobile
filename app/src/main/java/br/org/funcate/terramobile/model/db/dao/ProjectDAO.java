@@ -5,27 +5,23 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
-import android.util.Log;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import br.org.funcate.terramobile.model.Project;
-import br.org.funcate.terramobile.model.db.DataBase;
+import br.org.funcate.terramobile.model.domain.Project;
+import br.org.funcate.terramobile.model.db.ApplicationDatabase;
 
 /**
  * Created by marcelo on 5/26/15.
  */
 public class ProjectDAO {
-    private DataBase dataBase;
+    private ApplicationDatabase database;
 
     public ProjectDAO(Context context) {
-        this.dataBase = new DataBase(context);
+        this.database = new ApplicationDatabase(context);
     }
 
     public boolean insert(Project project) {
         try {
-            SQLiteDatabase db = dataBase.getWritableDatabase();
+            SQLiteDatabase db = database.getWritableDatabase();
             if (db != null) {
                 if (project != null) {
                     ContentValues contentValues = new ContentValues();
@@ -49,7 +45,7 @@ public class ProjectDAO {
     }
 
     public boolean update(Project project) {
-        SQLiteDatabase db = dataBase.getWritableDatabase();
+        SQLiteDatabase db = database.getWritableDatabase();
         try{
             if (db != null) {
                 if (project != null) {
@@ -75,7 +71,7 @@ public class ProjectDAO {
 
     public Project getByName(String name) {
         try {
-            SQLiteDatabase db = dataBase.getReadableDatabase();
+            SQLiteDatabase db = database.getReadableDatabase();
             Project project = null;
             if(db != null) {
                 Cursor cursor = db.query("PROJECT", new String[]{"ID", "NAME", "FILE_PATH", "UPDATED", "DOWNLOADED"}, "NAME = ?", new String[]{String.valueOf(name)}, null, null, null, null);
@@ -99,7 +95,7 @@ public class ProjectDAO {
     }
 
     public boolean remove(int id) {
-        SQLiteDatabase db = dataBase.getWritableDatabase();
+        SQLiteDatabase db = database.getWritableDatabase();
         int rows = db.delete("PROJECT", "id = ?", new String[] { String.valueOf(id) });
         db.close();
         if(rows != 0)
@@ -110,7 +106,7 @@ public class ProjectDAO {
     public Project getFirstProject() {
         String selectQuery = "select * from project";
 
-        SQLiteDatabase db = dataBase.getWritableDatabase();
+        SQLiteDatabase db = database.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 
         Project project = null;

@@ -34,13 +34,10 @@ import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.TilesOverlay;
 
 import java.io.File;
-import java.lang.reflect.Array;
 import java.sql.Time;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.jar.Attributes;
 
 import br.org.funcate.dynamicforms.FormUtilities;
 import br.org.funcate.dynamicforms.images.ImageUtilities;
@@ -51,7 +48,7 @@ import br.org.funcate.jgpkg.service.GeoPackageService;
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.controller.activity.MainActivity;
 import br.org.funcate.terramobile.controller.activity.TreeView;
-import br.org.funcate.terramobile.model.Project;
+import br.org.funcate.terramobile.model.domain.Project;
 import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
 import br.org.funcate.terramobile.model.exception.InvalidGeopackageException;
 import br.org.funcate.terramobile.model.exception.LowMemoryException;

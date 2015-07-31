@@ -1,4 +1,4 @@
-package br.org.funcate.terramobile.model;
+package br.org.funcate.terramobile.model.domain;
 
 /**
  * Created by Andre Carvalho on 01/06/15.

@@ -25,9 +25,8 @@ import java.util.ArrayList;
 
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.controller.activity.MainActivity;
-import br.org.funcate.terramobile.model.Project;
+import br.org.funcate.terramobile.model.domain.Project;
 import br.org.funcate.terramobile.util.Message;
-import br.org.funcate.terramobile.util.ResourceHelper;
 import br.org.funcate.terramobile.util.Util;
 
 /**

@@ -74,6 +74,10 @@
     <string name="read_features_exception">Unable to read layer features.</string>
     <string name="read_features_out_of_memory_exception">Unable to read layer features, due to memory limitation.</string>
     <string name="unexpected_exception">Unexpected error.</string>
+    <string name="settings_insert_exception">Unable to insert settings on database.</string>
+    <string name="settings_update_exception">Unable to update settings on database.</string>
+    <string name="settings_query_exception">Unable to get settings from database.</string>
+    <string name="settings_init_exception">Unable to initialize default settings on database.</string>
     <!-- Message window title -->
     <string name="error">Error</string>
     <string name="success">Success</string>

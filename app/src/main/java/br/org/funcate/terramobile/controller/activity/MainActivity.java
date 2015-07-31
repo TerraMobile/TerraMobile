@@ -23,37 +23,19 @@ import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
 
-import com.augtech.geoapi.feature.SimpleFeatureImpl;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.Point;
-
-import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.GeometryType;
-import org.osmdroid.bonuspack.kml.KmlDocument;
-import org.osmdroid.bonuspack.kml.Style;
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
-import org.osmdroid.views.MapView;
-import org.osmdroid.views.overlay.Overlay;
-
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 
-import br.org.funcate.jgpkg.exception.QueryException;
-import br.org.funcate.jgpkg.service.GeoPackageService;
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.configuration.ViewContextParameters;
 import br.org.funcate.terramobile.controller.activity.settings.SettingsActivity;
-import br.org.funcate.terramobile.model.Project;
-import br.org.funcate.terramobile.model.Settings;
+import br.org.funcate.terramobile.model.domain.Project;
+import br.org.funcate.terramobile.model.domain.Setting;
 import br.org.funcate.terramobile.model.db.dao.ProjectDAO;
 import br.org.funcate.terramobile.model.db.dao.SettingsDAO;
 import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
-import br.org.funcate.terramobile.model.exception.TerraMobileException;
-import br.org.funcate.terramobile.model.geomsource.SFSLayer;
-import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
-import br.org.funcate.terramobile.model.tilesource.AppGeoPackageService;
+import br.org.funcate.terramobile.model.exception.SettingsException;
+import br.org.funcate.terramobile.model.service.SettingsService;
 import br.org.funcate.terramobile.util.Message;
 import br.org.funcate.terramobile.util.ResourceHelper;
 import br.org.funcate.terramobile.util.Util;
@@ -71,7 +53,6 @@ public class MainActivity extends FragmentActivity {
     private ViewContextParameters parameters=new ViewContextParameters();
 
     private Project mProject;
-    private Settings settings;
 
     private SettingsDAO settingsDAO;
 
@@ -81,6 +62,8 @@ public class MainActivity extends FragmentActivity {
     private ProgressDialog progressDialog;
 
     private ProjectListFragment projectListFragment;
+
+    private MainController mainController;
 
 
 /*    public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -107,44 +90,44 @@ public class MainActivity extends FragmentActivity {
         setContentView(R.layout.activity_main);
         actionBar = getActionBar();
 
+        mainController = new MainController(this);
+
         PreferenceManager.setDefaultValues(this, R.xml.settings, false);
 
         ResourceHelper.setResources(getResources());
 
-        settingsDAO = new SettingsDAO(this);
-        if(settingsDAO.getById(1) == null){
-            settings = new Settings();
-            settings.setId(1);
-            try {
-                settings.setUrl(ResourceHelper.getStringResource(R.string.terramobile_url)); // URL for test
-            } catch (InvalidAppConfigException e) {
-                e.printStackTrace();
-                Message.showErrorMessage(this, R.string.error, e.getMessage());
-            }
-            settingsDAO.insert(settings);
-        }
-        else{
-            settings = settingsDAO.getById(1);
-        }
-
         File directory = Util.getDirectory(this.getResources().getString(R.string.app_workspace_dir));
 
-        String fileName = settings.getCurrentProject();
+        try {
+
+            SettingsService.initSettings(this);
+
+        } catch (InvalidAppConfigException e) {
+
+            Message.showErrorMessage(this, R.string.error, e.getMessage());
+
+        } catch (SettingsException e) {
+
+            Message.showErrorMessage(this, R.string.error, e.getMessage());
+
+        }
+
+        String currentProjectPath = mainController.getCurrentProject();
 
         String ext = this.getString(R.string.geopackage_extension);
-        if(settings.getCurrentProject() != null) {
+        if(currentProjectPath != null) {
             ProjectDAO projectDAO = new ProjectDAO(this);
-            mProject = projectDAO.getByName(settings.getCurrentProject());
-            File currentProject = Util.getGeoPackageByName(directory, ext, fileName);
+            mProject = projectDAO.getByName(currentProjectPath);
+            File currentProject = Util.getGeoPackageByName(directory, ext, currentProjectPath);
             if(currentProject != null) {
                 if(mProject == null) {
                     Project project = new Project();
                     project.setId(null);
-                    project.setName(fileName);
+                    project.setName(currentProjectPath);
                     project.setFilePath(currentProject.getPath());
                     projectDAO.insert(project);
 
-                    mProject = projectDAO.getByName(settings.getCurrentProject());
+                    mProject = projectDAO.getByName(currentProjectPath);
                 }
             }
             else{
@@ -364,8 +347,24 @@ public class MainActivity extends FragmentActivity {
 
     public void setProject(Project project) throws InvalidAppConfigException {
         this.mProject = project;
-        settings.setCurrentProject(project!=null?project.getName():null);
-        settingsDAO.update(settings);
+        Setting setting = null;
+        if(project==null)
+        {
+            setting = new Setting("current_project", null);
+        }
+        else
+        {
+            setting = new Setting("current_project", project.getName());
+        }
+
+        try {
+
+            SettingsService.update(this,setting);
+
+        } catch (SettingsException e) {
+            e.printStackTrace();
+            Message.showErrorMessage(this, R.string.error, e.getMessage());
+        }
         treeView.refreshTreeView();
         invalidateOptionsMenu();
     }
@@ -386,4 +385,11 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
+    public MainController getMainController() {
+        return mainController;
+    }
+
+    public void setMainController(MainController mainController) {
+        this.mainController = mainController;
+    }
 }

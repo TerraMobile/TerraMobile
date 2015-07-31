@@ -11,22 +11,18 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
 import br.org.funcate.terramobile.R;
-import br.org.funcate.terramobile.configuration.ViewContextParameters;
 import br.org.funcate.terramobile.controller.activity.MainActivity;
 import br.org.funcate.terramobile.controller.activity.MenuMapController;
 import br.org.funcate.terramobile.controller.activity.TreeView;
-import br.org.funcate.terramobile.model.Project;
 import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
 import br.org.funcate.terramobile.model.exception.LowMemoryException;
 import br.org.funcate.terramobile.model.exception.TerraMobileException;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
 import br.org.funcate.terramobile.util.Message;
-import br.org.funcate.terramobile.util.ResourceHelper;
 
 public class TreeViewAdapter extends BaseExpandableListAdapter implements View.OnClickListener {
 

@@ -1,7 +1,6 @@
 package br.org.funcate.terramobile.controller.activity.tasks;
 
 import android.os.AsyncTask;
-import android.provider.MediaStore;
 import android.util.Log;
 
 import java.io.BufferedInputStream;
@@ -15,17 +14,13 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import br.org.funcate.dynamicforms.util.FileUtilities;
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.controller.activity.MainActivity;
-import br.org.funcate.terramobile.model.Project;
-import br.org.funcate.terramobile.model.Settings;
+import br.org.funcate.terramobile.model.domain.Project;
 import br.org.funcate.terramobile.model.db.dao.ProjectDAO;
-import br.org.funcate.terramobile.model.db.dao.SettingsDAO;
 import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
 import br.org.funcate.terramobile.util.Message;
 import br.org.funcate.terramobile.util.Util;

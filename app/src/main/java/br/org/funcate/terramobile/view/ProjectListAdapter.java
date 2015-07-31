@@ -19,13 +19,11 @@ import java.util.ArrayList;
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.controller.activity.MainActivity;
 import br.org.funcate.terramobile.controller.activity.tasks.DownloadTask;
-import br.org.funcate.terramobile.model.Project;
-import br.org.funcate.terramobile.model.Settings;
+import br.org.funcate.terramobile.model.domain.Project;
 import br.org.funcate.terramobile.model.db.dao.ProjectDAO;
 import br.org.funcate.terramobile.model.db.dao.SettingsDAO;
 import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
 import br.org.funcate.terramobile.util.Message;
-import br.org.funcate.terramobile.util.ResourceHelper;
 import br.org.funcate.terramobile.util.Util;
 
 /**
@@ -113,7 +111,13 @@ public class ProjectListAdapter extends ArrayAdapter<Project> implements Adapter
             final String projectFilePath = projectPath.getPath();
 
             SettingsDAO settingsDAO = new SettingsDAO(context);
-            final Settings settings = settingsDAO.getById(1);
+            final String serverURL  = ((MainActivity) context).getMainController().getServerURL();
+
+            if(serverURL==null)
+            {
+                //Error Message already sent
+                return;
+            }
 
             if (Util.getGeoPackageByName(projectPath, context.getResources().getString(R.string.geopackage_extension), project.getName()) != null) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(
@@ -124,8 +128,7 @@ public class ProjectListAdapter extends ArrayAdapter<Project> implements Adapter
                 builder.setPositiveButton(R.string.yes,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                if (settings != null)
-                                    downloadTask = (DownloadTask) new DownloadTask(tempFilePath, projectFilePath, fileName, (MainActivity) context).execute(settings.getUrl() + "/getprojects/userName/" + fileName);
+                               downloadTask = (DownloadTask) new DownloadTask(tempFilePath, projectFilePath, fileName, (MainActivity) context).execute(serverURL + "/getprojects/userName/" + fileName);
 //                              else
 //                                   Message.showErrorMessage(context, R.string.error, R.string.not_logged);
                             }
@@ -140,8 +143,7 @@ public class ProjectListAdapter extends ArrayAdapter<Project> implements Adapter
                 alertDialog.show();
             }
             else {
-                if (settings != null)
-                    downloadTask = (DownloadTask) new DownloadTask(tempFilePath, projectFilePath, fileName, (MainActivity) context).execute(settings.getUrl() + "/getprojects/userName/" + fileName);
+                  downloadTask = (DownloadTask) new DownloadTask(tempFilePath, projectFilePath, fileName, (MainActivity) context).execute(serverURL + "/getprojects/userName/" + fileName);
 //                else
 //                    Message.showErrorMessage(context, R.string.error, R.string.not_logged);
             }
