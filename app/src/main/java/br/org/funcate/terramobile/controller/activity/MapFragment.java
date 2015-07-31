@@ -38,11 +38,13 @@ import br.org.funcate.dynamicforms.util.LibraryConstants;
 import br.org.funcate.jgpkg.exception.QueryException;
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.model.constants.OpenStreetMapConstants;
+import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
 import br.org.funcate.terramobile.model.exception.TerraMobileException;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
 import br.org.funcate.terramobile.model.tilesource.AppGeoPackageService;
 import br.org.funcate.terramobile.util.Message;
-import br.org.funcate.terramobile.util.ResourceUtil;
+import br.org.funcate.terramobile.util.ResourceHelper;
+import br.org.funcate.terramobile.util.Util;
 
 /*import org.osmdroid.samplefragments.BaseSampleFragment;
 import org.osmdroid.samplefragments.SampleFactory;*/
@@ -102,8 +104,14 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants{
         View v = inflater.inflate(R.layout.fragment_map, container, false);
         mMapView = (MapView) v.findViewById(R.id.mapview);
         drawingImageView = (ImageView) v.findViewById(R.id.DrawingImageView);
-        drawCross(drawingImageView);
-        configureMapView(mMapView);
+        try {
+            drawCross(drawingImageView);
+            configureMapView(mMapView);
+        } catch (InvalidAppConfigException e) {
+            e.printStackTrace();
+            Message.showErrorMessage((MainActivity)context, R.string.failure_title_msg, e.getMessage());
+        }
+
 
         gpsLocation = (ImageButton) v.findViewById(R.id.Gps);
         gpsLocation.setOnClickListener(new View.OnClickListener() {
@@ -185,16 +193,15 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants{
         }
     }
 
-    public void configureMapView(MapView mapView)
-    {
-        double x = ResourceUtil.getDoubleResource(getResources(), R.dimen.default_map_center_x);
-        double y = ResourceUtil.getDoubleResource(getResources(), R.dimen.default_map_center_y);
+    public void configureMapView(MapView mapView) throws InvalidAppConfigException {
+        double x = ResourceHelper.getDoubleResource(R.dimen.default_map_center_x);
+        double y = ResourceHelper.getDoubleResource(R.dimen.default_map_center_y);
 
         int initialZoomLevel = 5;
-        int maxZoomLevel = ResourceUtil.getIntResource(getResources(), R.integer.default_max_zoom_level);
+        int maxZoomLevel = ResourceHelper.getIntResource(R.integer.default_max_zoom_level);
 
-        boolean builtInZoomControls=ResourceUtil.getBooleanResource(getResources(), R.bool.default_built_in_zoom_controls);
-        boolean multiTouchControls=ResourceUtil.getBooleanResource(getResources(), R.bool.default_multi_touch_controls);
+        boolean builtInZoomControls= ResourceHelper.getBooleanResource(R.bool.default_built_in_zoom_controls);
+        boolean multiTouchControls= ResourceHelper.getBooleanResource(R.bool.default_multi_touch_controls);
 
         GeoPoint gPt = new GeoPoint(x,y);
 
@@ -205,7 +212,7 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants{
         mapView.getController().setZoom(initialZoomLevel);
     }
 
-    public void drawCross(ImageView drawingImageView) {
+    public void drawCross(ImageView drawingImageView) throws InvalidAppConfigException {
         Bitmap bitmap = Bitmap.createBitmap(getActivity().getWindowManager()
                 .getDefaultDisplay().getWidth(), getActivity().getWindowManager()
                 .getDefaultDisplay().getHeight(), Bitmap.Config.ARGB_8888);
@@ -221,7 +228,7 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants{
         int centerW = canvas.getWidth() / 2;
         int centerH = canvas.getHeight() / 2;
 
-        int offset = ResourceUtil.getIntResource(getResources(), R.integer.offsetCross);
+        int offset = ResourceHelper.getIntResource(R.integer.offsetCross);
 
         canvas.drawLine(centerW, centerH + offset, centerW, centerH - offset, paint);
         canvas.drawLine(centerW + offset, centerH, centerW - offset, centerH, paint);
@@ -256,7 +263,7 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants{
             formIntent.putExtra(FormUtilities.ATTR_JSON_TAGS, editableLayer.getJSON());
             formIntent.putExtra(FormUtilities.TYPE_LATITUDE, point.getLatitude());
             formIntent.putExtra(FormUtilities.TYPE_LONGITUDE, point.getLongitude());
-            File directory = ResourceUtil.getDirectory(this.getResources().getString(R.string.app_workspace_dir));
+            File directory = Util.getDirectory(this.getResources().getString(R.string.app_workspace_dir));
 
             formIntent.putExtra(FormUtilities.MAIN_APP_WORKING_DIRECTORY, directory.getAbsolutePath());
             startActivityForResult(formIntent, FORM_COLLECT_DATA);

@@ -1,19 +1,14 @@
 package br.org.funcate.terramobile.controller.activity;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ListView;
 
-import java.io.File;
 import java.util.ArrayList;
 
 import br.org.funcate.terramobile.R;
@@ -21,10 +16,7 @@ import br.org.funcate.terramobile.controller.activity.tasks.DownloadTask;
 import br.org.funcate.terramobile.controller.activity.tasks.ProjectListTask;
 import br.org.funcate.terramobile.model.Project;
 import br.org.funcate.terramobile.model.Settings;
-import br.org.funcate.terramobile.model.db.dao.ProjectDAO;
 import br.org.funcate.terramobile.model.db.dao.SettingsDAO;
-import br.org.funcate.terramobile.util.Message;
-import br.org.funcate.terramobile.util.ResourceUtil;
 import br.org.funcate.terramobile.util.Util;
 import br.org.funcate.terramobile.view.ProjectListAdapter;
 

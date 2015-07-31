@@ -26,6 +26,7 @@ import br.org.funcate.terramobile.model.Project;
 import br.org.funcate.terramobile.model.Settings;
 import br.org.funcate.terramobile.model.db.dao.ProjectDAO;
 import br.org.funcate.terramobile.model.db.dao.SettingsDAO;
+import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
 import br.org.funcate.terramobile.util.Message;
 import br.org.funcate.terramobile.util.Util;
 
@@ -142,34 +143,42 @@ public class DownloadTask extends AsyncTask<String, String, Boolean> {
 
     @Override
     protected void onPostExecute(Boolean aBoolean) {
-        if(android.os.Debug.isDebuggerConnected()) android.os.Debug.waitForDebugger(); // Para debugar é preciso colocar um breakpoint nessa linha
-        mainActivity.getTreeView().refreshTreeView();
+        try {
+            if(android.os.Debug.isDebuggerConnected()) android.os.Debug.waitForDebugger(); // Para debugar é preciso colocar um breakpoint nessa linha
 
-        String projectName = mFiles.get(0);// The project is the last not_downloaded geopackage file.
+                mainActivity.getTreeView().refreshTreeView();
 
-        ProjectDAO projectDAO = new ProjectDAO(mainActivity);
+            String projectName = mFiles.get(0);// The project is the last not_downloaded geopackage file.
 
-        Project project = new Project();
-        project.setId(null);
-        project.setName(projectName);
-        project.setFilePath(unzipDestinationFilePath);
-        project.setDownloaded(1);
-        projectDAO.insert(project);
+            ProjectDAO projectDAO = new ProjectDAO(mainActivity);
 
-        mainActivity.setProject(projectDAO.getByName(projectName));
+            Project project = new Project();
+            project.setId(null);
+            project.setName(projectName);
+            project.setFilePath(unzipDestinationFilePath);
+            project.setDownloaded(1);
+            projectDAO.insert(project);
 
-        if(mainActivity.getProgressDialog() != null && mainActivity.getProgressDialog().isShowing()) {
-            if (aBoolean) {
-                mainActivity.getProgressDialog().dismiss();
-                mainActivity.getProjectListFragment().dismiss();
-                Message.showSuccessMessage(mainActivity, R.string.success, R.string.download_success);
-            } else {
-                mainActivity.getProgressDialog().dismiss();
+            mainActivity.setProject(projectDAO.getByName(projectName));
+
+            if(mainActivity.getProgressDialog() != null && mainActivity.getProgressDialog().isShowing()) {
+                if (aBoolean) {
+                    mainActivity.getProgressDialog().dismiss();
+                    mainActivity.getProjectListFragment().dismiss();
+                    Message.showSuccessMessage(mainActivity, R.string.success, R.string.download_success);
+                } else {
+                    mainActivity.getProgressDialog().dismiss();
+                    Message.showErrorMessage(mainActivity, R.string.error, R.string.download_failed);
+                }
+            }
+            else {
                 Message.showErrorMessage(mainActivity, R.string.error, R.string.download_failed);
             }
+        } catch (InvalidAppConfigException e) {
+            e.printStackTrace();
+            Message.showErrorMessage(mainActivity, R.string.error, e.getMessage());
         }
-        else
-            Message.showErrorMessage(mainActivity, R.string.error, R.string.download_failed);
+
     }
 
     @Override

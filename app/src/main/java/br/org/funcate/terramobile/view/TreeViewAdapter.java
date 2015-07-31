@@ -21,8 +21,12 @@ import br.org.funcate.terramobile.controller.activity.MainActivity;
 import br.org.funcate.terramobile.controller.activity.MenuMapController;
 import br.org.funcate.terramobile.controller.activity.TreeView;
 import br.org.funcate.terramobile.model.Project;
+import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
+import br.org.funcate.terramobile.model.exception.LowMemoryException;
+import br.org.funcate.terramobile.model.exception.TerraMobileException;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
 import br.org.funcate.terramobile.util.Message;
+import br.org.funcate.terramobile.util.ResourceHelper;
 
 public class TreeViewAdapter extends BaseExpandableListAdapter implements View.OnClickListener {
 
@@ -93,8 +97,22 @@ public class TreeViewAdapter extends BaseExpandableListAdapter implements View.O
                     break;
                 }
             }
-        } catch (Exception e) {
-            Message.showErrorMessage(((MainActivity)context), R.string.error,"Failed on change the layer");
+        }
+        catch (LowMemoryException e) {
+            e.printStackTrace();
+            Message.showErrorMessage(((MainActivity) context), R.string.error, e.getMessage());
+        }
+        catch (InvalidAppConfigException e) {
+            e.printStackTrace();
+            Message.showErrorMessage(((MainActivity) context), R.string.error, e.getMessage());
+        }
+        catch (TerraMobileException e) {
+            e.printStackTrace();
+            Message.showErrorMessage(((MainActivity) context), R.string.error, e.getMessage());
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            Message.showErrorMessage(((MainActivity) context), R.string.error, context.getResources().getString(R.string.unexpected_exception));
         }
     }
 

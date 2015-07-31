@@ -27,6 +27,8 @@ import org.osmdroid.views.overlay.TilesOverlay;
 import java.util.HashMap;
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.configuration.ViewContextParameters;
+import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
+import br.org.funcate.terramobile.model.exception.LowMemoryException;
 import br.org.funcate.terramobile.model.exception.TerraMobileException;
 import br.org.funcate.terramobile.model.geomsource.SFSLayer;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
@@ -101,7 +103,7 @@ public class MenuMapController {
         return currentBaseLayer;
     }
 
-    public void addVectorLayer(GpkgLayer child) {
+    public void addVectorLayer(GpkgLayer child) throws LowMemoryException, InvalidAppConfigException, TerraMobileException {
 
         if(child.getOsmOverLayer()==null) {
             SFSLayer l = AppGeoPackageService.getFeatures(child);
@@ -137,7 +139,7 @@ public class MenuMapController {
         return;
     }
 
-    public void addEditableLayer(GpkgLayer child) {
+    public void addEditableLayer(GpkgLayer child) throws LowMemoryException, InvalidAppConfigException, TerraMobileException {
         addVectorLayer(child);
     }
 

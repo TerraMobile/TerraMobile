@@ -10,13 +10,14 @@ import java.util.Iterator;
 
 import br.org.funcate.jgpkg.exception.QueryException;
 import br.org.funcate.terramobile.R;
+import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
 import br.org.funcate.terramobile.model.exception.InvalidGeopackageException;
 import br.org.funcate.terramobile.model.exception.TerraMobileException;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
 import br.org.funcate.terramobile.model.tilesource.AppGeoPackageService;
 import br.org.funcate.terramobile.util.DevUtil;
 import br.org.funcate.terramobile.util.Message;
-import br.org.funcate.terramobile.util.ResourceUtil;
+import br.org.funcate.terramobile.util.ResourceHelper;
 import br.org.funcate.terramobile.view.TreeViewAdapter;
 
 /**
@@ -32,13 +33,13 @@ public class TreeView {
     private TreeViewAdapter treeViewAdapter;
     private GpkgLayer selectedEditableLayer;
 
-    public TreeView(Context context){
+    public TreeView(Context context) throws InvalidAppConfigException {
         this.context=context;
         this.resources=context.getResources();
         initTreeView();
     }
 
-    private void initTreeView() {
+    private void initTreeView() throws InvalidAppConfigException {
         setGroupData();
         setChildGroupData();
         try {
@@ -54,15 +55,15 @@ public class TreeView {
         selectedEditableLayer=null;
     }
 
-    public void refreshTreeView(){
+    public void refreshTreeView() throws InvalidAppConfigException {
         groupItem.clear();
         childItem.clear();
         initTreeView();
         treeViewAdapter.notifyDataSetChanged();
     }
 
-    private void setGroupData() {
-        String[] grp= ResourceUtil.getStringArrayResource(this.resources, R.array.menu_groups);
+    private void setGroupData() throws InvalidAppConfigException {
+        String[] grp= ResourceHelper.getStringArrayResource(R.array.menu_groups);
         GpkgLayer grpItem;
         grpItem=new GpkgLayer();
         grpItem.setName(grp[0]);

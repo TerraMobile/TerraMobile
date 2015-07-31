@@ -25,22 +25,22 @@
         android:icon="@android:drawable/stat_notify_sync"
         android:showAsAction="always|withText" />
 
+
+    <item android:id="@+id/test_memory"
+        android:title="@string/test_memory"
+        android:orderInCategory="100"
+        android:showAsAction="never" />
     <!--
-    <item android:id="@+id/test_vector_data"
-        android:title="@string/test_vector_data"
-        android:orderInCategory="100"
-        android:showAsAction="never" />
+        <item android:id="@+id/test_editable_layer"
+            android:title="@string/test_editable_layer"
+            android:orderInCategory="100"
+            android:showAsAction="never" />
 
-    <item android:id="@+id/test_editable_layer"
-        android:title="@string/test_editable_layer"
-        android:orderInCategory="100"
-        android:showAsAction="never" />
-
-    <item android:id="@+id/test_insert_sfs"
-        android:title="@string/test_insert_sfs"
-        android:orderInCategory="100"
-        android:showAsAction="never" />
--->
+        <item android:id="@+id/test_insert_sfs"
+            android:title="@string/test_insert_sfs"
+            android:orderInCategory="100"
+            android:showAsAction="never" />
+    -->
     <item android:id="@+id/settings"
         android:title="@string/settings"
         android:orderInCategory="100"
