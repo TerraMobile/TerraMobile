@@ -25,11 +25,11 @@
         android:id="@+id/cancelButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="@string/btn_form_cancel"
+        android:drawableLeft="@android:drawable/ic_menu_close_clear_cancel"
+        android:onClick="cancelClicked"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_margin="10dp"
-        android:background="@android:drawable/ic_menu_delete"
-        android:onClick="cancelClicked" />
+        android:layout_alignParentRight="true" />
 
         <Button
             android:id="@+id/saveButton"
@@ -37,8 +37,8 @@
             android:layout_height="wrap_content"
             android:layout_toLeftOf="@id/cancelButton"
             android:layout_alignBaseline="@+id/cancelButton"
-            android:layout_margin="10dp"
-            android:background="@android:drawable/ic_menu_save"
+            android:text="@string/btn_form_save"
+            android:drawableLeft="@android:drawable/ic_menu_add"
             android:onClick="saveClicked" />
     </RelativeLayout>
 
