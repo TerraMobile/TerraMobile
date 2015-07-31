@@ -337,7 +337,7 @@ public class AppGeoPackageService {
         }
         catch (Exception e) {
             e.printStackTrace();
-            throw new TerraMobileException(ResourceHelper.getStringResource(R.string.read_features_exception));
+            throw new TerraMobileException(ResourceHelper.getStringResource(R.string.read_features_exception), e);
         }
         catch (OutOfMemoryError e)
         {
