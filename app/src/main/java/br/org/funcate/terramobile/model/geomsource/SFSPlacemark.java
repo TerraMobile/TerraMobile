@@ -33,6 +33,7 @@ public class SFSPlacemark extends KmlPlacemark {
             if(feature.getDefaultGeometry()!=null)
             {
                 mGeometry = SFSGeometry.parseSFS(feature);
+                mGeometry.mId = mId;
             }
 
         }

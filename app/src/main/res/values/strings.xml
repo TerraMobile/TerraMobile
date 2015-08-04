@@ -83,4 +83,8 @@
     <string name="no">No</string>
     <string name="offline">Offline</string>
     <string name="copying_file">Copying file…</string>
+    <!-- Marker context menu -->
+    <string name="title_marker">Location</string>
+    <string name="title_fail_message_marker">Warning</string>
+    <string name="fail_message_on_remove_marker">Fail on remove Marker.</string>
 </resources>
