@@ -19,9 +19,10 @@ import java.util.AbstractList;
 
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.controller.activity.MainActivity;
+import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
 import br.org.funcate.terramobile.model.geomsource.SFSPoint;
 import br.org.funcate.terramobile.util.Message;
-import br.org.funcate.terramobile.util.ResourceUtil;
+import br.org.funcate.terramobile.util.ResourceHelper;
 
 /**
  * Created by Andre Carvalho on 31/07/15.
@@ -63,7 +64,13 @@ public class SFSMarker extends Marker implements Marker.OnMarkerClickListener {
             TextView txtTitle = (TextView) mView.findViewById(R.id.bubble_title);
             /*TextView txtDescription = (TextView) mView.findViewById(R.id.bubble_description);
             TextView txtSubdescription = (TextView) mView.findViewById(R.id.bubble_subdescription);*/
-            String titleMarker = ResourceUtil.getStringResource(mMapView.getResources(), R.string.title_marker);
+            String titleMarker = "";
+            try {
+                titleMarker = ResourceHelper.getStringResource(R.string.title_marker);
+
+            } catch (InvalidAppConfigException e) {
+                Message.showErrorMessage(((MainActivity) mMapView.getContext()), R.string.failure_title_msg, e.getMessage());
+            }
             titleMarker += ": " + m.getPosition().toDoubleString();
             txtTitle.setText(titleMarker);
             /*txtDescription.setText("Location:" + m.getPosition().toDoubleString());
