@@ -6,30 +6,40 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 
-import br.org.funcate.terramobile.model.Settings;
-import br.org.funcate.terramobile.model.db.DataBase;
+import br.org.funcate.terramobile.R;
+import br.org.funcate.terramobile.model.db.DatabaseHelper;
+import br.org.funcate.terramobile.model.domain.Setting;
+import br.org.funcate.terramobile.model.db.ApplicationDatabase;
+import br.org.funcate.terramobile.model.exception.DAOException;
+import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
+import br.org.funcate.terramobile.util.ResourceHelper;
 
 /**
  * Created by marcelo on 5/26/15.
  */
 public class SettingsDAO {
-    private DataBase dataBase;
+    private DatabaseHelper database;
 
-    public SettingsDAO(Context context) {
-        this.dataBase = new DataBase(context);
+    public SettingsDAO(DatabaseHelper database) throws InvalidAppConfigException, DAOException {
+        if(database!=null)
+        {
+            this.database = database;
+        }
+        else
+        {
+            throw new DAOException(ResourceHelper.getStringResource(R.string.invalid_database_exception));
+        }
     }
 
-    public boolean insert(Settings settings) {
+    public boolean insert(Setting setting) throws InvalidAppConfigException, DAOException {
         try {
-            SQLiteDatabase db = dataBase.getWritableDatabase();
+            SQLiteDatabase db = database.getWritableDatabase();
             if (db != null) {
-                if (settings != null) {
+                if (setting != null) {
                     ContentValues contentValues = new ContentValues();
-                    contentValues.put("ID", settings.getId());
-                    contentValues.put("USER_NAME", settings.getUserName());
-                    contentValues.put("PASSWORD", settings.getPassword());
-                    contentValues.put("URL", settings.getUrl());
-                    contentValues.put("CURRENT_PROJECT", settings.getCurrentProject());
+//                    contentValues.put("ID", setting.getId()); AUTOINCREMENT
+                    contentValues.put("KEY", setting.getKey());
+                    contentValues.put("VALUE", setting.getValue());
                     if (db.insert("SETTINGS", null, contentValues) != -1) {
                         db.close();
                         return true;
@@ -40,22 +50,33 @@ public class SettingsDAO {
             return false;
         } catch (SQLiteException e) {
             e.printStackTrace();
-            return false;
+            throw new DAOException(ResourceHelper.getStringResource(R.string.settings_insert_exception),e);
         }
     }
 
-    public boolean update(Settings settings) {
-        SQLiteDatabase db = dataBase.getWritableDatabase();
+    public boolean update(Setting setting) throws InvalidAppConfigException, DAOException {
+
+        String clause=null;
+        String clauseValue=null;
+
+        if(setting.getId()!=null)
+        {
+            clause = "ID = ?";
+            clauseValue = Long.toString(setting.getId());
+        } else if(setting.getKey()!=null)
+        {
+            clause = "KEY = ?";
+            clauseValue = setting.getKey();
+        }
+
+        SQLiteDatabase db = database.getWritableDatabase();
         try{
             if (db != null) {
-                if (settings != null) {
+                if (setting != null) {
                     ContentValues contentValues = new ContentValues();
-                    contentValues.put("ID", settings.getId());
-                    contentValues.put("USER_NAME", settings.getUserName());
-                    contentValues.put("PASSWORD", settings.getPassword());
-                    contentValues.put("URL", settings.getUrl());
-                    contentValues.put("CURRENT_PROJECT", settings.getCurrentProject());
-                    if (db.update("SETTINGS", contentValues, "ID=?", new String[]{String.valueOf(settings.getId())}) > 0) {
+                    contentValues.put("KEY", setting.getKey());
+                    contentValues.put("VALUE", setting.getValue());
+                    if (db.update("SETTINGS", contentValues, clause, new String[]{clauseValue}) > 0) {
                         db.close();
                         return true;
                     }
@@ -65,33 +86,75 @@ public class SettingsDAO {
             return false;
         } catch (SQLiteException e) {
             e.printStackTrace();
-            return false;
+            throw new DAOException(ResourceHelper.getStringResource(R.string.settings_update_exception),e);
         }
     }
-
-    public Settings getById(long id) {
+    @Deprecated
+    public Setting getById(long id) throws InvalidAppConfigException, DAOException {
         try {
-            SQLiteDatabase db = dataBase.getReadableDatabase();
+            SQLiteDatabase db = database.getReadableDatabase();
             if(db != null) {
-                Settings settings = null;
-                Cursor cursor = db.query("SETTINGS", new String[]{"ID", "USER_NAME", "PASSWORD", "URL", "CURRENT_PROJECT"}, "ID = ?", new String[]{String.valueOf(id)}, null, null, null, null);
+                Setting setting = null;
+                Cursor cursor = db.query("SETTINGS", new String[]{"ID", "KEY", "VALUE"}, "ID = ?", new String[]{String.valueOf(id)}, null, null, null, null);
                 if (cursor != null && cursor.getCount() != 0) {
                     cursor.moveToFirst();
-                    settings = new Settings();
-                    settings.setId(cursor.getInt(0));
-                    settings.setUserName(cursor.getString(1));
-                    settings.setPassword(cursor.getString(2));
-                    settings.setUrl(cursor.getString(3));
-                    settings.setCurrentProject(cursor.getString(4));
+                    setting = new Setting(cursor.getLong(0), cursor.getString(1), cursor.getString(2));
                     cursor.close();
                 }
                 db.close();
-                return settings;
+                return setting;
             }
             return null;
         } catch (SQLiteException e) {
             e.printStackTrace();
+            throw new DAOException(ResourceHelper.getStringResource(R.string.settings_query_exception),e);
+        }
+    }
+
+    /**
+     * Get settings by ID or by KEY in this order priority. Uses the same reference of the parameters
+     * @param setting Setting id OR key to search (reference will be used as return if valid)
+     * @return
+     * @throws InvalidAppConfigException
+     * @throws DAOException
+     */
+    public Setting get(Setting setting) throws InvalidAppConfigException, DAOException {
+
+        String clause=null;
+        String clauseValue=null;
+
+        if(setting.getId()!=null)
+        {
+            clause = "ID = ?";
+            clauseValue = Long.toString(setting.getId());
+        } else if(setting.getKey()!=null)
+        {
+            clause = "KEY = ?";
+            clauseValue = setting.getKey();
+        }
+
+
+        try {
+            SQLiteDatabase db = database.getReadableDatabase();
+            if(db != null) {
+                Cursor cursor = db.query("SETTINGS", new String[]{"ID", "KEY", "VALUE"}, clause, new String[]{clauseValue}, null, null, null, null);
+                if (cursor != null && cursor.getCount() != 0) {
+                    cursor.moveToFirst();
+                    setting = new Setting(cursor.getLong(0), cursor.getString(1), cursor.getString(2));
+                    cursor.close();
+                }
+                else
+                {
+                    db.close();
+                    return null;
+                }
+                db.close();
+                return setting;
+            }
             return null;
+        } catch (SQLiteException e) {
+            e.printStackTrace();
+            throw new DAOException(ResourceHelper.getStringResource(R.string.settings_query_exception),e);
         }
     }
 }

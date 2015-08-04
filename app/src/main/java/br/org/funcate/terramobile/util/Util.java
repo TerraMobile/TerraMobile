@@ -6,13 +6,16 @@ import android.content.Context;
 import android.graphics.ColorMatrix;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Environment;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -65,5 +68,46 @@ public class Util {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    /**
+     * Get the files list from app working directory.
+     * @param directory, The reference to working directory.
+     * @param extension, the default file extension to identify a GeoPackage database file.
+     * @return The list of files filtered using the extension.
+     */
+    public static ArrayList<File> getGeoPackageFiles(File directory, final String extension) {
+        if (directory==null || !directory.isDirectory()) return null;
+        ArrayList<File> files=new ArrayList<File>();
+        FileFilter filter = new FileFilter() {
+            @Override
+            public boolean accept(File pathname) {
+                if(pathname.isDirectory() || pathname.isHidden()) return false;
+                return pathname.getName().endsWith(extension);
+            }
+        };
+
+        File[] theFiles = directory.listFiles(filter);
+        for(File file : theFiles) files.add(file);
+        return files;
+    }
+
+    public static File getGeoPackageByName(File directory, final String extension, String fileName){
+        ArrayList<File> files = getGeoPackageFiles(directory, extension);
+        for (File file : files)
+            if(file.getName().equals(fileName)) return file;
+        return null;
+    }
+    /** Get a directory on external storage (SD card etc), ensuring it exists
+     *
+     * @return a new File representing the chosen directory
+     */
+    public static File getDirectory(String directory) {
+        if (directory==null) return null;
+        String path = Environment.getExternalStorageDirectory().toString();
+        path += directory.startsWith("/") ? "" : "/";
+        path += directory.endsWith("/") ? directory : directory + "/";
+        File file = new File(path);
+        file.mkdirs();
+        return file;
     }
 }

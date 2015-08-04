@@ -11,16 +11,16 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
 import br.org.funcate.terramobile.R;
-import br.org.funcate.terramobile.configuration.ViewContextParameters;
 import br.org.funcate.terramobile.controller.activity.MainActivity;
 import br.org.funcate.terramobile.controller.activity.MenuMapController;
 import br.org.funcate.terramobile.controller.activity.TreeView;
-import br.org.funcate.terramobile.model.Project;
+import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
+import br.org.funcate.terramobile.model.exception.LowMemoryException;
+import br.org.funcate.terramobile.model.exception.TerraMobileException;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
 import br.org.funcate.terramobile.util.Message;
 
@@ -37,7 +37,7 @@ public class TreeViewAdapter extends BaseExpandableListAdapter implements View.O
         this.context = context;
         this.groupItem = grpList;
         this.ChildItem = childItem;
-        this.menuMapController = new MenuMapController(this.context);
+        this.menuMapController = ((MainActivity) context).getMainController().getMenuMapController();
         baseLayerRBList = new ArrayList<RadioButton>();
         editableLayerRBList = new ArrayList<RadioButton>();
     }
@@ -93,8 +93,22 @@ public class TreeViewAdapter extends BaseExpandableListAdapter implements View.O
                     break;
                 }
             }
-        } catch (Exception e) {
-            Message.showErrorMessage(((MainActivity)context), R.string.error,"Failed on change the layer");
+        }
+        catch (LowMemoryException e) {
+            e.printStackTrace();
+            Message.showErrorMessage(((MainActivity) context), R.string.error, e.getMessage());
+        }
+        catch (InvalidAppConfigException e) {
+            e.printStackTrace();
+            Message.showErrorMessage(((MainActivity) context), R.string.error, e.getMessage());
+        }
+        catch (TerraMobileException e) {
+            e.printStackTrace();
+            Message.showErrorMessage(((MainActivity) context), R.string.error, e.getMessage());
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            Message.showErrorMessage(((MainActivity) context), R.string.error, context.getResources().getString(R.string.unexpected_exception));
         }
     }
 

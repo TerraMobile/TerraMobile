@@ -14,22 +14,15 @@ import com.augtech.geoapi.geopackage.DateUtil;
 import com.augtech.geoapi.geopackage.GeoPackage;
 import com.augtech.geoapi.geopackage.GpkgField;
 import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.GeometryType;
 import org.opengis.geometry.BoundingBox;
 import org.opengis.feature.type.Name;
 import org.osmdroid.ResourceProxy;
-import org.osmdroid.bonuspack.overlays.Polygon;
 import org.osmdroid.tileprovider.MapTileProviderArray;
 import org.osmdroid.tileprovider.MapTileProviderBasic;
 import org.osmdroid.tileprovider.modules.MapTileModuleProviderBase;
@@ -37,22 +30,17 @@ import org.osmdroid.tileprovider.tilesource.ITileSource;
 import org.osmdroid.tileprovider.tilesource.XYTileSource;
 import org.osmdroid.tileprovider.util.SimpleInvalidationHandler;
 import org.osmdroid.tileprovider.util.SimpleRegisterReceiver;
-import org.osmdroid.util.BoundingBoxE6;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.TilesOverlay;
 
 import java.io.File;
-import java.lang.reflect.Array;
 import java.sql.Time;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.jar.Attributes;
 
 import br.org.funcate.dynamicforms.FormUtilities;
 import br.org.funcate.dynamicforms.images.ImageUtilities;
-import br.org.funcate.dynamicforms.util.FileUtilities;
 import br.org.funcate.dynamicforms.util.LibraryConstants;
 import br.org.funcate.extended.model.TMConfigEditableLayer;
 import br.org.funcate.jgpkg.exception.QueryException;
@@ -60,12 +48,15 @@ import br.org.funcate.jgpkg.service.GeoPackageService;
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.controller.activity.MainActivity;
 import br.org.funcate.terramobile.controller.activity.TreeView;
-import br.org.funcate.terramobile.model.Project;
+import br.org.funcate.terramobile.model.domain.Project;
+import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
 import br.org.funcate.terramobile.model.exception.InvalidGeopackageException;
+import br.org.funcate.terramobile.model.exception.LowMemoryException;
 import br.org.funcate.terramobile.model.exception.TerraMobileException;
 import br.org.funcate.terramobile.model.geomsource.SFSLayer;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
-import br.org.funcate.terramobile.util.ResourceUtil;
+import br.org.funcate.terramobile.util.ResourceHelper;
+import br.org.funcate.terramobile.util.Util;
 
 public class AppGeoPackageService {
 
@@ -75,8 +66,8 @@ public class AppGeoPackageService {
     }
 
     public static File getGpkgFile(Context context) {
-        File directory = ResourceUtil.getDirectory(context.getResources().getString(R.string.app_workspace_dir));
-        ArrayList<File> gpkgFiles= ResourceUtil.getGeoPackageFiles(directory, context.getResources().getString(R.string.geopackage_extension));
+        File directory = Util.getDirectory(context.getResources().getString(R.string.app_workspace_dir));
+        ArrayList<File> gpkgFiles= Util.getGeoPackageFiles(directory, context.getResources().getString(R.string.geopackage_extension));
 
         File gpkgFile=null;
         if(gpkgFiles.size()>0){// now, using the first geopackage on list
@@ -349,24 +340,26 @@ public class AppGeoPackageService {
         return field;
     }
 
-    public static SFSLayer getFeatures(GpkgLayer layer)
-    {
+    public static SFSLayer getFeatures(GpkgLayer layer) throws InvalidAppConfigException, LowMemoryException, TerraMobileException {
 
         try {
-            List<SimpleFeature> features = GeoPackageService.getGeometries(layer.getGeoPackage(),layer.getName(),null);
-/*            for (int i = 0; i < features.size(); i++) {
-                System.out.println(((Geometry)features.get(i).getDefaultGeometry()).getCoordinates());
-            }
 
-            System.out.println("Features Size: " + features.size());*/
+            List<SimpleFeature> features = GeoPackageService.getGeometries(layer.getGeoPackage(),layer.getName(),null);
 
             SFSLayer l = new SFSLayer(features);
+
             return l;
 
-        } catch (Exception e) {
-            e.printStackTrace();
         }
-        return null;
+        catch (Exception e) {
+            e.printStackTrace();
+            throw new TerraMobileException(ResourceHelper.getStringResource(R.string.read_features_exception), e);
+        }
+        catch (OutOfMemoryError e)
+        {
+            e.printStackTrace();
+            throw new LowMemoryException(ResourceHelper.getStringResource(R.string.read_features_out_of_memory_exception));
+        }
     }
 
 }

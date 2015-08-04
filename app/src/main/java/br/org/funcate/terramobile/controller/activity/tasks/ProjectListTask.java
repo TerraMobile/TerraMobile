@@ -25,9 +25,8 @@ import java.util.ArrayList;
 
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.controller.activity.MainActivity;
-import br.org.funcate.terramobile.model.Project;
+import br.org.funcate.terramobile.model.domain.Project;
 import br.org.funcate.terramobile.util.Message;
-import br.org.funcate.terramobile.util.ResourceUtil;
 import br.org.funcate.terramobile.util.Util;
 
 /**
@@ -94,10 +93,10 @@ public class ProjectListTask extends AsyncTask<String, String, JSONObject> {
         try {
             mainActivity.getProgressDialog().dismiss();
 
-            File appPath = ResourceUtil.getDirectory(mainActivity.getString(R.string.app_workspace_dir));
+            File appPath = Util.getDirectory(mainActivity.getString(R.string.app_workspace_dir));
 
             ArrayList<Project> aLItems = new ArrayList<Project>();
-            ArrayList<File> files = ResourceUtil.getGeoPackageFiles(appPath, mainActivity.getString(R.string.geopackage_extension));
+            ArrayList<File> files = Util.getGeoPackageFiles(appPath, mainActivity.getString(R.string.geopackage_extension));
             if(!files.isEmpty()) {
                 for (File file : files) {
                     String destinationFilePath = appPath.getPath() + "/" + file.getName();
@@ -119,7 +118,7 @@ public class ProjectListTask extends AsyncTask<String, String, JSONObject> {
 
                     String destinationFilePath = appPath.getPath() + "/" + pkg;
 
-                    File file = ResourceUtil.getGeoPackageByName(appPath, mainActivity.getString(R.string.geopackage_extension), pkg);
+                    File file = Util.getGeoPackageByName(appPath, mainActivity.getString(R.string.geopackage_extension), pkg);
                     if (file == null) {
                         Project project = new Project();
                         project.setName(pkg);

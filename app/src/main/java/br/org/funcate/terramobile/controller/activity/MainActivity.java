@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -23,42 +22,32 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.augtech.geoapi.feature.SimpleFeatureImpl;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.Point;
-
-import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.GeometryType;
-import org.osmdroid.bonuspack.kml.KmlDocument;
-import org.osmdroid.bonuspack.kml.Style;
-import org.osmdroid.bonuspack.overlays.FolderOverlay;
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
-import org.osmdroid.views.MapView;
-import org.osmdroid.views.overlay.Overlay;
+import org.opengis.geometry.BoundingBox;
+import org.osmdroid.util.GeoPoint;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 
-import br.org.funcate.dynamicforms.images.ImageUtilities;
-import br.org.funcate.jgpkg.exception.QueryException;
-import br.org.funcate.jgpkg.service.GeoPackageService;
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.configuration.ViewContextParameters;
 import br.org.funcate.terramobile.controller.activity.settings.SettingsActivity;
-import br.org.funcate.terramobile.model.Project;
-import br.org.funcate.terramobile.model.Settings;
+import br.org.funcate.terramobile.model.db.ApplicationDatabase;
+import br.org.funcate.terramobile.model.db.DatabaseFactory;
+import br.org.funcate.terramobile.model.domain.Project;
+import br.org.funcate.terramobile.model.domain.Setting;
 import br.org.funcate.terramobile.model.db.dao.ProjectDAO;
 import br.org.funcate.terramobile.model.db.dao.SettingsDAO;
-import br.org.funcate.terramobile.model.exception.TerraMobileException;
-import br.org.funcate.terramobile.model.geomsource.SFSLayer;
-import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
-import br.org.funcate.terramobile.model.tilesource.AppGeoPackageService;
+import br.org.funcate.terramobile.model.exception.DAOException;
+import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
+import br.org.funcate.terramobile.model.exception.ProjectException;
+import br.org.funcate.terramobile.model.exception.SettingsException;
+import br.org.funcate.terramobile.model.service.LayersService;
+import br.org.funcate.terramobile.model.service.ProjectsService;
+import br.org.funcate.terramobile.model.service.SettingsService;
 import br.org.funcate.terramobile.util.Message;
-import br.org.funcate.terramobile.util.ResourceUtil;
+import br.org.funcate.terramobile.util.ResourceHelper;
+import br.org.funcate.terramobile.util.Util;
 
 public class MainActivity extends FragmentActivity {
     private ActionBarDrawerToggle mDrawerToggle;
@@ -73,7 +62,6 @@ public class MainActivity extends FragmentActivity {
     private ViewContextParameters parameters=new ViewContextParameters();
 
     private Project mProject;
-    private Settings settings;
 
     private SettingsDAO settingsDAO;
 
@@ -83,6 +71,8 @@ public class MainActivity extends FragmentActivity {
     private ProgressDialog progressDialog;
 
     private ProjectListFragment projectListFragment;
+
+    private MainController mainController;
 
 
 /*    public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -109,51 +99,66 @@ public class MainActivity extends FragmentActivity {
         setContentView(R.layout.activity_main);
         actionBar = getActionBar();
 
+        mainController = new MainController(this);
+
         PreferenceManager.setDefaultValues(this, R.xml.settings, false);
 
-        settingsDAO = new SettingsDAO(this);
-        if(settingsDAO.getById(1) == null){
-            settings = new Settings();
-            settings.setId(1);
-            settings.setUrl(ResourceUtil.getStringResource(getResources(), R.string.terramobile_url)); // URL for test
-            settingsDAO.insert(settings);
-        }
-        else{
-            settings = settingsDAO.getById(1);
-        }
+        ResourceHelper.setResources(getResources());
 
-        File directory = ResourceUtil.getDirectory(this.getResources().getString(R.string.app_workspace_dir));
+        File directory = Util.getDirectory(this.getResources().getString(R.string.app_workspace_dir));
 
-        String fileName = settings.getCurrentProject();
+        try {
 
-        String ext = this.getString(R.string.geopackage_extension);
-        if(settings.getCurrentProject() != null) {
-            ProjectDAO projectDAO = new ProjectDAO(this);
-            mProject = projectDAO.getByName(settings.getCurrentProject());
-            File currentProject = ResourceUtil.getGeoPackageByName(directory, ext, fileName);
-            if(currentProject != null) {
-                if(mProject == null) {
-                    Project project = new Project();
-                    project.setId(null);
-                    project.setName(fileName);
-                    project.setFilePath(currentProject.getPath());
-                    projectDAO.insert(project);
+            SettingsService.initApplicationSettings(this);
 
-                    mProject = projectDAO.getByName(settings.getCurrentProject());
-                }
-            }
-            else{
-                if(mProject != null){
-                    if(projectDAO.remove(mProject.getId())){
-                        Log.i("Remove project","Project removed");
+            String currentProjectPath = mainController.getCurrentProject();
+
+            String ext = this.getString(R.string.geopackage_extension);
+            if(currentProjectPath != null) {
+                ProjectDAO projectDAO = new ProjectDAO(DatabaseFactory.getDatabase(this, ApplicationDatabase.DATABASE_NAME));
+                mProject = projectDAO.getByName(currentProjectPath);
+                File currentProject = Util.getGeoPackageByName(directory, ext, currentProjectPath);
+                if(currentProject != null) {
+                    if(mProject == null) {
+                        Project project = new Project();
+                        project.setId(null);
+                        project.setName(currentProjectPath);
+                        project.setFilePath(currentProject.getPath());
+                        projectDAO.insert(project);
+
+                        mProject = projectDAO.getByName(currentProjectPath);
                     }
-                    else
-                        Log.e("Remove project","Couldn't remove the project");
+                }
+                else{
+                    if(mProject != null){
+                        if(projectDAO.remove(mProject.getId())){
+                            Log.i("Remove project","Project removed");
+                        }
+                        else
+                            Log.e("Remove project","Couldn't remove the project");
+                    }
                 }
             }
+
+        } catch (InvalidAppConfigException e) {
+
+            Message.showErrorMessage(this, R.string.error, e.getMessage());
+
+        } catch (SettingsException e) {
+
+            Message.showErrorMessage(this, R.string.error, e.getMessage());
+
+        } catch (DAOException e) {
+            Message.showErrorMessage(this, R.string.error, e.getMessage());
         }
 
-        treeView = new TreeView(this);
+
+        try {
+            treeView = new TreeView(this);
+        } catch (InvalidAppConfigException e) {
+            e.printStackTrace();
+            Message.showErrorMessage(this, R.string.error, e.getMessage());
+        }
 
         mTitle = mDrawerTitle = getTitle();
         DrawerLayout mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -250,19 +255,26 @@ public class MainActivity extends FragmentActivity {
                 // add an bookmark on map and show the related form
                 fragment.startForm();
                 break;
-            /*
-            case R.id.test_vector_data:
-                testVectorData();
-                break;
-            case R.id.test_editable_layer:
-                testEditableLayer();
-                break;
-            case R.id.test_insert_sfs:
-                testInsertSFS();
-                break;
-            */
             case R.id.settings:
                 startActivity(new Intent(this, SettingsActivity.class));
+                break;
+            case R.id.test_icon_inpe:
+                getActionBar().setIcon(R.drawable.ic_launcher);
+                break;
+            case R.id.test_icon1:
+                getActionBar().setIcon(R.drawable.logo_terra_mobile_1);
+                break;
+            case R.id.test_icon2:
+                getActionBar().setIcon(R.drawable.logo_terra_mobile_2);
+                break;
+            case R.id.test_icon3:
+                getActionBar().setIcon(R.drawable.logo_terra_mobile_3);
+                break;
+            case R.id.test_icon4:
+                getActionBar().setIcon(R.drawable.logo_terra_mobile_4);
+                break;
+            case R.id.test_memory:
+                testMemory();
                 break;
             case R.id.exit:
                 this.finish();
@@ -360,145 +372,71 @@ public class MainActivity extends FragmentActivity {
         return mProject;
     }
 
-    public void setProject(Project project) {
+    public void setProject(Project project) throws InvalidAppConfigException {
         this.mProject = project;
-        settings.setCurrentProject(project!=null?project.getName():null);
-        settingsDAO.update(settings);
+        Setting currentProjectSet = null;
+        if(currentProjectSet==null)
+        {
+            currentProjectSet = new Setting("current_project", null);
+        }
+        else
+        {
+            currentProjectSet = new Setting("current_project", project.getName());
+        }
+
         treeView.refreshTreeView();
         invalidateOptionsMenu();
+
+        try {
+
+            SettingsService.update(this, currentProjectSet, ApplicationDatabase.DATABASE_NAME);
+
+            SettingsService.initProjectSettings(this, project);
+
+            BoundingBox bb = ProjectsService.getProjectDefaultBoundingBox(this, project.getFilePath());
+
+            if(bb==null)
+            {
+                //if bb == null include all layers bounding box
+                bb = LayersService.getLayersMaxExtent(getTreeView().getLayers());
+            }
+            mainController.getMenuMapController().panTo(bb);
+
+
+        } catch (SettingsException e) {
+            e.printStackTrace();
+            Message.showErrorMessage(this, R.string.error, e.getMessage());
+        } catch (ProjectException e) {
+            e.printStackTrace();
+            Message.showErrorMessage(this, R.string.error, e.getMessage());
+        }
     }
 
-    private void testEditableLayer() {
-        GpkgLayer layer = null;
-        SFSLayer l = null;
-        try {
-            layer = treeView.getLayerByName("field_work_collect_data");
-            l = AppGeoPackageService.getFeatures(layer);
 
 
-        } catch (TerraMobileException e) {
-            e.printStackTrace();
-        }
-
-        MapView map = (MapView) findViewById(R.id.mapview);
-        map.setTileSource(TileSourceFactory.MAPNIK);
-        map.setBuiltInZoomControls(true);
-        map.setMultiTouchControls(true);
-
-        Style defaultStyle = new Style(null, 0x901010AA, 1.0f, 0x20AA1010);
-
-        KmlDocument kmlDocument = new KmlDocument();
-        Overlay overlay = null;
-        if (l != null) {
-            overlay = l.buildOverlay(map, defaultStyle, null, kmlDocument);
-        }
-
-        map.getOverlays().add(overlay);
-
-        map.invalidate();
-    }
-
-    private void testInsertSFS() {
-        GpkgLayer layer = null;
-        try {
-            layer = treeView.getLayerByName("field_work_collect_data");
-        }catch (TerraMobileException e) {
-            e.printStackTrace();
-        }
-
-        SimpleFeatureType ft = layer.getFeatureType();
-        GeometryType geometryType = ft.getGeometryDescriptor().getType();
-        List<Object> attributeValues = new ArrayList<Object>();
-        SimpleFeatureImpl feature = new SimpleFeatureImpl(null, attributeValues, ft);
-        GeometryFactory factory=new GeometryFactory();
-        Coordinate coordinate = new Coordinate(-45.10,5.20);
-        Point point = factory.createPoint(coordinate);
-        feature.setDefaultGeometry(point);
-
-        feature.setAttribute("location_name", "Teste de insercao");// testar com palavras acentuadas
-        feature.setAttribute("temperature",25.1);
-        feature.setAttribute("soil_ph",6);
-
-        /*
-        String date = formData.getString(key);
-        Date dt = DateUtil.deserializeDate(date);
-        if (dt == null) dt = new Date();
-        feature.setAttribute(key,dt);
-
-        */
-        feature.setAttribute("collect_date",null);
-        feature.setAttribute("termites",null);
-        feature.setAttribute("crop_stage",null);
-        feature.setAttribute("picture",null);
-
-        /*String path = "";
-        if (ImageUtilities.isImagePath(path)) {
-            byte[] blob = ImageUtilities.getImageFromPath(path, 1);
-            feature.setAttribute("picture",blob);
-        }else{
-            feature.setAttribute("picture",null);
-        }*/
-
-        /*
-        location_name" TEXT,
-        "temperature" DOUBLE,
-        "soil_ph" INTEGER,
-        "collect_date" DATE,
-        "termites" INTEGER,
-        "crop_stage" TEXT,
-        "picture" BLOB,
-        */
-        try {
-            GeoPackageService.writeLayerFeature(layer.getGeoPackage(), feature);
-        } catch (QueryException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    private void testVectorData()
+    public void testMemory()
     {
-
-        GpkgLayer layer = null;
-        SFSLayer l = null;
+        long start = System.currentTimeMillis();
+        byte[] buffer = new byte[2^20];
+        ArrayList<String> list = new ArrayList<String>();
         try {
-            layer = treeView.getLayerByName("inpe_area_de_estudo_canasat_2000");
-            l = AppGeoPackageService.getFeatures(layer);
-
-
-        } catch (TerraMobileException e) {
-            e.printStackTrace();
+            while (true) {
+                list.add("BOGOOOOOOOOOOOOOOOOOOOO");
+            }
+        } catch (OutOfMemoryError t) {
+            long end = System.currentTimeMillis();
+            buffer = null;
+            System.err.println(t + " in " + (end-start) + " millis.");
         }
-
-        MapView map = (MapView) findViewById(R.id.mapview);
-        map.setTileSource(TileSourceFactory.MAPNIK);
-        map.setBuiltInZoomControls(true);
-        map.setMultiTouchControls(true);
-
-        Style defaultStyle = new Style(null, 0x901010AA, 1.0f, 0x20AA1010);
-
-        KmlDocument kmlDocument = new KmlDocument();
-        Overlay overlay = l.buildOverlay(map, defaultStyle, null, kmlDocument);
-
-        map.getOverlays().add(overlay);
-
-        map.invalidate();
-
-       // map.zoomToBoundingBox(l.getBoundingBox());
-
-/*        String url = "http://mapsengine.google.com/map/kml?mid=z6IJfj90QEd4.kUUY9FoHFRdE";
-
-        KmlDocument kmlDocument = new KmlDocument();
-
-        kmlDocument.parseKMLUrl(url);
-
-        FolderOverlay kmlOverlay = (FolderOverlay)kmlDocument.mKmlRoot.buildOverlay(map, null, null, kmlDocument);
-
-        map.getOverlays().add(kmlOverlay);
-
-        map.invalidate();
-
-        map.zoomToBoundingBox(kmlDocument.mKmlRoot.getBoundingBox());*/
-
     }
+
+    public MainController getMainController() {
+        return mainController;
+    }
+
+    public void setMainController(MainController mainController) {
+        this.mainController = mainController;
+    }
+
+
 }
