@@ -42,6 +42,7 @@ import br.org.funcate.terramobile.model.exception.DAOException;
 import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
 import br.org.funcate.terramobile.model.exception.ProjectException;
 import br.org.funcate.terramobile.model.exception.SettingsException;
+import br.org.funcate.terramobile.model.service.LayersService;
 import br.org.funcate.terramobile.model.service.ProjectsService;
 import br.org.funcate.terramobile.model.service.SettingsService;
 import br.org.funcate.terramobile.util.Message;
@@ -383,6 +384,9 @@ public class MainActivity extends FragmentActivity {
             currentProjectSet = new Setting("current_project", project.getName());
         }
 
+        treeView.refreshTreeView();
+        invalidateOptionsMenu();
+
         try {
 
             SettingsService.update(this, currentProjectSet, ApplicationDatabase.DATABASE_NAME);
@@ -391,10 +395,13 @@ public class MainActivity extends FragmentActivity {
 
             BoundingBox bb = ProjectsService.getProjectDefaultBoundingBox(this, project.getFilePath());
 
-            if(bb!=null)
+            if(bb==null)
             {
-                mainController.getMenuMapController().panTo(bb);
+                //if bb == null include all layers bounding box
+                bb = LayersService.getLayersMaxExtent(getTreeView().getLayers());
             }
+            mainController.getMenuMapController().panTo(bb);
+
 
         } catch (SettingsException e) {
             e.printStackTrace();
@@ -403,8 +410,6 @@ public class MainActivity extends FragmentActivity {
             e.printStackTrace();
             Message.showErrorMessage(this, R.string.error, e.getMessage());
         }
-        treeView.refreshTreeView();
-        invalidateOptionsMenu();
     }
 
 

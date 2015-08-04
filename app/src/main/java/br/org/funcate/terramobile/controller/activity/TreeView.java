@@ -214,4 +214,18 @@ public class TreeView {
     public void setSelectedEditableLayer(GpkgLayer selectedEditableLayer) {
         this.selectedEditableLayer = selectedEditableLayer;
     }
+
+    /**
+     * Return all layers, from all groups (Base, Gathering and Overlays
+     * @return
+     */
+    public ArrayList<GpkgLayer> getLayers() {
+        ArrayList<GpkgLayer> layers = new ArrayList<GpkgLayer>();
+        for (int i = 0; i < childItem.size(); i++) {
+            layers.addAll(childItem.get(i));
+        }
+
+        return layers;
+    }
+
 }

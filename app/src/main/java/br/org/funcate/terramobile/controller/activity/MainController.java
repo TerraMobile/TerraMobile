@@ -1,5 +1,7 @@
 package br.org.funcate.terramobile.controller.activity;
 
+import org.opengis.geometry.BoundingBox;
+
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.model.db.ApplicationDatabase;
 import br.org.funcate.terramobile.model.domain.Setting;
@@ -72,4 +74,5 @@ public class MainController {
     public void setMenuMapController(MenuMapController menuMapController) {
         this.menuMapController = menuMapController;
     }
+
 }
