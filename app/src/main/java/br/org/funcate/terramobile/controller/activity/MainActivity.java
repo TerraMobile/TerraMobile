@@ -23,18 +23,26 @@ import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
 
+import org.opengis.geometry.BoundingBox;
+import org.osmdroid.util.GeoPoint;
+
 import java.io.File;
 import java.util.ArrayList;
 
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.configuration.ViewContextParameters;
 import br.org.funcate.terramobile.controller.activity.settings.SettingsActivity;
+import br.org.funcate.terramobile.model.db.ApplicationDatabase;
+import br.org.funcate.terramobile.model.db.DatabaseFactory;
 import br.org.funcate.terramobile.model.domain.Project;
 import br.org.funcate.terramobile.model.domain.Setting;
 import br.org.funcate.terramobile.model.db.dao.ProjectDAO;
 import br.org.funcate.terramobile.model.db.dao.SettingsDAO;
+import br.org.funcate.terramobile.model.exception.DAOException;
 import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
+import br.org.funcate.terramobile.model.exception.ProjectException;
 import br.org.funcate.terramobile.model.exception.SettingsException;
+import br.org.funcate.terramobile.model.service.ProjectsService;
 import br.org.funcate.terramobile.model.service.SettingsService;
 import br.org.funcate.terramobile.util.Message;
 import br.org.funcate.terramobile.util.ResourceHelper;
@@ -100,7 +108,36 @@ public class MainActivity extends FragmentActivity {
 
         try {
 
-            SettingsService.initSettings(this);
+            SettingsService.initApplicationSettings(this);
+
+            String currentProjectPath = mainController.getCurrentProject();
+
+            String ext = this.getString(R.string.geopackage_extension);
+            if(currentProjectPath != null) {
+                ProjectDAO projectDAO = new ProjectDAO(DatabaseFactory.getDatabase(this, ApplicationDatabase.DATABASE_NAME));
+                mProject = projectDAO.getByName(currentProjectPath);
+                File currentProject = Util.getGeoPackageByName(directory, ext, currentProjectPath);
+                if(currentProject != null) {
+                    if(mProject == null) {
+                        Project project = new Project();
+                        project.setId(null);
+                        project.setName(currentProjectPath);
+                        project.setFilePath(currentProject.getPath());
+                        projectDAO.insert(project);
+
+                        mProject = projectDAO.getByName(currentProjectPath);
+                    }
+                }
+                else{
+                    if(mProject != null){
+                        if(projectDAO.remove(mProject.getId())){
+                            Log.i("Remove project","Project removed");
+                        }
+                        else
+                            Log.e("Remove project","Couldn't remove the project");
+                    }
+                }
+            }
 
         } catch (InvalidAppConfigException e) {
 
@@ -110,36 +147,10 @@ public class MainActivity extends FragmentActivity {
 
             Message.showErrorMessage(this, R.string.error, e.getMessage());
 
+        } catch (DAOException e) {
+            Message.showErrorMessage(this, R.string.error, e.getMessage());
         }
 
-        String currentProjectPath = mainController.getCurrentProject();
-
-        String ext = this.getString(R.string.geopackage_extension);
-        if(currentProjectPath != null) {
-            ProjectDAO projectDAO = new ProjectDAO(this);
-            mProject = projectDAO.getByName(currentProjectPath);
-            File currentProject = Util.getGeoPackageByName(directory, ext, currentProjectPath);
-            if(currentProject != null) {
-                if(mProject == null) {
-                    Project project = new Project();
-                    project.setId(null);
-                    project.setName(currentProjectPath);
-                    project.setFilePath(currentProject.getPath());
-                    projectDAO.insert(project);
-
-                    mProject = projectDAO.getByName(currentProjectPath);
-                }
-            }
-            else{
-                if(mProject != null){
-                    if(projectDAO.remove(mProject.getId())){
-                        Log.i("Remove project","Project removed");
-                    }
-                    else
-                        Log.e("Remove project","Couldn't remove the project");
-                }
-            }
-        }
 
         try {
             treeView = new TreeView(this);
@@ -246,6 +257,21 @@ public class MainActivity extends FragmentActivity {
             case R.id.settings:
                 startActivity(new Intent(this, SettingsActivity.class));
                 break;
+            case R.id.test_icon_inpe:
+                getActionBar().setIcon(R.drawable.ic_launcher);
+                break;
+            case R.id.test_icon1:
+                getActionBar().setIcon(R.drawable.logo_terra_mobile_1);
+                break;
+            case R.id.test_icon2:
+                getActionBar().setIcon(R.drawable.logo_terra_mobile_2);
+                break;
+            case R.id.test_icon3:
+                getActionBar().setIcon(R.drawable.logo_terra_mobile_3);
+                break;
+            case R.id.test_icon4:
+                getActionBar().setIcon(R.drawable.logo_terra_mobile_4);
+                break;
             case R.id.test_memory:
                 testMemory();
                 break;
@@ -347,27 +373,41 @@ public class MainActivity extends FragmentActivity {
 
     public void setProject(Project project) throws InvalidAppConfigException {
         this.mProject = project;
-        Setting setting = null;
-        if(project==null)
+        Setting currentProjectSet = null;
+        if(currentProjectSet==null)
         {
-            setting = new Setting("current_project", null);
+            currentProjectSet = new Setting("current_project", null);
         }
         else
         {
-            setting = new Setting("current_project", project.getName());
+            currentProjectSet = new Setting("current_project", project.getName());
         }
 
         try {
 
-            SettingsService.update(this,setting);
+            SettingsService.update(this, currentProjectSet, ApplicationDatabase.DATABASE_NAME);
+
+            SettingsService.initProjectSettings(this, project);
+
+            BoundingBox bb = ProjectsService.getProjectDefaultBoundingBox(this, project.getFilePath());
+
+            if(bb!=null)
+            {
+                mainController.getMenuMapController().panTo(bb);
+            }
 
         } catch (SettingsException e) {
+            e.printStackTrace();
+            Message.showErrorMessage(this, R.string.error, e.getMessage());
+        } catch (ProjectException e) {
             e.printStackTrace();
             Message.showErrorMessage(this, R.string.error, e.getMessage());
         }
         treeView.refreshTreeView();
         invalidateOptionsMenu();
     }
+
+
 
     public void testMemory()
     {
@@ -392,4 +432,6 @@ public class MainActivity extends FragmentActivity {
     public void setMainController(MainController mainController) {
         this.mainController = mainController;
     }
+
+
 }

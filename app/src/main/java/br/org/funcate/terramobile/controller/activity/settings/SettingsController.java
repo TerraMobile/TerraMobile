@@ -6,6 +6,7 @@ import android.preference.PreferenceActivity;
 import android.support.v4.app.FragmentActivity;
 
 import br.org.funcate.terramobile.R;
+import br.org.funcate.terramobile.model.db.ApplicationDatabase;
 import br.org.funcate.terramobile.model.domain.Setting;
 import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
 import br.org.funcate.terramobile.model.exception.SettingsException;
@@ -28,7 +29,7 @@ public class SettingsController {
     {
         try {
 
-            Setting setting = SettingsService.get(((Context)activity), "terramobile_url");
+            Setting setting = SettingsService.get(((Context)activity), "terramobile_url", ApplicationDatabase.DATABASE_NAME);
 
             if(setting!=null)
             {

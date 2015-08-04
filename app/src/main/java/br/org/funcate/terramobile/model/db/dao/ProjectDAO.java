@@ -6,17 +6,29 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 
+import br.org.funcate.terramobile.R;
+import br.org.funcate.terramobile.model.db.DatabaseHelper;
 import br.org.funcate.terramobile.model.domain.Project;
 import br.org.funcate.terramobile.model.db.ApplicationDatabase;
+import br.org.funcate.terramobile.model.exception.DAOException;
+import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
+import br.org.funcate.terramobile.util.ResourceHelper;
 
 /**
  * Created by marcelo on 5/26/15.
  */
 public class ProjectDAO {
-    private ApplicationDatabase database;
+    private DatabaseHelper database;
 
-    public ProjectDAO(Context context) {
-        this.database = new ApplicationDatabase(context);
+    public ProjectDAO(DatabaseHelper database) throws InvalidAppConfigException, DAOException {
+        if(database!=null)
+        {
+            this.database = database;
+        }
+        else
+        {
+            throw new DAOException(ResourceHelper.getStringResource(R.string.invalid_database_exception));
+        }
     }
 
     public boolean insert(Project project) {

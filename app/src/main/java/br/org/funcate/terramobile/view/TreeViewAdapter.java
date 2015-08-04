@@ -37,7 +37,7 @@ public class TreeViewAdapter extends BaseExpandableListAdapter implements View.O
         this.context = context;
         this.groupItem = grpList;
         this.ChildItem = childItem;
-        this.menuMapController = new MenuMapController(this.context);
+        this.menuMapController = ((MainActivity) context).getMainController().getMenuMapController();
         baseLayerRBList = new ArrayList<RadioButton>();
         editableLayerRBList = new ArrayList<RadioButton>();
     }

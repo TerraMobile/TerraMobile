@@ -30,6 +30,31 @@
         android:title="@string/test_memory"
         android:orderInCategory="100"
         android:showAsAction="never" />
+
+    <item android:id="@+id/test_icon_inpe"
+        android:title="Test Icon Inpe"
+        android:orderInCategory="100"
+        android:showAsAction="never" />
+
+    <item android:id="@+id/test_icon1"
+        android:title="Test Icon 1"
+        android:orderInCategory="100"
+        android:showAsAction="never" />
+
+    <item android:id="@+id/test_icon2"
+        android:title="Test Icon 2"
+        android:orderInCategory="100"
+        android:showAsAction="never" />
+
+    <item android:id="@+id/test_icon3"
+        android:title="Test Icon 3"
+        android:orderInCategory="100"
+        android:showAsAction="never" />
+
+    <item android:id="@+id/test_icon4"
+        android:title="Test Icon 4"
+        android:orderInCategory="100"
+        android:showAsAction="never" />
     <!--
         <item android:id="@+id/test_editable_layer"
             android:title="@string/test_editable_layer"

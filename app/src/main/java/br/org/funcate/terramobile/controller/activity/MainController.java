@@ -1,6 +1,7 @@
 package br.org.funcate.terramobile.controller.activity;
 
 import br.org.funcate.terramobile.R;
+import br.org.funcate.terramobile.model.db.ApplicationDatabase;
 import br.org.funcate.terramobile.model.domain.Setting;
 import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
 import br.org.funcate.terramobile.model.exception.SettingsException;
@@ -12,11 +13,14 @@ import br.org.funcate.terramobile.util.Message;
  */
 public class MainController {
 
-    MainActivity mainActivity;
+    private MainActivity mainActivity;
+
+    private MenuMapController menuMapController;
 
     public MainController(MainActivity mainActivity)
     {
         this.mainActivity = mainActivity;
+        menuMapController = new MenuMapController(mainActivity);
     }
 
     public String getServerURL()
@@ -44,7 +48,7 @@ public class MainController {
     {
         try {
 
-            Setting setting = SettingsService.get(mainActivity, key);
+            Setting setting = SettingsService.get(mainActivity, key, ApplicationDatabase.DATABASE_NAME);
 
             if(setting!=null)
             {
@@ -61,5 +65,11 @@ public class MainController {
         return null;
     }
 
+    public MenuMapController getMenuMapController() {
+        return menuMapController;
+    }
 
+    public void setMenuMapController(MenuMapController menuMapController) {
+        this.menuMapController = menuMapController;
+    }
 }

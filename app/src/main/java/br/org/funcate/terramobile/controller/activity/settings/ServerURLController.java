@@ -5,6 +5,7 @@ import android.content.Context;
 
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.controller.activity.MainActivity;
+import br.org.funcate.terramobile.model.db.ApplicationDatabase;
 import br.org.funcate.terramobile.model.domain.Setting;
 import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
 import br.org.funcate.terramobile.model.exception.SettingsException;
@@ -28,7 +29,7 @@ public class ServerURLController {
         try {
             Setting serverURLSet = new Setting("terramobile_url" , serverURL);
 
-            SettingsService.update((Context)fragment.getActivity(), serverURLSet);
+            SettingsService.update((Context)fragment.getActivity(), serverURLSet, ApplicationDatabase.DATABASE_NAME);
 
         } catch (InvalidAppConfigException e) {
             e.printStackTrace();
@@ -44,7 +45,7 @@ public class ServerURLController {
         try {
             Setting serverURLSet = new Setting("terramobile_url" , serverURL);
 
-            SettingsService.update((Context)fragment.getActivity(), serverURLSet);
+            SettingsService.update((Context)fragment.getActivity(), serverURLSet, ApplicationDatabase.DATABASE_NAME);
 
         } catch (InvalidAppConfigException e) {
             e.printStackTrace();

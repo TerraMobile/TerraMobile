@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 
 import br.org.funcate.terramobile.R;
+import br.org.funcate.terramobile.model.db.DatabaseHelper;
 import br.org.funcate.terramobile.model.domain.Setting;
 import br.org.funcate.terramobile.model.db.ApplicationDatabase;
 import br.org.funcate.terramobile.model.exception.DAOException;
@@ -17,15 +18,22 @@ import br.org.funcate.terramobile.util.ResourceHelper;
  * Created by marcelo on 5/26/15.
  */
 public class SettingsDAO {
-    private ApplicationDatabase applicationDatabase;
+    private DatabaseHelper database;
 
-    public SettingsDAO(Context context) {
-        this.applicationDatabase = new ApplicationDatabase(context);
+    public SettingsDAO(DatabaseHelper database) throws InvalidAppConfigException, DAOException {
+        if(database!=null)
+        {
+            this.database = database;
+        }
+        else
+        {
+            throw new DAOException(ResourceHelper.getStringResource(R.string.invalid_database_exception));
+        }
     }
 
     public boolean insert(Setting setting) throws InvalidAppConfigException, DAOException {
         try {
-            SQLiteDatabase db = applicationDatabase.getWritableDatabase();
+            SQLiteDatabase db = database.getWritableDatabase();
             if (db != null) {
                 if (setting != null) {
                     ContentValues contentValues = new ContentValues();
@@ -61,7 +69,7 @@ public class SettingsDAO {
             clauseValue = setting.getKey();
         }
 
-        SQLiteDatabase db = applicationDatabase.getWritableDatabase();
+        SQLiteDatabase db = database.getWritableDatabase();
         try{
             if (db != null) {
                 if (setting != null) {
@@ -84,7 +92,7 @@ public class SettingsDAO {
     @Deprecated
     public Setting getById(long id) throws InvalidAppConfigException, DAOException {
         try {
-            SQLiteDatabase db = applicationDatabase.getReadableDatabase();
+            SQLiteDatabase db = database.getReadableDatabase();
             if(db != null) {
                 Setting setting = null;
                 Cursor cursor = db.query("SETTINGS", new String[]{"ID", "KEY", "VALUE"}, "ID = ?", new String[]{String.valueOf(id)}, null, null, null, null);
@@ -127,7 +135,7 @@ public class SettingsDAO {
 
 
         try {
-            SQLiteDatabase db = applicationDatabase.getReadableDatabase();
+            SQLiteDatabase db = database.getReadableDatabase();
             if(db != null) {
                 Cursor cursor = db.query("SETTINGS", new String[]{"ID", "KEY", "VALUE"}, clause, new String[]{clauseValue}, null, null, null, null);
                 if (cursor != null && cursor.getCount() != 0) {

@@ -6,14 +6,14 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 /**
- * This class its used to create and connect the database
+ * This class is an extends or generic database helper do be able to use different configuration while access different kinds of database, in this case the app sqlite database
  */
 public class ApplicationDatabase extends DatabaseHelper {
 	
 	/* Name of the database */
-	private static final String DATABASE_NAME = "terramobile";
+	public static final String DATABASE_NAME = "terramobile";
 
-	public ApplicationDatabase(Context context) {
+    protected ApplicationDatabase(Context context) {
 		super(context, DATABASE_NAME);
 	}
 
