@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
@@ -63,6 +64,8 @@ public class ProjectListAdapter extends ArrayAdapter<Project> implements Adapter
 
         RadioButton rBCurrentProject = (RadioButton) convertView.findViewById(R.id.rBCurrentProject);
         rBCurrentProject.setTag(project);
+        iVDownloaded.setTag(project);
+
 
         Project currentProject = ((MainActivity) context).getProject();
         if (currentProject != null && currentProject.toString().equals(project.toString()))
@@ -75,82 +78,122 @@ public class ProjectListAdapter extends ArrayAdapter<Project> implements Adapter
             iVDownloaded.setImageResource(R.drawable.downloaded);
         }
 
+        iVDownloaded.setOnClickListener(onDownloadIconClick);
+
         rBCurrentProject.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                for (int count = 0; count < parent.getChildCount(); count++) {
-                    View childView = parent.getChildAt(count);
-                    RadioButton radioButton = (RadioButton) childView.findViewById(R.id.rBCurrentProject);
-                    radioButton.setChecked(false);
-                }
-                RadioButton rBNewCurrentProject = (RadioButton) v;
-                if (!rBNewCurrentProject.isChecked()) {
-                    rBNewCurrentProject.setChecked(true);
-
-                    Project newCurrentProject = (Project) rBNewCurrentProject.getTag();
-                    try {
-                        ((MainActivity) context).setProject(newCurrentProject);
-                    } catch (InvalidAppConfigException e) {
-                        e.printStackTrace();
-                        Message.showErrorMessage(((MainActivity) context), R.string.error, e.getMessage());
-                    }
-                }
+                clearProjectSelection((ListView) parent);
+                selectProject((RadioButton) v);
             }
         });
 
         return convertView;
     }
 
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        if (Util.isConnected(context)) {
-            final Project project = (Project) parent.getItemAtPosition(position);
-            final String fileName = project.getName();
+    private View.OnClickListener onDownloadIconClick = new View.OnClickListener()
+    {
+        public void onClick(View v) {
+            if (Util.isConnected(context)) {
+                final Project project = (Project) v.getTag();
+                final String fileName = project.getName();
 
-            File tempPath = Util.getDirectory(context.getString(R.string.app_workspace_temp_dir));
-            File projectPath = Util.getDirectory(context.getString(R.string.app_workspace_dir));
+                File tempPath = Util.getDirectory(context.getString(R.string.app_workspace_temp_dir));
+                File projectPath = Util.getDirectory(context.getString(R.string.app_workspace_dir));
 
-            final String tempFilePath = tempPath.getPath() + "/" + fileName;
-            final String projectFilePath = projectPath.getPath();
+                final String tempFilePath = tempPath.getPath() + "/" + fileName;
+                final String projectFilePath = projectPath.getPath();
 
-            final String serverURL  = ((MainActivity) context).getMainController().getServerURL();
+                final String serverURL  = ((MainActivity) context).getMainController().getServerURL();
 
-            if(serverURL==null)
-            {
-                //Error Message already sent
-                return;
-            }
+                if(serverURL==null)
+                {
+                    //Error Message already sent
+                    return;
+                }
 
-            if (Util.getGeoPackageByName(projectPath, context.getResources().getString(R.string.geopackage_extension), project.getName()) != null) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(
-                        context);
-                builder.setTitle(context.getString(R.string.project_remove_title));
-                builder.setMessage(context.getString(R.string.project_download_confirm));
-                builder.setCancelable(false);
-                builder.setPositiveButton(R.string.yes,
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                               downloadTask = (DownloadTask) new DownloadTask(tempFilePath, projectFilePath, fileName, (MainActivity) context).execute(serverURL + "/getprojects/userName/" + fileName);
+                if (Util.getGeoPackageByName(projectPath, context.getResources().getString(R.string.geopackage_extension), project.getName()) != null) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(
+                            context);
+                    builder.setTitle(context.getString(R.string.project_remove_title));
+                    builder.setMessage(context.getString(R.string.project_download_confirm));
+                    builder.setCancelable(false);
+                    builder.setPositiveButton(R.string.yes,
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    downloadTask = (DownloadTask) new DownloadTask(tempFilePath, projectFilePath, fileName, (MainActivity) context).execute(serverURL + "/getprojects/userName/" + fileName);
 //                              else
 //                                   Message.showErrorMessage(context, R.string.error, R.string.not_logged);
-                            }
-                        });
-                builder.setNegativeButton(R.string.no,
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.cancel();
-                            }
-                        });
-                AlertDialog alertDialog = builder.create();
-                alertDialog.show();
-            }
-            else {
-                  downloadTask = (DownloadTask) new DownloadTask(tempFilePath, projectFilePath, fileName, (MainActivity) context).execute(serverURL + "/getprojects/userName/" + fileName);
+                                }
+                            });
+                    builder.setNegativeButton(R.string.no,
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.cancel();
+                                }
+                            });
+                    AlertDialog alertDialog = builder.create();
+                    alertDialog.show();
+                }
+                else {
+                    downloadTask = (DownloadTask) new DownloadTask(tempFilePath, projectFilePath, fileName, (MainActivity) context).execute(serverURL + "/getprojects/userName/" + fileName);
 //                else
 //                    Message.showErrorMessage(context, R.string.error, R.string.not_logged);
+                }
+            } else
+                Message.showErrorMessage((MainActivity) context, R.string.error, R.string.no_connection);
+
+        }
+    };
+
+    private void selectProject(RadioButton radioButton)
+    {
+        if (!radioButton.isChecked()) {
+            radioButton.setChecked(true);
+            boolean success = false;
+            Project newCurrentProject = (Project) radioButton.getTag();
+
+            if(newCurrentProject.isDownloaded()==1)
+            {
+
+                try {
+                    success = ((MainActivity) context).setProject(newCurrentProject);
+                } catch (InvalidAppConfigException e)
+                {
+                    e.printStackTrace();
+                    Message.showErrorMessage(((MainActivity) context), R.string.error, e.getMessage());
+                }
+
+
             }
-        } else
-            Message.showErrorMessage((MainActivity) context, R.string.error, R.string.no_connection);
+            else
+            {
+                Message.showErrorMessage((MainActivity) context, R.string.error, R.string.download_project_first);
+            }
+            if(!success)
+            {
+                clearProjectSelection((ListView)radioButton.getParent().getParent());
+            }
+
+        }
+    }
+
+    private void clearProjectSelection(ListView listView)
+    {
+        for (int count = 0; count < listView.getChildCount(); count++) {
+            View childView = listView.getChildAt(count);
+            RadioButton radioButton = (RadioButton) childView.findViewById(R.id.rBCurrentProject);
+            radioButton.setChecked(false);
+        }
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//        selectProject.onClick(view);
+        this.clearProjectSelection((ListView)parent);
+        RadioButton button = (RadioButton)view.findViewById(R.id.rBCurrentProject);
+        this.selectProject(button);
+
     }
 
     /**
