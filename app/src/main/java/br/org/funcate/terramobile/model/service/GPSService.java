@@ -1,11 +1,8 @@
-package br.org.funcate.terramobile.service;
+package br.org.funcate.terramobile.model.service;
 
 import android.content.Context;
-import android.graphics.Point;
 import android.location.LocationListener;
 import android.location.LocationManager;
-
-import org.osmdroid.util.GeoPoint;
 
 /**
  * Created by Andre Carvalho on 04/08/15.

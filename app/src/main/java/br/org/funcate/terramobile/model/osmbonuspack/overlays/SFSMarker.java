@@ -20,8 +20,7 @@ import java.util.AbstractList;
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.controller.activity.MainActivity;
 import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
-import br.org.funcate.terramobile.model.geomsource.SFSPoint;
-import br.org.funcate.terramobile.service.GPSService;
+import br.org.funcate.terramobile.model.service.GPSService;
 import br.org.funcate.terramobile.util.Message;
 import br.org.funcate.terramobile.util.ResourceHelper;
 
