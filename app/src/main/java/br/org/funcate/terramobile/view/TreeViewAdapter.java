@@ -210,10 +210,14 @@ public class TreeViewAdapter extends BaseExpandableListAdapter implements View.O
                         context.getResources().getDimension(R.dimen.child_text_size));
                 break;
         }
+
         //Adding the listener to the zoom to extent image
         extentImage = (ImageView)convertView.findViewById(R.id.zoomExtent);
-        extentImage.setOnClickListener(extentImageListener);
-        extentImage.setTag(child);
+        if(extentImage!=null)
+        {
+            extentImage.setOnClickListener(extentImageListener);
+            extentImage.setTag(child);
+        }
         return convertView;
     }
 

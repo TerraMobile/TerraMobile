@@ -372,7 +372,12 @@ public class MainActivity extends FragmentActivity {
         return mProject;
     }
 
-    public void setProject(Project project) throws InvalidAppConfigException {
+    public boolean setProject(Project project) throws InvalidAppConfigException {
+        if(project==null)
+        {
+            clearCurrentProject();
+            return true;
+        }
         this.mProject = project;
         Setting currentProjectSet = null;
         if(currentProjectSet==null)
@@ -402,11 +407,45 @@ public class MainActivity extends FragmentActivity {
             }
             mainController.getMenuMapController().panTo(bb);
 
+        } catch (SettingsException e)
+        {
+            e.printStackTrace();
+            Message.showErrorMessage(this, R.string.error, e.getMessage());
+            clearCurrentProject();
+            return false;
+        } catch (ProjectException e)
+        {
+            e.printStackTrace();
+            Message.showErrorMessage(this, R.string.error, e.getMessage());
+            clearCurrentProject();
+            return false;
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+            Message.showErrorMessage(this, R.string.error, R.string.invalid_project);
+            clearCurrentProject();
+            return false;
+        }
+        return true;
+    }
+
+    private void clearCurrentProject()
+    {
+        try {
+            this.mProject = null;
+
+            Setting currentProjectSet = new Setting("current_project", null);
+
+            SettingsService.update(this, currentProjectSet, ApplicationDatabase.DATABASE_NAME);
+
+            treeView.refreshTreeView();
+
+            invalidateOptionsMenu();
 
         } catch (SettingsException e) {
             e.printStackTrace();
             Message.showErrorMessage(this, R.string.error, e.getMessage());
-        } catch (ProjectException e) {
+        } catch (InvalidAppConfigException e) {
             e.printStackTrace();
             Message.showErrorMessage(this, R.string.error, e.getMessage());
         }

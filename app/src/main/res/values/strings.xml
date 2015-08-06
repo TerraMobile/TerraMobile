@@ -80,6 +80,8 @@
     <string name="settings_init_exception">Unable to initialize default settings on database.</string>
     <string name="invalid_database_exception">Invalid database instance.</string>
     <string name="failed_getting_project_setting">Failed while getting a project setting.</string>
+    <string name="invalid_project">Unable to load due to invalid project.</string>
+    <string name="download_project_first">Please download project first.</string>
     <!-- Message window title -->
     <string name="error">Error</string>
     <string name="success">Success</string>
