@@ -10,6 +10,8 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.location.Location;
+import android.location.LocationListener;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -49,6 +51,7 @@ import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
 import br.org.funcate.terramobile.model.exception.TerraMobileException;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
 import br.org.funcate.terramobile.model.tilesource.AppGeoPackageService;
+import br.org.funcate.terramobile.service.GPSService;
 import br.org.funcate.terramobile.util.Message;
 import br.org.funcate.terramobile.util.ResourceHelper;
 import br.org.funcate.terramobile.util.Util;
@@ -121,7 +124,7 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants{
         gpsLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showGpsLocation(context);
+                centerMapToGPS();
             }
         });
 
@@ -237,11 +240,11 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants{
 
     public void startForm() {
 
-        GeoPoint point = getCenterMap();
+        GeoPoint point = (GeoPoint) this.mMapView.getMapCenter();
 
         // This id is provided from the selected point, if one it is selected otherwise -1 is default.
         long selectedPointID = -1;
-        GpkgLayer editableLayer=null;
+        GpkgLayer editableLayer;
         try{
             TreeView tv = ((MainActivity) context).getTreeView();
             editableLayer = tv.getSelectedEditableLayer();
@@ -275,47 +278,23 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants{
         }
     }
 
-    public GeoPoint getCenterMap() {
-        GeoPoint point = (GeoPoint) this.mMapView.getMapCenter();
-        return point;
-    }
-
-/*    private void addBookmark(GeoPoint point, long code) {
-
-        Marker marker = new Marker(this.mMapView);
-        marker.setPosition(new GeoPoint(point.getLatitude(), point.getLongitude()));
-        marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-        marker.setIcon(getResources().getDrawable(R.drawable.marker_red));
-        marker.setDraggable(false);
-        marker.setTitle(String.valueOf(code));// using title to store marker code
-
-        if (!this.mMapView.getOverlays().add(marker)) {
-            Message.showErrorMessage(((MainActivity) context), R.string.failure_title_msg, R.string.error_start_form);
-        } else {
-            updateMap();
-        }
-    }*/
-
-    public void showGpsLocation(Context context){
-        myLocationoverlay = new MyLocationOverlay(context, this.mMapView);
-        myLocationoverlay.enableMyLocation();
-        myLocationoverlay.disableCompass();
-        myLocationoverlay.enableFollowLocation();
-        myLocationoverlay.setDrawAccuracyEnabled(true);
-        myLocationoverlay.runOnFirstFix(new Runnable() {
-            public void run() {
-                if (myLocationoverlay.getMyLocation() != null) {
-                    // go to MyLocation
-                    mMapView.getController().animateTo(myLocationoverlay
-                            .getMyLocation());
-                    myLocationoverlay.disableFollowLocation();
-                } else {
-
-                    mMapView.getController().animateTo(new GeoPoint(R.dimen.default_map_center_x, R.dimen.default_map_center_y));
-
-                }
+    public void centerMapToGPS() {
+        // Define a listener that responds to location updates
+        LocationListener locationListener = new LocationListener() {
+            public void onLocationChanged(Location location) {
+                GPSService.unregisterListener(mMapView.getContext(), this);
+                // Called when a new location is found by the GPS location provider.
+                GeoPoint point=new GeoPoint(location);
+                mMapView.getController().animateTo(point);
             }
-        });
+            public void onStatusChanged(String provider, int status, Bundle extras) {}
+            public void onProviderEnabled(String provider) {}
+            public void onProviderDisabled(String provider) {}
+        };
+
+        if(!GPSService.registerListener(mMapView.getContext(), locationListener)){
+            Message.showErrorMessage((MainActivity)mMapView.getContext(),R.string.fail,R.string.disabled_provider);
+        }
     }
 
     public void ZoomIn(){

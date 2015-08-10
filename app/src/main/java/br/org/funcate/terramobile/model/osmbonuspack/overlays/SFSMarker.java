@@ -1,15 +1,15 @@
 package br.org.funcate.terramobile.model.osmbonuspack.overlays;
 
+import android.location.Location;
+import android.location.LocationListener;
+import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.bonuspack.overlays.BasicInfoWindow;
 import org.osmdroid.bonuspack.overlays.FolderOverlay;
-import org.osmdroid.bonuspack.overlays.InfoWindow;
 import org.osmdroid.bonuspack.overlays.Marker;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
@@ -21,6 +21,7 @@ import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.controller.activity.MainActivity;
 import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
 import br.org.funcate.terramobile.model.geomsource.SFSPoint;
+import br.org.funcate.terramobile.service.GPSService;
 import br.org.funcate.terramobile.util.Message;
 import br.org.funcate.terramobile.util.ResourceHelper;
 
@@ -44,7 +45,7 @@ public class SFSMarker extends Marker implements Marker.OnMarkerClickListener {
 
     private class TMMarkerInfoWindow extends BasicInfoWindow {
 
-        private String markerId;
+        //private String markerId;
         private SFSMarker m = null;
 
         public TMMarkerInfoWindow(int layoutResId, MapView mapView) {
@@ -58,7 +59,7 @@ public class SFSMarker extends Marker implements Marker.OnMarkerClickListener {
             closeAllInfoWindowsOn(this.mMapView);
             if(arg0 instanceof SFSMarker) {
                 m = (SFSMarker) arg0;
-                markerId = ((SFSPoint)m.getRelatedObject()).mId;
+                //markerId = ((SFSPoint)m.getRelatedObject()).mId;
             }
             //LinearLayout layout = (LinearLayout) mView.findViewById(R.id.bubble_layout);
             TextView txtTitle = (TextView) mView.findViewById(R.id.bubble_title);
@@ -112,7 +113,26 @@ public class SFSMarker extends Marker implements Marker.OnMarkerClickListener {
             ImageButton btnGPS = (ImageButton) mView.findViewById(R.id.btn_move_to_gps);
             btnGPS.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    // Implement onClick behaviour
+
+                    // Define a listener that responds to location updates
+                    LocationListener locationListener = new LocationListener() {
+                        public void onLocationChanged(Location location) {
+                            GPSService.unregisterListener(mMapView.getContext(), this);
+                            // Called when a new location is found by the GPS location provider.
+                            GeoPoint point=new GeoPoint(location);
+                            m.setPosition(point);
+                            m.closeInfoWindow();
+                            mMapView.invalidate();
+                            m.showInfoWindow();
+                        }
+                        public void onStatusChanged(String provider, int status, Bundle extras) {}
+                        public void onProviderEnabled(String provider) {}
+                        public void onProviderDisabled(String provider) {}
+                    };
+
+                    if(!GPSService.registerListener(mMapView.getContext(), locationListener)){
+                        Message.showErrorMessage((MainActivity)mMapView.getContext(),R.string.fail,R.string.disabled_provider);
+                    }
                 }
             });
             ImageButton btnMapCenter = (ImageButton) mView.findViewById(R.id.btn_move_to_map_center);

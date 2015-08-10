@@ -85,6 +85,7 @@
     <!-- Message window title -->
     <string name="error">Error</string>
     <string name="success">Success</string>
+    <string name="fail">Failure</string>
     <!-- Confirm -->
     <string name="ok">OK</string>
     <string name="yes">Yes</string>
@@ -95,4 +96,6 @@
     <string name="title_marker">Location</string>
     <string name="title_fail_message_marker">Warning</string>
     <string name="fail_message_on_remove_marker">Fail on remove Marker.</string>
+    <!-- Location services -->
+    <string name="disabled_provider">Your location provider is disabled.</string>
 </resources>
