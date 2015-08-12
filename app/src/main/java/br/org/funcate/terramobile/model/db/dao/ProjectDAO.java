@@ -42,7 +42,7 @@ public class ProjectDAO {
                     contentValues.put("FILE_PATH", project.getFilePath());
                     contentValues.put("UPDATED", project.isUpdated());
                     contentValues.put("DOWNLOADED", project.isDownloaded());
-                    if (db.insert("PROJECT", null, contentValues) != -1) {
+                    if (db.insert("TM_PROJECT", null, contentValues) != -1) {
                         db.close();
                         return true;
                     }
@@ -67,7 +67,7 @@ public class ProjectDAO {
                     contentValues.put("FILE_PATH", project.getFilePath());
                     contentValues.put("UPDATED", project.isUpdated());
                     contentValues.put("DOWNLOADED", project.isDownloaded());
-                    if (db.update("PROJECT", contentValues, "ID=?", new String[]{String.valueOf(project.getId())}) > 0) {
+                    if (db.update("TM_PROJECT", contentValues, "ID=?", new String[]{String.valueOf(project.getId())}) > 0) {
                         db.close();
                         return true;
                     }
@@ -86,7 +86,7 @@ public class ProjectDAO {
             SQLiteDatabase db = database.getReadableDatabase();
             Project project = null;
             if(db != null) {
-                Cursor cursor = db.query("PROJECT", new String[]{"ID", "NAME", "FILE_PATH", "UPDATED", "DOWNLOADED"}, "NAME = ?", new String[]{String.valueOf(name)}, null, null, null, null);
+                Cursor cursor = db.query("TM_PROJECT", new String[]{"ID", "NAME", "FILE_PATH", "UPDATED", "DOWNLOADED"}, "NAME = ?", new String[]{String.valueOf(name)}, null, null, null, null);
                 if (cursor != null && cursor.getCount() != 0) {
                     cursor.moveToFirst();
                     project = new Project();
@@ -108,7 +108,7 @@ public class ProjectDAO {
 
     public boolean remove(int id) {
         SQLiteDatabase db = database.getWritableDatabase();
-        int rows = db.delete("PROJECT", "id = ?", new String[] { String.valueOf(id) });
+        int rows = db.delete("TM_PROJECT", "id = ?", new String[] { String.valueOf(id) });
         db.close();
         if(rows != 0)
             return true;
@@ -116,7 +116,7 @@ public class ProjectDAO {
     }
 
     public Project getFirstProject() {
-        String selectQuery = "select * from project";
+        String selectQuery = "select * from TM_PROJECT";
 
         SQLiteDatabase db = database.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);

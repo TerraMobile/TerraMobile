@@ -18,13 +18,23 @@ public class ProjectDatabase extends DatabaseHelper {
 
     private void initSettings()
     {
-        StringBuilder sBCreateSettings = new StringBuilder();
-        sBCreateSettings.append("create table if not exists SETTINGS (");
-        sBCreateSettings.append("ID integer primary key AUTOINCREMENT not null,");
-        sBCreateSettings.append("KEY text,");
-        sBCreateSettings.append("VALUE text);");
+        StringBuilder sBCreate = new StringBuilder();
+        sBCreate.append("create table if not exists TM_SETTINGS (");
+        sBCreate.append("ID integer primary key AUTOINCREMENT not null,");
+        sBCreate.append("KEY text,");
+        sBCreate.append("VALUE text);");
 
-        this.getWritableDatabase().execSQL(sBCreateSettings.toString());
+        this.getWritableDatabase().execSQL(sBCreate.toString());
+    }
+
+    private void initStyleTable()
+    {
+        StringBuilder sBCreate = new StringBuilder();
+        sBCreate.append("create table if not exists TM_STYLE (");
+        sBCreate.append("LAYER_NAME text primary key AUTOINCREMENT not null,");
+        sBCreate.append("SLD_XML text);");
+
+        this.getWritableDatabase().execSQL(sBCreate.toString());
     }
 
     protected void initDatabase()

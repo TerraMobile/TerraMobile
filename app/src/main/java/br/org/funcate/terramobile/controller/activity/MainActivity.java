@@ -4,6 +4,7 @@ import android.app.ActionBar;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -24,11 +25,16 @@ import android.widget.ExpandableListView;
 import android.widget.TextView;
 
 import org.opengis.geometry.BoundingBox;
-import org.osmdroid.util.GeoPoint;
+import org.xml.sax.SAXException;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
+import javax.xml.parsers.ParserConfigurationException;
+
+import br.org.funcate.mobile.sld.SLDParser;
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.configuration.ViewContextParameters;
 import br.org.funcate.terramobile.controller.activity.settings.SettingsActivity;
@@ -273,6 +279,9 @@ public class MainActivity extends FragmentActivity {
             case R.id.test_icon4:
                 getActionBar().setIcon(R.drawable.logo_terra_mobile_4);
                 break;
+            case R.id.test_sld:
+                testSLDParsing();
+                break;
             case R.id.test_memory:
                 testMemory();
                 break;
@@ -466,6 +475,17 @@ public class MainActivity extends FragmentActivity {
             long end = System.currentTimeMillis();
             buffer = null;
             System.err.println(t + " in " + (end-start) + " millis.");
+        }
+    }
+
+    public void testSLDParsing()
+    {
+        AssetManager assetManager = this.getAssets();
+        try {
+            InputStream inputStream = assetManager.open("sld/terraview-sld.xml");
+            SLDParser.parse(inputStream);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

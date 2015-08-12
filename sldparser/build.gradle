@@ -17,15 +17,8 @@ android {
         }
     }
 }
-repositories {
-    maven { name = "osgeo"; url = "http://download.osgeo.org/webdav/geotools/" }
-}
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:22.2.0'
-    compile "org.geotools:gt-api:13.1"
-    compile "org.geotools:gt-main:13.1"
-    compile "org.geotools:gt-opengis:13.1"
-    compile "org.geotools:gt-xsd-core:13.1"
-    compile "org.geotools:gt-xsd-sld:13.1"
+
 }

@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="gt-api-13.2">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/sldparser/libs/gt-api-13.2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
