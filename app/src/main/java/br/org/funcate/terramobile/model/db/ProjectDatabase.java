@@ -40,5 +40,6 @@ public class ProjectDatabase extends DatabaseHelper {
     protected void initDatabase()
     {
         initSettings();
+        initStyleTable();
     }
 }

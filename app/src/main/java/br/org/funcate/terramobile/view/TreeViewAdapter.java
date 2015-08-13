@@ -20,6 +20,7 @@ import br.org.funcate.terramobile.controller.activity.MenuMapController;
 import br.org.funcate.terramobile.controller.activity.TreeView;
 import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
 import br.org.funcate.terramobile.model.exception.LowMemoryException;
+import br.org.funcate.terramobile.model.exception.StyleException;
 import br.org.funcate.terramobile.model.exception.TerraMobileException;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
 import br.org.funcate.terramobile.util.Message;
@@ -103,6 +104,9 @@ public class TreeViewAdapter extends BaseExpandableListAdapter implements View.O
             Message.showErrorMessage(((MainActivity) context), R.string.error, e.getMessage());
         }
         catch (TerraMobileException e) {
+            e.printStackTrace();
+            Message.showErrorMessage(((MainActivity) context), R.string.error, e.getMessage());
+        } catch (StyleException e) {
             e.printStackTrace();
             Message.showErrorMessage(((MainActivity) context), R.string.error, e.getMessage());
         }

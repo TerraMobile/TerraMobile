@@ -155,8 +155,10 @@ public class AppGeoPackageService {
             // Getting data type
             if("features".equals(dataTypeField.getValue()))
             {
-                if(!tmConfigEditableLayer.isEditable(layerName))
+                if(!tmConfigEditableLayer.isEditable(layerName)) {
                     layer.setType(GpkgLayer.Type.FEATURES);
+                    layer.setFeatureType(GeoPackageService.getLayerFeatureType(gpkg, layerName));
+                }
                 else {
                     layer.setType(GpkgLayer.Type.EDITABLE);
                     layer.setJSON(tmConfigEditableLayer.getConfig(layerName));

@@ -25,13 +25,17 @@ import org.osmdroid.views.overlay.Overlay;
 import org.osmdroid.views.overlay.TilesOverlay;
 
 import java.util.HashMap;
+
+import br.org.funcate.jgpkg.service.GeoPackageService;
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.configuration.ViewContextParameters;
 import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
 import br.org.funcate.terramobile.model.exception.LowMemoryException;
+import br.org.funcate.terramobile.model.exception.StyleException;
 import br.org.funcate.terramobile.model.exception.TerraMobileException;
 import br.org.funcate.terramobile.model.geomsource.SFSLayer;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
+import br.org.funcate.terramobile.model.service.StyleService;
 import br.org.funcate.terramobile.model.tilesource.AppGeoPackageService;
 import br.org.funcate.terramobile.model.tilesource.MapTileGeoPackageProvider;
 import br.org.funcate.terramobile.model.tilesource.MapTileProviderArrayGeoPackage;
@@ -103,7 +107,7 @@ public class MenuMapController {
         return currentBaseLayer;
     }
 
-    public void addVectorLayer(GpkgLayer child) throws LowMemoryException, InvalidAppConfigException, TerraMobileException {
+    public void addVectorLayer(GpkgLayer child) throws LowMemoryException, InvalidAppConfigException, TerraMobileException, StyleException {
 
         if(child.getOsmOverLayer()==null) {
             SFSLayer l = AppGeoPackageService.getFeatures(child);
@@ -111,9 +115,7 @@ public class MenuMapController {
             MapView mapView = (MapView) ((MainActivity) context).findViewById(R.id.mapview);
             HashMap<String, Integer> colorMap = Util.getRandomColor();
 
-            int contourColor = Color.rgb(colorMap.get("r"), colorMap.get("g"), colorMap.get("b"));
-            int fillColor = Color.argb(80, colorMap.get("r"), colorMap.get("g"), colorMap.get("b"));
-            Style defaultStyle = new Style(null, contourColor, 2.0f, fillColor);
+            Style defaultStyle = StyleService.loadStyle(context, child.getGeoPackage().getDatabaseFileName(),child);
 
             KmlDocument kmlDocument = new KmlDocument();
             Overlay overlay = l.buildOverlay(mapView, defaultStyle, null, kmlDocument);
@@ -139,7 +141,7 @@ public class MenuMapController {
         return;
     }
 
-    public void addEditableLayer(GpkgLayer child) throws LowMemoryException, InvalidAppConfigException, TerraMobileException {
+    public void addEditableLayer(GpkgLayer child) throws LowMemoryException, InvalidAppConfigException, TerraMobileException, StyleException {
         addVectorLayer(child);
     }
 
