@@ -24,6 +24,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.GeometryType;
 import org.opengis.geometry.Geometry;
 import org.opengis.style.GraphicalSymbol;
+import org.osmdroid.bonuspack.kml.KmlFeature;
 import org.osmdroid.bonuspack.kml.Style;
 
 import java.util.HashMap;
@@ -37,6 +38,7 @@ import br.org.funcate.terramobile.model.exception.DAOException;
 import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
 import br.org.funcate.terramobile.model.exception.StyleException;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
+import br.org.funcate.terramobile.model.osmbonuspack.overlays.MyKmlStyler;
 import br.org.funcate.terramobile.util.Util;
 
 /**
@@ -102,14 +104,14 @@ public class StyleService {
 
             strokeWidth = Float.parseFloat(((LineSymbolizer)sym).getStroke().getWidth().toString());
 
-            contourOpacity = Double.parseDouble(((PolygonSymbolizer)sym).getStroke().getOpacity().toString());
+            contourOpacity = Double.parseDouble(((LineSymbolizer)sym).getStroke().getOpacity().toString());
 
         } else if(sym instanceof PointSymbolizerImpl)
         {
 
             List<GraphicalSymbol> graphicsSymbol = ((PointSymbolizer)sym).getGraphic().graphicalSymbols();
 
-            if(graphicsSymbol.size()>1)
+            if(graphicsSymbol.size()>0)
             {
                 GraphicalSymbol gs = graphicsSymbol.get(0);
                 if(gs instanceof MarkImpl)
@@ -146,6 +148,7 @@ public class StyleService {
 
         }
         Style osmStyle = new Style(null, contourColor, strokeWidth, fillColor);
+
 
       /*  if(geometryType.getBinding() == Point.class)
         {

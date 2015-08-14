@@ -4,6 +4,8 @@
       <root url="jar://$PROJECT_DIR$/app/libs/osmbonuspack_v5.1.jar!/" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES />
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/../../../downloads/osmbonuspack-5.1/OSMBonusPack/src" />
+    </SOURCES>
   </library>
 </component>

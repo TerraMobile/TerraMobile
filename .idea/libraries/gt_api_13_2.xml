@@ -4,6 +4,8 @@
       <root url="jar://$PROJECT_DIR$/sldparser/libs/gt-api-13.2.jar!/" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/../../../temp/jars/gt-api-13.2-sources.jar!/" />
+    </SOURCES>
   </library>
 </component>

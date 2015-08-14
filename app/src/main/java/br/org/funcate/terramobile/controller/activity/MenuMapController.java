@@ -35,6 +35,7 @@ import br.org.funcate.terramobile.model.exception.StyleException;
 import br.org.funcate.terramobile.model.exception.TerraMobileException;
 import br.org.funcate.terramobile.model.geomsource.SFSLayer;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
+import br.org.funcate.terramobile.model.osmbonuspack.overlays.MyKmlStyler;
 import br.org.funcate.terramobile.model.service.StyleService;
 import br.org.funcate.terramobile.model.tilesource.AppGeoPackageService;
 import br.org.funcate.terramobile.model.tilesource.MapTileGeoPackageProvider;
@@ -113,12 +114,15 @@ public class MenuMapController {
             SFSLayer l = AppGeoPackageService.getFeatures(child);
 
             MapView mapView = (MapView) ((MainActivity) context).findViewById(R.id.mapview);
-            HashMap<String, Integer> colorMap = Util.getRandomColor();
 
             Style defaultStyle = StyleService.loadStyle(context, child.getGeoPackage().getDatabaseFileName(),child);
 
+
+
             KmlDocument kmlDocument = new KmlDocument();
-            Overlay overlay = l.buildOverlay(mapView, defaultStyle, null, kmlDocument);
+            MyKmlStyler kmlStyler = new MyKmlStyler(defaultStyle, kmlDocument, mapView);
+
+            Overlay overlay = l.buildOverlay(mapView, defaultStyle, kmlStyler, kmlDocument);
 
             mapView.getOverlays().add(overlay);
             child.setOsmOverLayer(overlay);
