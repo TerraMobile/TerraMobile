@@ -1,6 +1,8 @@
 package br.org.funcate.terramobile.model.service;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 
 import com.augtech.geoapi.feature.type.GeometryTypeImpl;
@@ -10,6 +12,8 @@ import com.vividsolutions.jts.geom.Polygon;
 
 import org.geotools.styling.AbstractSymbolizer;
 import org.geotools.styling.BasicPolygonStyle;
+import org.geotools.styling.ExternalGraphic;
+import org.geotools.styling.ExternalGraphicImpl;
 import org.geotools.styling.FeatureTypeStyle;
 import org.geotools.styling.LineSymbolizer;
 import org.geotools.styling.LineSymbolizerImpl;
@@ -79,6 +83,7 @@ public class StyleService {
         float strokeWidth =0;
         String wellNowName=null;
         int pointSize=0;
+        Bitmap img = null;
 
         if(sym instanceof PolygonSymbolizerImpl)
         {
@@ -134,6 +139,14 @@ public class StyleService {
                     contourOpacity = Double.parseDouble(((MarkImpl)gs).getStroke().getOpacity().toString());
 
                     pointSize = Integer.parseInt(((PointSymbolizer)sym).getGraphic().getSize().toString());
+
+                } else if(gs instanceof ExternalGraphicImpl)
+                {
+                    if(((ExternalGraphicImpl)gs).getInlineContent()!=null)
+                    {
+                        img = BitmapFactory.decodeStream(((ExternalGraphicImpl)gs).getInlineContent());
+                    }
+
                 }
             }
 
@@ -147,7 +160,8 @@ public class StyleService {
             strokeWidth = 2.0f;
 
         }
-        Style osmStyle = new Style(null, contourColor, strokeWidth, fillColor);
+
+        Style osmStyle = new Style(img, contourColor, strokeWidth, fillColor);
 
 
       /*  if(geometryType.getBinding() == Point.class)
