@@ -38,16 +38,11 @@
       <change type="MOVED" beforePath="$PROJECT_DIR$/Java-OpenMobility/libs/gt-opengis-12.2.jar" afterPath="$PROJECT_DIR$/Java-OpenMobility/gt-opengis-12.2.jar" />
       <change type="MOVED" beforePath="$PROJECT_DIR$/Java-OpenMobility/libs/jts-1.8.jar" afterPath="$PROJECT_DIR$/Java-OpenMobility/jts-1.8.jar" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Java-OpenMobility" afterPath="$PROJECT_DIR$/Java-OpenMobility" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/sldparser/libs/gt-api-13.2.jar" afterPath="$PROJECT_DIR$/sldparser/libs/gt-api-13.2.jar" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/sldparser/libs/gt-main-13.2.jar" afterPath="$PROJECT_DIR$/sldparser/libs/gt-main-13.2.jar" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/sldparser/libs/gt-metadata-13.2.jar" afterPath="$PROJECT_DIR$/sldparser/libs/gt-metadata-13.2.jar" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/sldparser/libs/gt-opengis-13.2.jar" afterPath="$PROJECT_DIR$/sldparser/libs/gt-opengis-13.2.jar" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/sldparser/libs/gt-xsd-core-13.2.jar" afterPath="$PROJECT_DIR$/sldparser/libs/gt-xsd-core-13.2.jar" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/sldparser/libs/gt-xsd-sld-13.2.jar" afterPath="$PROJECT_DIR$/sldparser/libs/gt-xsd-sld-13.2.jar" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Java-OpenMobility/AugTech_GeoAPI/AugTech_GeoAPI.iml" afterPath="$PROJECT_DIR$/Java-OpenMobility/AugTech_GeoAPI/AugTech_GeoAPI.iml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Java-OpenMobility/AugTech_GeoAPI/src/main/java/com/augtech/geoapi/geopackage/GeoPackage.java" afterPath="$PROJECT_DIR$/Java-OpenMobility/AugTech_GeoAPI/src/main/java/com/augtech/geoapi/geopackage/GeoPackage.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Java-OpenMobility/JGPKG/JGPKG.iml" afterPath="$PROJECT_DIR$/Java-OpenMobility/JGPKG/JGPKG.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/model/service/StyleService.java" afterPath="$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/model/service/StyleService.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/controller/activity/MainActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/controller/activity/MainActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/controller/activity/MenuMapController.java" afterPath="$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/controller/activity/MenuMapController.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="TerraMobile.iws" />
@@ -173,18 +168,8 @@
       <file leaf-file-name="StyleService.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/model/service/StyleService.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.5686275" vertical-offset="1510" max-vertical-offset="2145">
-              <caret line="163" column="31" selection-start-line="163" selection-start-column="31" selection-end-line="163" selection-end-column="31" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="IconStyle.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../../../downloads/osmbonuspack-5.1/OSMBonusPack/src/org/osmdroid/bonuspack/kml/IconStyle.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1980">
-              <caret line="27" column="17" selection-start-line="27" selection-start-column="17" selection-end-line="27" selection-end-column="17" />
+            <state vertical-scroll-proportion="0.33333334" vertical-offset="115" max-vertical-offset="2145">
+              <caret line="62" column="0" selection-start-line="62" selection-start-column="0" selection-end-line="62" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -202,55 +187,41 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Style.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../../../downloads/osmbonuspack-5.1/OSMBonusPack/src/org/osmdroid/bonuspack/kml/Style.java">
+      <file leaf-file-name="MainActivity.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/controller/activity/MainActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="505" max-vertical-offset="1560">
-              <caret line="30" column="11" selection-start-line="30" selection-start-column="11" selection-end-line="30" selection-end-column="11" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="4875" max-vertical-offset="6600">
+              <caret line="407" column="73" selection-start-line="407" selection-start-column="73" selection-end-line="407" selection-end-column="73" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="BitmapFactory.class" pinned="false" current="false" current-in-tab="false">
-        <entry file="jar://$USER_HOME$/Android/Sdk/platforms/android-15/android.jar!/android/graphics/BitmapFactory.class">
+      <file leaf-file-name="MainController.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/controller/activity/MainController.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="45" max-vertical-offset="915">
-              <caret line="21" column="102" selection-start-line="21" selection-start-column="102" selection-end-line="21" selection-end-column="102" />
-              <folding>
-                <element signature="e#0#2757#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ExternalGraphic.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="jar://$PROJECT_DIR$/../../../temp/jars/gt-api-13.2-sources.jar!/org/geotools/styling/ExternalGraphic.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="720" max-vertical-offset="2160">
-              <caret line="78" column="17" selection-start-line="78" selection-start-column="17" selection-end-line="78" selection-end-column="17" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Bitmap.class" pinned="false" current="false" current-in-tab="false">
-        <entry file="jar://$USER_HOME$/Android/Sdk/platforms/android-15/android.jar!/android/graphics/Bitmap.class">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1800">
-              <caret line="10" column="4" selection-start-line="10" selection-start-column="4" selection-end-line="10" selection-end-column="4" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="420" max-vertical-offset="930">
+              <caret line="15" column="13" selection-start-line="15" selection-start-column="13" selection-end-line="15" selection-end-column="13" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="AppGeoPackageService.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/model/tilesource/AppGeoPackageService.java">
+      <file leaf-file-name="MapFragment.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/controller/activity/MapFragment.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="3596" max-vertical-offset="4800">
-              <caret line="333" column="87" selection-start-line="333" selection-start-column="87" selection-end-line="333" selection-end-column="87" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="3660" max-vertical-offset="4170">
+              <caret line="353" column="0" selection-start-line="353" selection-start-column="0" selection-end-line="353" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="MenuMapController.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/controller/activity/MenuMapController.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="945" max-vertical-offset="1980">
+              <caret line="117" column="0" selection-start-line="117" selection-start-column="0" selection-end-line="117" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -261,16 +232,6 @@
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0" vertical-offset="315" max-vertical-offset="825">
               <caret line="53" column="0" selection-start-line="53" selection-start-column="0" selection-end-line="53" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="MenuMapController.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/controller/activity/MenuMapController.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="945" max-vertical-offset="1905">
-              <caret line="117" column="0" selection-start-line="117" selection-start-column="0" selection-end-line="117" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -4132,7 +4093,6 @@
         <option value="$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/model/db/dao/StyleDAO.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/model/exception/StyleException.java" />
         <option value="$PROJECT_DIR$/sldparser/src/main/java/br/org/funcate/mobile/sld/OSMDroidSLDParser.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/controller/activity/MainActivity.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/model/db/ProjectDatabase.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/view/TreeViewAdapter.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/model/tilesource/AppGeoPackageService.java" />
@@ -4142,8 +4102,9 @@
         <option value="$PROJECT_DIR$/sldparser/src/main/java/br/org/funcate/mobile/sld/KmlStyler.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/model/osmbonuspack/overlays/KmlStyler.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/model/osmbonuspack/overlays/MyKmlStyler.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/controller/activity/MenuMapController.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/model/service/StyleService.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/controller/activity/MenuMapController.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/controller/activity/MainActivity.java" />
       </list>
     </option>
   </component>
@@ -4257,6 +4218,124 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="libs" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="TerraMobile" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="TerraMobile" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="TerraMobile" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="TerraMobile" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="TerraMobile" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="TerraMobile" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="TerraMobile" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="TerraMobile" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="terramobile" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="TerraMobile" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="TerraMobile" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="terramobile" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="activity" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -4959,7 +5038,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/controller/activity/MainActivity.java</url>
-          <line>482</line>
+          <line>484</line>
           <properties />
           <option name="timeStamp" value="547" />
         </line-breakpoint>
@@ -4974,42 +5053,6 @@
           <line>1131</line>
           <properties />
           <option name="timeStamp" value="553" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/model/geomsource/SFSPoint.java</url>
-          <line>53</line>
-          <properties />
-          <option name="timeStamp" value="562" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/controller/activity/MenuMapController.java</url>
-          <line>117</line>
-          <properties />
-          <option name="timeStamp" value="566" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/model/service/StyleService.java</url>
-          <line>62</line>
-          <properties />
-          <option name="timeStamp" value="573" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/model/service/StyleService.java</url>
-          <line>116</line>
-          <properties />
-          <option name="timeStamp" value="574" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>jar://$PROJECT_DIR$/../../../temp/jars/gt-main-13.2-sources.jar!/org/geotools/styling/ExternalGraphicImpl.java</url>
-          <line>241</line>
-          <properties />
-          <option name="timeStamp" value="575" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/model/service/StyleService.java</url>
-          <line>163</line>
-          <properties />
-          <option name="timeStamp" value="576" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.geotools/gt-main/13.1/fbaaa29f89ce0d8ae638aae07166b86592d94e43/gt-main-13.1-sources.jar!/org/geotools/styling/PolygonSymbolizerImpl.java</url>
@@ -5046,14 +5089,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/controller/activity/MapFragment.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-1.1020408" vertical-offset="750" max-vertical-offset="4170">
-          <caret line="68" column="13" selection-start-line="68" selection-start-column="13" selection-end-line="68" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://$USER_HOME$/Android/Sdk/platforms/android-15/android.jar!/android/graphics/Color.class">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="122" max-vertical-offset="720">
@@ -5079,17 +5114,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="5985">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/controller/activity/MainActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="6855" max-vertical-offset="7365">
-          <caret line="485" column="0" selection-start-line="485" selection-start-column="0" selection-end-line="485" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="false" />
-            <element signature="e#17181#17189#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -5185,6 +5209,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="1515" max-vertical-offset="3645">
           <caret line="150" column="0" selection-start-line="150" selection-start-column="0" selection-end-line="150" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -5310,7 +5335,7 @@
     </entry>
     <entry file="jar://$USER_HOME$/Android/Sdk/platforms/android-15/android.jar!/android/graphics/Bitmap.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1800">
+        <state vertical-scroll-proportion="0.27162978" vertical-offset="0" max-vertical-offset="1800">
           <caret line="10" column="4" selection-start-line="10" selection-start-column="4" selection-end-line="10" selection-end-column="4" />
           <folding />
         </state>
@@ -5318,7 +5343,7 @@
     </entry>
     <entry file="jar://$PROJECT_DIR$/../../../temp/jars/gt-api-13.2-sources.jar!/org/geotools/styling/ExternalGraphic.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="720" max-vertical-offset="2160">
+        <state vertical-scroll-proportion="0.4117647" vertical-offset="720" max-vertical-offset="2160">
           <caret line="78" column="17" selection-start-line="78" selection-start-column="17" selection-end-line="78" selection-end-column="17" />
           <folding>
             <element signature="imports" expanded="true" />
@@ -5328,7 +5353,7 @@
     </entry>
     <entry file="jar://$USER_HOME$/Android/Sdk/platforms/android-15/android.jar!/android/graphics/BitmapFactory.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="45" max-vertical-offset="915">
+        <state vertical-scroll-proportion="0.54325956" vertical-offset="45" max-vertical-offset="915">
           <caret line="21" column="102" selection-start-line="21" selection-start-column="102" selection-end-line="21" selection-end-column="102" />
           <folding>
             <element signature="e#0#2757#0" expanded="true" />
@@ -5336,9 +5361,65 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/model/tilesource/AppGeoPackageService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="1.1843138" vertical-offset="3596" max-vertical-offset="4800">
+          <caret line="333" column="87" selection-start-line="333" selection-start-column="87" selection-end-line="333" selection-end-column="87" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../downloads/osmbonuspack-5.1/OSMBonusPack/src/org/osmdroid/bonuspack/kml/IconStyle.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.32352942" vertical-offset="0" max-vertical-offset="1980">
+          <caret line="27" column="17" selection-start-line="27" selection-start-column="17" selection-end-line="27" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../downloads/osmbonuspack-5.1/OSMBonusPack/src/org/osmdroid/bonuspack/kml/Style.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-0.46078432" vertical-offset="505" max-vertical-offset="1560">
+          <caret line="30" column="11" selection-start-line="30" selection-start-column="11" selection-end-line="30" selection-end-column="11" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/model/geomsource/SFSPoint.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="315" max-vertical-offset="825">
+          <caret line="53" column="0" selection-start-line="53" selection-start-column="0" selection-end-line="53" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/controller/activity/MapFragment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="3660" max-vertical-offset="4170">
+          <caret line="353" column="0" selection-start-line="353" selection-start-column="0" selection-end-line="353" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/controller/activity/MainController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="420" max-vertical-offset="930">
+          <caret line="15" column="13" selection-start-line="15" selection-start-column="13" selection-end-line="15" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/controller/activity/MainActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="4875" max-vertical-offset="6600">
+          <caret line="407" column="73" selection-start-line="407" selection-start-column="73" selection-end-line="407" selection-end-column="73" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/controller/activity/MenuMapController.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="763" max-vertical-offset="1905">
+        <state vertical-scroll-proportion="0.0" vertical-offset="945" max-vertical-offset="1980">
           <caret line="117" column="0" selection-start-line="117" selection-start-column="0" selection-end-line="117" selection-end-column="0" />
           <folding />
         </state>
@@ -5354,42 +5435,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/model/geomsource/SFSPoint.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="315" max-vertical-offset="825">
-          <caret line="53" column="0" selection-start-line="53" selection-start-column="0" selection-end-line="53" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/model/tilesource/AppGeoPackageService.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="3596" max-vertical-offset="4800">
-          <caret line="333" column="87" selection-start-line="333" selection-start-column="87" selection-end-line="333" selection-end-column="87" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../../downloads/osmbonuspack-5.1/OSMBonusPack/src/org/osmdroid/bonuspack/kml/IconStyle.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1980">
-          <caret line="27" column="17" selection-start-line="27" selection-start-column="17" selection-end-line="27" selection-end-column="17" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../../downloads/osmbonuspack-5.1/OSMBonusPack/src/org/osmdroid/bonuspack/kml/Style.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="505" max-vertical-offset="1560">
-          <caret line="30" column="11" selection-start-line="30" selection-start-column="11" selection-end-line="30" selection-end-column="11" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/model/service/StyleService.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.5686275" vertical-offset="1510" max-vertical-offset="2145">
-          <caret line="163" column="31" selection-start-line="163" selection-start-column="31" selection-end-line="163" selection-end-column="31" />
+        <state vertical-scroll-proportion="0.33333334" vertical-offset="115" max-vertical-offset="2145">
+          <caret line="62" column="0" selection-start-line="62" selection-start-column="0" selection-end-line="62" selection-end-column="0" />
           <folding />
         </state>
       </provider>

@@ -117,12 +117,10 @@ public class MenuMapController {
 
             Style defaultStyle = StyleService.loadStyle(context, child.getGeoPackage().getDatabaseFileName(),child);
 
-
-
             KmlDocument kmlDocument = new KmlDocument();
-            MyKmlStyler kmlStyler = new MyKmlStyler(defaultStyle, kmlDocument, mapView);
+/*            MyKmlStyler kmlStyler = new MyKmlStyler(defaultStyle, kmlDocument, mapView);*/
 
-            Overlay overlay = l.buildOverlay(mapView, defaultStyle, kmlStyler, kmlDocument);
+            Overlay overlay = l.buildOverlay(mapView, defaultStyle, null, kmlDocument);
 
             mapView.getOverlays().add(overlay);
             child.setOsmOverLayer(overlay);
@@ -164,5 +162,12 @@ public class MenuMapController {
         BoundingBoxE6 bbe6 = GeoUtil.convertToBoundingBoxE6(bb);
         System.out.println(bbe6);
         mapView.zoomToBoundingBox(bbe6);
+    }
+
+    public void removeAllLayers()
+    {
+        MapView mapView = (MapView) ((MainActivity) context).findViewById(R.id.mapview);
+        mapView.getOverlays().clear();
+        mapView.invalidate();
     }
 }

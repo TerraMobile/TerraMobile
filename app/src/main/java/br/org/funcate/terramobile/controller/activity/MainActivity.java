@@ -405,6 +405,8 @@ public class MainActivity extends FragmentActivity {
 
             SettingsService.update(this, currentProjectSet, ApplicationDatabase.DATABASE_NAME);
 
+            getMainController().getMenuMapController().removeAllLayers();
+
             SettingsService.initProjectSettings(this, project);
 
             BoundingBox bb = ProjectsService.getProjectDefaultBoundingBox(this, project.getFilePath());
