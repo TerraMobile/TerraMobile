@@ -388,20 +388,13 @@ public class MainActivity extends FragmentActivity {
             return true;
         }
         this.mProject = project;
-        Setting currentProjectSet = null;
-        if(currentProjectSet==null)
-        {
-            currentProjectSet = new Setting("current_project", null);
-        }
-        else
-        {
-            currentProjectSet = new Setting("current_project", project.getName());
-        }
 
         treeView.refreshTreeView();
+
         invalidateOptionsMenu();
 
         try {
+            Setting currentProjectSet = new Setting("current_project", project.getName());
 
             SettingsService.update(this, currentProjectSet, ApplicationDatabase.DATABASE_NAME);
 
