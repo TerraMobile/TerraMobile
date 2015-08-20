@@ -23,6 +23,7 @@ import br.org.funcate.terramobile.model.exception.LowMemoryException;
 import br.org.funcate.terramobile.model.exception.StyleException;
 import br.org.funcate.terramobile.model.exception.TerraMobileException;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
+import br.org.funcate.terramobile.model.service.LayersService;
 import br.org.funcate.terramobile.util.Message;
 
 public class TreeViewAdapter extends BaseExpandableListAdapter implements View.OnClickListener {
@@ -59,8 +60,8 @@ public class TreeViewAdapter extends BaseExpandableListAdapter implements View.O
                     RadioButton rBChildBaseLayer = (RadioButton) v;
                     if (!rBChildBaseLayer.isChecked()) {
                         if(menuMapController.getBaseLayer() != null)
-                            this.menuMapController.removeBaseLayer();
-                        this.menuMapController.addBaseLayer(child);
+                            this.menuMapController.removeLayer(menuMapController.getBaseLayer());
+                        this.menuMapController.addLayer(child);
                         rBChildBaseLayer.setChecked(true);
                     }
                     break;
@@ -68,9 +69,9 @@ public class TreeViewAdapter extends BaseExpandableListAdapter implements View.O
                 case FEATURES:{// collect
 
                     if (((CheckBox) v).isChecked()) {
-                        this.menuMapController.addVectorLayer(child);
+                        this.menuMapController.addLayer(child);
                     } else {
-                        this.menuMapController.removeVectorLayer(child);
+                        this.menuMapController.removeLayer(child);
                     }
                     break;
                 }
@@ -78,13 +79,13 @@ public class TreeViewAdapter extends BaseExpandableListAdapter implements View.O
                     TreeView treeView=((MainActivity) this.context).getTreeView();
                     GpkgLayer ed = treeView.getSelectedEditableLayer();
                     if(ed!=null)
-                        this.menuMapController.removeEditableLayer(ed);
+                        this.menuMapController.removeLayer(ed);
                     treeView.setSelectedEditableLayer(child);
                     this.unselectAllRadioButtons(editableLayerRBList);
 
                     RadioButton rBChildGatheringLayer = (RadioButton) v;
                     if (!rBChildGatheringLayer.isChecked()) {
-                        this.menuMapController.addEditableLayer(child);
+                        this.menuMapController.addLayer(child);
                         rBChildGatheringLayer.setChecked(true);
                     }
                     break;
@@ -94,6 +95,8 @@ public class TreeViewAdapter extends BaseExpandableListAdapter implements View.O
                     break;
                 }
             }
+            //Correct the layer order by the GPKGLayer index.
+            menuMapController.updateOverlaysOrder(LayersService.composeLinearLayerList(ChildItem));
         }
         catch (LowMemoryException e) {
             e.printStackTrace();
@@ -296,12 +299,22 @@ public class TreeViewAdapter extends BaseExpandableListAdapter implements View.O
     private void moveLayerUp(int currentGroupPos, int currentPos)
     {
         ArrayList<GpkgLayer> layers = ChildItem.get(currentGroupPos);
-        if(currentPos!=0)
+
+
+        if(currentPos!=0) //This condition keeps the layer inside his group
         {
             GpkgLayer currentLayer = layers.get(currentPos);
             GpkgLayer upLayer = layers.get(currentPos-1);
-            layers.set(currentPos, upLayer);
-            layers.set(currentPos-1, currentLayer);
+
+            //Changing GpkgLayer index overlay
+            int currLayerPos = currentLayer.getIndexOverlay();
+            currentLayer.setIndexOverlay(upLayer.getIndexOverlay());
+            upLayer.setIndexOverlay(currLayerPos);
+
+            //Correct the layer order by the GPKGLayer index.
+            LayersService.sortLayersByIndex(layers);
+            menuMapController.updateOverlaysOrder(LayersService.composeLinearLayerList(ChildItem));
+
             notifyDataSetChanged();
         }
     }
@@ -309,12 +322,24 @@ public class TreeViewAdapter extends BaseExpandableListAdapter implements View.O
     private void moveLayerDown(int currentGroupPos, int currentPos)
     {
         ArrayList<GpkgLayer> layers = ChildItem.get(currentGroupPos);
-        if(currentPos!=(layers.size()-1))
+        if(currentPos!=(layers.size()-1)) //This condition keeps the layer inside his group
         {
             GpkgLayer currentLayer = layers.get(currentPos);
             GpkgLayer downLayer = layers.get(currentPos+1);
-            layers.set(currentPos, downLayer);
-            layers.set(currentPos+1, currentLayer);
+/*            layers.set(currentPos, downLayer);
+            layers.set(currentPos+1, currentLayer);*/
+
+            //Changing GpkgLayer index overlay
+            int currLayerPos = currentLayer.getIndexOverlay();
+            currentLayer.setIndexOverlay(downLayer.getIndexOverlay());
+            downLayer.setIndexOverlay(currLayerPos);
+
+
+
+            //Correct the layer order by the GPKGLayer index.
+            LayersService.sortLayersByIndex(layers);
+            menuMapController.updateOverlaysOrder(LayersService.composeLinearLayerList(ChildItem));
+
             notifyDataSetChanged();
         }
     }

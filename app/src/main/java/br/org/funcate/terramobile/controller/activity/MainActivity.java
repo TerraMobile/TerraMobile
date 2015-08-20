@@ -398,7 +398,7 @@ public class MainActivity extends FragmentActivity {
 
             SettingsService.update(this, currentProjectSet, ApplicationDatabase.DATABASE_NAME);
 
-            getMainController().getMenuMapController().removeAllLayers();
+            getMainController().getMenuMapController().removeAllLayers(true);
 
             SettingsService.initProjectSettings(this, project);
 

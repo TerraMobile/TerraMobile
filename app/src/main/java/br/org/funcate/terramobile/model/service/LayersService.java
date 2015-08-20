@@ -3,8 +3,12 @@ package br.org.funcate.terramobile.model.service;
 import android.content.Context;
 
 import org.opengis.geometry.BoundingBox;
+import org.osmdroid.views.overlay.Overlay;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.model.db.ApplicationDatabase;
@@ -43,5 +47,39 @@ public class LayersService {
             }
         }
         return box;
+    }
+
+    public static void sortLayersByIndex(ArrayList<GpkgLayer> layers) {
+        Collections.sort(layers, new Comparator<GpkgLayer>() {
+            @Override
+            public int compare(GpkgLayer gpkgLayer, GpkgLayer gpkgLayer2) {
+                if (gpkgLayer.getIndexOverlay() > gpkgLayer2.getIndexOverlay()) {
+                    return 1;
+                } else {
+                    return -1;
+                }
+            }
+        });
+    }
+
+    public static void sortOverlayByGPKGLayer(List<Overlay> overlays, ArrayList<GpkgLayer> gpkgLayers)
+    {
+        overlays.clear();
+        for (int i = gpkgLayers.size()-1; i >= 0; i--) {
+            if(gpkgLayers.get(i).getOsmOverLayer()!=null)
+            {
+                overlays.add(gpkgLayers.get(i).getOsmOverLayer());
+            }
+        }
+    }
+
+    public static ArrayList<GpkgLayer> composeLinearLayerList(ArrayList<ArrayList<GpkgLayer>> gpkgLayers)
+    {
+        ArrayList<GpkgLayer> layers = new ArrayList<GpkgLayer>();
+        for (int i = 0; i < gpkgLayers.size(); i++) {
+            layers.addAll(gpkgLayers.get(i));
+        }
+        sortLayersByIndex(layers);
+        return layers;
     }
 }

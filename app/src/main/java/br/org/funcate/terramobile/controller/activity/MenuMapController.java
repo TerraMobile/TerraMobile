@@ -24,6 +24,9 @@ import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Overlay;
 import org.osmdroid.views.overlay.TilesOverlay;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 
 import br.org.funcate.jgpkg.service.GeoPackageService;
@@ -36,6 +39,7 @@ import br.org.funcate.terramobile.model.exception.TerraMobileException;
 import br.org.funcate.terramobile.model.geomsource.SFSLayer;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
 import br.org.funcate.terramobile.model.osmbonuspack.overlays.MyKmlStyler;
+import br.org.funcate.terramobile.model.service.LayersService;
 import br.org.funcate.terramobile.model.service.StyleService;
 import br.org.funcate.terramobile.model.tilesource.AppGeoPackageService;
 import br.org.funcate.terramobile.model.tilesource.MapTileGeoPackageProvider;
@@ -59,7 +63,7 @@ public class MenuMapController {
         this.currentBaseLayer = null;
     }
 
-    public void addBaseLayer(GpkgLayer child) {
+    private void addBaseLayer(GpkgLayer child) {
 
         if(child.getGeoPackage().isGPKGValid(false)) {
             if(child.getOsmOverLayer()==null)
@@ -91,24 +95,59 @@ public class MenuMapController {
         return;
     }
 
-    public void removeBaseLayer() {
+    private void removeBaseLayer(GpkgLayer layer) {
 
-        if(currentBaseLayer!=null)
+        if(layer!=null)
         {
             MapView mapView = (MapView) ((MainActivity) context).findViewById(R.id.mapview);
-            mapView.getOverlays().remove(currentBaseLayer.getOsmOverLayer());
-            currentBaseLayer.setOsmOverLayer(null);
+            mapView.getOverlays().remove(layer.getOsmOverLayer());
+            layer.setOsmOverLayer(null);
             currentBaseLayer=null;
         }
 
         return;
     }
 
+    public void addLayer(GpkgLayer layer) throws TerraMobileException, StyleException, InvalidAppConfigException, LowMemoryException {
+
+        if(layer.getType()==GpkgLayer.Type.FEATURES
+                || layer.getType()==GpkgLayer.Type.EDITABLE)
+        {
+
+            addVectorLayer(layer);;
+
+        } else
+          if(layer.getType()==GpkgLayer.Type.TILES)
+          {
+
+                addBaseLayer(layer);
+
+          }
+    }
+
+    public void removeLayer(GpkgLayer layer) {
+
+        if(layer.getType()==GpkgLayer.Type.FEATURES
+                || layer.getType()==GpkgLayer.Type.EDITABLE)
+        {
+
+            removeVectorLayer(layer);;
+
+        } else
+        if(layer.getType()==GpkgLayer.Type.TILES)
+        {
+
+            removeBaseLayer(layer);
+
+        }
+    }
+
+
     public GpkgLayer getBaseLayer() {
         return currentBaseLayer;
     }
 
-    public void addVectorLayer(GpkgLayer child) throws LowMemoryException, InvalidAppConfigException, TerraMobileException, StyleException {
+    private void addVectorLayer(GpkgLayer child) throws LowMemoryException, InvalidAppConfigException, TerraMobileException, StyleException {
 
         if(child.getOsmOverLayer()==null) {
             SFSLayer l = AppGeoPackageService.getFeatures(child);
@@ -118,11 +157,11 @@ public class MenuMapController {
             Style defaultStyle = StyleService.loadStyle(context, child.getGeoPackage().getDatabaseFileName(),child);
 
             KmlDocument kmlDocument = new KmlDocument();
-/*            MyKmlStyler kmlStyler = new MyKmlStyler(defaultStyle, kmlDocument, mapView);*/
 
             Overlay overlay = l.buildOverlay(mapView, defaultStyle, null, kmlDocument);
 
             mapView.getOverlays().add(overlay);
+
             child.setOsmOverLayer(overlay);
 
             mapView.invalidate();
@@ -131,7 +170,7 @@ public class MenuMapController {
 
     }
 
-    public void removeVectorLayer(GpkgLayer child) {
+    private void removeVectorLayer(GpkgLayer child) {
 
         if(child.getOsmOverLayer()!=null)
         {
@@ -143,15 +182,6 @@ public class MenuMapController {
         return;
     }
 
-    public void addEditableLayer(GpkgLayer child) throws LowMemoryException, InvalidAppConfigException, TerraMobileException, StyleException {
-        addVectorLayer(child);
-    }
-
-    public void removeEditableLayer(GpkgLayer child) {
-        removeVectorLayer(child);
-    }
-
-
     /**
      * Allows to pan the mapView to the requested BoundingBox and calculating the extent required zoom level to fit on canvas
      * @param bb Requested BoundingBox to pan
@@ -160,14 +190,24 @@ public class MenuMapController {
     {
         MapView mapView = (MapView) ((MainActivity) context).findViewById(R.id.mapview);
         BoundingBoxE6 bbe6 = GeoUtil.convertToBoundingBoxE6(bb);
-        System.out.println(bbe6);
         mapView.zoomToBoundingBox(bbe6);
     }
 
-    public void removeAllLayers()
+    public void removeAllLayers(boolean updateMap)
     {
         MapView mapView = (MapView) ((MainActivity) context).findViewById(R.id.mapview);
         mapView.getOverlays().clear();
+        if(updateMap)
+        {
+            mapView.invalidate();
+        }
+
+    }
+    public void updateOverlaysOrder(ArrayList<GpkgLayer> orderedLayers)
+    {
+        MapView mapView = (MapView) ((MainActivity) context).findViewById(R.id.mapview);
+        LayersService.sortOverlayByGPKGLayer(mapView.getOverlays(), orderedLayers);
         mapView.invalidate();
     }
+
 }
