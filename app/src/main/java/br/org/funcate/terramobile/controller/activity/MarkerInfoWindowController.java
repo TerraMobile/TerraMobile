@@ -81,7 +81,7 @@ public class MarkerInfoWindowController {
     }
 
     public void moveMarker(Marker marker) {
-
+        long markerId = getMarkerId(marker).longValue();
     }
 
     public void startActivityForm() {
