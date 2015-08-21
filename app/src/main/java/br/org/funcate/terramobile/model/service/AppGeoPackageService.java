@@ -1,4 +1,4 @@
-package br.org.funcate.terramobile.model.tilesource;
+package br.org.funcate.terramobile.model.service;
 
 /**
  * Created by Andre Carvalho on 29/04/15.
@@ -55,6 +55,7 @@ import br.org.funcate.terramobile.model.exception.LowMemoryException;
 import br.org.funcate.terramobile.model.exception.TerraMobileException;
 import br.org.funcate.terramobile.model.geomsource.SFSLayer;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
+import br.org.funcate.terramobile.model.tilesource.MapTileGeoPackageProvider;
 import br.org.funcate.terramobile.util.ResourceHelper;
 import br.org.funcate.terramobile.util.Util;
 
