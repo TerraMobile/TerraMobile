@@ -17,6 +17,8 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -43,6 +45,8 @@ import br.org.funcate.terramobile.util.Util;
  * Created by Andre Carvalho on 14/08/15.
  */
 public class MarkerInfoWindowController {
+
+    private ArrayList<File> temporaryImages;
     private MainActivity mainActivity;
     // identify the return of the request of the Activity Form
     private static int FORM_RESULT_CODE = 222;
@@ -81,7 +85,7 @@ public class MarkerInfoWindowController {
     }
 
     public void moveMarker(Marker marker) {
-
+        long markerId = getMarkerId(marker).longValue();
     }
 
     public void startActivityForm() {
@@ -119,13 +123,20 @@ public class MarkerInfoWindowController {
             } catch (InvalidAppConfigException e) {
                 e.printStackTrace();
                 Message.showErrorMessage(mainActivity, R.string.failure_title_msg, e.getMessage());
+                return;
             } catch (LowMemoryException e) {
                 e.printStackTrace();
                 Message.showErrorMessage(mainActivity, R.string.failure_title_msg, e.getMessage());
+                return;
             } catch (TerraMobileException e) {
                 e.printStackTrace();
                 Message.showErrorMessage(mainActivity, R.string.failure_title_msg, e.getMessage());
+                return;
+            }catch (Exception e) {
+                Message.showErrorMessage(mainActivity, R.string.failure_title_msg, R.string.error_start_form);
+                return;
             }
+
             if (feature!=null && feature.getDefaultGeometry() != null) {
                 geom = (Geometry) feature.getDefaultGeometry();
                 if(geom!=null && geom.getGeometryType().equals("Point")) {
@@ -134,7 +145,7 @@ public class MarkerInfoWindowController {
                         point = new GeoPoint(coords[0].y, coords[0].x);
                 }
                 formDataValues = featureAttrsToBundle(feature);
-                if(images!=null && !images.isEmpty()){
+                if(images!=null && !images.isEmpty()) {
                     formDataValues = mediaToBundle(formDataValues, images);
                 }
             }
@@ -211,12 +222,25 @@ public class MarkerInfoWindowController {
 
         Set<String> keys = images.keySet();
         Iterator<String> itKeys = keys.iterator();
-        while (itKeys.hasNext()) {
-            String key = itKeys.next();
-            Object value = images.get(key);
-            Bitmap imageBitmap = ImageUtilities.getBitmapFromBlob((byte[])value);
-            Bitmap thumbnail = ImageUtilities.makeThumbnail(imageBitmap);
-            imageMapBundle.putByteArray(key, ImageUtilities.getBlobFromBitmap(thumbnail));
+        String imagePath = "";
+        temporaryImages = new ArrayList<File>(keys.size());
+        try {
+            while (itKeys.hasNext()) {
+                String key = itKeys.next();
+                File tmpFile = File.createTempFile(ImageUtilities.getTempImageName(null), key);
+                Object value = images.get(key);
+                imagePath = tmpFile.getPath();
+                ImageUtilities.writeImageDataToFile((byte[])value, imagePath);
+                temporaryImages.add(tmpFile);
+                imageMapBundle.putString(key, imagePath);
+/*                Bitmap imageBitmap = ImageUtilities.getBitmapFromBlob((byte[])value);
+                Bitmap thumbnail = ImageUtilities.makeThumbnail(imageBitmap);
+                imageMapBundle.putByteArray(key, ImageUtilities.getBlobFromBitmap(thumbnail));*/
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         bundle.putBundle(FormUtilities.IMAGE_MAP, imageMapBundle);

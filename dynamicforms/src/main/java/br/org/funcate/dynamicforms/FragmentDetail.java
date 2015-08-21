@@ -267,8 +267,10 @@ public class FragmentDetail extends Fragment {
 
                             while (itKeys.hasNext()) {
                                 String keyMap = itKeys.next();
-                                Object imageBinary = imageMapBundle.get(keyMap);
-                                value.put(keyMap, imageBinary);
+                                //Object imageBinary = imageMapBundle.get(keyMap);
+                                //value.put(keyMap, imageBinary);
+                                Object imagePath = imageMapBundle.get(keyMap);
+                                value.put(keyMap, imagePath);
                             }
                         }
                         addedView = FormUtilities.addPictureView(noteId, this, requestCode, mainView, label, value, constraintDescription);
@@ -313,6 +315,7 @@ public class FragmentDetail extends Fragment {
             e.printStackTrace();
         } catch (Exception e) {
             //GPLog.error(context, null, e);
+            e.printStackTrace();
             Toast.makeText(getActivity().getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
         }
         return view;
@@ -327,6 +330,7 @@ public class FragmentDetail extends Fragment {
                 o = jsonObject.get(TAG_VALUE);
             }
         }
+        if(o==null) o="";
         return o;
     }
 

@@ -136,6 +136,7 @@ public class TagsManager {
             tagsManager = new TagsManager();
             tagsManager.getTags(tags);
         }
+        if (tagsManager == null) throw new JSONException("The formulary configuration is invalid.");
         return tagsManager;
     }
     /**

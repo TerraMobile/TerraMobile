@@ -253,21 +253,6 @@ public class MainActivity extends FragmentActivity {
             case R.id.settings:
                 startActivity(new Intent(this, SettingsActivity.class));
                 break;
-            case R.id.test_icon_inpe:
-                getActionBar().setIcon(R.drawable.ic_launcher);
-                break;
-            case R.id.test_icon1:
-                getActionBar().setIcon(R.drawable.logo_terra_mobile_1);
-                break;
-            case R.id.test_icon2:
-                getActionBar().setIcon(R.drawable.logo_terra_mobile_2);
-                break;
-            case R.id.test_icon3:
-                getActionBar().setIcon(R.drawable.logo_terra_mobile_3);
-                break;
-            case R.id.test_icon4:
-                getActionBar().setIcon(R.drawable.logo_terra_mobile_4);
-                break;
             case R.id.exit:
                 this.finish();
                 System.exit(0);

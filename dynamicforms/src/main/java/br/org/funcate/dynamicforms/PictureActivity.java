@@ -16,7 +16,7 @@ import br.org.funcate.dynamicforms.views.GPictureView;
 public class PictureActivity extends FragmentActivity {
 
     private String _picturePath;
-    private String _pictureID;
+    private String _pictureTmpPath;
     private int _bitmapID;
 
     @Override
@@ -28,7 +28,7 @@ public class PictureActivity extends FragmentActivity {
             _picturePath = getIntent().getStringExtra(FormUtilities.PICTURE_PATH_VIEW);
         }
         if (getIntent().hasExtra(FormUtilities.PICTURE_DB_VIEW)) {
-            _pictureID = getIntent().getStringExtra(FormUtilities.PICTURE_DB_VIEW);
+            _pictureTmpPath = getIntent().getStringExtra(FormUtilities.PICTURE_DB_VIEW);
         }
 
         _bitmapID = getIntent().getIntExtra(FormUtilities.PICTURE_BITMAP_ID, -1);
@@ -61,7 +61,7 @@ public class PictureActivity extends FragmentActivity {
         return _picturePath;
     }
 
-    public String getPictureID() {
-        return _pictureID;
+    public String getPictureTmpPath() {
+        return _pictureTmpPath;
     }
 }

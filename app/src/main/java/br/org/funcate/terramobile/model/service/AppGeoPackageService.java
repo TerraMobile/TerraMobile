@@ -60,6 +60,7 @@ import br.org.funcate.terramobile.model.domain.Project;
 import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
 import br.org.funcate.terramobile.model.exception.InvalidGeopackageException;
 import br.org.funcate.terramobile.model.exception.LowMemoryException;
+import br.org.funcate.terramobile.model.exception.StyleException;
 import br.org.funcate.terramobile.model.exception.TerraMobileException;
 import br.org.funcate.terramobile.model.geomsource.SFSLayer;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
@@ -247,6 +248,10 @@ public class AppGeoPackageService {
                 ArrayList<String> databaseImages = getDatabaseImages(formData);
                 ArrayList<Object> insertImages = getInsertImages(formData);
                 GeoPackageService.writeLayerFeature(tv.getSelectedEditableLayer().getGeoPackage(), tv.getSelectedEditableLayer().getMediaTable(), feature, databaseImages, insertImages);
+
+                ((MainActivity)context).getMainController().getMenuMapController().removeLayer(tv.getSelectedEditableLayer());
+                ((MainActivity)context).getMainController().getMenuMapController().addLayer(tv.getSelectedEditableLayer());
+
             }catch (Exception e) {
                 int flags = context.getApplicationInfo().flags;
                 if((flags & context.getApplicationInfo().FLAG_DEBUGGABLE) != 0) {
@@ -254,6 +259,12 @@ public class AppGeoPackageService {
                 }else {
                     throw new TerraMobileException(context.getString(R.string.error_while_storing_form_data));
                 }
+            }catch (StyleException e) {
+                e.printStackTrace();
+                throw new TerraMobileException(e.getMessage());
+            } catch (InvalidAppConfigException e) {
+                e.printStackTrace();
+                throw new TerraMobileException(e.getMessage());
             }
         }
     }
