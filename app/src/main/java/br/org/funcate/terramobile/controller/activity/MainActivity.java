@@ -4,6 +4,7 @@ import android.app.ActionBar;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -24,11 +25,16 @@ import android.widget.ExpandableListView;
 import android.widget.TextView;
 
 import org.opengis.geometry.BoundingBox;
-import org.osmdroid.util.GeoPoint;
+import org.xml.sax.SAXException;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
+import javax.xml.parsers.ParserConfigurationException;
+
+import br.org.funcate.mobile.sld.SLDParser;
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.configuration.ViewContextParameters;
 import br.org.funcate.terramobile.controller.activity.settings.SettingsActivity;
@@ -257,9 +263,6 @@ public class MainActivity extends FragmentActivity {
             case R.id.test_icon4:
                 getActionBar().setIcon(R.drawable.logo_terra_mobile_4);
                 break;
-            case R.id.test_memory:
-                testMemory();
-                break;
             case R.id.exit:
                 this.finish();
                 System.exit(0);
@@ -356,22 +359,17 @@ public class MainActivity extends FragmentActivity {
             return true;
         }
         this.mProject = project;
-        Setting currentProjectSet = null;
-        if(currentProjectSet==null)
-        {
-            currentProjectSet = new Setting("current_project", null);
-        }
-        else
-        {
-            currentProjectSet = new Setting("current_project", project.getName());
-        }
 
         treeView.refreshTreeView();
+
         invalidateOptionsMenu();
 
         try {
+            Setting currentProjectSet = new Setting("current_project", project.getName());
 
             SettingsService.update(this, currentProjectSet, ApplicationDatabase.DATABASE_NAME);
+
+            getMainController().getMenuMapController().removeAllLayers(true);
 
             SettingsService.initProjectSettings(this, project);
 
@@ -425,24 +423,6 @@ public class MainActivity extends FragmentActivity {
         } catch (InvalidAppConfigException e) {
             e.printStackTrace();
             Message.showErrorMessage(this, R.string.error, e.getMessage());
-        }
-    }
-
-
-
-    public void testMemory()
-    {
-        long start = System.currentTimeMillis();
-        byte[] buffer = new byte[2^20];
-        ArrayList<String> list = new ArrayList<String>();
-        try {
-            while (true) {
-                list.add("BOGOOOOOOOOOOOOOOOOOOOO");
-            }
-        } catch (OutOfMemoryError t) {
-            long end = System.currentTimeMillis();
-            buffer = null;
-            System.err.println(t + " in " + (end - start) + " millis.");
         }
     }
 

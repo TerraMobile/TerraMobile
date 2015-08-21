@@ -20,7 +20,7 @@ public class ApplicationDatabase extends DatabaseHelper {
     private void initSettings()
     {
         StringBuilder sBCreateSettings = new StringBuilder();
-        sBCreateSettings.append("create table if not exists SETTINGS (");
+        sBCreateSettings.append("create table if not exists TM_SETTINGS (");
         sBCreateSettings.append("ID integer primary key AUTOINCREMENT not null,");
         sBCreateSettings.append("KEY text,");
         sBCreateSettings.append("VALUE text);");
@@ -31,7 +31,7 @@ public class ApplicationDatabase extends DatabaseHelper {
     private void initProjects()
     {
         StringBuilder sBCreateProject = new StringBuilder();
-        sBCreateProject.append("create table if not exists PROJECT (");
+        sBCreateProject.append("create table if not exists TM_PROJECT (");
         sBCreateProject.append("ID integer primary key AUTOINCREMENT not null,");
         sBCreateProject.append("NAME text not null,");
         sBCreateProject.append("FILE_PATH text not null,");

@@ -13,6 +13,7 @@ buildscript {
 
 allprojects {
     repositories {
+        maven { name = "osgeo"; url = "http://download.osgeo.org/webdav/geotools/" }
         jcenter()
     }
 }

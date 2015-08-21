@@ -5,6 +5,7 @@ import com.augtech.geoapi.geopackage.GpkgField;
 
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.geometry.BoundingBox;
+import org.osmdroid.bonuspack.kml.Style;
 import org.osmdroid.util.BoundingBoxE6;
 import org.osmdroid.views.overlay.Overlay;
 
@@ -33,6 +34,7 @@ public class GpkgLayer{
     private SimpleFeatureType featureType;
     private Overlay osmOverLayer;
     private String mediaTable;// the name of the media table to store medias outside of the SFS spec.
+    private Style style;
 
     public GpkgLayer() {
     }
@@ -121,7 +123,6 @@ public class GpkgLayer{
     public void setOsmOverLayer(Overlay osmOverLayer) {
         this.osmOverLayer = osmOverLayer;
     }
-
     public String getMediaTable() {
         return mediaTable;
     }
@@ -130,5 +131,11 @@ public class GpkgLayer{
         this.mediaTable = mediaTable;
     }
 
+    public Style getStyle() {
+        return style;
+    }
 
+    public void setStyle(Style style) {
+        this.style = style;
+    }
 }

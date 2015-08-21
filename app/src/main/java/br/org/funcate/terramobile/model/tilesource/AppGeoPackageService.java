@@ -119,20 +119,22 @@ public class AppGeoPackageService {
             throw new InvalidGeopackageException("Invalid GeoPackage file.");
         }
 
-        ArrayList<ArrayList<GpkgField>> fields = GeoPackageService.getGpkgFieldsContents(gpkg, null, "");
+        ArrayList<ArrayList<GpkgField>> layersList = GeoPackageService.getGpkgFieldsContents(gpkg, null, "");
         TMConfigEditableLayer tmConfigEditableLayer = GeoPackageService.getTMConfigEditableLayer(gpkg);
         ArrayList<GpkgLayer> listLayers=new ArrayList<GpkgLayer>();
         GpkgLayer layer;
 
-        for (int i = 0,size = fields.size(); i < size; i++) {
+        for (int i = 0,size = layersList.size(); i < size; i++) {
 
-            ArrayList<GpkgField> aField = fields.get(i);
+            ArrayList<GpkgField> aField = layersList.get(i);
             layer=new GpkgLayer(gpkg);// set geoPackage reference in this layer
 
             if(aField.size()!=10)
             {
                 throw new InvalidGeopackageException("Invalid number of field on GPKG content table. ");
             }
+
+            layer.setIndexOverlay(i);
 
             String layerName=null;
             GpkgField dataTypeField = null;
@@ -168,18 +170,22 @@ public class AppGeoPackageService {
             // Getting data type
             if("features".equals(dataTypeField.getValue()))
             {
-                if(!tmConfigEditableLayer.isEditable(layerName))
+                if(!tmConfigEditableLayer.isEditable(layerName)) {
                     layer.setType(GpkgLayer.Type.FEATURES);
+                    layer.setFeatureType(GeoPackageService.getLayerFeatureType(gpkg, layerName));
+                }
                 else {
                     layer.setType(GpkgLayer.Type.EDITABLE);
                     layer.setJSON(tmConfigEditableLayer.getJSONConfig(layerName));
                     layer.setFields(GeoPackageService.getLayerFields(gpkg, layerName));
                     layer.setFeatureType(GeoPackageService.getLayerFeatureType(gpkg, layerName));
                     layer.setMediaTable(tmConfigEditableLayer.getMediaTableConfig(layerName));
+                    layer.setIndexOverlay(0);
                 }
             } else if("tiles".equals(dataTypeField.getValue()))
             {
                 layer.setType(GpkgLayer.Type.TILES);
+                layer.setIndexOverlay(1000);
             } else
             {
                 //TODO:Verify if it's necessary to stop the process or ignore the current layer iteration

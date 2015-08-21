@@ -79,6 +79,9 @@
     <string name="settings_update_exception">Unable to update settings on database.</string>
     <string name="settings_query_exception">Unable to get settings from database.</string>
     <string name="settings_init_exception">Unable to initialize default settings on database.</string>
+    <string name="style_insert_exception">Unable to insert SLD style on database.</string>
+    <string name="style_update_exception">Unable to update SLD style on database.</string>
+    <string name="style_query_exception">Unable to get SLD style from database.</string>
     <string name="invalid_database_exception">Invalid database instance.</string>
     <string name="failed_getting_project_setting">Failed while getting a project setting.</string>
     <string name="invalid_project">Unable to load due to invalid project.</string>
