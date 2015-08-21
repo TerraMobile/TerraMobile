@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:id="@+id/picture_linear"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:measureWithLargestChild="false">
+
+        <ImageView
+            android:id="@+id/to_remove_picture"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" />
+
+        <TableLayout
+            android:id="@+id/btn_picture_linear"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            style="@android:style/Holo.Light.ButtonBar"
+            android:showDividers="middle"
+            android:gravity="bottom|end"
+            android:baselineAligned="false"
+            android:layout_gravity="center_horizontal"
+            android:padding="10dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true">
+
+            <Button
+                android:id="@+id/removeButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/btn_form_remove"
+                android:drawableLeft="@android:drawable/ic_menu_delete"
+                android:onClick="removePictureClicked" />
+
+            <Button
+                android:id="@+id/cancelButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/btn_form_cancel"
+                android:drawableLeft="@android:drawable/ic_menu_close_clear_cancel"
+                android:onClick="cancelPictureClicked" />
+        </TableLayout>
+    </RelativeLayout>
+
+</LinearLayout>

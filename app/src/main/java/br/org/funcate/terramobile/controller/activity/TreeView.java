@@ -87,6 +87,7 @@ public class TreeView {
     private void setChildGroupData() {
         ArrayList<GpkgLayer> childBaseLayers = new ArrayList<GpkgLayer>();
         ArrayList<GpkgLayer> childCollectLayers = new ArrayList<GpkgLayer>();
+        ArrayList<GpkgLayer> childEditableLayers = new ArrayList<GpkgLayer>();
         ArrayList<GpkgLayer> childOnlineLayers = new ArrayList<GpkgLayer>();
         /**
          * Add menu items from strings resource file.
@@ -134,7 +135,7 @@ public class TreeView {
                     break;
                 }
                 case EDITABLE:{
-                    childOnlineLayers.add(l);
+                    childEditableLayers.add(l);
                     break;
                 }
                 case ONLINE:{
@@ -156,12 +157,12 @@ public class TreeView {
             childCollectLayers.add(getNotFoundMenuLayerItem());
         if(childBaseLayers.isEmpty())
             childBaseLayers.add(getNotFoundMenuLayerItem());
-        if(childOnlineLayers.isEmpty())
-            childOnlineLayers.add(getNotFoundMenuLayerItem());
+        if(childEditableLayers.isEmpty())
+            childEditableLayers.add(getNotFoundMenuLayerItem());
 
         childItem.add(childBaseLayers);
         childItem.add(childCollectLayers);
-        childItem.add(childOnlineLayers);
+        childItem.add(childEditableLayers);
     }
 
     public ExpandableListView getUIComponent(){
@@ -180,14 +181,17 @@ public class TreeView {
 
         ArrayList<GpkgLayer> childBaseLayers = new ArrayList<GpkgLayer>();
         ArrayList<GpkgLayer> childCollectLayers = new ArrayList<GpkgLayer>();
+        ArrayList<GpkgLayer> childEditableLayers = new ArrayList<GpkgLayer>();
         ArrayList<GpkgLayer> childOnlineLayers = new ArrayList<GpkgLayer>();
 
         childBaseLayers.add(getNotFoundMenuLayerItem());
         childCollectLayers.add(getNotFoundMenuLayerItem());
+        childEditableLayers.add(getNotFoundMenuLayerItem());
         childOnlineLayers.add(getNotFoundMenuLayerItem());
 
         childItem.add(childBaseLayers);
         childItem.add(childCollectLayers);
+        childItem.add(childEditableLayers);
         childItem.add(childOnlineLayers);
     }
     public GpkgLayer getLayerByName(String layerName) throws TerraMobileException {

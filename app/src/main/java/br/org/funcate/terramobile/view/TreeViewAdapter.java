@@ -79,12 +79,13 @@ public class TreeViewAdapter extends BaseExpandableListAdapter implements View.O
                     break;
                 }
                 case EDITABLE:{// editable (vector)
+                    this.unselectAllRadioButtons(editableLayerRBList);
+
                     TreeView treeView=((MainActivity) this.context).getTreeView();
                     GpkgLayer ed = treeView.getSelectedEditableLayer();
                     if(ed!=null)
                         this.menuMapController.removeLayer(ed);
                     treeView.setSelectedEditableLayer(child);
-                    this.unselectAllRadioButtons(editableLayerRBList);
 
                     RadioButton rBChildGatheringLayer = (RadioButton) v;
                     if (!rBChildGatheringLayer.isChecked()) {

@@ -6,9 +6,11 @@ package br.org.funcate.terramobile.model.service;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.format.DateFormat;
 import android.util.Log;
 
 import com.augtech.geoapi.feature.SimpleFeatureImpl;
+import com.augtech.geoapi.feature.type.SimpleFeatureTypeImpl;
 import com.augtech.geoapi.geometry.BoundingBoxImpl;
 import com.augtech.geoapi.geopackage.DateUtil;
 import com.augtech.geoapi.geopackage.GeoPackage;
@@ -19,7 +21,9 @@ import com.vividsolutions.jts.geom.Point;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.GeometryType;
+import org.opengis.filter.identity.FeatureId;
 import org.opengis.geometry.BoundingBox;
 import org.opengis.feature.type.Name;
 import org.osmdroid.ResourceProxy;
@@ -35,9 +39,13 @@ import org.osmdroid.views.overlay.TilesOverlay;
 
 import java.io.File;
 import java.sql.Time;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import br.org.funcate.dynamicforms.FormUtilities;
 import br.org.funcate.dynamicforms.images.ImageUtilities;
@@ -96,7 +104,12 @@ public class AppGeoPackageService {
         GeoPackage gpkg = null;
 
         if(prj!=null)
-             gpkg = GeoPackageService.readGPKG(context, prj.getFilePath());
+            try {
+
+                gpkg = GeoPackageService.readGPKG(context, prj.getFilePath());
+            }catch (Exception e) {
+                throw new InvalidGeopackageException("Invalid GeoPackage file.");
+            }
         else {
             Log.i("getLayers", "Project not found");
             return null;
@@ -164,9 +177,10 @@ public class AppGeoPackageService {
                 }
                 else {
                     layer.setType(GpkgLayer.Type.EDITABLE);
-                    layer.setJSON(tmConfigEditableLayer.getConfig(layerName));
+                    layer.setJSON(tmConfigEditableLayer.getJSONConfig(layerName));
                     layer.setFields(GeoPackageService.getLayerFields(gpkg, layerName));
                     layer.setFeatureType(GeoPackageService.getLayerFeatureType(gpkg, layerName));
+                    layer.setMediaTable(tmConfigEditableLayer.getMediaTableConfig(layerName));
                     layer.setIndexOverlay(0);
                 }
             } else if("tiles".equals(dataTypeField.getValue()))
@@ -230,7 +244,9 @@ public class AppGeoPackageService {
         }else {
             try {
                 SimpleFeature feature = makeSimpleFeature(formData, tv);
-                GeoPackageService.writeLayerFeature(tv.getSelectedEditableLayer().getGeoPackage(), feature);
+                ArrayList<String> databaseImages = getDatabaseImages(formData);
+                ArrayList<Object> insertImages = getInsertImages(formData);
+                GeoPackageService.writeLayerFeature(tv.getSelectedEditableLayer().getGeoPackage(), tv.getSelectedEditableLayer().getMediaTable(), feature, databaseImages, insertImages);
             }catch (Exception e) {
                 int flags = context.getApplicationInfo().flags;
                 if((flags & context.getApplicationInfo().FLAG_DEBUGGABLE) != 0) {
@@ -242,16 +258,77 @@ public class AppGeoPackageService {
         }
     }
 
+    public static Map<String, Object> getImagesFromDatabase(GpkgLayer layer, long featureID) throws TerraMobileException {
+        Map<String, Object> images;
+        try{
+            images = GeoPackageService.getMedias(layer.getGeoPackage(), layer.getMediaTable(), featureID);
+        }catch (QueryException qe){
+            qe.printStackTrace();
+            throw new TerraMobileException(qe.getMessage());
+        }catch (Exception e) {
+            e.printStackTrace();
+            throw new TerraMobileException(e.getMessage());
+        }
+        return images;
+    }
+
+    /**
+     * Get Array of the image's identifiers loaded from the Form.
+     * This identifiers represent the database images of the list image display on the Form.
+     * @param formData, the form
+     * @return list of the images identifiers
+     */
+    private static ArrayList<String> getDatabaseImages(Bundle formData) {
+        ArrayList<String> imageIds=null;
+
+        if(formData.containsKey(FormUtilities.DATABASE_IMAGE_IDS)) {
+            imageIds = formData.getStringArrayList(FormUtilities.DATABASE_IMAGE_IDS);
+        }
+        return imageIds;
+    }
+
+    /**
+     * Get Array of the byte[] loaded from system files using the paths registered into the Form.
+     * @param formData, the form
+     * @return list in memory of the images in binary format
+     */
+    private static ArrayList<Object> getInsertImages(Bundle formData) {
+
+        ArrayList<Object> images = null;
+        Object image;
+
+        if(formData.containsKey(FormUtilities.INSERTED_IMAGE_PATHS)) {
+            ArrayList<String> imagePaths = formData.getStringArrayList(FormUtilities.INSERTED_IMAGE_PATHS);
+
+            if(imagePaths.isEmpty()) return images;
+
+            images = new ArrayList<Object>(imagePaths.size());
+            Iterator<String> it = imagePaths.iterator();
+            while (it.hasNext()) {
+                String path = it.next();
+                if (ImageUtilities.isImagePath(path)) {
+                    image = ImageUtilities.getImageFromPath(path, 2);
+                    images.add(image);
+                }
+            }
+        }
+        return images;
+    }
+
     private static SimpleFeature makeSimpleFeature(Bundle formData, TreeView tv) {
 
 
         ArrayList<GpkgField> fields = tv.getSelectedEditableLayer().getFields();
         SimpleFeatureType ft = tv.getSelectedEditableLayer().getFeatureType();
         GeometryType geometryType = ft.getGeometryDescriptor().getType();
-        //List<Object> attributeValues = new ArrayList<Object>();
         Object[] attrs = new Object[fields.size()];
+        String featureID=null;
+        // if contains Geometry identification when update feature process is call
+        if(formData.containsKey(FormUtilities.GEOM_ID)) {
+            featureID=ft.getTypeName()+formData.getLong(FormUtilities.GEOM_ID);
+        }
 
-        SimpleFeatureImpl feature = new SimpleFeatureImpl(null, null, ft);
+        SimpleFeatureImpl feature = new SimpleFeatureImpl(featureID, null, ft);
 
         GeometryFactory factory=new GeometryFactory();
 
@@ -262,7 +339,6 @@ public class AppGeoPackageService {
             Point point = factory.createPoint(coordinate);
             Name geomColName = ft.getGeometryDescriptor().getName();
             attrs[ft.indexOf(geomColName)]=point;
-            //feature.setDefaultGeometry(point);
         }
 
         ArrayList<String> formKeys = formData.getStringArrayList(LibraryConstants.FORM_KEYS);
@@ -276,24 +352,22 @@ public class AppGeoPackageService {
             String formType = formTypes.get(i);
             int index = ft.indexOf(key);
 
+            if(index<0) continue;
+
             if ("DOUBLE".equalsIgnoreCase(dbType)) {
                 Double d = formData.getDouble(key);
                 attrs[index]=d;
-                //feature.setAttribute(key,d);
             } else if ("TEXT".equalsIgnoreCase(dbType)) {
                 String s = formData.getString(key);
                 attrs[index]=s;
-                //feature.setAttribute(key,s);
             } else if ("INTEGER".equalsIgnoreCase(dbType)) {
 
                 if(formType.equalsIgnoreCase(dbType)) {
                     Integer in = formData.getInt(key);
                     attrs[index]=in;
-                    //feature.setAttribute(key, in);
                 }else {
                     Boolean b = formData.getBoolean(key);
                     attrs[index]=b;
-                    //feature.setAttribute(key, b);
                 }
             } else if ("BLOB".equalsIgnoreCase(dbType)) {
                 if( !key.equals(feature.getFeatureType().getGeometryDescriptor().getName())) {
@@ -301,18 +375,20 @@ public class AppGeoPackageService {
                     if (path!=null && ImageUtilities.isImagePath(path)) {
                         byte[] blob = ImageUtilities.getImageFromPath(path, 1);
                         attrs[index]=blob;
-                        //feature.setAttribute(key, blob);
                     }else{
                         attrs[index]=null;
-                        //feature.setAttribute(key,null);
                     }
                 }
+            } else if ("BOOLEAN".equalsIgnoreCase(dbType)) {
+                Boolean aBoolean = formData.getBoolean(key);
+                attrs[index]=aBoolean;
             } else if ("DATE".equalsIgnoreCase(dbType)) {
                 String date = formData.getString(key);
-                Date dt = DateUtil.deserializeDate(date);
-                if (dt == null) dt = new Date();
+                Date dt = stringToDate(date);
+                if (dt == null) {
+                    dt = new Date();
+                }
                 attrs[index]=dt;
-                //feature.setAttribute(key,dt);
             } else if ("TIME".equalsIgnoreCase(dbType)) {
                 String date = formData.getString(key);
                 if (!date.equals("")) {
@@ -323,17 +399,35 @@ public class AppGeoPackageService {
                     dt = new Time(Long.decode(date));
                 }
                 attrs[index]=dt;
-                //feature.setAttribute(key,dt);
             } else if ("DATETIME".equalsIgnoreCase(dbType)) {
                 String date = formData.getString(key);
-                Date dt = DateUtil.deserializeDateTime(date);
-                if (dt == null) dt = new Date();
+                Date dt = stringToDate(date);
+                if (dt == null) {
+                    dt = new Date();
+                }
                 attrs[index]=dt;
-               // feature.setAttribute(key,dt);
             }
         }
         feature.setAttributes(attrs);
         return feature;
+    }
+
+    /**
+     * This method parse a date String, in this format (yyyy-MM-dd), to a Date, in this format ( YYYY-MM-DDTHH:MM:SS.SSS )
+     * See this link for more detail: https://www.sqlite.org/lang_datefunc.html
+     * @param strDate, the date in this format yyyy-MM-dd HH:mm:ss
+     * @return a Date
+     */
+    private static Date stringToDate(String strDate) {
+        SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd");
+        //SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        Date dt = null;
+        try {
+            dt = inputFormat.parse(strDate);
+        } catch (ParseException ex) {
+            ex.printStackTrace();
+        }
+        return dt;
     }
 
     private static GpkgField getFieldByName(ArrayList<GpkgField> fields, String name) {
@@ -356,6 +450,44 @@ public class AppGeoPackageService {
             SFSLayer l = new SFSLayer(features);
 
             return l;
+
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            throw new TerraMobileException(ResourceHelper.getStringResource(R.string.read_features_exception), e);
+        }
+        catch (OutOfMemoryError e)
+        {
+            e.printStackTrace();
+            throw new LowMemoryException(ResourceHelper.getStringResource(R.string.read_features_out_of_memory_exception));
+        }
+    }
+
+    public static SimpleFeature getFeature(GpkgLayer layer, long featureID) throws InvalidAppConfigException, LowMemoryException, TerraMobileException {
+
+        try {
+
+            SimpleFeature feature = GeoPackageService.getFeatureByID(layer.getGeoPackage(), layer.getName(), featureID);
+
+            return feature;
+
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            throw new TerraMobileException(ResourceHelper.getStringResource(R.string.read_features_exception), e);
+        }
+        catch (OutOfMemoryError e)
+        {
+            e.printStackTrace();
+            throw new LowMemoryException(ResourceHelper.getStringResource(R.string.read_features_out_of_memory_exception));
+        }
+    }
+
+    public static boolean deleteFeature(GpkgLayer layer, long featureID) throws InvalidAppConfigException, LowMemoryException, TerraMobileException {
+
+        try {
+
+            return GeoPackageService.deleteFeature(layer.getGeoPackage(), layer.getName(), featureID);
 
         }
         catch (Exception e) {

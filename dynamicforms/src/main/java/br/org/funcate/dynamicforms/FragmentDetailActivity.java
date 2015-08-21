@@ -32,10 +32,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import br.org.funcate.dynamicforms.util.LibraryConstants;
 import br.org.funcate.dynamicforms.util.Utilities;
+import br.org.funcate.dynamicforms.views.GPictureView;
 
 import static br.org.funcate.dynamicforms.FormUtilities.ATTR_SECTIONNAME;
 import static br.org.funcate.dynamicforms.FormUtilities.TAG_KEY;
@@ -68,6 +71,7 @@ public class FragmentDetailActivity extends FragmentActivity {
     private double elevation = -9999.0;
     private long pointId;
     private String workingDirectory;
+    private Bundle existingFeatureData;
 
     // this members is used in dynamic form process.
     private static final String USE_MAPCENTER_POSITION = "USE_MAPCENTER_POSITION";
@@ -102,8 +106,14 @@ public class FragmentDetailActivity extends FragmentActivity {
             pointId = extras.getLong(LibraryConstants.SELECTED_POINT_ID);
             formName = extras.getString(FormUtilities.ATTR_FORMNAME);
             tags = extras.getString(FormUtilities.ATTR_JSON_TAGS);
-            latitude = extras.getDouble(FormUtilities.TYPE_LATITUDE);
-            longitude = extras.getDouble(FormUtilities.TYPE_LONGITUDE);
+            if(extras.containsKey(FormUtilities.TYPE_LATITUDE)) {
+                latitude = extras.getDouble(FormUtilities.TYPE_LATITUDE);
+                longitude = extras.getDouble(FormUtilities.TYPE_LONGITUDE);
+            }
+            // here are the attribute values from feature to populate form in edit operation
+            if(extras.containsKey(FormUtilities.ATTR_DATA_VALUES)) {
+                existingFeatureData = extras.getBundle(FormUtilities.ATTR_DATA_VALUES);
+            }
             workingDirectory = extras.getString(FormUtilities.MAIN_APP_WORKING_DIRECTORY);
         }
 
@@ -116,6 +126,7 @@ public class FragmentDetailActivity extends FragmentActivity {
                 JSONArray coords = new JSONArray("["+longitude+","+latitude+"]");
                 geojson.put(FormUtilities.GEOJSON_TAG_COORDINATES, coords);
                 sectionObject.put(FormUtilities.GEOJSON_TAG_GEOM, geojson);
+
             }else{
                 JSONObject geojson = sectionObject.getJSONObject(FormUtilities.GEOJSON_TAG_GEOM);
                 JSONArray coords = geojson.getJSONArray(FormUtilities.GEOJSON_TAG_COORDINATES);
@@ -133,6 +144,11 @@ public class FragmentDetailActivity extends FragmentActivity {
 
         setContentView(R.layout.details_activity_layout);
     }
+
+    /**
+     * @return the data of the feature provided from editing process
+     */
+    public Bundle getFeatureData() { return this.existingFeatureData; }
 
     /**
      * @return the form name.
@@ -219,7 +235,7 @@ public class FragmentDetailActivity extends FragmentActivity {
             String key = "";
             String value = "";
             String type = "";
-            boolean insertKey;
+            boolean insertKey;// This control flag is used to ignore some types because are simply ignored or are manipulated in other time.
 
             for (int i = 0; i < length; i++) {
                 JSONObject jsonObject = formItemsArray.getJSONObject(i);
@@ -267,8 +283,10 @@ public class FragmentDetailActivity extends FragmentActivity {
                         insertKey=false;
                         //formData.putString(key,value);
                     } else if (type.equals(TYPE_PICTURES)) {
-                        // pass the directory where are pictures.
-                        formData.putString(key,value);
+                        insertKey=false;
+                        // Using the new key to represent a list of image paths. It is manipulated on posterior time.
+                        //formData.putString(key,value);
+                        decodeFromJson(value, formData);
                     }
 
                     if(insertKey) {
@@ -297,10 +315,58 @@ public class FragmentDetailActivity extends FragmentActivity {
             formData.putDoubleArray(FormUtilities.GEOJSON_TYPE_POINT,coords);
         }
 
+        if(pointId>=0){
+            formData.putLong(FormUtilities.GEOM_ID, pointId);
+        }
+
         Intent intent = getIntent();
         intent.putExtra(LibraryConstants.PREFS_KEY_FORM, formData);
         setResult(Activity.RESULT_OK, intent);
         finish();
+    }
+
+    private void decodeFromJson(String json, Bundle formData){
+        JSONObject jsonObject=null;
+        try {
+            jsonObject = new JSONObject(json);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        ArrayList<String> listInsertedPaths = null;
+        ArrayList<String> listDatabaseIds = null;
+        try {
+            String insertedPaths = null;
+            String databaseIds = null;
+            insertedPaths = jsonObject.getString(FormUtilities.TAG_ADDED_IMG);
+            databaseIds = jsonObject.getString(FormUtilities.TAG_DATABASE_IMG);
+
+            if(insertedPaths!=null && !insertedPaths.isEmpty()) {
+                String[] paths = insertedPaths.split(FormUtilities.SEMICOLON);
+                int len = paths.length;
+                int i = 0;
+                listInsertedPaths = new ArrayList<String>(len);
+                while (i<len) {
+                    listInsertedPaths.add(paths[i]);
+                    i++;
+                }
+            }
+
+            if(databaseIds!=null && !databaseIds.isEmpty()) {
+                String[] ids = databaseIds.split(FormUtilities.SEMICOLON);
+                int len = ids.length;
+                int i = 0;
+                listDatabaseIds = new ArrayList<String>(len);
+                while (i<len) {
+                    listDatabaseIds.add(ids[i]);
+                    i++;
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        if(listInsertedPaths!=null && !listInsertedPaths.isEmpty()) formData.putStringArrayList(FormUtilities.INSERTED_IMAGE_PATHS, listInsertedPaths);
+        if(listDatabaseIds!=null && !listDatabaseIds.isEmpty()) formData.putStringArrayList(FormUtilities.DATABASE_IMAGE_IDS, listDatabaseIds);
     }
 
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -316,19 +382,13 @@ public class FragmentDetailActivity extends FragmentActivity {
         return workingDirectory;
     }
 
-    // TODO: send this method to MapFragment and implement tool to capture GPS coordinates instead of capture from map center.
-    /*private void checkPositionCoordinates() {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean useMapCenterPosition = preferences.getBoolean(USE_MAPCENTER_POSITION, false);
-        if (useMapCenterPosition || gpsLocation == null) {
-            double[] mapCenter = PositionUtilities.getMapCenterFromPreferences(preferences, true, true);
-            latitude = mapCenter[1];
-            longitude = mapCenter[0];
-            elevation = 0.0;
-        } else {
-            latitude = gpsLocation[1];
-            longitude = gpsLocation[0];
-            elevation = gpsLocation[2];
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == GPictureView.PICTURE_VIEW_RESULT) {
+            FragmentDetail detailFragment = (FragmentDetail) getSupportFragmentManager().findFragmentById(R.id.detailFragment);
+            if (detailFragment != null) {
+                detailFragment.onActivityResult(requestCode, Activity.RESULT_OK, data);
+            }
         }
-    }*/
+    }
 }

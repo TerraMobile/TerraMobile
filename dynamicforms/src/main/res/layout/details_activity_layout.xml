@@ -11,27 +11,4 @@
         android:layout_height="fill_parent"
         class="br.org.funcate.dynamicforms.FragmentDetail" />
 
-    <Button
-        android:id="@+id/saveButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_margin="10dp"
-        android:text="@string/btn_form_save"
-        android:drawableLeft="@android:drawable/ic_menu_add"
-        android:onClick="saveClicked" />
-
-    <Button
-        android:id="@+id/cancelButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/saveButton"
-        android:layout_alignBottom="@+id/saveButton"
-        android:layout_margin="10dp"
-        android:layout_toRightOf="@+id/saveButton"
-        android:text="@string/btn_form_cancel"
-        android:drawableLeft="@android:drawable/ic_menu_close_clear_cancel"
-        android:onClick="cancelClicked" />
-
 </LinearLayout>

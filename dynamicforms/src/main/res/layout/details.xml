@@ -13,33 +13,39 @@
             android:id="@+id/form_linear"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:orientation="vertical"
+            android:measureWithLargestChild="false">
+
+            <LinearLayout
+                android:id="@+id/btn_linear"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                style="@android:style/Holo.Light.ButtonBar"
+                android:showDividers="middle"
+                android:gravity="bottom|end"
+                android:baselineAligned="false"
+                android:layout_margin="10dp"
+                android:layout_gravity="center_horizontal"
+                android:padding="10dp">
+
+                <Button
+                    android:id="@+id/saveButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/btn_form_save"
+                    android:drawableLeft="@android:drawable/ic_menu_add"
+                    android:onClick="saveClicked" />
+
+                <Button
+                    android:id="@+id/cancelButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/btn_form_cancel"
+                    android:drawableLeft="@android:drawable/ic_menu_close_clear_cancel"
+                    android:onClick="cancelClicked" />
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
-
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" >
-    <Button
-        android:id="@+id/cancelButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/btn_form_cancel"
-        android:drawableLeft="@android:drawable/ic_menu_close_clear_cancel"
-        android:onClick="cancelClicked"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true" />
-
-        <Button
-            android:id="@+id/saveButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toLeftOf="@id/cancelButton"
-            android:layout_alignBaseline="@+id/cancelButton"
-            android:text="@string/btn_form_save"
-            android:drawableLeft="@android:drawable/ic_menu_add"
-            android:onClick="saveClicked" />
-    </RelativeLayout>
 
 </LinearLayout>

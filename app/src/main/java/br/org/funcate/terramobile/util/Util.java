@@ -4,6 +4,7 @@ package br.org.funcate.terramobile.util;
 
 import android.content.Context;
 import android.graphics.ColorMatrix;
+import android.media.MediaScannerConnection;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Environment;
@@ -110,4 +111,30 @@ public class Util {
         file.mkdirs();
         return file;
     }
+
+    /**
+     * Get a directory on external storage (SD card).
+     * If this directory not exist, will be created.
+     * @return a new File representing the chosen directory
+     */
+/*    public static File getPublicDirectory(String directory) {
+        if (directory==null) return null;
+        String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath();
+        File outputDirectory = new File(path + File.separator + directory + File.separator);
+        outputDirectory.mkdirs();
+        return outputDirectory;
+    }
+
+    public static void applyAllPermission(File file) {
+
+        if(file.exists()){
+            file.setExecutable(true);
+            file.setWritable(true);
+            file.setReadable(true);
+        }
+    }
+
+    public static void startSync(File file, Context context) {
+        MediaScannerConnection.scanFile(context, new String[] {file.getAbsolutePath()}, null, null );
+    }*/
 }

@@ -33,6 +33,7 @@ public class GpkgLayer{
     private ArrayList<GpkgField> fields;
     private SimpleFeatureType featureType;
     private Overlay osmOverLayer;
+    private String mediaTable;// the name of the media table to store medias outside of the SFS spec.
     private Style style;
 
     public GpkgLayer() {
@@ -121,6 +122,13 @@ public class GpkgLayer{
 
     public void setOsmOverLayer(Overlay osmOverLayer) {
         this.osmOverLayer = osmOverLayer;
+    }
+    public String getMediaTable() {
+        return mediaTable;
+    }
+
+    public void setMediaTable(String mediaTable) {
+        this.mediaTable = mediaTable;
     }
 
     public Style getStyle() {

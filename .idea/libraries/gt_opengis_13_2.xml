@@ -1,7 +1,7 @@
 <component name="libraryTable">
   <library name="gt-opengis-13.2">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/Java-OpenMobility/libs/gt-opengis-13.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/sldparser/libs/gt-opengis-13.2.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

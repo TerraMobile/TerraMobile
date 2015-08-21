@@ -71,7 +71,7 @@ public class MenuMapController {
                 MapTileModuleProviderBase moduleProvider = new MapTileGeoPackageProvider(tileSource, child.getName(), child.getGeoPackage());
                 SimpleRegisterReceiver simpleReceiver = new SimpleRegisterReceiver(context);
 
-                MapTileProviderArray tileProviderArray = new MapTileProviderArrayGeoPackage(tileSource, simpleReceiver, new MapTileModuleProviderBase[] { moduleProvider }, ((MainActivity) this.context).getMapFragment());
+                MapTileProviderArray tileProviderArray = new MapTileProviderArrayGeoPackage(tileSource, simpleReceiver, new MapTileModuleProviderBase[] { moduleProvider }, ((MainActivity) this.context).getMainController().getMapFragment());
 
                 final TilesOverlay tilesOverlay = new TilesOverlay(tileProviderArray, context);
                 tilesOverlay.setLoadingBackgroundColor(Color.TRANSPARENT);
