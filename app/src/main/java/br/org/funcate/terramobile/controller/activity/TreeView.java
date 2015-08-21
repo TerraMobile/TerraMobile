@@ -14,7 +14,7 @@ import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
 import br.org.funcate.terramobile.model.exception.InvalidGeopackageException;
 import br.org.funcate.terramobile.model.exception.TerraMobileException;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
-import br.org.funcate.terramobile.model.tilesource.AppGeoPackageService;
+import br.org.funcate.terramobile.model.service.AppGeoPackageService;
 import br.org.funcate.terramobile.util.DevUtil;
 import br.org.funcate.terramobile.util.Message;
 import br.org.funcate.terramobile.util.ResourceHelper;
