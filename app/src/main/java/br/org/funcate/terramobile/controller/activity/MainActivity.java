@@ -253,7 +253,10 @@ public class MainActivity extends FragmentActivity {
             case R.id.settings:
                 startActivity(new Intent(this, SettingsActivity.class));
                 break;
-            case R.id.exit:
+            case R.id.tooglesfsbboxquery:
+                this.useNewOverlaySFS=!this.useNewOverlaySFS;
+                break;
+           case R.id.exit:
                 this.finish();
                 System.exit(0);
                 break;

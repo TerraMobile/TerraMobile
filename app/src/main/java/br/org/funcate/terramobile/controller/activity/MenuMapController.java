@@ -150,7 +150,7 @@ public class MenuMapController {
             MapView mapView = (MapView) ((MainActivity) context).findViewById(R.id.mapview);
 
             Style defaultStyle = StyleService.loadStyle(context, child.getGeoPackage().getDatabaseFileName(),child);
-
+            System.out.println("======================§§§§§§§ USE NEW OVERLAY SFS = " + ((MainActivity) context).useNewOverlaySFS);
             if(!((MainActivity) context).useNewOverlaySFS)
             {
                 SFSLayer l = AppGeoPackageService.getFeatures(child);

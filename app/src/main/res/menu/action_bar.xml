@@ -25,6 +25,11 @@
         android:icon="@android:drawable/stat_notify_sync"
         android:showAsAction="always|withText" />
 
+    <item android:id="@+id/tooglesfsbboxquery"
+        android:title="Toogle SFS BBox Query"
+        android:orderInCategory="100"
+        android:showAsAction="never" />
+
     <item android:id="@+id/settings"
         android:title="@string/settings"
         android:orderInCategory="100"

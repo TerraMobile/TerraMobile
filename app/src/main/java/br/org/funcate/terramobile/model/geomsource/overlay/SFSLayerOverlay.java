@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.org.funcate.jgpkg.service.GeoPackageService;
+import br.org.funcate.terramobile.controller.activity.MainActivity;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
 import br.org.funcate.terramobile.util.GeoUtil;
 
@@ -44,6 +45,7 @@ public class SFSLayerOverlay extends Overlay {
     }
     @Override
     protected void draw(Canvas c, MapView osmv, boolean shadow) {
+        System.out.println("======================§§§§§§§ USING SFSLayerOverlay = " + ((MainActivity) context).useNewOverlaySFS);
          if(!shadow)
         {
             try {
