@@ -12,6 +12,8 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
+import org.osmdroid.views.MapView;
+
 import java.util.ArrayList;
 
 import br.org.funcate.terramobile.R;
@@ -23,6 +25,7 @@ import br.org.funcate.terramobile.model.exception.LowMemoryException;
 import br.org.funcate.terramobile.model.exception.StyleException;
 import br.org.funcate.terramobile.model.exception.TerraMobileException;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
+import br.org.funcate.terramobile.model.osmbonuspack.overlays.SFSOverlay;
 import br.org.funcate.terramobile.model.service.LayersService;
 import br.org.funcate.terramobile.util.Message;
 
@@ -98,6 +101,11 @@ public class TreeViewAdapter extends BaseExpandableListAdapter implements View.O
             }
             //Correct the layer order by the GPKGLayer index.
             menuMapController.updateOverlaysOrder(LayersService.composeLinearLayerList(ChildItem));
+
+/*            MapView mapView = (MapView) ((MainActivity) context).findViewById(R.id.mapview);
+
+
+            mapView.getOverlays().add(new SFSOverlay(child, this.context));*/
         }
         catch (LowMemoryException e) {
             e.printStackTrace();

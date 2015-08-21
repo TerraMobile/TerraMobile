@@ -41,7 +41,6 @@ import br.org.funcate.terramobile.model.exception.SettingsException;
 import br.org.funcate.terramobile.model.exception.TerraMobileException;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
 import br.org.funcate.terramobile.model.service.SettingsService;
-import br.org.funcate.terramobile.model.tilesource.AppGeoPackageService;
 import br.org.funcate.terramobile.util.Message;
 import br.org.funcate.terramobile.util.Util;
 
