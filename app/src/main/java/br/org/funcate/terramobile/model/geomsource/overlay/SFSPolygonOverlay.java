@@ -1,6 +1,8 @@
 package br.org.funcate.terramobile.model.geomsource.overlay;
 
 import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -8,9 +10,11 @@ import com.vividsolutions.jts.geom.LineString;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.osmdroid.bonuspack.kml.Style;
 import org.osmdroid.bonuspack.overlays.OverlayWithIW;
 import org.osmdroid.bonuspack.overlays.Polygon;
 import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.MapView;
 
 import java.util.ArrayList;
 
@@ -24,30 +28,16 @@ public class SFSPolygonOverlay extends Polygon {
     private SFSPolygonOverlay(Context ctx) {
         super(ctx);
     }
-    public SFSPolygonOverlay(Context ctx, SimpleFeature feature)
+    public SFSPolygonOverlay(Context ctx, Geometry geom)
     {
         this(ctx);
-        parseSFS(feature);
+        parseSFS(geom);
     }
 
-    private void parseSFS(SimpleFeature feature)
+    private void parseSFS(Geometry geom)
     {
-        if (feature != null)
-        {
-            if (feature.getDefaultGeometry() != null)
-            {
-                SimpleFeatureType type = feature.getType();
-                Geometry geom = (Geometry) feature.getDefaultGeometry();
-
-                //return parseSFS(geom);
-
-                if ("Polygon".equals(geom.getGeometryType())){
-                    com.vividsolutions.jts.geom.Polygon p = (com.vividsolutions.jts.geom.Polygon) geom;
-                    readPolygon(p);
-                }
-
-            }
-        }
+        com.vividsolutions.jts.geom.Polygon p = (com.vividsolutions.jts.geom.Polygon) geom;
+        readPolygon(p);
     }
     private void readPolygon(com.vividsolutions.jts.geom.Polygon p)
     {
@@ -83,5 +73,18 @@ public class SFSPolygonOverlay extends Polygon {
             return coordinates;
         }
         return null;
+    }
+    public void draw(final Canvas canvas, final MapView mapView, final boolean shadow)
+    {
+        super.draw(canvas, mapView, shadow);
+    }
+
+    public void setStyle(Style defaultStyle)
+    {
+        Paint outlinePaint = defaultStyle.getOutlinePaint();
+        setStrokeColor(outlinePaint.getColor());
+        setStrokeWidth(outlinePaint.getStrokeWidth());
+        int fillColor = defaultStyle.mPolyStyle.getFinalColor();
+        setFillColor(fillColor);
     }
 }
