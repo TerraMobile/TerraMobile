@@ -27,820 +27,9 @@
   </component>
   <component name="ChangeListManager">
     <list id="47aa6106-7084-493a-9e08-69b648e1200e" name="Default" comment="Changed order on insert bookmark on map in gathering data operation.&#10;Preparing insertion of the selected vector layer from TreeView on to map.&#10;Instantiate and set attributes on to SimpleFeature. Do not work correctly yet." />
-    <list default="true" id="7d60bba6-fd62-4a72-bcc9-a7f210e0ce03" name="Rejected commit: Default" comment="Refactor: moved the GPSService class to other package.">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/libs/gt-api-13.2.jar" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/libs/gt-main-13.2.jar" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/libs/gt-metadata-13.2.jar" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/libs/gt-xsd-core-13.2.jar" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/libs/gt-xsd-sld-13.2.jar" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/libs/jai_core-1.1.3.jar" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/libs/jts-1.13.jar" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-hdpi/layer_down.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-mdpi/layer_down.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-xhdpi/layer_down.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-xxhdpi/layer_down.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-xxxhdpi/layer_down.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-hdpi/layer_extent.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-mdpi/layer_extent.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-xhdpi/layer_extent.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-xxhdpi/layer_extent.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-xxxhdpi/layer_extent.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-hdpi/layer_up.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-mdpi/layer_up.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-xhdpi/layer_up.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-xxhdpi/layer_up.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-xxxhdpi/layer_up.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/libs/osmbonuspack_v5.1.jar" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/libs/xerces.jar" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/.gitignore" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/AbstractAttributeIO.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/visitor/AbstractCalcResult.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/AbstractDataStore.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/AbstractDataStoreFactory.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/expression/AbstractExpressionVisitor.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/collection/AbstractFeatureCollection.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/AbstractFeatureFactoryImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/AbstractFeatureLocking.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/AbstractFeatureSource.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/AbstractFeatureStore.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/collection/AbstractFeatureVisitor.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/AbstractFileDataStore.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/AbstractFilter.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/AbstractFilterImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/visitor/AbstractFilterVisitor.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/visitor/AbstractFinderFilterVisitor.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/ows/AbstractGetCapabilitiesRequest.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/type/AbstractLazyAttributeTypeImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/type/AbstractLazyComplexTypeImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/geometry/jts/AbstractLiteIterator.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/ows/AbstractOpenWebService.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/spatial/AbstractPreparedGeometryFilter.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/ows/AbstractRequest.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/visitor/AbstractSearchFilterVisitor.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/styling/AbstractStyleFactory.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/styling/AbstractStyleVisitor.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/styling/AbstractSymbolizer.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/collection/AdaptorFeatureCollection.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/expression/AddImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/temporal/AfterImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/styling/AnchorPointImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/AndImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/AndroidManifest.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/type/AnnotationFeatureType.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/temporal/AnyInteractsImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/androidTest/java/jgpkg/funcate/org/br/sldparser/ApplicationTest.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/AreaFunction.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/capability/ArithmeticOperatorsImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/store/ArrayDataStore.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/type/AssociationDescriptorImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/AssociationImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/type/AssociationTypeImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/AttributeBuilder.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/type/AttributeDescriptorImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/AttributeExpressionImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/AttributeImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/AttributeReader.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/AttributeTypeBuilder.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/type/AttributeTypeImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/AttributeWriter.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/visitor/AverageVisitor.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/spatial/BBOX3DImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/spatial/BBOXImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/Base64.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/collection/BaseFeatureCollection.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/collection/BaseSimpleFeatureCollection.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/factory/BasicFactories.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/type/BasicFeatureTypes.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/styling/BasicLineStyle.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/styling/BasicPolygonStyle.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/BatchFeatureEvent.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/temporal/BeforeImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/temporal/BeginsImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/temporal/BegunByImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/BetweenFilterImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/spatial/BeyondImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/BinaryComparisonAbstract.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/BinaryLogicAbstract.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/temporal/BinaryTemporalOperatorImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/util/BooleanConverterFactory.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/visitor/BoundsVisitor.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/collection/BridgeIterator.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/crs/CRSAuthoritySpi.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/geometry/coordinatesequence/CSBuilder.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/geometry/jts/coordinatesequence/CSBuilder.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/geometry/coordinatesequence/CSBuilderFactory.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/geometry/jts/coordinatesequence/CSBuilderFactory.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/visitor/CalcResult.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/visitor/CalcUtil.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/ows/Capabilities.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/Capabilities.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/visitor/CapabilitiesFilterSplitter.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/CartesianDistanceFilter.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/visitor/Categorize.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/CategorizeFunction.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/styling/ChannelSelectionImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/util/CharsetConverterFactory.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/ClassificationFunction.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/Classifier.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/ClassifyFunction.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/visitor/ClientTransactionAccessor.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/util/CollectionConverterFactory.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/collection/CollectionDataStore.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/CollectionFeatureMemberFilterVisitor.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/CollectionFeatureReader.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/memory/CollectionSource.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/visitor/CollectionUtil.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/Collection_AverageFunction.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/Collection_BoundsFunction.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/Collection_CountFunction.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/Collection_MaxFunction.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/Collection_MedianFunction.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/Collection_MinFunction.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/Collection_NearestFunction.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/Collection_SumFunction.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/Collection_UniqueFunction.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/styling/ColorMapEntryImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/styling/ColorMapImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/styling/ColorReplacementImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/util/CommonsConverterFactory.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/CompareFilterImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/capability/ComparisonOperatorsImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/util/ComplexAttributeConverterFactory.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/ComplexAttributeImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/ComplexFeatureBuilder.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/type/ComplexTypeImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/sort/CompositeComparator.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/string/ConcatenateFunction.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/spatial/ContainsImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/styling/ContrastEnhancementImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/geometry/jts/coordinatesequence/CoordinateSequences.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/gml/producer/CoordinateWriter.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/visitor/CountVisitor.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/spatial/CrossesImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/spatial/DWithinImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/DataAccessFinder.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/store/DataFeatureCollection.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/DataStoreAdaptor.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/DataStoreFinder.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/DataUtilities.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/type/DateUtil.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/geometry/jts/Decimator.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/DecoratingFeature.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/collection/DecoratingFeatureCollection.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/collection/DecoratingFeatureIterator.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/collection/DecoratingSimpleFeatureCollection.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/collection/DecoratingSimpleFeatureIterator.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/spatial/DefaultCRSFilterVisitor.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/geometry/coordinatesequence/DefaultCSBuilder.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/geometry/jts/coordinatesequence/DefaultCSBuilder.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/temporal/reference/DefaultCalendar.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/temporal/object/DefaultCalendarDate.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/temporal/reference/DefaultCalendarEra.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/temporal/reference/DefaultClock.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/temporal/object/DefaultClockTime.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/temporal/object/DefaultDateAndTime.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/temporal/object/DefaultDuration.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/DefaultExpression.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/visitor/DefaultExpressionVisitor.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/DefaultFIDReader.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/DefaultFeatureCollection.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/DefaultFeatureCollections.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/DefaultFeatureLock.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/DefaultFeatureLockFactory.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/DefaultFeatureReader.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/DefaultFeatureResults.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/visitor/DefaultFilterVisitor.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/DefaultFunctionFactory.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/temporal/object/DefaultInstant.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/temporal/object/DefaultIntervalLength.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/temporal/object/DefaultJulianDate.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/temporal/reference/DefaultOrdinalEra.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/temporal/object/DefaultOrdinalPosition.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/temporal/reference/DefaultOrdinalReferenceSystem.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/temporal/object/DefaultPeriod.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/temporal/object/DefaultPeriodDuration.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/temporal/object/DefaultPosition.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/util/DefaultProgressListener.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/DefaultQuery.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/DefaultRepository.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/DefaultResourceInfo.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/styling/DefaultResourceLocator.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/DefaultServiceInfo.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/temporal/object/DefaultTemporalCoordinate.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/temporal/reference/DefaultTemporalCoordinateSystem.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/temporal/object/DefaultTemporalGeometricPrimitive.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/temporal/object/DefaultTemporalObject.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/temporal/object/DefaultTemporalPosition.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/temporal/object/DefaultTemporalPrimitive.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/temporal/reference/DefaultTemporalReferenceSystem.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/DefaultTransaction.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/view/DefaultView.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/collection/DelegateFeatureIterator.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/collection/DelegateFeatureReader.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/ows/DelegateHTTPClient.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/ows/DelegateHTTPResponse.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/util/DelegateProgressListener.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/collection/DelegateSimpleFeatureIterator.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/simple/DelegateSimpleFeatureReader.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/DelegatingFeatureReader.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/DelegatingFeatureWriter.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/simple/DelegatingSimpleFeatureWriter.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/styling/DescriptionImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/type/DescriptorValidator.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/type/Descriptors.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/Diff.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/DiffFeatureReader.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/DiffFeatureWriter.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/expression/DirectPropertyAccessorFactory.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/spatial/DisjointImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/styling/DisplacementImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/expression/DivideImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/styling/visitor/DpiRescaleStyleVisitor.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/visitor/DuplicatingFilterVisitor.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/styling/visitor/DuplicatingStyleVisitor.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/temporal/DuringImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/store/EmptyFeatureCollection.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/EmptyFeatureReader.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/EmptyFeatureWriter.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/store/EmptyIterator.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/geometry/jts/EmptyIterator.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/simple/EmptySimpleFeatureReader.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/temporal/EndedByImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/temporal/EndsImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/util/EnumerationConverterFactory.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/EnvFunction.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/EqualIntervalFunction.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/spatial/EqualsImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/ExplicitClassifier.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/expression/ExpressionAbstract.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/ExpressionDOMParser.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/ExpressionSAXParser.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/visitor/ExpressionTypeVisitor.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/styling/ExtentImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/styling/ExternalGraphicImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/styling/ExternalMarkImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/visitor/ExtractBoundsFilterVisitor.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/FIDFeatureReader.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/FIDReader.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/geometry/jts/FactoryFinder.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/FallbackFunction.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/visitor/FeatureAttributeVisitor.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/sort/FeatureBlockReader.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/FeatureBuilder.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/visitor/FeatureCalc.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/FeatureCollectionIteration.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/FeatureComparators.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/FeatureFactory.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/identity/FeatureIdImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/identity/FeatureIdVersionedImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/FeatureImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/FeatureImplUtils.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/FeatureIndex.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/collection/FeatureIteratorImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/store/FeatureIteratorIterator.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/FeatureLockException.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/sort/FeatureReaderFeatureIterator.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/store/FeatureReaderFeatureIterator.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/FeatureReaderIterator.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/gml/producer/FeatureTransformer.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/styling/FeatureTypeConstraintImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/type/FeatureTypeFactoryImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/type/FeatureTypeImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/styling/FeatureTypeStyleImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/gml/producer/FeatureTypeTransformer.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/FeatureTypes.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/store/FeatureWriterFeatureIterator.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/store/FeatureWriterIterator.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/sort/FidComparator.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/FidFilterImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/FileDataStoreFinder.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/styling/FillImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/FillOurImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/FilterAbstract.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/FilterAttributeExtractor.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/FilterCapabilities.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/capability/FilterCapabilitiesImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/FilterDOMParser.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/FilterFactoryCreationException.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/FilterFactoryImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/FilterFilter.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_Convert.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/math/FilterFunction_IEEEremainder.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/math/FilterFunction_abs.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/math/FilterFunction_abs_2.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/math/FilterFunction_abs_3.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/math/FilterFunction_abs_4.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/math/FilterFunction_acos.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_area.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/math/FilterFunction_asin.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/math/FilterFunction_atan.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/math/FilterFunction_atan2.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_between.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_boundary.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_boundaryDimension.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_buffer.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_bufferWithSegments.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/math/FilterFunction_ceil.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_centroid.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_contains.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_convexHull.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/math/FilterFunction_cos.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_crosses.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_dateFormat.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_dateParse.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_difference.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_dimension.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_disjoint.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_disjoint3D.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_distance.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_distance3D.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_double2bool.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_endAngle.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_endPoint.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_envelope.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_equalTo.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_equalsExact.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_equalsExactTolerance.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/math/FilterFunction_exp.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_exteriorRing.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/math/FilterFunction_floor.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_geomFromWKT.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_geomLength.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_geometryType.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_getGeometryN.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_getX.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_getY.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_getZ.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_greaterEqualThan.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_greaterThan.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_if_then_else.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_in10.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_in2.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_in3.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_in4.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_in5.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_in6.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_in7.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_in8.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_in9.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_int2bbool.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_int2ddouble.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_interiorPoint.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_interiorRingN.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_intersection.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_intersects.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_intersects3D.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_isClosed.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_isEmpty.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_isLike.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_isNull.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_isRing.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_isSimple.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_isValid.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_isWithinDistance.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_isWithinDistance3D.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_isometric.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_lessEqualThan.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_lessThan.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_list.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/math/FilterFunction_log.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/math/FilterFunction_max.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/math/FilterFunction_max_2.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/math/FilterFunction_max_3.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/math/FilterFunction_max_4.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/math/FilterFunction_min.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/math/FilterFunction_min_2.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/math/FilterFunction_min_3.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/math/FilterFunction_min_4.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_minimumCircle.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_minimumDiameter.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_minimumRectangle.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_not.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_notEqualTo.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_numGeometries.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_numInteriorRing.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_numPoints.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_numberFormat.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_numberFormat2.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_octagonalEnvelope.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_offset.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_overlaps.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_parseBoolean.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_parseDouble.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_parseInt.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_parseLong.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_pointN.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/math/FilterFunction_pow.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_property.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/math/FilterFunction_random.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_relate.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_relatePattern.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/math/FilterFunction_rint.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/math/FilterFunction_round.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_roundDouble.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/math/FilterFunction_round_2.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_setCRS.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/math/FilterFunction_sin.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/math/FilterFunction_sqrt.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_startAngle.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_startPoint.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_strCapitalize.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_strConcat.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_strEndsWith.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_strEqualsIgnoreCase.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_strIndexOf.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_strLastIndexOf.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_strLength.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_strMatches.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_strPosition.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_strReplace.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_strStartsWith.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_strSubstring.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_strSubstringStart.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_strToLowerCase.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_strToUpperCase.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_strTrim.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_strTrim2.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_symDifference.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/math/FilterFunction_tan.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/math/FilterFunction_toDegrees.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/math/FilterFunction_toRadians.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_toWKT.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_touches.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_union.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_vertices.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/FilterFunction_within.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/FilterHandler.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/FilterNameTypeMapping.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/FilterSAXParser.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/FilterTransformer.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/visitor/FilterVisitorSupport.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/collection/FilteredIterator.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/store/FilteringFeatureCollection.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/store/FilteringFeatureIterator.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/FilteringFeatureReader.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/FilteringFeatureWriter.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/FilteringIteration.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/store/FilteringIterator.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/collection/FilteringSimpleFeatureCollection.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/collection/FilteringSimpleFeatureIterator.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/simple/FilteringSimpleFeatureReader.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/Filters.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/visitor/FixBBOXFilterVisitor.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/styling/FontImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/crs/ForceCoordinateSystemFeatureReader.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/crs/ForceCoordinateSystemFeatureResults.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/crs/ForceCoordinateSystemIterator.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/FunctionExpressionImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/FunctionFinder.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/FunctionImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/capability/FunctionNameImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/capability/FunctionsImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/gml/GMLException.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/gml/GMLFilterDocument.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/gml/GMLFilterFeature.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/gml/GMLFilterGeometry.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/gml/GMLHandlerFeature.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/gml/GMLHandlerGeometry.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/gml/GMLHandlerJTS.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/gml/GMLReceiver.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/gml/producer/GMLUtils.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/geometry/jts/GeomCollectionIterator.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/GeometryAttributeImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/geometry/jts/GeometryBuilder.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/geometry/jts/GeometryClipper.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/geometry/jts/GeometryCollector.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/util/GeometryConverterFactory.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/type/GeometryDescriptorImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/GeometryFilterImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/GeometryTransformation.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/GeometryTransformationVisitor.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/gml/producer/GeometryTransformer.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/util/GeometryTypeConverterFactory.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/type/GeometryTypeImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/ows/GetCapabilitiesRequest.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/ows/GetCapabilitiesResponse.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/identity/GmlObjectIdImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/styling/GraphicImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/ows/HTTPClient.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/ows/HTTPResponse.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/styling/HaloImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/IDFunction.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/capability/IdCapabilitiesImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/visitor/IdCollectorFilterVisitor.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/visitor/IdFinderFilterVisitor.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/styling/ImageOutlineImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/geometry/coordinatesequence/InPlaceCoordinateSequenceTransformer.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/geometry/jts/coordinatesequence/InPlaceCoordinateSequenceTransformer.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/InProcessLockingManager.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/expression/InternalVolatileFunction.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/visitor/Interpolate.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/InterpolateFunction.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/visitor/InterpolationPoint.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/spatial/IntersectsImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/IsBetweenImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/IsEqualsToImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/visitor/IsFullySupportedFilterVisitor.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/IsGreaterThanImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/IsGreaterThanOrEqualToImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/IsLessThenImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/IsLessThenOrEqualToImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/IsNilImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/IsNotEqualToImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/IsNullImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/visitor/IsStaticExpressionVisitor.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/visitor/IsSupportedFilterVisitor.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/geometry/jts/JTSFactoryFinder.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/JenksNaturalBreaksFunction.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/JoiningAttributeReader.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/JoiningAttributeWriter.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/styling/LayerFeatureConstraintsImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/LengthFunction.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/LenientFeatureFactoryImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/LikeFilterImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/LikeToRegexConverter.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/visitor/LimitingVisitor.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/geometry/jts/LineIterator.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/geometry/jts/LineIterator2.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/styling/LinePlacementImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/styling/LineSymbolizerImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/collection/ListFeatureCollection.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/util/ListenerList.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/geometry/jts/LiteCoordinateSequence.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/geometry/jts/LiteCoordinateSequenceFactory.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/geometry/jts/LiteShape.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/geometry/jts/LiteShape2.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/visitor/LiteralDemultiplyingFilterVisitor.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/LiteralExpressionImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/ows/LoggingHTTPClient.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/LogicFilterImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/LogicSAXParser.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/MalformedFilterException.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/MapInfoFileReader.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/visitor/MapItem.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/styling/MarkImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/MathExpressionImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/MaxFeatureReader.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/store/MaxFeaturesFeatureCollection.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/store/MaxFeaturesIterator.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/collection/MaxFeaturesSimpleFeatureIterator.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/MaxFunction.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/collection/MaxSimpleFeatureCollection.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/visitor/MaxVisitor.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/styling/visitor/Measure.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/util/MeasureConverterFactory.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/visitor/MedianVisitor.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/temporal/MeetsImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/sort/MergeSortDumper.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/sort/MergeSortReader.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/temporal/MetByImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/visitor/Method.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/MinFunction.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/visitor/MinVisitor.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/visitor/Mode.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/math/ModuloFunction.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/MultiCompareFilterImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/visitor/MultiRange.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/expression/MultiplyImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/model/osmbonuspack/overlays/MyKmlStyler.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/util/NameConverterFactory.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/styling/NamedLayerImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/styling/NamedStyleImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/visitor/NearestVisitor.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/store/NoContentIterator.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/NotImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/visitor/NullExpressionVisitor.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/NullFilterImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/visitor/NullFilterVisitor.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/util/NullProgressListener.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/expression/NullPropertyAccessorFactory.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/util/NumericConverterFactory.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/ows/OperationType.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/capability/OperatorImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/visitor/OperatorNameFilterVisitor.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/OrImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/geometry/jts/Ordinates.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/styling/OtherTextImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/temporal/OverlappedByImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/spatial/OverlapsImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/geometry/coordinatesequence/PackedCSBuilder.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/geometry/jts/coordinatesequence/PackedCSBuilder.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/geometry/jts/PackedLineIterator.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/java/br/org/funcate/mobile/sld/ParseSDLException.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/math/PiFunction.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/geometry/jts/PointIterator.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/styling/PointPlacementImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/styling/PointSymbolizerImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/geometry/jts/PolygonIterator.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/PolygonSymbolizerImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/styling/PolygonSymbolizerImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/visitor/PostPreProcessFilterSplittingVisitor.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/geometry/jts/PreciseCoordinateSequenceTransformer.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/PrjFileReader.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/type/ProfileImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/expression/PropertyAccessors.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/sort/PropertyComparator.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/type/PropertyDescriptorImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/PropertyImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/visitor/PropertyNameResolvingVisitor.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/type/PropertyTypeImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/util/QNameConverterFactory.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/QuantileFunction.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/visitor/QuantileListVisitor.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/visitor/RangeCombiner.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/RangedClassifier.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/styling/RasterSymbolizerImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/ReTypeFeatureReader.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/store/ReTypingFeatureCollection.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/store/ReTypingFeatureIterator.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/store/ReTypingIterator.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/type/ReadonlyAttributeDecorator.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/visitor/Recode.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/RecodeFunction.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/styling/RemoteOWSImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/RenderingTransformation.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/crs/ReprojectFeatureIterator.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/crs/ReprojectFeatureReader.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/crs/ReprojectFeatureResults.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/store/ReprojectingFeatureCollection.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/store/ReprojectingFeatureIterator.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/spatial/ReprojectingFilterVisitor.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/store/ReprojectingIterator.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/ows/Request.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/styling/visitor/RescaleStyleVisitor.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/styling/visitor/RescaleToPixelsFunction.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/styling/visitor/RescalingMode.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/identity/ResourceIdImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/ows/Response.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/styling/RuleImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/styling/SLD.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/styling/SLDInlineFeatureParser.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/SLDParser.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/styling/SLDParser.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/java/br/org/funcate/mobile/sld/SLDParser.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/styling/SLDTransformer.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/capability/ScalarCapabilitiesImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/Schema.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/type/SchemaImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/SchemaNotFoundException.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/renderer/ScreenMap.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/styling/SelectedChannelTypeImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/ows/Service.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/ows/ServiceException.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/ows/ServiceExceptionParser.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/styling/ShadedReliefImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/simple/SimpleFeatureBuilder.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/SimpleFeatureCollectionBridge.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/simple/SimpleFeatureImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/collection/SimpleFeatureIteratorImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/SimpleFeatureLockingBridge.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/expression/SimpleFeaturePropertyAccessorFactory.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/SimpleFeatureReaderBrige.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/SimpleFeatureSourceBridge.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/SimpleFeatureStoreBridge.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/simple/SimpleFeatureTypeBuilder.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/simple/SimpleFeatureTypeImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/ows/SimpleHttpClient.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/simple/SimpleSchema.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/visitor/SimplifyingFilterVisitor.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/SortByImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/sort/SortedFeatureIterator.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/sort/SortedFeatureReader.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/collection/SortedSimpleFeatureCollection.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/capability/SpatialCapabiltiesImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/visitor/SpatialFilterVisitor.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/collection/SpatialIndexFeatureCollection.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/collection/SpatialIndexFeatureSource.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/capability/SpatialOperatorImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/capability/SpatialOperatorsImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/ows/Specification.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/StandardDeviationFunction.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/visitor/StandardDeviationVisitor.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/StaticGeometry.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/string/StringInFunction.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/StringTemplateFunction.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/styling/StrokeImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/StrokeOurImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/styling/StyleBuilder.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/model/db/dao/StyleDAO.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/model/exception/StyleException.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/styling/StyleFactoryCreationException.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/styling/StyleFactoryFinder.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/styling/StyleFactoryImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/styling/StyleFactoryImpl2.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/StyleFactoryOurImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/styling/StyleImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/model/service/StyleService.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/styling/StyledLayerDescriptorImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/styling/StyledLayerImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/collection/SubFeatureCollection.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/collection/SubFeatureList.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/gml/SubHandler.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/gml/SubHandlerBox.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/gml/SubHandlerFactory.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/gml/SubHandlerLineString.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/gml/SubHandlerLinearRing.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/gml/SubHandlerMulti.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/gml/SubHandlerPoint.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/gml/SubHandlerPolygon.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/util/SubProgressListener.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/expression/SubtractImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/visitor/SumVisitor.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/temporal/TContainsImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/temporal/TEqualsImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/temporal/TOverlapsImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/capability/TemporalCapabilitiesImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/temporal/TemporalConverterFactory.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/util/TemporalConverterFactory.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/capability/TemporalOperatorImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/capability/TemporalOperatorsImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/gml/TestHandler.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/styling/TextSymbolizerImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/expression/ThisPropertyAccessorFactory.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/visitor/ThreshholdsBelongTo.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/spatial/TouchesImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/TransactionStateDiff.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/geometry/jts/TransformedShape.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/xml/transform/TransformerBase.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/xml/transform/Translator.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/collection/TreeSetFeatureCollection.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/TypeBuilder.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/type/Types.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/util/URConverterFactory.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/UniqueIntervalFunction.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/visitor/UniqueVisitor.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/styling/UomOgcMapping.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/styling/visitor/UomRescaleHelper.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/styling/visitor/UomRescaleStyleVisitor.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/styling/UserLayerImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/temporal/object/Utils.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/util/UuidConverterFactory.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/ValidatingFeatureFactoryImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/styling/VendorSymbolizerImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/geometry/text/WKTParser.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/geometry/jts/WKTReader2.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/spatial/WithinImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/xml/XMLUtils.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/build.gradle" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/gt_api_13_2.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/gt_main_13_2.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/gt_metadata_13_2.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/gt_opengis_13_2.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/gt_xsd_core_13_2.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/gt_xsd_sld_13_2.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/jai_core_1_1_3.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/jts_1_13.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/multidex_1_0_0.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/collection/package-info.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/filter/function/string/package-info.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/package.html" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/data/crs/package.html" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/feature/collection/package.html" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/gml/package.html" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/ows/package.html" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/geotools/xml/package.html" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/proguard-rules.pro" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sldparser/src/main/res/values/strings.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/assets/sld/terraview-sld.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/xerces.xml" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/src/main/res/drawable-hdpi/zoom_extent.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/src/main/res/drawable-ldpi/zoom_extent.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/src/main/res/drawable-mdpi/zoom_extent.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/src/main/res/drawable-xhdpi/zoom_extent.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/src/main/res/drawable-xxhdpi/zoom_extent.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/libs/jts-1.8.jar" afterPath="" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/libs/gt-opengis-12.2.jar" afterPath="$PROJECT_DIR$/sldparser/libs/gt-opengis-13.2.jar" />
+    <list default="true" id="7d60bba6-fd62-4a72-bcc9-a7f210e0ce03" name="Rejected commit: Default" comment="Merge">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Java-OpenMobility" afterPath="$PROJECT_DIR$/Java-OpenMobility" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Java-OpenMobility/JGPKG/src/main/java/br/org/funcate/geopackage/AndroidSQLDatabase.java" afterPath="$PROJECT_DIR$/Java-OpenMobility/JGPKG/src/main/java/br/org/funcate/geopackage/AndroidSQLDatabase.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/model/tilesource/AppGeoPackageService.java" afterPath="$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/model/tilesource/AppGeoPackageService.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/model/db/ApplicationDatabase.java" afterPath="$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/model/db/ApplicationDatabase.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Java-OpenMobility/AugTech_GeoAPI/src/main/java/com/augtech/geoapi/geopackage/DateUtil.java" afterPath="$PROJECT_DIR$/Java-OpenMobility/AugTech_GeoAPI/src/main/java/com/augtech/geoapi/geopackage/DateUtil.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Java-OpenMobility/AugTech_GeoAPI/src/main/java/com/augtech/geoapi/geopackage/GeoPackage.java" afterPath="$PROJECT_DIR$/Java-OpenMobility/AugTech_GeoAPI/src/main/java/com/augtech/geoapi/geopackage/GeoPackage.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Java-OpenMobility/JGPKG/src/main/java/br/org/funcate/jgpkg/service/GeoPackageService.java" afterPath="$PROJECT_DIR$/Java-OpenMobility/JGPKG/src/main/java/br/org/funcate/jgpkg/service/GeoPackageService.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/model/gpkg/objects/GpkgLayer.java" afterPath="$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/model/gpkg/objects/GpkgLayer.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Java-OpenMobility/AugTech_GeoAPI/src/main/java/com/augtech/geoapi/geopackage/GpkgTable.java" afterPath="$PROJECT_DIR$/Java-OpenMobility/AugTech_GeoAPI/src/main/java/com/augtech/geoapi/geopackage/GpkgTable.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/model/service/LayersService.java" afterPath="$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/model/service/LayersService.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/controller/activity/MainActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/controller/activity/MainActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/controller/activity/MenuMapController.java" afterPath="$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/controller/activity/MenuMapController.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/model/db/dao/ProjectDAO.java" afterPath="$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/model/db/dao/ProjectDAO.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/model/db/ProjectDatabase.java" afterPath="$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/model/db/ProjectDatabase.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/model/db/dao/SettingsDAO.java" afterPath="$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/model/db/dao/SettingsDAO.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Java-OpenMobility/JGPKG/src/main/java/br/org/funcate/extended/model/TMConfigEditableLayer.java" afterPath="$PROJECT_DIR$/Java-OpenMobility/JGPKG/src/main/java/br/org/funcate/extended/model/TMConfigEditableLayer.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/view/TreeViewAdapter.java" afterPath="$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/view/TreeViewAdapter.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/menu/action_bar.xml" afterPath="$PROJECT_DIR$/app/src/main/res/menu/action_bar.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/app.iml" afterPath="$PROJECT_DIR$/app/app.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build.gradle" afterPath="$PROJECT_DIR$/build.gradle" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/build.gradle" afterPath="$PROJECT_DIR$/app/build.gradle" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout/child_item_base_layers.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/child_item_base_layers.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout/child_item_gathering_layers.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/child_item_gathering_layers.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout/child_item_layers.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/child_item_layers.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/gradle.xml" afterPath="$PROJECT_DIR$/.idea/gradle.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/modules.xml" afterPath="$PROJECT_DIR$/.idea/modules.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/settings.gradle" afterPath="$PROJECT_DIR$/settings.gradle" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="TerraMobile.iws" />
@@ -1016,16 +205,6 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="action_bar.xml" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/app/src/main/res/menu/action_bar.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.30442178">
-              <caret line="26" column="0" selection-start-line="26" selection-start-column="0" selection-end-line="26" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="MainActivity.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/controller/activity/MainActivity.java">
           <provider selected="true" editor-type-id="text-editor">
@@ -1061,19 +240,17 @@
         <entry file="file://$PROJECT_DIR$/Java-OpenMobility/JGPKG/src/main/java/br/org/funcate/jgpkg/service/GeoPackageService.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="260" column="33" selection-start-line="260" selection-start-column="23" selection-end-line="260" selection-end-column="40" />
-              <folding>
-                <element signature="imports" expanded="false" />
-              </folding>
+              <caret line="260" column="46" selection-start-line="260" selection-start-column="46" selection-end-line="260" selection-end-column="46" />
+              <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="GeoPackage.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="GeoPackage.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Java-OpenMobility/AugTech_GeoAPI/src/main/java/com/augtech/geoapi/geopackage/GeoPackage.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="1339" column="35" selection-start-line="1339" selection-start-column="35" selection-end-line="1339" selection-end-column="35" />
+            <state vertical-scroll-proportion="0.45971563">
+              <caret line="1384" column="32" selection-start-line="1384" selection-start-column="32" selection-end-line="1384" selection-end-column="32" />
               <folding>
                 <element signature="e#16165#16180#0" expanded="true" />
                 <element signature="e#19634#19649#0" expanded="true" />
@@ -1126,7 +303,7 @@
   </component>
   <component name="Git.Settings">
     <option name="ROOT_SYNC" value="SYNC" />
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/Java-OpenMobility" />
   </component>
   <component name="GradleLocalSettings">
     <option name="tasksExpandState">
@@ -5006,11 +4183,11 @@
         <option value="$PROJECT_DIR$/dynamicforms/src/main/java/br/org/funcate/dynamicforms/FragmentDetailActivity.java" />
         <option value="$PROJECT_DIR$/dynamicforms/src/main/java/br/org/funcate/dynamicforms/views/GPictureView.java" />
         <option value="$PROJECT_DIR$/Java-OpenMobility/JGPKG/src/main/java/br/org/funcate/jgpkg/service/GeoPackageService.java" />
-        <option value="$PROJECT_DIR$/Java-OpenMobility/AugTech_GeoAPI/src/main/java/com/augtech/geoapi/geopackage/GeoPackage.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/model/tilesource/AppGeoPackageService.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/model/gpkg/objects/GpkgLayer.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/controller/activity/MainActivity.java" />
         <option value="$PROJECT_DIR$/app/src/main/res/menu/action_bar.xml" />
+        <option value="$PROJECT_DIR$/Java-OpenMobility/AugTech_GeoAPI/src/main/java/com/augtech/geoapi/geopackage/GeoPackage.java" />
       </list>
     </option>
   </component>
@@ -5705,7 +4882,13 @@
       <option name="project" value="LOCAL" />
       <updated>1438884502890</updated>
     </task>
-    <option name="localTasksCounter" value="49" />
+    <task id="LOCAL-00049" summary="Merge">
+      <created>1440163765985</created>
+      <option name="number" value="00049" />
+      <option name="project" value="LOCAL" />
+      <updated>1440163765985</updated>
+    </task>
+    <option name="localTasksCounter" value="50" />
     <servers />
   </component>
   <component name="TodoView">
@@ -5719,13 +4902,13 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1920" height="1056" extended-state="6" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.29925454" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.31463414" sideWeight="0.49347702" order="15" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3242059" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.27491784" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Captures" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3290735" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.61336255" sideWeight="0.36794463" order="8" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="true" content_ui="tabs" />
@@ -5783,7 +4966,6 @@
     <MESSAGE value="Implemented, no final code, to store data to database using SimpleFeature instance." />
     <MESSAGE value="Insert new types of the geometry columns, see spec OGC 12-128r10 on Annex E." />
     <MESSAGE value="Changed order on insert bookmark on map in gathering data operation.&#10;Preparing insertion of the selected vector layer from TreeView on to map.&#10;Instantiate and set attributes on to SimpleFeature. Do not work correctly yet." />
-    <MESSAGE value="Merge" />
     <MESSAGE value="Create model and an example of the field work collect layer." />
     <MESSAGE value="Adding &quot;drop table&quot; on sql script." />
     <MESSAGE value="Alter icons of the save and cancel buttons to native icons and format.&#10;Auto update project files executed by IDE." />
@@ -5794,7 +4976,8 @@
     <MESSAGE value="Fix #25" />
     <MESSAGE value="Fix #26&#10;Map icons was changed" />
     <MESSAGE value="Refactor: moved the GPSService class to other package." />
-    <option name="LAST_COMMIT_MESSAGE" value="Refactor: moved the GPSService class to other package." />
+    <MESSAGE value="Merge" />
+    <option name="LAST_COMMIT_MESSAGE" value="Merge" />
     <option name="FILE_HISTORY_SPLITTER_PROPORTION" value="0.81049067" />
   </component>
   <component name="XDebuggerManager">
@@ -6258,16 +5441,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Java-OpenMobility/JGPKG/src/main/java/br/org/funcate/jgpkg/service/GeoPackageService.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="260" column="33" selection-start-line="260" selection-start-column="23" selection-end-line="260" selection-end-column="40" />
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/dynamicforms/src/main/java/br/org/funcate/dynamicforms/PictureActivity.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -6304,39 +5477,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Java-OpenMobility/AugTech_GeoAPI/src/main/java/com/augtech/geoapi/geopackage/GeoPackage.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="1339" column="35" selection-start-line="1339" selection-start-column="35" selection-end-line="1339" selection-end-column="35" />
-          <folding>
-            <element signature="e#16165#16180#0" expanded="true" />
-            <element signature="e#19634#19649#0" expanded="true" />
-            <element signature="e#26046#26061#0" expanded="true" />
-            <element signature="e#30357#30372#0" expanded="true" />
-            <element signature="e#46252#46279#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/model/tilesource/AppGeoPackageService.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="181" column="0" selection-start-line="181" selection-start-column="0" selection-end-line="181" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/model/gpkg/objects/GpkgLayer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="35" column="0" selection-start-line="35" selection-start-column="0" selection-end-line="35" selection-end-column="0" />
-          <folding>
-            <element signature="e#2713#2714#0" expanded="true" />
-            <element signature="e#2761#2762#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/controller/activity/MainActivity.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -6357,6 +5497,47 @@
         <state vertical-scroll-proportion="0.30442178">
           <caret line="26" column="0" selection-start-line="26" selection-start-column="0" selection-end-line="26" selection-end-column="0" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/model/gpkg/objects/GpkgLayer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="35" column="0" selection-start-line="35" selection-start-column="0" selection-end-line="35" selection-end-column="0" />
+          <folding>
+            <element signature="e#2713#2714#0" expanded="true" />
+            <element signature="e#2761#2762#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/br/org/funcate/terramobile/model/tilesource/AppGeoPackageService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="181" column="0" selection-start-line="181" selection-start-column="0" selection-end-line="181" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Java-OpenMobility/JGPKG/src/main/java/br/org/funcate/jgpkg/service/GeoPackageService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="260" column="46" selection-start-line="260" selection-start-column="46" selection-end-line="260" selection-end-column="46" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Java-OpenMobility/AugTech_GeoAPI/src/main/java/com/augtech/geoapi/geopackage/GeoPackage.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.45971563">
+          <caret line="1384" column="32" selection-start-line="1384" selection-start-column="32" selection-end-line="1384" selection-end-column="32" />
+          <folding>
+            <element signature="e#16165#16180#0" expanded="true" />
+            <element signature="e#19634#19649#0" expanded="true" />
+            <element signature="e#26046#26061#0" expanded="true" />
+            <element signature="e#30357#30372#0" expanded="true" />
+            <element signature="e#46252#46279#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
