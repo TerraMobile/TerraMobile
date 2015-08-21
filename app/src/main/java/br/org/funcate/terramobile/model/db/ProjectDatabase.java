@@ -31,7 +31,7 @@ public class ProjectDatabase extends DatabaseHelper {
     {
         StringBuilder sBCreate = new StringBuilder();
         sBCreate.append("create table if not exists TM_STYLE (");
-        sBCreate.append("LAYER_NAME text primary key AUTOINCREMENT not null,");
+        sBCreate.append("LAYER_NAME text primary key not null,");
         sBCreate.append("SLD_XML text);");
 
         this.getWritableDatabase().execSQL(sBCreate.toString());
