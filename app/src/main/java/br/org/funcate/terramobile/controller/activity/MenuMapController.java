@@ -4,9 +4,6 @@ import android.content.Context;
 import android.graphics.Color;
 import android.widget.Toast;
 
-import com.augtech.geoapi.geometry.BoundingBoxImpl;
-
-import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.geometry.BoundingBox;
 import org.osmdroid.ResourceProxy;
 import org.osmdroid.bonuspack.kml.KmlDocument;
@@ -19,33 +16,26 @@ import org.osmdroid.tileprovider.tilesource.XYTileSource;
 import org.osmdroid.tileprovider.util.SimpleInvalidationHandler;
 import org.osmdroid.tileprovider.util.SimpleRegisterReceiver;
 import org.osmdroid.util.BoundingBoxE6;
-import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Overlay;
 import org.osmdroid.views.overlay.TilesOverlay;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
 
-import br.org.funcate.jgpkg.service.GeoPackageService;
 import br.org.funcate.terramobile.R;
-import br.org.funcate.terramobile.configuration.ViewContextParameters;
 import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
 import br.org.funcate.terramobile.model.exception.LowMemoryException;
 import br.org.funcate.terramobile.model.exception.StyleException;
 import br.org.funcate.terramobile.model.exception.TerraMobileException;
 import br.org.funcate.terramobile.model.geomsource.SFSLayer;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
-import br.org.funcate.terramobile.model.osmbonuspack.overlays.MyKmlStyler;
+import br.org.funcate.terramobile.model.osmbonuspack.overlays.SFSOverlay;
 import br.org.funcate.terramobile.model.service.LayersService;
 import br.org.funcate.terramobile.model.service.StyleService;
-import br.org.funcate.terramobile.model.tilesource.AppGeoPackageService;
+import br.org.funcate.terramobile.model.service.AppGeoPackageService;
 import br.org.funcate.terramobile.model.tilesource.MapTileGeoPackageProvider;
 import br.org.funcate.terramobile.model.tilesource.MapTileProviderArrayGeoPackage;
 import br.org.funcate.terramobile.util.GeoUtil;
-import br.org.funcate.terramobile.util.Util;
 
 /**
  * Created by Andre Carvalho on 27/04/15.
@@ -65,10 +55,15 @@ public class MenuMapController {
 
     private void addBaseLayer(GpkgLayer child) {
 
+
+
         if(child.getGeoPackage().isGPKGValid(false)) {
             if(child.getOsmOverLayer()==null)
             {
                 MapView mapView = (MapView) ((MainActivity) context).findViewById(R.id.mapview);
+
+
+
 
                 final MapTileProviderBasic tileProvider = new MapTileProviderBasic(context);
 
