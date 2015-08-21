@@ -73,6 +73,7 @@
     <string name="title_activity_download_task">DownloadTask</string>
     <string name="read_features_exception">Unable to read layer features.</string>
     <string name="read_features_out_of_memory_exception">Unable to read layer features, due to memory limitation.</string>
+    <string name="feature_not_found">Feature not found on selected editable layer.</string>
     <string name="unexpected_exception">Unexpected error.</string>
     <string name="settings_insert_exception">Unable to insert settings on database.</string>
     <string name="settings_update_exception">Unable to update settings on database.</string>

@@ -22,6 +22,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.text.format.DateUtils;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,10 +35,21 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.sql.SQLData;
+import java.sql.SQLException;
+import java.sql.SQLInput;
+import java.sql.SQLOutput;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import br.org.funcate.dynamicforms.constraints.Constraints;
 import br.org.funcate.dynamicforms.views.GMapView;
@@ -82,6 +94,7 @@ public class FragmentDetail extends Fragment {
     private double longitude;
     private double latitude;
     private String workingDirectory;
+    private Bundle existingFeatureData;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -103,11 +116,11 @@ public class FragmentDetail extends Fragment {
         try {
             FragmentActivity activity = getActivity();
             if (selectedFormName == null || sectionObject == null) {
-                FragmentList listFragment = (FragmentList) getFragmentManager().findFragmentById(R.id.listFragment);
-                if (listFragment != null) {
-                    selectedFormName = listFragment.getSelectedItemName();
-                    sectionObject = listFragment.getSectionObject();
-                    noteId = listFragment.getNoteId();
+                FragmentList fragmentList = (FragmentList) getFragmentManager().findFragmentById(R.id.listFragment);
+                if (fragmentList != null) {
+                    selectedFormName = fragmentList.getSelectedItemName();
+                    sectionObject = fragmentList.getSectionObject();
+                    noteId = fragmentList.getNoteId();
 /*                    longitude = listFragment.getLongitude();
                     latitude = listFragment.getLatitude();*/
                 } else {
@@ -118,6 +131,7 @@ public class FragmentDetail extends Fragment {
                         sectionObject = fragmentDetailActivity.getSectionObject();
                         noteId = fragmentDetailActivity.getNoteId();
                         workingDirectory = fragmentDetailActivity.getWorkingDirectory();
+                        existingFeatureData = fragmentDetailActivity.getFeatureData();
 /*                        longitude = fragmentDetailActivity.getLongitude();
                         latitude = fragmentDetailActivity.getLatitude();*/
                     }
@@ -146,10 +160,6 @@ public class FragmentDetail extends Fragment {
                     if (jsonObject.has(TAG_LABEL))
                         label = jsonObject.getString(TAG_LABEL).trim();
 
-                    String value = ""; //$NON-NLS-1$
-                    if (jsonObject.has(TAG_VALUE)) {
-                        value = jsonObject.getString(TAG_VALUE).trim();
-                    }
                     String type = FormUtilities.TYPE_STRING;
                     if (jsonObject.has(TAG_TYPE)) {
                         type = jsonObject.getString(TAG_TYPE).trim();
@@ -166,23 +176,36 @@ public class FragmentDetail extends Fragment {
                     key2ConstraintsMap.put(key, constraints);
                     String constraintDescription = constraints.getDescription();
 
+                    Object o;
                     GView addedView = null;
                     if (type.equals(TYPE_STRING)) {
+                        o = getValueFromExtras(jsonObject, key);
+                        String value = ((String)o).trim();
                         addedView = FormUtilities.addEditText(activity, mainView, label, value, 0, 0, constraintDescription,
                                 readonly);
                     } else if (type.equals(TYPE_STRINGAREA)) {
+                        o = getValueFromExtras(jsonObject, key);
+                        String value = ((String)o).trim();
                         addedView = FormUtilities.addEditText(activity, mainView, label, value, 0, 7, constraintDescription,
                                 readonly);
                     } else if (type.equals(TYPE_DOUBLE)) {
+                        o = getValueFromExtras(jsonObject, key);
+                        String value = ((String)o).trim();
                         addedView = FormUtilities.addEditText(activity, mainView, label, value, 1, 0, constraintDescription,
                                 readonly);
                     } else if (type.equals(TYPE_INTEGER)) {
+                        o = getValueFromExtras(jsonObject, key);
+                        String value = ((String)o).trim();
                         addedView = FormUtilities.addEditText(activity, mainView, label, value, 4, 0, constraintDescription,
                                 readonly);
                     } else if (type.equals(TYPE_DATE)) {
+                        o = getValueFromExtras(jsonObject, key);
+                        String value = ((String)o).trim();
                         addedView = FormUtilities.addDateView(FragmentDetail.this, mainView, label, value, constraintDescription,
                                 readonly);
                     } else if (type.equals(TYPE_TIME)) {
+                        o = getValueFromExtras(jsonObject, key);
+                        String value = ((String)o).trim();
                         addedView = FormUtilities.addTimeView(FragmentDetail.this, mainView, label, value, constraintDescription,
                                 readonly);
                     } else if (type.equals(TYPE_LABEL)) {
@@ -192,6 +215,9 @@ public class FragmentDetail extends Fragment {
                         String url = null;
                         if (jsonObject.has(TAG_URL))
                             url = jsonObject.getString(TAG_URL);
+
+                        o = getValueFromExtras(jsonObject, key);
+                        String value = ((String)o).trim();
                         addedView = FormUtilities.addTextView(activity, mainView, value, size, false, url);
                     } else if (type.equals(TYPE_LABELWITHLINE)) {
                         String size = "20"; //$NON-NLS-1$
@@ -200,27 +226,57 @@ public class FragmentDetail extends Fragment {
                         String url = null;
                         if (jsonObject.has(TAG_URL))
                             url = jsonObject.getString(TAG_URL);
+
+                        o = getValueFromExtras(jsonObject, key);
+                        String value = ((String)o).trim();
                         addedView = FormUtilities.addTextView(activity, mainView, value, size, true, url);
                     } else if (type.equals(TYPE_BOOLEAN)) {
+                        o = getValueFromExtras(jsonObject, key);
+                        String value = ((String)o).trim();
                         addedView = FormUtilities.addBooleanView(activity, mainView, label, value, constraintDescription, readonly);
                     } else if (type.equals(TYPE_STRINGCOMBO)) {
                         JSONArray comboItems = TagsManager.getComboItems(jsonObject);
                         String[] itemsArray = TagsManager.comboItems2StringArray(comboItems);
+                        o = getValueFromExtras(jsonObject, key);
+                        String value = ((String)o).trim();
                         addedView = FormUtilities.addComboView(activity, mainView, label, value, itemsArray, constraintDescription);
                     } else if (type.equals(TYPE_CONNECTEDSTRINGCOMBO)) {
                         LinkedHashMap<String, List<String>> valuesMap = TagsManager.extractComboValuesMap(jsonObject);
+                        o = getValueFromExtras(jsonObject, key);
+                        String value = ((String)o).trim();
                         addedView = FormUtilities.addConnectedComboView(activity, mainView, label, value, valuesMap,
                                 constraintDescription);
                     } else if (type.equals(TYPE_STRINGMULTIPLECHOICE)) {
                         JSONArray comboItems = TagsManager.getComboItems(jsonObject);
                         String[] itemsArray = TagsManager.comboItems2StringArray(comboItems);
+                        o = getValueFromExtras(jsonObject, key);
+                        String value = ((String)o).trim();
                         addedView = FormUtilities.addMultiSelectionView(activity, mainView, label, value, itemsArray,
                                 constraintDescription);
                     } else if (type.equals(TYPE_PICTURES)) {
+
+                        o = getValueFromExtras(jsonObject, FormUtilities.IMAGE_MAP);
+                        Map<String, Object> value=null;
+                        String clazz = o.getClass().getSimpleName();
+                        if(("bundle").equalsIgnoreCase(clazz)) {
+                            Bundle imageMapBundle = (Bundle) o;
+                            Set<String> keys = imageMapBundle.keySet();
+                            Iterator<String> itKeys = keys.iterator();
+                            if (keys.size() > 0)
+                                value = new HashMap<String, Object>(keys.size());
+
+                            while (itKeys.hasNext()) {
+                                String keyMap = itKeys.next();
+                                Object imageBinary = imageMapBundle.get(keyMap);
+                                value.put(keyMap, imageBinary);
+                            }
+                        }
                         addedView = FormUtilities.addPictureView(noteId, this, requestCode, mainView, label, value, constraintDescription);
-                    } else if (type.equals(TYPE_SKETCH)) {
+                    }
+                     /*else if (type.equals(TYPE_SKETCH)) {
                         addedView = FormUtilities.addSketchView(noteId, this, requestCode, mainView, label, value, constraintDescription);
-                    }else{
+                    } */
+                    else{
                         Toast.makeText(getActivity().getApplicationContext(), "Type non implemented yet: " + type, Toast.LENGTH_LONG).show();
                     }
 /*                    } else if (type.equals(TYPE_MAP)) {
@@ -249,13 +305,29 @@ public class FragmentDetail extends Fragment {
                     requestCodes2WidgetMap.put(requestCode, addedView);
                     requestCode++;
                 }
-
+                LinearLayout btnLinear = (LinearLayout)mainView.findViewById(R.id.btn_linear);
+                mainView.removeView(btnLinear);
+                mainView.addView(btnLinear);
             }
+        } catch (ParseException e) {
+            e.printStackTrace();
         } catch (Exception e) {
             //GPLog.error(context, null, e);
             Toast.makeText(getActivity().getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
         }
         return view;
+    }
+
+    private Object getValueFromExtras(JSONObject jsonObject, String key) throws JSONException {
+        Object o = ""; //$NON-NLS-1$
+        if (jsonObject.has(TAG_VALUE)) {
+            if(this.existingFeatureData!=null && this.existingFeatureData.containsKey(key)) {
+                o = this.existingFeatureData.get(key);
+            }else {
+                o = jsonObject.get(TAG_VALUE);
+            }
+        }
+        return o;
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

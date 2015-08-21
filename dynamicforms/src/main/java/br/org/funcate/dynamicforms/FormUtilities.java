@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import br.org.funcate.dynamicforms.constraints.Constraints;
 import br.org.funcate.dynamicforms.constraints.MandatoryConstraint;
@@ -65,6 +66,15 @@ import br.org.funcate.dynamicforms.views.GView;
 @SuppressWarnings("nls")
 public class FormUtilities {
 
+    /**
+     * This globals are used between GPictureView and PictureActivity to pass values of image reference.
+     */
+    public static final String PICTURE_PATH_VIEW = "picture_path_view";
+    public static final String PICTURE_DB_VIEW = "picture_db_view";
+    public static final String PICTURE_BITMAP_ID = "picture_bitmap_id";
+    public static final String PICTURE_RESPONSE_REMOVE_VIEW = "picture_response_remove";
+    public static final int PICTURE_VIEW_RESULT_CODE = 1234;
+
     public static final String PHOTO_COMPLETE_PATH = "PHOTO_COMPLETE_PATH";
 
     public static final String MAIN_APP_WORKING_DIRECTORY = "MAIN_APP_WORKING_DIRECTORY";
@@ -72,6 +82,11 @@ public class FormUtilities {
      *
      */
     public static final String COLON = ":";
+
+    public static final String SEMICOLON = ";";
+
+    public static final String COMMA = ",";
+
     /**
      *
      */
@@ -273,10 +288,33 @@ public class FormUtilities {
      *
      */
     public static final String TAG_URL = "url";
+
+    public static final String TAG_ADDED_IMG = "added_paths";
+    public static final String TAG_DATABASE_IMG = "exists_ids";
     /**
      * Code to pass value between MainActivity and FragmentDetailActivity
      */
     public static final String ATTR_JSON_TAGS = "json_tags";
+
+    /**
+     * Code use to identify a Bundle with feature data values when editing attributes
+     */
+    public static final String ATTR_DATA_VALUES = "feature_data_values";
+
+    /**
+     * Code to represent a json tag with identifiers of the removed  images
+     */
+    public static final String DATABASE_IMAGE_IDS = "database_image_ids";
+
+    /**
+     * Code to represent a json tag with the inserted image paths
+     */
+    public static final String INSERTED_IMAGE_PATHS = "inserted_image_paths";
+
+    /**
+     * Code to represent a json tag with the binary image map
+     */
+    public static final String IMAGE_MAP = "image_map";
 
     /**
      * The following types are part of the geojson inserted in config JSONObject form
@@ -287,6 +325,8 @@ public class FormUtilities {
     public static final String GEOJSON_TYPE_POINT = "Point";
     public static final String GEOJSON_TYPE_LINESTRING = "LineString";
     public static final String GEOJSON_TYPE_POLYGON = "Polygon";
+
+    public static final String GEOM_ID = "geometry_id";
 
 
     /**
@@ -418,14 +458,14 @@ public class FormUtilities {
      * @param fragmentDetail        the fragmentDetail.
      * @param requestCode           the code to use for activity return.
      * @param mainView              the main view to which to add the new widget to.
-     * @param label                   the label of the widget.
-     * @param value                 the value to put in the widget.
+     * @param label                 the label of the widget.
+     * @param pictures              the value to put in the widget. A Map with id and binary to images.
      * @param constraintDescription constraint
      * @return the added view.
      */
-    public static GView addPictureView(long noteId, FragmentDetail fragmentDetail, int requestCode, LinearLayout mainView, String label, String value,
+    public static GView addPictureView(long noteId, FragmentDetail fragmentDetail, int requestCode, LinearLayout mainView, String label, Map<String, Object> pictures,
                                        String constraintDescription) {
-        return new GPictureView(noteId, fragmentDetail, null, requestCode, mainView, label, value, constraintDescription);
+        return new GPictureView(noteId, fragmentDetail, null, requestCode, mainView, label, pictures, constraintDescription);
     }
 
     /**

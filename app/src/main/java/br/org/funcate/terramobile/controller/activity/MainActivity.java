@@ -63,10 +63,6 @@ public class MainActivity extends FragmentActivity {
 
     private Project mProject;
 
-    private SettingsDAO settingsDAO;
-
-    private static int FORM_COLLECT_DATA = 222;
-
     // Progress bar
     private ProgressDialog progressDialog;
 
@@ -74,24 +70,13 @@ public class MainActivity extends FragmentActivity {
 
     private MainController mainController;
 
+    private MarkerInfoWindowController markerInfoWindowController;
 
-/*    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == Activity.RESULT_OK && requestCode == FORM_COLLECT_DATA) {
-            Bundle extras = data.getBundleExtra(LibraryConstants.PREFS_KEY_FORM);
-            try {
-                AppGeoPackageService.storeData(this,extras);
-            }catch (TerraMobileException tme) {
-                //Message.showMessage(this, R.drawable.error, getResources().getString(R.string.error), tme.getMessage());
-                Message.showErrorMessage(this, R.string.error, R.string.missing_form_data);
-            }catch (QueryException qe) {
-                //Message.showMessage(this, R.drawable.error, getResources().getString(R.string.error), qe.getMessage());
-                Message.showErrorMessage(this, R.string.error, R.string.error_while_storing_form_data);
-            }
-        }else {
-            Message.showErrorMessage(this, R.string.error, R.string.cancel_form_data);
-        }
-    }*/
+        this.markerInfoWindowController.makeSomeProcessWithResult(requestCode, resultCode, data);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,6 +85,8 @@ public class MainActivity extends FragmentActivity {
         actionBar = getActionBar();
 
         mainController = new MainController(this);
+
+        markerInfoWindowController=new MarkerInfoWindowController(this);
 
         PreferenceManager.setDefaultValues(this, R.xml.settings, false);
 
@@ -250,10 +237,7 @@ public class MainActivity extends FragmentActivity {
                 projectListFragment.show(getFragmentManager(), "packageList");
                 return true;
             case R.id.acquire_new_point:
-                FragmentManager fm = getSupportFragmentManager();
-                MapFragment fragment = (MapFragment)fm.findFragmentById(R.id.content_frame);
-                // add an bookmark on map and show the related form
-                fragment.startForm();
+                this.markerInfoWindowController.startActivityForm();
                 break;
             case R.id.settings:
                 startActivity(new Intent(this, SettingsActivity.class));
@@ -284,13 +268,6 @@ public class MainActivity extends FragmentActivity {
                 return super.onOptionsItemSelected(item);
         }
         return true;
-    }
-
-    public MapFragment getMapFragment()
-    {
-        FragmentManager fm = getSupportFragmentManager();
-        MapFragment fragment = (MapFragment)fm.findFragmentById(R.id.content_frame);
-        return fragment;
     }
 
     private void insertMapView() {
@@ -465,13 +442,15 @@ public class MainActivity extends FragmentActivity {
         } catch (OutOfMemoryError t) {
             long end = System.currentTimeMillis();
             buffer = null;
-            System.err.println(t + " in " + (end-start) + " millis.");
+            System.err.println(t + " in " + (end - start) + " millis.");
         }
     }
 
     public MainController getMainController() {
         return mainController;
     }
+
+    public MarkerInfoWindowController getMarkerInfoWindowController() { return markerInfoWindowController; }
 
     public void setMainController(MainController mainController) {
         this.mainController = mainController;

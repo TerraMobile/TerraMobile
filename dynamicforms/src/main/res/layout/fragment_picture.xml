@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:background="@color/formbgcolor"
-    android:orientation="vertical" >
+android:layout_width="fill_parent"
+android:layout_height="fill_parent"
+android:background="@color/formbgcolor"
+android:orientation="vertical" >
 
     <fragment
-        android:id="@+id/listFragment"
+        android:id="@+id/pictureFragment"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        class="br.org.funcate.dynamicforms.FragmentList" />
+        class="br.org.funcate.dynamicforms.FragmentPicture" />
 
 </RelativeLayout>

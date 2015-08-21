@@ -20,12 +20,15 @@ package br.org.funcate.dynamicforms.views;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -35,17 +38,25 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import br.org.funcate.dynamicforms.FormUtilities;
 import br.org.funcate.dynamicforms.FragmentDetail;
+import br.org.funcate.dynamicforms.PictureActivity;
 import br.org.funcate.dynamicforms.R;
 import br.org.funcate.dynamicforms.camera.CameraActivity;
 import br.org.funcate.dynamicforms.exceptions.CollectFormException;
 import br.org.funcate.dynamicforms.images.ImageUtilities;
+import br.org.funcate.dynamicforms.markers.MarkersUtilities;
 import br.org.funcate.dynamicforms.util.LibraryConstants;
 import br.org.funcate.dynamicforms.util.PositionUtilities;
+import br.org.funcate.dynamicforms.util.ResourcesManager;
 
 import static br.org.funcate.dynamicforms.FormUtilities.COLON;
 import static br.org.funcate.dynamicforms.FormUtilities.UNDERSCORE;
@@ -57,17 +68,20 @@ import static br.org.funcate.dynamicforms.FormUtilities.UNDERSCORE;
  */
 public class GPictureView extends View implements GView {
 
-    public static final String IMAGE_ID_SEPARATOR = ";";
     /**
      * The ids of the pictures.
      */
-    private String _value;
+    private Map<String, Object> _pictures;
 
     private List<String> addedImages = new ArrayList<String>();
+
+    private Map<Integer, String> addedIdsToImageViews = new HashMap<Integer, String>();
 
     private LinearLayout imageLayout;
 
     private FragmentDetail mFragmentDetail;
+
+    public static int PICTURE_VIEW_RESULT;
 
     /**
      * @param context  the context to use.
@@ -93,16 +107,18 @@ public class GPictureView extends View implements GView {
      * @param requestCode           the code for starting the activity with result.
      * @param parentView            parent
      * @param label                 label
-     * @param value                 in case of pictures, the value are the ids of the image, semicolonseparated.
+     * @param pictures              the value are the ids and binary data of the images.
      * @param constraintDescription constraints
      */
-    public GPictureView(final long noteId, final FragmentDetail fragmentDetail, AttributeSet attrs, final int requestCode, LinearLayout parentView, String label, String value,
+    public GPictureView(final long noteId, final FragmentDetail fragmentDetail, AttributeSet attrs, final int requestCode, LinearLayout parentView, String label, Map<String, Object> pictures,
                         String constraintDescription) {
         super(fragmentDetail.getActivity(), attrs);
 
         mFragmentDetail=fragmentDetail;
 
-        _value = value;
+        _pictures = pictures;
+
+        PICTURE_VIEW_RESULT = requestCode;
 
         final FragmentActivity activity = fragmentDetail.getActivity();
         LinearLayout textLayout = new LinearLayout(activity);
@@ -129,18 +145,18 @@ public class GPictureView extends View implements GView {
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(activity);
-                double[] gpsLocation = PositionUtilities.getGpsLocationFromPreferences(preferences);
+                //double[] gpsLocation = PositionUtilities.getGpsLocationFromPreferences(preferences);
 
                 String imageName = ImageUtilities.getCameraImageName(null);
                 Intent cameraIntent = new Intent(activity, CameraActivity.class);
                 cameraIntent.putExtra(LibraryConstants.PREFS_KEY_CAMERA_IMAGENAME, imageName);
                 cameraIntent.putExtra(LibraryConstants.SELECTED_POINT_ID, noteId);
                 cameraIntent.putExtra(FormUtilities.MAIN_APP_WORKING_DIRECTORY, fragmentDetail.getWorkingDirectory());
-                if (gpsLocation != null) {
+               /* if (gpsLocation != null) {
                     cameraIntent.putExtra(LibraryConstants.LATITUDE, gpsLocation[1]);
                     cameraIntent.putExtra(LibraryConstants.LONGITUDE, gpsLocation[0]);
                     cameraIntent.putExtra(LibraryConstants.ELEVATION, gpsLocation[2]);
-                }
+                }*/
                 fragmentDetail.startActivityForResult(cameraIntent, requestCode);
             }
         });
@@ -152,62 +168,132 @@ public class GPictureView extends View implements GView {
         parentView.addView(scrollView);
 
         imageLayout = new LinearLayout(activity);
-        LinearLayout.LayoutParams imageLayoutParams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT,
-                LayoutParams.WRAP_CONTENT);
+        LinearLayout.LayoutParams imageLayoutParams = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
+                LayoutParams.WRAP_CONTENT) ;
         imageLayoutParams.setMargins(10, 10, 10, 10);
+        imageLayoutParams.leftMargin=20;
         imageLayout.setLayoutParams(imageLayoutParams);
         imageLayout.setOrientation(LinearLayout.HORIZONTAL);
         scrollView.addView(imageLayout);
 
+        updateValueForm();
         try {
             refresh(activity);
         } catch (Exception e) {
             //GPLog.error(this, null, e);
+            e.printStackTrace();
             Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 
     public void refresh(final Context context) throws Exception {
 
-/*        if (_value != null && _value.length() > 0) {
-            String[] imageSplit = _value.split(IMAGE_ID_SEPARATOR);
-            log("Handling images: " + _value);
+        if (_pictures != null && _pictures.size() > 0) {
 
-            final IImagesDbHelper imagesDbHelper = DefaultHelperClasses.getDefaulfImageHelper();
+            Set<String> imageKeys = _pictures.keySet();
+            Iterator<String> itKeys = imageKeys.iterator();
+            while (itKeys.hasNext()) {
 
-            for (String imageId : imageSplit) {
-                log("img: " + imageId);
-
-                if (imageId.length() == 0) {
+                String imageId = itKeys.next();
+                if(!_pictures.containsKey(imageId)) {
+                    // TODO: Here, write a log in logfile
                     continue;
+                }
+
+                byte[] image = (byte[])_pictures.get(imageId);
+                Bitmap imageBitmap = ImageUtilities.getBitmapFromBlob(image);
+                //Bitmap thumbnail = ImageUtilities.makeThumbnail(imageBitmap);
+                int viewID = new Integer(imageId).intValue();
+                View v = imageLayout.findViewById(viewID);
+                if(v==null) {
+                    imageLayout.addView(getImageView(context, imageBitmap, viewID));
+                    imageLayout.invalidate();
+                }
+            }
+        }
+        if (addedImages.size() > 0) {
+            for (String imagePath : addedImages) {
+                if ( ImageUtilities.isImagePath(imagePath) && !addedIdsToImageViews.containsValue(imagePath) ) {
+                    byte[] image = ImageUtilities.getImageFromPath(imagePath, 2);
+                    Bitmap imageBitmap = ImageUtilities.getBitmapFromBlob(image);
+                    Bitmap thumbnail = ImageUtilities.makeThumbnail(imageBitmap);
+                    imageLayout.addView(getImageView(context, thumbnail, thumbnail.getGenerationId()));
+                    addedIdsToImageViews.put(thumbnail.getGenerationId(), imagePath);
+                    imageLayout.invalidate();
+                }
+            }
+        }
+
+        if ( (_pictures == null || _pictures.size() == 0) && (addedImages == null || addedImages.size() == 0) ) {
+            imageLayout.removeAllViewsInLayout();
+        }
+
+    }
+
+    public ImageView getImageView(final Context context, final Bitmap thumbnail, int ID) {
+        ImageView imageView = new ImageView(context);
+        imageView.setLayoutParams(new LinearLayout.LayoutParams(102, 102));
+        imageView.setPadding(5, 5, 5, 5);
+        imageView.setImageBitmap(thumbnail);
+        imageView.setBackgroundDrawable(getResources().getDrawable(R.drawable.border_black_1px));
+        imageView.setId(ID);
+        imageView.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                int photoId = v.getId();
+
+                FragmentActivity activity = mFragmentDetail.getActivity();
+                Intent intent = new Intent(activity, PictureActivity.class);
+
+                if(addedIdsToImageViews.containsKey(photoId)){// pictures on session
+                    intent.putExtra(FormUtilities.PICTURE_PATH_VIEW, addedIdsToImageViews.get(photoId));
+                }else if(_pictures.containsKey(photoId)) {// pictures from database
+                    intent.putExtra(FormUtilities.PICTURE_DB_VIEW, String.valueOf(photoId));
+                }
+                if(intent.hasExtra(FormUtilities.PICTURE_PATH_VIEW) || intent.hasExtra(FormUtilities.PICTURE_DB_VIEW)) {
+                    intent.putExtra(FormUtilities.PICTURE_BITMAP_ID, photoId);
+                    activity.startActivityForResult(intent, PICTURE_VIEW_RESULT);
+                }
+                else
+                    Toast.makeText(getContext(), "Fail, the picture not found.", Toast.LENGTH_LONG).show();
+
+
+                /*
+                if(addedIdsToImageViews.containsKey(photoId)){// pictures on session
+                    String imagePath = addedIdsToImageViews.remove(photoId);
+                    addedImages.remove(imagePath);
+                }else if(_pictures.containsKey(photoId)) {// pictures from database
+                    _pictures.remove(photoId);
+                }
+
+                JSONArray form = null;
+                try {
+                    form = mFragmentDetail.getSelectedForm();
+                } catch (JSONException jse) {
+                    jse.printStackTrace();
+                    Toast.makeText(getContext(), jse.getMessage(), Toast.LENGTH_LONG).show();
+                }
+
+                if (form != null) {
+                    try {
+                        String json = encodeToJson();
+                        FormUtilities.updatePicture(form, json);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
                 try {
-                    Long.parseLong(imageId);
+                    refresh(getContext());
                 } catch (Exception e) {
-                    //GPLog.error(this, null, e);
+                    e.printStackTrace();
                     Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-                    continue;
-                }
-                if (addedImages.contains(imageId.trim())) {
-                    continue;
-                }
-                final long imageIdLong = Long.parseLong(imageId);
-
-                byte[] imageThumbnail = imagesDbHelper.getImageThumbnail(imageIdLong);
-                Bitmap thumbnail = ImageUtilities.getImageFromImageData(imageThumbnail);
-
-                ImageView imageView = new ImageView(context);
-                imageView.setLayoutParams(new LinearLayout.LayoutParams(102, 102));
-                imageView.setPadding(5, 5, 5, 5);
-                imageView.setImageBitmap(thumbnail);
-                imageView.setBackgroundDrawable(getResources().getDrawable(R.drawable.border_black_1px));
-                imageView.setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View v) {
-                        *//*
-                         * open in markers to edit it
-                         *//*
-                        // MarkersUtilities.launchOnImage(context, image);
-                        try {
+                }*/
+                /**
+                 * open in markers to edit it
+                 */
+                // MarkersUtilities.launchOnImage(context, image);
+                       /* try {
                             Intent intent = new Intent();
                             intent.setAction(Intent.ACTION_VIEW);
                             Image image = imagesDbHelper.getImage(imageIdLong);
@@ -219,78 +305,122 @@ public class GPictureView extends View implements GView {
                             byte[] imageData = imagesDbHelper.getImageData(image.getId());
                             ImageUtilities.writeImageDataToFile(imageData, imageFile.getAbsolutePath());
 
-                            intent.setDataAndType(Uri.fromFile(imageFile), "image*//*"); //$NON-NLS-1$
+                            intent.setDataAndType(Uri.fromFile(imageFile), "image*//**//*"); //$NON-NLS-1$
                             context.startActivity(intent);
                         } catch (Exception e) {
                             //GPLog.error(this, null, e);
                             Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-                        }
-                    }
-                });
-                log("Creating thumb and adding it: " + imageId);
-                imageLayout.addView(imageView);
-                imageLayout.invalidate();
-                addedImages.add(imageId);
-            }
-
-            if (addedImages.size() > 0) {
-                StringBuilder sb = new StringBuilder();
-                for (String imagePath : addedImages) {
-                    sb.append(IMAGE_ID_SEPARATOR).append(imagePath);
-                }
-                _value = sb.substring(1);
-
-                log("New img ids: " + _value);
+                        }*/
+                //Toast.makeText(getContext(), "Implement this action", Toast.LENGTH_LONG).show();
 
             }
-            log("Exiting refresh....");
-
-        }*/
-    }
-
-    private void log(String msg) {
-        Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
-        /*if (GPLog.LOG_HEAVY)
-            GPLog.addLogEntry(this, null, null, msg);*/
+        });
+        return imageView;
     }
 
     public String getValue() {
-        return _value;
+        return "";
+    }
+
+    /**
+     * Encode from the picture control variables to json format.
+     * Using addedImages and _pictures to create the json:
+     *
+     * {added_paths:'path1,path2,path3', removed_ids:'10,32'}
+     *
+     * @return the json string
+     */
+    private String encodeToJson() {
+
+        String imagePaths = "";
+        if(addedImages!=null) {
+            Iterator<String> iterator = addedImages.iterator();
+            while (iterator.hasNext())
+                imagePaths += (imagePaths.isEmpty() ? "" : FormUtilities.SEMICOLON) + iterator.next();
+        }
+
+        imagePaths = "'"+FormUtilities.TAG_ADDED_IMG+"'"+FormUtilities.COLON+"'"+imagePaths+"'";
+
+        String imageIds = "";
+        if(_pictures!=null) {
+            Set<String> keySet = _pictures.keySet();
+            Iterator<String> iterator = keySet.iterator();
+            while (iterator.hasNext())
+                imageIds += (imageIds.isEmpty() ? "" : FormUtilities.SEMICOLON) + iterator.next();
+        }
+
+        imageIds = "'" + FormUtilities.TAG_DATABASE_IMG + "'"+FormUtilities.COLON+"'" + imageIds + "'";
+        String jsonImgs = "{"+imagePaths+ FormUtilities.COMMA +imageIds+"}";
+
+        return jsonImgs;
+    }
+
+    /**
+     * Make json with image information and put in selected form in memory.
+     */
+    private void updateValueForm() {
+        JSONArray form = null;
+        try {
+            form = mFragmentDetail.getSelectedForm();
+        } catch (JSONException jse) {
+            jse.printStackTrace();
+            Toast.makeText(getContext(), jse.getMessage(), Toast.LENGTH_LONG).show();
+        }
+
+        if (form != null) {
+            try {
+                String json = encodeToJson();
+                FormUtilities.updatePicture(form, json);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
     public void setOnActivityResult(Intent data) {
 
         Boolean hasPhoto = data.getBooleanExtra(LibraryConstants.OBJECT_EXISTS, false);
+        String imgPath = "";
         if(hasPhoto) {
-            JSONArray form=null;
+
+            imgPath = data.getStringExtra(FormUtilities.PHOTO_COMPLETE_PATH);
+            addedImages.add(imgPath);
+            updateValueForm();
+
             try {
-                form = mFragmentDetail.getSelectedForm();
-            } catch (JSONException jse) {
-                Toast.makeText(getContext(), jse.getMessage(), Toast.LENGTH_LONG).show();
-            }
-            if(form!=null) {
-                String imgPath = data.getStringExtra(FormUtilities.PHOTO_COMPLETE_PATH);
-                //long imageId = data.getLongExtra(LibraryConstants.SELECTED_POINT_ID, -1);
-                try {
-                    FormUtilities.updatePicture(form, imgPath);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                refresh(getContext());
+            } catch (Exception e) {
+                e.printStackTrace();
+                Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
             }
         }
+        if(data.hasExtra(FormUtilities.PICTURE_RESPONSE_REMOVE_VIEW)) {
+            Boolean hasPictureRemoved = data.getBooleanExtra(FormUtilities.PICTURE_RESPONSE_REMOVE_VIEW, false);
+            if(!hasPictureRemoved) {
+                return;
+            }
 
+            Integer photoId = data.getIntExtra(FormUtilities.PICTURE_BITMAP_ID, -1);
 
-        /*if (imageId == -1) {
-            return;
+            if(addedIdsToImageViews.containsKey(photoId)){// pictures on session
+                String imagePath = addedIdsToImageViews.remove(photoId);
+                addedImages.remove(imagePath);
+            }else if(_pictures.containsKey(photoId.toString())) {// pictures from database
+                _pictures.remove(photoId);
+            }
+
+            updateValueForm();
+
+            try {
+                refresh(getContext());
+            } catch (Exception e) {
+                e.printStackTrace();
+                Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+            }
         }
-        _value = _value + IMAGE_ID_SEPARATOR + imageId;
-        try {
-            refresh(getContext());
-        } catch (Exception e) {
-            //GPLog.error(this, null, e);
-            Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-        }*/
     }
 }
 

@@ -55,6 +55,11 @@
         android:title="Test Icon 4"
         android:orderInCategory="100"
         android:showAsAction="never" />
+
+    <item android:id="@+id/backup_project"
+        android:title="Backup"
+        android:orderInCategory="100"
+        android:showAsAction="never" />
     <!--
         <item android:id="@+id/test_editable_layer"
             android:title="@string/test_editable_layer"

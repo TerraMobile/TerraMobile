@@ -165,9 +165,31 @@ public class ImageUtilities {
         return bitmap;
     }
 
-    public static Bitmap getImageFromImageData(byte[] imageData) {
-        Bitmap bitmap = BitmapFactory.decodeByteArray(imageData, 0, imageData.length);
+    public static Bitmap makeThumbnail(Bitmap image) {
+        if (image == null) return null;
+
+        int width = image.getWidth();
+        int height = image.getHeight();
+
+        // define sampling for thumbnail
+        float sampleSizeF = (float) width / (float) THUMBNAILWIDTH;
+        float newHeight = height/sampleSizeF;
+        Bitmap thumbnail =  Bitmap.createScaledBitmap(image, THUMBNAILWIDTH, (int) newHeight, false);
+        return thumbnail;
+    }
+
+    public static Bitmap getBitmapFromBlob(byte[] image) {
+        Bitmap bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
         return bitmap;
+    }
+
+    public static byte[] getBlobFromBitmap(Bitmap image) {
+
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        image.compress(Bitmap.CompressFormat.JPEG, 90, stream);
+        byte[] imageBytes = stream.toByteArray();
+
+        return imageBytes;
     }
 
     /**

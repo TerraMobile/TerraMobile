@@ -16,7 +16,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -29,24 +28,17 @@ import org.osmdroid.tileprovider.tilesource.XYTileSource;
 import org.osmdroid.tileprovider.util.CloudmadeUtil;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
-import org.osmdroid.views.overlay.MyLocationOverlay;
 
-import java.io.File;
-
-import br.org.funcate.dynamicforms.FormUtilities;
-import br.org.funcate.dynamicforms.FragmentDetailActivity;
 import br.org.funcate.dynamicforms.util.LibraryConstants;
 import br.org.funcate.jgpkg.exception.QueryException;
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.model.constants.OpenStreetMapConstants;
 import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
 import br.org.funcate.terramobile.model.exception.TerraMobileException;
-import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
-import br.org.funcate.terramobile.model.tilesource.AppGeoPackageService;
 import br.org.funcate.terramobile.model.service.GPSService;
+import br.org.funcate.terramobile.model.tilesource.AppGeoPackageService;
 import br.org.funcate.terramobile.util.Message;
 import br.org.funcate.terramobile.util.ResourceHelper;
-import br.org.funcate.terramobile.util.Util;
 
 /*import org.osmdroid.samplefragments.BaseSampleFragment;
 import org.osmdroid.samplefragments.SampleFactory;*/
@@ -59,16 +51,6 @@ import org.osmdroid.samplefragments.SampleFactory;*/
  *
  */
 public class MapFragment extends Fragment implements OpenStreetMapConstants{
-    // ===========================================================
-    // Constants
-    // ===========================================================
-
-    private static final int DIALOG_ABOUT_ID = 1;
-
-    private static final int MENU_SAMPLES = Menu.FIRST + 1;
-    private static final int MENU_ABOUT = MENU_SAMPLES + 1;
-
-    private static final int MENU_LAST_ID = MENU_ABOUT + 1; // Always set to last unused id
 
     // ===========================================================
     // Fields
@@ -76,19 +58,13 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants{
 
     private SharedPreferences mPrefs;
     private MapView mMapView;
-    private ResourceProxy mResourceProxy;
     private ImageView drawingImageView;
 
-    private LayoutInflater inflater;
-    private ViewGroup container;
-
-    private MyLocationOverlay  myLocationoverlay;
     private ImageButton gpsLocation;
     private ImageButton zoomIn;
     private ImageButton zoomOut;
 
     private Context context;
-    private static int FORM_COLLECT_DATA = 222;
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -230,7 +206,7 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants{
         canvas.drawLine(centerW + offset, centerH, centerW - offset, centerH, paint);
     }
 
-    public void startForm() {
+/*    public void startForm() {
 
         GeoPoint point = (GeoPoint) this.mMapView.getMapCenter();
 
@@ -268,7 +244,7 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants{
             Message.showErrorMessage(((MainActivity) context), R.string.failure_title_msg, R.string.error_start_form);
             return;
         }
-    }
+    }*/
 
     public void centerMapToGPS() {
         // Define a listener that responds to location updates
@@ -298,7 +274,7 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants{
     }
 
 
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+/*    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK && requestCode == FORM_COLLECT_DATA) {
             Bundle extras = data.getBundleExtra(LibraryConstants.PREFS_KEY_FORM);
@@ -317,7 +293,7 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants{
         }else {
             Message.showErrorMessage(((MainActivity) context), R.string.error, R.string.cancel_form_data);
         }
-    }
+    }*/
 
     public synchronized void updateMap()
     {

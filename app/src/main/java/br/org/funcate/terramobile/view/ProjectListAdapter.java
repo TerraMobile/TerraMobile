@@ -56,6 +56,7 @@ public class ProjectListAdapter extends ArrayAdapter<Project> implements Adapter
 
         TextView tVProject = (TextView) convertView.findViewById(R.id.tVProjectName);
         ImageView iVDownloaded = (ImageView) convertView.findViewById(R.id.iVDownloaded);
+        //ImageView iVMoveToSD = (ImageView) convertView.findViewById(R.id.iVMoveToSD);
 //        ImageView iVUpdated = (ImageView)convertView.findViewById(R.id.iVUpdated);
 
         Project project = (Project) projectList.get(position);
@@ -65,6 +66,7 @@ public class ProjectListAdapter extends ArrayAdapter<Project> implements Adapter
         RadioButton rBCurrentProject = (RadioButton) convertView.findViewById(R.id.rBCurrentProject);
         rBCurrentProject.setTag(project);
         iVDownloaded.setTag(project);
+       // iVMoveToSD.setTag(project);
 
 
         Project currentProject = ((MainActivity) context).getProject();
@@ -79,6 +81,7 @@ public class ProjectListAdapter extends ArrayAdapter<Project> implements Adapter
         }
 
         iVDownloaded.setOnClickListener(onDownloadIconClick);
+       // iVMoveToSD.setOnClickListener(onMoveToSDCard);
 
         rBCurrentProject.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,6 +93,25 @@ public class ProjectListAdapter extends ArrayAdapter<Project> implements Adapter
 
         return convertView;
     }
+
+/*    private View.OnClickListener onMoveToSDCard = new View.OnClickListener()
+    {
+        public void onClick(View v){
+            if (Util.isConnected(context)) {
+                final Project project = (Project) v.getTag();
+                String fileInput = project.getFilePath();
+                final String fileName = project.getName();
+
+                String defaultAppDirectory = context.getResources().getString(R.string.app_workspace_dir);
+                File appPublicDirectory = Util.getPublicDirectory(defaultAppDirectory);
+                String fileOutput = appPublicDirectory.getAbsolutePath() + File.separator + fileName;
+                Util.copyFile(fileInput, fileOutput);
+                Util.applyAllPermission(appPublicDirectory);
+                Util.applyAllPermission(new File(fileOutput));
+                Util.startSync(appPublicDirectory.getParentFile(), context);
+            }
+        }
+    };*/
 
     private View.OnClickListener onDownloadIconClick = new View.OnClickListener()
     {

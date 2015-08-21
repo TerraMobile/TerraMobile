@@ -7,6 +7,8 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.augtech.geoapi.geopackage.table.GpkgExtensions;
+
 import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.bonuspack.overlays.BasicInfoWindow;
 import org.osmdroid.bonuspack.overlays.FolderOverlay;
@@ -19,7 +21,12 @@ import java.util.AbstractList;
 
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.controller.activity.MainActivity;
+import br.org.funcate.terramobile.controller.activity.MainController;
+import br.org.funcate.terramobile.controller.activity.MarkerInfoWindowController;
 import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
+import br.org.funcate.terramobile.model.exception.LowMemoryException;
+import br.org.funcate.terramobile.model.exception.TerraMobileException;
+import br.org.funcate.terramobile.model.geomsource.SFSPoint;
 import br.org.funcate.terramobile.model.service.GPSService;
 import br.org.funcate.terramobile.util.Message;
 import br.org.funcate.terramobile.util.ResourceHelper;
@@ -32,7 +39,10 @@ public class SFSMarker extends Marker implements Marker.OnMarkerClickListener {
     public SFSMarker(MapView mapView) {
         super(mapView);
         this.setOnMarkerClickListener(this);
-        this.setInfoWindow(new TMMarkerInfoWindow(R.layout.marker_info_window, mapView));
+        this.setInfoWindow(new TMMarkerInfoWindow(R.layout.marker_info_window,
+                mapView,
+                ((MainActivity)mapView.getContext()).getMarkerInfoWindowController()
+        ));
         this.setTitle("Centered on " + this.getPosition().getLatitude() + "," + this.getPosition().getLongitude());
     }
 
@@ -46,9 +56,11 @@ public class SFSMarker extends Marker implements Marker.OnMarkerClickListener {
 
         //private String markerId;
         private SFSMarker m = null;
+        private MarkerInfoWindowController markerInfoWindowController = null;
 
-        public TMMarkerInfoWindow(int layoutResId, MapView mapView) {
+        public TMMarkerInfoWindow(int layoutResId, MapView mapView, MarkerInfoWindowController markerInfoWindowController) {
             super(layoutResId, mapView);
+            this.markerInfoWindowController=markerInfoWindowController;
         }
 
         public void onClose() {
@@ -58,12 +70,8 @@ public class SFSMarker extends Marker implements Marker.OnMarkerClickListener {
             closeAllInfoWindowsOn(this.mMapView);
             if(arg0 instanceof SFSMarker) {
                 m = (SFSMarker) arg0;
-                //markerId = ((SFSPoint)m.getRelatedObject()).mId;
             }
-            //LinearLayout layout = (LinearLayout) mView.findViewById(R.id.bubble_layout);
             TextView txtTitle = (TextView) mView.findViewById(R.id.bubble_title);
-            /*TextView txtDescription = (TextView) mView.findViewById(R.id.bubble_description);
-            TextView txtSubdescription = (TextView) mView.findViewById(R.id.bubble_subdescription);*/
             String titleMarker = "";
             try {
                 titleMarker = ResourceHelper.getStringResource(R.string.title_marker);
@@ -73,9 +81,6 @@ public class SFSMarker extends Marker implements Marker.OnMarkerClickListener {
             }
             titleMarker += ": " + m.getPosition().toDoubleString();
             txtTitle.setText(titleMarker);
-            /*txtDescription.setText("Location:" + m.getPosition().toDoubleString());
-            txtSubdescription.setText("You can also edit the subdescription");
-            txtSubdescription.setVisibility(txtSubdescription.INVISIBLE);*/
 
             ImageButton btnMoreInfo = (ImageButton) mView.findViewById(R.id.bubble_moreinfo);
             btnMoreInfo.setOnClickListener(new View.OnClickListener() {
@@ -86,25 +91,26 @@ public class SFSMarker extends Marker implements Marker.OnMarkerClickListener {
             ImageButton btnEdit = (ImageButton) mView.findViewById(R.id.btn_edit_marker);
             btnEdit.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    // Implement onClick behaviour
+                    markerInfoWindowController.editMarker(m);
                 }
             });
             ImageButton btnRemove = (ImageButton) mView.findViewById(R.id.btn_remove_marker);
             btnRemove.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
 
+                    try {
+                        markerInfoWindowController.deleteMarker(m);
+                    } catch (TerraMobileException e) {
+                        e.printStackTrace();
+                        showErrorMessage(R.string.fail_message_on_remove_marker);
+                    }
+
                     FolderOverlay f = getRelatedFolder();
-                    //assert f != null;
                     if (f!=null && f.remove(m)) {
                         m.closeInfoWindow();
                         mMapView.invalidate();
                     } else {
-                        //Fail on remove this point
-                        Message.showErrorMessage(
-                                (MainActivity)mMapView.getContext(),
-                                R.string.title_fail_message_marker,
-                                R.string.fail_message_on_remove_marker
-                        );
+                        showErrorMessage(R.string.fail_message_on_remove_marker);
                     }
                     return;
                 }
@@ -129,7 +135,7 @@ public class SFSMarker extends Marker implements Marker.OnMarkerClickListener {
                         public void onProviderDisabled(String provider) {}
                     };
 
-                    if(!GPSService.registerListener(mMapView.getContext(), locationListener)){
+                    if(!GPSService.registerListener(mMapView.getContext(), locationListener)) {
                         Message.showErrorMessage((MainActivity)mMapView.getContext(),R.string.fail,R.string.disabled_provider);
                     }
                 }
@@ -151,6 +157,14 @@ public class SFSMarker extends Marker implements Marker.OnMarkerClickListener {
                     m.closeInfoWindow();
                 }
             });
+        }
+
+        private void showErrorMessage(int msgId) {
+            Message.showErrorMessage(
+                    (MainActivity)mMapView.getContext(),
+                    R.string.title_fail_message_marker,
+                    msgId
+            );
         }
 
         private FolderOverlay getRelatedFolder() {
