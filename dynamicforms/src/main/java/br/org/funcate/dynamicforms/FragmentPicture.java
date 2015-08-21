@@ -12,7 +12,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import java.io.File;
+
 import br.org.funcate.dynamicforms.images.ImageUtilities;
+import br.org.funcate.dynamicforms.util.FileUtilities;
 
 /**
  * Created by Andre Carvalho on 20/08/15.
@@ -37,8 +40,8 @@ public class FragmentPicture extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.picture, container, false);
         ImageView toRemovePicture = (ImageView) view.findViewById(R.id.to_remove_picture);
-        Button removeButton = (Button) view.findViewById(R.id.removeButton);
-        Button cancelButton = (Button) view.findViewById(R.id.cancelButton);
+/*        Button removeButton = (Button) view.findViewById(R.id.removeButton);
+        Button cancelButton = (Button) view.findViewById(R.id.cancelButton);*/
 
         toRemovePicture.setImageBitmap(getPicture());
 
@@ -50,15 +53,15 @@ public class FragmentPicture extends Fragment{
 
     private Bitmap getPicture() {
         String picturePath = activity.getPicturePath();
-        String pictureID = activity.getPictureID();
+        String pictureTmpPath = activity.getPictureTmpPath();
         Bitmap image = null;
 
         if(picturePath!=null && !picturePath.isEmpty()) {
             image = getPictureFromPath(picturePath);
         }
 
-        if(pictureID!=null && !pictureID.isEmpty()) {
-            image = getPictureFromDB(pictureID);
+        if(pictureTmpPath!=null && !pictureTmpPath.isEmpty()) {
+            image = getPictureFromPath(pictureTmpPath);
         }
 
         return image;
@@ -66,7 +69,7 @@ public class FragmentPicture extends Fragment{
 
     private Bitmap getPictureFromPath(String path) {
         Bitmap image = null;
-        if(ImageUtilities.isImagePath(path)) {
+        if(path!=null && !path.isEmpty()) {// this tool not will be use here because the file extension not valid to image extension
             byte[] blob = ImageUtilities.getImageFromPath(path, 2);
             image = ImageUtilities.getBitmapFromBlob(blob);
         }

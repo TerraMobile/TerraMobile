@@ -188,6 +188,8 @@ public class GPictureView extends View implements GView {
 
     public void refresh(final Context context) throws Exception {
 
+        imageLayout.removeAllViewsInLayout();
+
         if (_pictures != null && _pictures.size() > 0) {
 
             Set<String> imageKeys = _pictures.keySet();
@@ -195,38 +197,41 @@ public class GPictureView extends View implements GView {
             while (itKeys.hasNext()) {
 
                 String imageId = itKeys.next();
+                Bitmap thumbnail = null;
                 if(!_pictures.containsKey(imageId)) {
                     // TODO: Here, write a log in logfile
                     continue;
+                }else {
+                    String imagePath = (String) _pictures.get(imageId);
+                    byte[] image = ImageUtilities.getImageFromPath(imagePath, 2);
+                    Bitmap imageBitmap = ImageUtilities.getBitmapFromBlob(image);
+                    thumbnail = ImageUtilities.makeThumbnail(imageBitmap);
                 }
-
-                byte[] image = (byte[])_pictures.get(imageId);
-                Bitmap imageBitmap = ImageUtilities.getBitmapFromBlob(image);
+                //byte[] image = (byte[])_pictures.get(imageId);
+                //Bitmap imageBitmap = ImageUtilities.getBitmapFromBlob(image);
                 //Bitmap thumbnail = ImageUtilities.makeThumbnail(imageBitmap);
                 int viewID = new Integer(imageId).intValue();
-                View v = imageLayout.findViewById(viewID);
-                if(v==null) {
-                    imageLayout.addView(getImageView(context, imageBitmap, viewID));
-                    imageLayout.invalidate();
-                }
+                imageLayout.addView(getImageView(context, thumbnail, viewID));
             }
         }
         if (addedImages.size() > 0) {
             for (String imagePath : addedImages) {
-                if ( ImageUtilities.isImagePath(imagePath) && !addedIdsToImageViews.containsValue(imagePath) ) {
-                    byte[] image = ImageUtilities.getImageFromPath(imagePath, 2);
-                    Bitmap imageBitmap = ImageUtilities.getBitmapFromBlob(image);
-                    Bitmap thumbnail = ImageUtilities.makeThumbnail(imageBitmap);
-                    imageLayout.addView(getImageView(context, thumbnail, thumbnail.getGenerationId()));
+                byte[] image = ImageUtilities.getImageFromPath(imagePath, 2);
+                Bitmap imageBitmap = ImageUtilities.getBitmapFromBlob(image);
+                Bitmap thumbnail = ImageUtilities.makeThumbnail(imageBitmap);
+
+                imageLayout.addView(getImageView(context, thumbnail, thumbnail.getGenerationId()));
+                if(!addedIdsToImageViews.containsValue(imagePath))
                     addedIdsToImageViews.put(thumbnail.getGenerationId(), imagePath);
-                    imageLayout.invalidate();
-                }
             }
         }
 
-        if ( (_pictures == null || _pictures.size() == 0) && (addedImages == null || addedImages.size() == 0) ) {
+        /*if ( (_pictures == null || _pictures.size() == 0) && (addedImages == null || addedImages.size() == 0) ) {
             imageLayout.removeAllViewsInLayout();
-        }
+        }*/
+
+
+        imageLayout.invalidate();
 
     }
 
@@ -246,8 +251,8 @@ public class GPictureView extends View implements GView {
 
                 if(addedIdsToImageViews.containsKey(photoId)){// pictures on session
                     intent.putExtra(FormUtilities.PICTURE_PATH_VIEW, addedIdsToImageViews.get(photoId));
-                }else if(_pictures.containsKey(photoId)) {// pictures from database
-                    intent.putExtra(FormUtilities.PICTURE_DB_VIEW, String.valueOf(photoId));
+                }else if(_pictures.containsKey(String.valueOf(photoId))) {// pictures from database
+                    intent.putExtra(FormUtilities.PICTURE_DB_VIEW, (String)_pictures.get(String.valueOf(photoId)));// Image temporary path
                 }
                 if(intent.hasExtra(FormUtilities.PICTURE_PATH_VIEW) || intent.hasExtra(FormUtilities.PICTURE_DB_VIEW)) {
                     intent.putExtra(FormUtilities.PICTURE_BITMAP_ID, photoId);
@@ -409,7 +414,7 @@ public class GPictureView extends View implements GView {
                 String imagePath = addedIdsToImageViews.remove(photoId);
                 addedImages.remove(imagePath);
             }else if(_pictures.containsKey(photoId.toString())) {// pictures from database
-                _pictures.remove(photoId);
+                _pictures.remove(photoId.toString());
             }
 
             updateValueForm();
