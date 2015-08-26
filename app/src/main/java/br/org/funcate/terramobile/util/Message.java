@@ -1,9 +1,12 @@
 package br.org.funcate.terramobile.util;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.controller.activity.MessageFragment;
+import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
 
 /**
  * Created by marcelo on 5/29/15.
@@ -43,5 +46,39 @@ public class Message {
         MessageFragment messageFragment = new MessageFragment();
         messageFragment.setMessageDialogContent(R.drawable.success, title, message);
         messageFragment.show(activity.getFragmentManager(), "message");
+    }
+
+    public static void showConfirmMessage(Activity activity, int title, int message, final CallbackConfirmMessage callback){
+
+        // Default values
+        String yes = "Yes";
+        String no = "Yes";
+        try{
+            yes = ResourceHelper.getStringResource(R.string.yes);
+            no = ResourceHelper.getStringResource(R.string.no);
+        }catch (InvalidAppConfigException e){
+            e.printStackTrace();
+        }
+
+        new AlertDialog.Builder(activity)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle(title)
+                .setMessage(message)
+                .setPositiveButton(yes, new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        callback.confirmResponse(true);
+                    }
+
+                })
+                .setNegativeButton(no, new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        callback.confirmResponse(false);
+                    }
+
+                }).show();
     }
 }

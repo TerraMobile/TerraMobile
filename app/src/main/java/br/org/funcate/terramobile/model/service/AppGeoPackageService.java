@@ -27,6 +27,7 @@ import org.opengis.filter.identity.FeatureId;
 import org.opengis.geometry.BoundingBox;
 import org.opengis.feature.type.Name;
 import org.osmdroid.ResourceProxy;
+import org.osmdroid.bonuspack.overlays.Marker;
 import org.osmdroid.tileprovider.MapTileProviderArray;
 import org.osmdroid.tileprovider.MapTileProviderBasic;
 import org.osmdroid.tileprovider.modules.MapTileModuleProviderBase;
@@ -34,6 +35,7 @@ import org.osmdroid.tileprovider.tilesource.ITileSource;
 import org.osmdroid.tileprovider.tilesource.XYTileSource;
 import org.osmdroid.tileprovider.util.SimpleInvalidationHandler;
 import org.osmdroid.tileprovider.util.SimpleRegisterReceiver;
+import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.TilesOverlay;
 
@@ -64,6 +66,7 @@ import br.org.funcate.terramobile.model.exception.StyleException;
 import br.org.funcate.terramobile.model.exception.TerraMobileException;
 import br.org.funcate.terramobile.model.geomsource.SFSLayer;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
+import br.org.funcate.terramobile.model.osmbonuspack.overlays.SFSMarker;
 import br.org.funcate.terramobile.model.tilesource.MapTileGeoPackageProvider;
 import br.org.funcate.terramobile.util.ResourceHelper;
 import br.org.funcate.terramobile.util.Util;
@@ -326,6 +329,12 @@ public class AppGeoPackageService {
         return images;
     }
 
+    private static SimpleFeature getSimpleFeatureInstance(GpkgLayer layer, String featureID) {
+        SimpleFeatureType ft = layer.getFeatureType();
+        SimpleFeatureImpl feature = new SimpleFeatureImpl(featureID, null, ft);
+        return feature;
+    }
+
     private static SimpleFeature makeSimpleFeature(Bundle formData, TreeView tv) {
 
 
@@ -509,6 +518,38 @@ public class AppGeoPackageService {
         {
             e.printStackTrace();
             throw new LowMemoryException(ResourceHelper.getStringResource(R.string.read_features_out_of_memory_exception));
+        }
+    }
+
+    public static boolean updateFeature(GpkgLayer layer, Marker marker) throws InvalidAppConfigException, LowMemoryException, TerraMobileException {
+
+        SimpleFeature feature = getSimpleFeatureInstance(layer, ((SFSMarker) marker).getFeatureId());
+
+        ArrayList<GpkgField> fields = layer.getFields();
+        SimpleFeatureType ft = layer.getFeatureType();
+        Object[] attrs = new Object[fields.size()];
+        GeometryFactory factory=new GeometryFactory();
+        GeoPoint p = marker.getPosition();
+        Coordinate coordinate = new Coordinate(p.getLongitude(), p.getLatitude());
+        Point point = factory.createPoint(coordinate);
+        Name geomColName = ft.getGeometryDescriptor().getName();
+        attrs[ft.indexOf(geomColName)]=point;
+
+        feature.setAttributes(attrs);
+
+        try {
+
+            return GeoPackageService.updateFeature(layer.getGeoPackage(), feature);
+
+        }
+        catch (OutOfMemoryError e)
+        {
+            e.printStackTrace();
+            throw new LowMemoryException(ResourceHelper.getStringResource(R.string.read_features_out_of_memory_exception));
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            throw new TerraMobileException(ResourceHelper.getStringResource(R.string.read_features_exception), e);
         }
     }
 

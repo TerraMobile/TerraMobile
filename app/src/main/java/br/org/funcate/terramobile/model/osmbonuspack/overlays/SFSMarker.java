@@ -1,5 +1,7 @@
 package br.org.funcate.terramobile.model.osmbonuspack.overlays;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
@@ -28,6 +30,7 @@ import br.org.funcate.terramobile.model.exception.LowMemoryException;
 import br.org.funcate.terramobile.model.exception.TerraMobileException;
 import br.org.funcate.terramobile.model.geomsource.SFSPoint;
 import br.org.funcate.terramobile.model.service.GPSService;
+import br.org.funcate.terramobile.util.CallbackConfirmMessage;
 import br.org.funcate.terramobile.util.Message;
 import br.org.funcate.terramobile.util.ResourceHelper;
 
@@ -36,14 +39,17 @@ import br.org.funcate.terramobile.util.ResourceHelper;
  */
 public class SFSMarker extends Marker implements Marker.OnMarkerClickListener {
 
+    private MainActivity mMainActivity=null;
+
     public SFSMarker(MapView mapView) {
         super(mapView);
         this.setOnMarkerClickListener(this);
         this.setInfoWindow(new TMMarkerInfoWindow(R.layout.marker_info_window,
                 mapView,
-                ((MainActivity)mapView.getContext()).getMarkerInfoWindowController()
+                ((MainActivity) mapView.getContext()).getMarkerInfoWindowController()
         ));
         this.setTitle("Centered on " + this.getPosition().getLatitude() + "," + this.getPosition().getLongitude());
+        this.mMainActivity = (MainActivity) mapView.getContext();
     }
 
     public boolean onMarkerClick(Marker marker, MapView mapView) {
@@ -52,18 +58,124 @@ public class SFSMarker extends Marker implements Marker.OnMarkerClickListener {
         return true;
     }
 
-    private class TMMarkerInfoWindow extends BasicInfoWindow {
+    public Long getMarkerId() {
+        String markerId = ((SFSPoint)this.getRelatedObject()).mId;
+        String editableLayerName = this.mMainActivity.getTreeView().getSelectedEditableLayer().getName();
+        markerId = markerId.replaceFirst(editableLayerName,"");
+        return new Long(markerId);
+    }
 
-        //private String markerId;
+    public String getFeatureId() {
+        return ((SFSPoint)this.getRelatedObject()).mId;
+    }
+
+    private class TMMarkerInfoWindow extends BasicInfoWindow implements CallbackConfirmMessage {
+
+        private final int MOVE_TO_GPS = 0;
+        private final int MOVE_TO_CENTER = 1;
+        private final int REMOVE_MAKER = 2;
+
+
         private SFSMarker m = null;
         private MarkerInfoWindowController markerInfoWindowController = null;
+        private TMMarkerInfoWindow that=null;
+        private int who;
 
         public TMMarkerInfoWindow(int layoutResId, MapView mapView, MarkerInfoWindowController markerInfoWindowController) {
             super(layoutResId, mapView);
             this.markerInfoWindowController=markerInfoWindowController;
+            that=this;
         }
 
         public void onClose() {
+        }
+
+        public void confirmResponse(boolean response){
+            if(response) {
+                switch (this.who){
+                    case MOVE_TO_GPS:
+                        moveToGPS();
+                        break;
+                    case MOVE_TO_CENTER:
+                        moveToCenter();
+                        break;
+                    case REMOVE_MAKER:
+                        remove();
+                        break;
+                }
+            }
+
+        }
+        public void setWhoCall(int whoCall){
+            this.who=whoCall;
+        }
+
+        private void moveToGPS() {
+            final ProgressDialog progressDialog = new MarkerProgressView(mMapView.getContext());
+            progressDialog.show();
+            // Define a listener that responds to location updates
+            LocationListener locationListener = new LocationListener() {
+                public void onLocationChanged(Location location) {
+                    GPSService.unregisterListener(mMapView.getContext(), this);
+                    // Called when a new location is found by the GPS location provider.
+                    GeoPoint newPoint=new GeoPoint(location);
+                    GeoPoint oldPoint=m.getPosition();
+                    try {
+                        m.setPosition(newPoint);
+                        markerInfoWindowController.moveMarker(m);
+                    }catch (TerraMobileException tme){
+                        tme.printStackTrace();
+                        Message.showErrorMessage((MainActivity) mMapView.getContext(), R.string.fail, tme.getMessage());
+                        m.setPosition(oldPoint);
+                        progressDialog.dismiss();
+                    }
+                    m.closeInfoWindow();
+                    mMapView.invalidate();
+                    m.showInfoWindow();
+                    progressDialog.dismiss();
+                }
+                public void onStatusChanged(String provider, int status, Bundle extras) {}
+                public void onProviderEnabled(String provider) {}
+                public void onProviderDisabled(String provider) {}
+            };
+
+            if(!GPSService.registerListener(mMapView.getContext(), locationListener)) {
+                Message.showErrorMessage((MainActivity)mMapView.getContext(),R.string.fail,R.string.disabled_provider);
+            }
+        }
+
+        private void moveToCenter() {
+            IGeoPoint iPoint = mMapView.getMapCenter();
+            GeoPoint newPoint=new GeoPoint(iPoint.getLatitude(),iPoint.getLongitude());
+            GeoPoint oldPoint=m.getPosition();
+            try {
+                m.setPosition(newPoint);
+                markerInfoWindowController.moveMarker(m);
+            }catch (TerraMobileException tme){
+                tme.printStackTrace();
+                Message.showErrorMessage((MainActivity) mMapView.getContext(), R.string.fail, tme.getMessage());
+                m.setPosition(oldPoint);
+            }
+            m.closeInfoWindow();
+            mMapView.invalidate();
+            m.showInfoWindow();
+        }
+
+        private void remove() {
+            try {
+                markerInfoWindowController.deleteMarker(m);
+            } catch (TerraMobileException e) {
+                e.printStackTrace();
+                showErrorMessage(R.string.failure_on_remove_marker);
+            }
+
+            FolderOverlay f = getRelatedFolder();
+            if (f!=null && f.remove(m)) {
+                m.closeInfoWindow();
+                mMapView.invalidate();
+            } else {
+                showErrorMessage(R.string.failure_on_remove_marker);
+            }
         }
 
         public void onOpen(Object arg0) {
@@ -98,57 +210,24 @@ public class SFSMarker extends Marker implements Marker.OnMarkerClickListener {
             btnRemove.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
 
-                    try {
-                        markerInfoWindowController.deleteMarker(m);
-                    } catch (TerraMobileException e) {
-                        e.printStackTrace();
-                        showErrorMessage(R.string.fail_message_on_remove_marker);
-                    }
-
-                    FolderOverlay f = getRelatedFolder();
-                    if (f!=null && f.remove(m)) {
-                        m.closeInfoWindow();
-                        mMapView.invalidate();
-                    } else {
-                        showErrorMessage(R.string.fail_message_on_remove_marker);
-                    }
-                    return;
+                    that.setWhoCall(REMOVE_MAKER);
+                    Message.showConfirmMessage((MainActivity) mMapView.getContext(), R.string.title_remove_marker, R.string.message_remove_marker, that);
                 }
             });
             ImageButton btnGPS = (ImageButton) mView.findViewById(R.id.btn_move_to_gps);
             btnGPS.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
 
-                    // Define a listener that responds to location updates
-                    LocationListener locationListener = new LocationListener() {
-                        public void onLocationChanged(Location location) {
-                            GPSService.unregisterListener(mMapView.getContext(), this);
-                            // Called when a new location is found by the GPS location provider.
-                            GeoPoint point=new GeoPoint(location);
-                            m.setPosition(point);
-                            m.closeInfoWindow();
-                            mMapView.invalidate();
-                            m.showInfoWindow();
-                        }
-                        public void onStatusChanged(String provider, int status, Bundle extras) {}
-                        public void onProviderEnabled(String provider) {}
-                        public void onProviderDisabled(String provider) {}
-                    };
+                    that.setWhoCall(MOVE_TO_GPS);
+                    Message.showConfirmMessage((MainActivity) mMapView.getContext(), R.string.title_move_marker, R.string.message_move_marker_gps, that);
 
-                    if(!GPSService.registerListener(mMapView.getContext(), locationListener)) {
-                        Message.showErrorMessage((MainActivity)mMapView.getContext(),R.string.fail,R.string.disabled_provider);
-                    }
                 }
             });
             ImageButton btnMapCenter = (ImageButton) mView.findViewById(R.id.btn_move_to_map_center);
             btnMapCenter.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    IGeoPoint iPoint = mMapView.getMapCenter();
-                    GeoPoint location=new GeoPoint(iPoint.getLatitudeE6(),iPoint.getLongitudeE6());
-                    m.setPosition(location);
-                    m.closeInfoWindow();
-                    mMapView.invalidate();
-                    m.showInfoWindow();
+                    that.setWhoCall(MOVE_TO_CENTER);
+                    Message.showConfirmMessage((MainActivity) mMapView.getContext(), R.string.title_move_marker, R.string.message_move_marker_center, that);
                 }
             });
             ImageButton btnCloseInfo = (ImageButton) mView.findViewById(R.id.btn_close_info_window);
@@ -166,6 +245,16 @@ public class SFSMarker extends Marker implements Marker.OnMarkerClickListener {
                     msgId
             );
         }
+
+        private class MarkerProgressView extends ProgressDialog {
+
+            public MarkerProgressView(Context context) {
+                super(context);
+                this.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                this.setIndeterminate(true);
+                this.setCanceledOnTouchOutside(true);
+            }
+        };
 
         private FolderOverlay getRelatedFolder() {
             for (int j = 0, len = mMapView.getOverlayManager().size(); j < len; j++) {

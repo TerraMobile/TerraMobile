@@ -36,6 +36,7 @@ import br.org.funcate.terramobile.model.exception.LowMemoryException;
 import br.org.funcate.terramobile.model.exception.TerraMobileException;
 import br.org.funcate.terramobile.model.geomsource.SFSPoint;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
+import br.org.funcate.terramobile.model.osmbonuspack.overlays.SFSMarker;
 import br.org.funcate.terramobile.model.service.AppGeoPackageService;
 import br.org.funcate.terramobile.util.Message;
 import br.org.funcate.terramobile.util.ResourceHelper;
@@ -56,22 +57,22 @@ public class MarkerInfoWindowController {
     }
 
     public void editMarker(Marker marker) {
-        startActivityForm(getMarkerId(marker).longValue());
+        startActivityForm(((SFSMarker)marker).getMarkerId().longValue());
     }
 
-    private Long getMarkerId(Marker marker) {
+    /*private Long getMarkerId(Marker marker) {
         String markerId = ((SFSPoint)marker.getRelatedObject()).mId;
         String editableLayerName = this.mainActivity.getTreeView().getSelectedEditableLayer().getName();
         markerId = markerId.replaceFirst(editableLayerName,"");
         return new Long(markerId);
-    }
+    }*/
 
     public void deleteMarker(Marker marker) throws TerraMobileException {
         GpkgLayer layer=this.mainActivity.getTreeView().getSelectedEditableLayer();
         boolean exec;
 
         try {
-            exec = AppGeoPackageService.deleteFeature(layer, getMarkerId(marker));
+            exec = AppGeoPackageService.deleteFeature(layer, ((SFSMarker)marker).getMarkerId());
             if(!exec) {
                 throw new TerraMobileException(ResourceHelper.getStringResource(R.string.feature_not_found));
             }else{
@@ -84,8 +85,19 @@ public class MarkerInfoWindowController {
         }
     }
 
-    public void moveMarker(Marker marker) {
-        long markerId = getMarkerId(marker).longValue();
+    public void moveMarker(Marker marker) throws TerraMobileException {
+        GpkgLayer layer=this.mainActivity.getTreeView().getSelectedEditableLayer();
+        try {
+            if(!AppGeoPackageService.updateFeature(layer, marker)) {
+                throw new TerraMobileException(ResourceHelper.getStringResource(R.string.failure_on_save_new_location));
+            }
+        } catch (InvalidAppConfigException e) {
+            e.printStackTrace();
+            throw new TerraMobileException(e.getMessage());
+        } catch (LowMemoryException e) {
+            e.printStackTrace();
+            throw new TerraMobileException(e.getMessage());
+        }
     }
 
     public void startActivityForm() {

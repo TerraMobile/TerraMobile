@@ -98,8 +98,14 @@
     <string name="copying_file">Copying file…</string>
     <!-- Marker context menu -->
     <string name="title_marker">Location</string>
+    <string name="title_move_marker">Move Marker</string>
+    <string name="title_remove_marker">Remove Marker</string>
+    <string name="message_remove_marker">Would like remove this marker?</string>
+    <string name="message_move_marker_gps">Would like move this marker to current your GPS location?</string>
+    <string name="message_move_marker_center">Would like move this marker to center of the map?</string>
     <string name="title_fail_message_marker">Warning</string>
-    <string name="fail_message_on_remove_marker">Fail on remove Marker.</string>
+    <string name="failure_on_remove_marker">Failure on remove Marker.</string>
+    <string name="failure_on_save_new_location">Failure on save the new location.</string>
     <!-- Location services -->
     <string name="disabled_provider">Your location provider is disabled.</string>
 </resources>
