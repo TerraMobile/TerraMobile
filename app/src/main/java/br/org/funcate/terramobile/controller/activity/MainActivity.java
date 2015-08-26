@@ -34,7 +34,7 @@ import java.util.ArrayList;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import br.org.funcate.mobile.sld.SLDParser;
+import br.org.funcate.dynamicforms.util.FileUtilities;
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.configuration.ViewContextParameters;
 import br.org.funcate.terramobile.controller.activity.settings.SettingsActivity;
@@ -77,6 +77,11 @@ public class MainActivity extends FragmentActivity {
     private MainController mainController;
 
     private MarkerInfoWindowController markerInfoWindowController;
+
+    /**
+     * Temporary variable to test GPKG
+     */
+    public boolean useNewOverlaySFS = false;
 
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -248,7 +253,10 @@ public class MainActivity extends FragmentActivity {
             case R.id.settings:
                 startActivity(new Intent(this, SettingsActivity.class));
                 break;
-            case R.id.exit:
+            case R.id.tooglesfsbboxquery:
+                this.useNewOverlaySFS=!this.useNewOverlaySFS;
+                break;
+           case R.id.exit:
                 this.finish();
                 System.exit(0);
                 break;

@@ -28,8 +28,8 @@ import br.org.funcate.terramobile.model.exception.LowMemoryException;
 import br.org.funcate.terramobile.model.exception.StyleException;
 import br.org.funcate.terramobile.model.exception.TerraMobileException;
 import br.org.funcate.terramobile.model.geomsource.SFSLayer;
+import br.org.funcate.terramobile.model.geomsource.overlay.SFSLayerOverlay;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
-import br.org.funcate.terramobile.model.osmbonuspack.overlays.SFSOverlay;
 import br.org.funcate.terramobile.model.service.LayersService;
 import br.org.funcate.terramobile.model.service.StyleService;
 import br.org.funcate.terramobile.model.service.AppGeoPackageService;
@@ -145,20 +145,34 @@ public class MenuMapController {
     private void addVectorLayer(GpkgLayer child) throws LowMemoryException, InvalidAppConfigException, TerraMobileException, StyleException {
 
         if(child.getOsmOverLayer()==null) {
-            SFSLayer l = AppGeoPackageService.getFeatures(child);
+
 
             MapView mapView = (MapView) ((MainActivity) context).findViewById(R.id.mapview);
 
             Style defaultStyle = StyleService.loadStyle(context, child.getGeoPackage().getDatabaseFileName(),child);
+            System.out.println("======================§§§§§§§ USE NEW OVERLAY SFS = " + ((MainActivity) context).useNewOverlaySFS);
+            if(!((MainActivity) context).useNewOverlaySFS)
+            {
+                SFSLayer l = AppGeoPackageService.getFeatures(child);
 
-            KmlDocument kmlDocument = new KmlDocument();
+                KmlDocument kmlDocument = new KmlDocument();
 
-            Overlay overlay = l.buildOverlay(mapView, defaultStyle, null, kmlDocument);
+                Overlay overlay = l.buildOverlay(mapView, defaultStyle, null, kmlDocument);
 
-            mapView.getOverlays().add(overlay);
+                mapView.getOverlays().add(overlay);
 
-            child.setOsmOverLayer(overlay);
+                child.setOsmOverLayer(overlay);
+            }
+            else
+            {
+                SFSLayerOverlay overlay = new SFSLayerOverlay(child, this.context);
 
+                overlay.setStyle(defaultStyle);
+
+                mapView.getOverlays().add(overlay);
+
+                child.setOsmOverLayer(overlay);
+            }
             mapView.invalidate();
         }
 
