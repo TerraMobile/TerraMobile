@@ -4,7 +4,6 @@ import android.app.ActionBar;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -25,25 +24,16 @@ import android.widget.ExpandableListView;
 import android.widget.TextView;
 
 import org.opengis.geometry.BoundingBox;
-import org.xml.sax.SAXException;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
 
-import javax.xml.parsers.ParserConfigurationException;
-
-import br.org.funcate.dynamicforms.util.FileUtilities;
 import br.org.funcate.terramobile.R;
-import br.org.funcate.terramobile.configuration.ViewContextParameters;
 import br.org.funcate.terramobile.controller.activity.settings.SettingsActivity;
 import br.org.funcate.terramobile.model.db.ApplicationDatabase;
 import br.org.funcate.terramobile.model.db.DatabaseFactory;
+import br.org.funcate.terramobile.model.db.dao.ProjectDAO;
 import br.org.funcate.terramobile.model.domain.Project;
 import br.org.funcate.terramobile.model.domain.Setting;
-import br.org.funcate.terramobile.model.db.dao.ProjectDAO;
-import br.org.funcate.terramobile.model.db.dao.SettingsDAO;
 import br.org.funcate.terramobile.model.exception.DAOException;
 import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
 import br.org.funcate.terramobile.model.exception.ProjectException;
@@ -60,12 +50,9 @@ public class MainActivity extends FragmentActivity {
 
     private ActionBar actionBar;
 
-    private CharSequence mDrawerTitle;
     private CharSequence mTitle;
 
     private TreeView treeView;
-
-    private ViewContextParameters parameters=new ViewContextParameters();
 
     private Project mProject;
 
@@ -158,15 +145,14 @@ public class MainActivity extends FragmentActivity {
             Message.showErrorMessage(this, R.string.error, e.getMessage());
         }
 
-        mTitle = mDrawerTitle = getTitle();
+        mTitle = getTitle();
         DrawerLayout mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         // set a custom shadow that overlays the action_bar content when the drawer opens
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
 
         int ActionBarTitleID = Resources.getSystem().getIdentifier("action_bar_title", "id", "android");
         TextView ActionBarTextView = (TextView) this.findViewById(ActionBarTitleID);
-        ActionBarTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX,
-                getResources().getDimension(R.dimen.title_text_size));
+        ActionBarTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.title_text_size));
 
         actionBar.setDisplayHomeAsUpEnabled(true);
         // ActionBarDrawerToggle ties together the proper interactions
@@ -184,7 +170,7 @@ public class MainActivity extends FragmentActivity {
             }
 
             public void onDrawerOpened(View drawerView) {
-                actionBar.setTitle(mDrawerTitle);
+                actionBar.setTitle(mTitle);
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             }
         };
@@ -200,10 +186,6 @@ public class MainActivity extends FragmentActivity {
         this.finish();
         System.exit(0);
         return;
-    }
-
-    public ViewContextParameters getParameters(){
-        return parameters;
     }
 
     @Override

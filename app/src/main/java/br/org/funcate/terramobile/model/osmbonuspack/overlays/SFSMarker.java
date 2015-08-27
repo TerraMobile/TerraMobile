@@ -104,7 +104,6 @@ public class SFSMarker extends Marker implements Marker.OnMarkerClickListener {
                         break;
                 }
             }
-
         }
         public void setWhoCall(int whoCall){
             this.who=whoCall;
