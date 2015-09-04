@@ -66,6 +66,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="right"
                     android:layout_weight="0" />
+
                 <ImageButton android:id="@+id/btn_edit_marker"
                     android:background="@android:drawable/ic_menu_edit"
                     android:visibility="visible"
@@ -73,7 +74,20 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="right"
                     android:layout_weight="0" />
-                <ImageButton android:id="@+id/btn_remove_marker"
+
+                <ProgressBar
+                    android:id="@+id/pgr_info_window"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:indeterminate="true"
+                    android:layout_alignBottom="@+id/btn_close_info_window"
+                    android:layout_weight="0"
+                    android:visibility="gone"
+                    style="@android:style/Widget.ProgressBar.Small"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="5dp" />
+
+            <ImageButton android:id="@+id/btn_remove_marker"
                     android:background="@android:drawable/ic_menu_delete"
                     android:visibility="visible"
                     android:layout_width="wrap_content"
@@ -96,6 +110,7 @@
                     android:layout_weight="0" />
             </LinearLayout>
     </LinearLayout>
+
     <ImageButton android:id="@+id/btn_close_info_window"
         android:background="@android:drawable/ic_notification_clear_all"
         android:visibility="visible"

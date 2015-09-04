@@ -2,6 +2,7 @@ package br.org.funcate.terramobile.controller.activity;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -33,6 +34,7 @@ import org.osmdroid.views.MapView;
 import br.org.funcate.dynamicforms.util.LibraryConstants;
 import br.org.funcate.jgpkg.exception.QueryException;
 import br.org.funcate.terramobile.R;
+import br.org.funcate.terramobile.controller.activity.settings.GPSSettingController;
 import br.org.funcate.terramobile.model.constants.OpenStreetMapConstants;
 import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
 import br.org.funcate.terramobile.model.exception.TerraMobileException;
@@ -164,7 +166,31 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants{
             String[] url= {"http://tile.openstreetmap.org/"};
             final ITileSource tileSource = new XYTileSource("Mapnik", ResourceProxy.string.mapnik, 1, 18, 256, ".png", url);
             mMapView.setTileSource(tileSource);
+            applyGPSSetting();
         } catch (final IllegalArgumentException ignore) {
+        }
+    }
+
+    /**
+     * Reads the GPS configuration and inserts GPS overlay on map, if it is enabled.
+     */
+    public void applyGPSSetting() {
+        // verify if GPS enable on device
+        if(GPSService.isGPSProviderEnable(context) || GPSService.isNetworkProviderEnable(context)) {
+
+            GPSSettingController gpsSettingController = new GPSSettingController(mMapView.getContext());
+            Boolean showGPSLocation = gpsSettingController.getGPSLocationState();
+            Boolean showGPSLocationOnCenter = gpsSettingController.getGPSCenterState();
+            if (showGPSLocation != null)
+                if (showGPSLocation) {
+                    MainActivity mainActivity = (MainActivity) context;
+                    GPSOverlayController gpsOverlayController = mainActivity.getMainController().getGpsOverlayController();
+                    gpsOverlayController.addGPSTrackerLayer();
+                    gpsOverlayController.setKeepOnCenter( ((showGPSLocationOnCenter != null)?(showGPSLocationOnCenter):(false)) );
+                }
+        }else {
+            // TODO: notify user when the state of the GPS resource is disabled. use one icon on action bar?
+
         }
     }
 
@@ -209,50 +235,22 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants{
         canvas.drawLine(centerW + offset, centerH, centerW - offset, centerH, paint);
     }
 
-/*    public void startForm() {
-
-        GeoPoint point = (GeoPoint) this.mMapView.getMapCenter();
-
-        // This id is provided from the selected point, if one it is selected otherwise -1 is default.
-        long selectedPointID = -1;
-        GpkgLayer editableLayer;
-        try{
-            TreeView tv = ((MainActivity) context).getTreeView();
-            editableLayer = tv.getSelectedEditableLayer();
-            if(editableLayer==null) {
-                Message.showErrorMessage(((MainActivity) context), R.string.failure_title_msg, R.string.missing_editable_layer);
-                return;
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-            Message.showErrorMessage(((MainActivity) context), R.string.failure_title_msg, R.string.error_start_form);
-            return;
-        }
-
-
-        try {
-            Intent formIntent = new Intent(context, FragmentDetailActivity.class);
-            formIntent.putExtra(LibraryConstants.SELECTED_POINT_ID, selectedPointID);
-            // The form name attribute, provided by JSON, shall be the same name of the editable layer.
-            formIntent.putExtra(FormUtilities.ATTR_FORMNAME, editableLayer.getName());
-            formIntent.putExtra(FormUtilities.ATTR_JSON_TAGS, editableLayer.getJSON());
-            formIntent.putExtra(FormUtilities.TYPE_LATITUDE, point.getLatitude());
-            formIntent.putExtra(FormUtilities.TYPE_LONGITUDE, point.getLongitude());
-            File directory = Util.getDirectory(this.getResources().getString(R.string.app_workspace_dir));
-
-            formIntent.putExtra(FormUtilities.MAIN_APP_WORKING_DIRECTORY, directory.getAbsolutePath());
-            startActivityForResult(formIntent, FORM_COLLECT_DATA);
-
-        } catch (Exception e) {
-            Message.showErrorMessage(((MainActivity) context), R.string.failure_title_msg, R.string.error_start_form);
-            return;
-        }
-    }*/
-
     public void centerMapToGPS() {
+
+        String waitingMsg="";
+        try {
+            waitingMsg = ResourceHelper.getStringResource(R.string.message_waiting_location_gps);
+        }catch (InvalidAppConfigException e) {
+            e.printStackTrace();
+            waitingMsg="Waiting...";
+        }
+
+        final ProgressDialog progressDialog = Message.startProgressDialog(mMapView.getContext(), waitingMsg);
+
         // Define a listener that responds to location updates
         LocationListener locationListener = new LocationListener() {
             public void onLocationChanged(Location location) {
+                progressDialog.dismiss();
                 GPSService.unregisterListener(mMapView.getContext(), this);
                 // Called when a new location is found by the GPS location provider.
                 GeoPoint point=new GeoPoint(location);
@@ -260,10 +258,14 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants{
             }
             public void onStatusChanged(String provider, int status, Bundle extras) {}
             public void onProviderEnabled(String provider) {}
-            public void onProviderDisabled(String provider) {}
+            public void onProviderDisabled(String provider) {
+                progressDialog.dismiss();
+                Message.showErrorMessage((MainActivity) mMapView.getContext(), R.string.fail, R.string.disabled_provider);
+            }
         };
 
         if(!GPSService.registerListener(mMapView.getContext(), locationListener)){
+            progressDialog.dismiss();
             Message.showErrorMessage((MainActivity)mMapView.getContext(),R.string.fail,R.string.disabled_provider);
         }
     }
@@ -275,28 +277,6 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants{
     public void ZoomOut(){
         mMapView.getController().zoomOut();
     }
-
-
-/*    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == Activity.RESULT_OK && requestCode == FORM_COLLECT_DATA) {
-            Bundle extras = data.getBundleExtra(LibraryConstants.PREFS_KEY_FORM);
-            try {
-                AppGeoPackageService.storeData( context, extras);
-            }catch (TerraMobileException tme) {
-                //Message.showMessage(this, R.drawable.error, getResources().getString(R.string.error), tme.getMessage());
-                tme.printStackTrace();
-                Message.showErrorMessage(((MainActivity) context), R.string.error, R.string.missing_form_data);
-            }catch (QueryException qe) {
-                //Message.showMessage(this, R.drawable.error, getResources().getString(R.string.error), qe.getMessage());
-                qe.printStackTrace();
-                Message.showErrorMessage(((MainActivity) context), R.string.error, R.string.error_while_storing_form_data);
-            }
-            updateMap();
-        }else {
-            Message.showErrorMessage(((MainActivity) context), R.string.error, R.string.cancel_form_data);
-        }
-    }*/
 
     public synchronized void updateMap()
     {

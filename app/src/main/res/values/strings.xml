@@ -12,6 +12,7 @@
     <string name="missing_editable_layer">Select one gathering layer.</string>
     <string name="missing_form_data">Missing data from gathering form.</string>
     <string name="cancel_form_data">Canceled data collection form.</string>
+    <string name="default_feature_info_msg">Not found Feature data.</string>
     <!-- Sync data -->
     <!-- List project -->
     <string name="no_connection">Connect to the internet</string>
@@ -40,6 +41,7 @@
     <string name="test_memory">Test Memory</string>
     <string name="sync_preferences">Sync preferences</string>
     <string name="map_preferences">Map preferences</string>
+    <string name="gps_preferences">GPS preferences</string>
     <!-- Sync preferences -->
     <string name="credentials">Credentials</string>
     <string name="hint_url_server">Enter the URL</string>
@@ -53,6 +55,9 @@
     <string name="error_passwords_match">Passwords doesn\'t match</string>
     <string name="btn_save">Save</string>
     <string name="btn_cancel">Cancel</string>
+    <!-- GPS preferences -->
+    <string name="hint_gps_tracker">Keep visible GPS location?</string>
+    <string name="hint_gps_center">Retain my location on map center?</string>
     <!-- Server URL -->
     <string name="hint_server_url">Enter the server URL</string>
     <string name="server_url">Set the server URL</string>
@@ -103,6 +108,7 @@
     <string name="message_remove_marker">Would like remove this marker?</string>
     <string name="message_move_marker_gps">Would like move this marker to current your GPS location?</string>
     <string name="message_move_marker_center">Would like move this marker to center of the map?</string>
+    <string name="message_waiting_location_gps">Waiting GPS location...</string>
     <string name="title_fail_message_marker">Warning</string>
     <string name="failure_on_remove_marker">Failure on remove Marker.</string>
     <string name="failure_on_save_new_location">Failure on save the new location.</string>

@@ -2,6 +2,8 @@ package br.org.funcate.terramobile.util;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 
 import br.org.funcate.terramobile.R;
@@ -80,5 +82,29 @@ public class Message {
                     }
 
                 }).show();
+    }
+
+    /**
+     * Start and show a ProgressDialog with a simple configuration to ProgressDialog widget.
+     * Who call this method need call dismiss method of the ProgressDialog to destroy the ProgressDialog widget.
+     * @param context, the application context
+     * @param waitingMsg, the initial message
+     * @return a reference to new instance of this widget.
+     */
+    public static ProgressDialog startProgressDialog(Context context, String waitingMsg) {
+        final ProgressDialog progressDialog = new MarkerProgressView(context);
+        progressDialog.setMessage(waitingMsg);
+        progressDialog.show();
+        return progressDialog;
+    }
+
+    private static class MarkerProgressView extends ProgressDialog {
+
+        public MarkerProgressView(Context context) {
+            super(context);
+            this.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            this.setIndeterminate(true);
+            this.setCanceledOnTouchOutside(false);
+        }
     }
 }

@@ -11,6 +11,7 @@ import android.view.MenuItem;
 public class SettingsActivity extends PreferenceActivity {
 
     private SettingsController controller;
+    private GPSSettingController gpsSettingController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,6 +20,7 @@ public class SettingsActivity extends PreferenceActivity {
             getActionBar().setDisplayHomeAsUpEnabled(true);
         getFragmentManager().beginTransaction().replace(android.R.id.content, new SettingsFragment(), "settings").commit();
         controller = new SettingsController(this);
+        gpsSettingController = new GPSSettingController(this);
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -42,5 +44,9 @@ public class SettingsActivity extends PreferenceActivity {
 
     public void setController(SettingsController controller) {
         this.controller = controller;
+    }
+
+    public GPSSettingController getGPSSettingController() {
+        return this.gpsSettingController;
     }
 }

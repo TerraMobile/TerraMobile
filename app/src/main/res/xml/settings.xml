@@ -8,6 +8,14 @@
             android:key="server_url">
         </Preference>
     </PreferenceCategory>
+    <PreferenceCategory android:title="@string/gps_preferences">
+        <CheckBoxPreference android:title="@string/hint_gps_tracker"
+            android:key="keep_gps_location">
+        </CheckBoxPreference>
+        <CheckBoxPreference android:title="@string/hint_gps_center"
+            android:key="keep_gps_center">
+        </CheckBoxPreference>
+    </PreferenceCategory>
     <!--<PreferenceCategory android:title="@string/map_preferences">-->
     <!--</PreferenceCategory>-->
 </PreferenceScreen>

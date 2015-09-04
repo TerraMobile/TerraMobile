@@ -11,4 +11,5 @@
     <string name="btn_form_save">Save</string>
     <string name="btn_form_remove">Remove</string>
     <string name="btn_form_cancel">Cancel</string>
+    <string name="wait_form_start">Waiting form...</string>
 </resources>

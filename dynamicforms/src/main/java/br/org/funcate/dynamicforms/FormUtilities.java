@@ -73,11 +73,17 @@ public class FormUtilities {
     public static final String PICTURE_DB_VIEW = "picture_db_view";
     public static final String PICTURE_BITMAP_ID = "picture_bitmap_id";
     public static final String PICTURE_RESPONSE_REMOVE_VIEW = "picture_response_remove";
-    public static final int PICTURE_VIEW_RESULT_CODE = 1234;
 
     public static final String PHOTO_COMPLETE_PATH = "PHOTO_COMPLETE_PATH";
 
     public static final String MAIN_APP_WORKING_DIRECTORY = "MAIN_APP_WORKING_DIRECTORY";
+
+    /**
+     * Default session name is used to find one valid session into JSON document
+     * provided from configuration of one "gathering layer" into one Geopackage.
+     */
+    public static final String DEFAULT_SESSION_NAME = "terramobile";
+
     /**
      *
      */

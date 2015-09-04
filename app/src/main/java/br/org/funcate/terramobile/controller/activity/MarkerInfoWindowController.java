@@ -2,16 +2,15 @@ package br.org.funcate.terramobile.controller.activity;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageButton;
+import android.widget.ProgressBar;
 
-import com.augtech.geoapi.geopackage.DateUtil;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 
 import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.type.AttributeType;
-import org.opengis.feature.type.Name;
 import org.osmdroid.bonuspack.overlays.Marker;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
@@ -19,9 +18,7 @@ import org.osmdroid.views.MapView;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -34,10 +31,10 @@ import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
 import br.org.funcate.terramobile.model.exception.LowMemoryException;
 import br.org.funcate.terramobile.model.exception.TerraMobileException;
-import br.org.funcate.terramobile.model.geomsource.SFSPoint;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
 import br.org.funcate.terramobile.model.osmbonuspack.overlays.SFSMarker;
 import br.org.funcate.terramobile.model.service.AppGeoPackageService;
+import br.org.funcate.terramobile.model.service.FeatureService;
 import br.org.funcate.terramobile.util.Message;
 import br.org.funcate.terramobile.util.ResourceHelper;
 import br.org.funcate.terramobile.util.Util;
@@ -49,6 +46,8 @@ public class MarkerInfoWindowController {
 
     private ArrayList<File> temporaryImages;
     private MainActivity mainActivity;
+    private ProgressBar pgrInfoWindow;
+    private ImageButton btnEditMarker;
     // identify the return of the request of the Activity Form
     private static int FORM_RESULT_CODE = 222;
 
@@ -56,16 +55,22 @@ public class MarkerInfoWindowController {
         this.mainActivity = mainActivity;
     }
 
+    public void setProgressBar(ProgressBar progressBar) {
+        pgrInfoWindow = progressBar;
+    }
+
+    public void setImageBtn(ImageButton imageBtn) {
+        btnEditMarker = imageBtn;
+    }
+
+    private void hideProgress() {
+        pgrInfoWindow.setVisibility(View.GONE);
+        btnEditMarker.setVisibility(View.VISIBLE);
+    }
+
     public void editMarker(Marker marker) {
         startActivityForm(((SFSMarker)marker).getMarkerId().longValue());
     }
-
-    /*private Long getMarkerId(Marker marker) {
-        String markerId = ((SFSPoint)marker.getRelatedObject()).mId;
-        String editableLayerName = this.mainActivity.getTreeView().getSelectedEditableLayer().getName();
-        markerId = markerId.replaceFirst(editableLayerName,"");
-        return new Long(markerId);
-    }*/
 
     public void deleteMarker(Marker marker) throws TerraMobileException {
         GpkgLayer layer=this.mainActivity.getTreeView().getSelectedEditableLayer();
@@ -110,6 +115,7 @@ public class MarkerInfoWindowController {
 
         GeoPoint point=null;
         GpkgLayer editableLayer;
+
         try{
             TreeView tv = mainActivity.getTreeView();
             editableLayer = tv.getSelectedEditableLayer();
@@ -145,6 +151,7 @@ public class MarkerInfoWindowController {
                 Message.showErrorMessage(mainActivity, R.string.failure_title_msg, e.getMessage());
                 return;
             }catch (Exception e) {
+                e.printStackTrace();
                 Message.showErrorMessage(mainActivity, R.string.failure_title_msg, R.string.error_start_form);
                 return;
             }
@@ -156,9 +163,10 @@ public class MarkerInfoWindowController {
                     if(coords.length>0 && coords.length==1)
                         point = new GeoPoint(coords[0].y, coords[0].x);
                 }
-                formDataValues = featureAttrsToBundle(feature);
+                formDataValues = FeatureService.featureAttrsToBundle(feature);
                 if(images!=null && !images.isEmpty()) {
-                    formDataValues = mediaToBundle(formDataValues, images);
+                    Bundle b = mediaToBundle(formDataValues, images);
+                    if(b!=null) formDataValues = b;
                 }
             }
         }else {
@@ -184,49 +192,9 @@ public class MarkerInfoWindowController {
             mainActivity.startActivityForResult(formIntent, FORM_RESULT_CODE);
 
         } catch (Exception e) {
+            e.printStackTrace();
             Message.showErrorMessage(mainActivity, R.string.failure_title_msg, R.string.error_start_form);
-            return;
         }
-    }
-
-    private Bundle featureAttrsToBundle(SimpleFeature feature) {
-
-        List<Object> attrs = feature.getAttributes();
-        if(attrs.size()<=0) return null;
-        List<AttributeType> featureTypes = feature.getFeatureType().getTypes();
-
-        Iterator<AttributeType> itTypes = featureTypes.iterator();
-        Bundle bundle = new Bundle(attrs.size());
-
-        while (itTypes.hasNext()) {
-            AttributeType attributeType = itTypes.next();
-            Name typeName = attributeType.getName();
-            String typeClass = attributeType.getBinding().getName();
-            Object o = feature.getAttribute(typeName);
-            String s=null;
-            if(String.class.getName().equals(typeClass)){
-                s = (String)o;
-                bundle.putString(typeName.toString(),s);
-            }else if(Double.class.getName().equals(typeClass)){
-                Double d = (Double)o;
-                s = d.toString();
-            }else if(Integer.class.getName().equals(typeClass)){
-                Integer i = (Integer)o;
-                s = i.toString();
-            }else if(Boolean.class.getName().equals(typeClass)){
-                Boolean b = (Boolean)o;
-                s = b.toString();
-            }else if(Date.class.getName().equals(typeClass)){
-                Date date = (Date)o;
-                s = DateUtil.serializeDate(date);
-            }else if(typeClass.equals("[Ljava.lang.Byte;")){
-                byte[] photo=(byte[])o;
-                bundle.putByteArray(typeName.toString(), photo);
-            }
-
-            if(s!=null) bundle.putString(typeName.toString(), s);
-        }
-        return bundle;
     }
 
     private Bundle mediaToBundle(Bundle bundle, Map<String, Object> images) {
@@ -245,14 +213,13 @@ public class MarkerInfoWindowController {
                 ImageUtilities.writeImageDataToFile((byte[])value, imagePath);
                 temporaryImages.add(tmpFile);
                 imageMapBundle.putString(key, imagePath);
-/*                Bitmap imageBitmap = ImageUtilities.getBitmapFromBlob((byte[])value);
-                Bitmap thumbnail = ImageUtilities.makeThumbnail(imageBitmap);
-                imageMapBundle.putByteArray(key, ImageUtilities.getBlobFromBitmap(thumbnail));*/
             }
         } catch (IOException e) {
             e.printStackTrace();
+            return null;
         } catch (Exception e) {
             e.printStackTrace();
+            return null;
         }
 
         bundle.putBundle(FormUtilities.IMAGE_MAP, imageMapBundle);
@@ -261,6 +228,8 @@ public class MarkerInfoWindowController {
     }
 
     public void makeSomeProcessWithResult(int requestCode, int resultCode, Intent data) {
+
+        hideProgress();
 
         if (resultCode == Activity.RESULT_OK && requestCode == FORM_RESULT_CODE) {
             Bundle extras = data.getBundleExtra(LibraryConstants.PREFS_KEY_FORM);
@@ -275,9 +244,6 @@ public class MarkerInfoWindowController {
             }
             this.mainActivity.getMainController().getMapFragment().updateMap();
         }
-        /*else {
-            Message.showErrorMessage(mainActivity, R.string.error, R.string.cancel_form_data);
-        }*/
     }
 
     public MapView getMapView() {
@@ -285,4 +251,22 @@ public class MarkerInfoWindowController {
         return mapView;
     }
 
+    public void viewFeatureData(long featureID) {
+        GpkgLayer editableLayer;
+        try{
+            TreeView tv = mainActivity.getTreeView();
+            editableLayer = tv.getSelectedEditableLayer();
+            if(editableLayer==null) {
+                Message.showErrorMessage(mainActivity, R.string.failure_title_msg, R.string.missing_editable_layer);
+                return;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            Message.showErrorMessage(mainActivity, R.string.failure_title_msg, R.string.error_start_form);
+            return;
+        }
+
+        FeatureInfoPanelController controller = mainActivity.getFeatureInfoPanelController();
+        controller.startFeatureInfoPanel(editableLayer, featureID);
+    }
 }

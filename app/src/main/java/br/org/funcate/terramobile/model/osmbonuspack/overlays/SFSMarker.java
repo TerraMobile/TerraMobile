@@ -7,6 +7,7 @@ import android.location.LocationListener;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.augtech.geoapi.geopackage.table.GpkgExtensions;
@@ -87,9 +88,6 @@ public class SFSMarker extends Marker implements Marker.OnMarkerClickListener {
             that=this;
         }
 
-        public void onClose() {
-        }
-
         public void confirmResponse(boolean response){
             if(response) {
                 switch (this.who){
@@ -110,8 +108,15 @@ public class SFSMarker extends Marker implements Marker.OnMarkerClickListener {
         }
 
         private void moveToGPS() {
-            final ProgressDialog progressDialog = new MarkerProgressView(mMapView.getContext());
-            progressDialog.show();
+            String waitingMsg="";
+            try {
+                waitingMsg = ResourceHelper.getStringResource(R.string.message_waiting_location_gps);
+            }catch (InvalidAppConfigException e) {
+                e.printStackTrace();
+                waitingMsg="Waiting...";
+            }
+
+            final ProgressDialog progressDialog = Message.startProgressDialog(mMapView.getContext(), waitingMsg);
             // Define a listener that responds to location updates
             LocationListener locationListener = new LocationListener() {
                 public void onLocationChanged(Location location) {
@@ -196,12 +201,21 @@ public class SFSMarker extends Marker implements Marker.OnMarkerClickListener {
             ImageButton btnMoreInfo = (ImageButton) mView.findViewById(R.id.bubble_moreinfo);
             btnMoreInfo.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    // Implement onClick behaviour
+                    long featureID = m.getMarkerId();
+                    markerInfoWindowController.viewFeatureData(featureID);
                 }
             });
             ImageButton btnEdit = (ImageButton) mView.findViewById(R.id.btn_edit_marker);
             btnEdit.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
+
+                    ImageButton imageButton = (ImageButton)v;
+                    imageButton.setVisibility(View.GONE);
+                    ProgressBar progressBar = (ProgressBar)mView.findViewById(R.id.pgr_info_window);
+                    progressBar.setVisibility(View.VISIBLE);
+                    markerInfoWindowController.setProgressBar(progressBar);
+                    markerInfoWindowController.setImageBtn(imageButton);
+
                     markerInfoWindowController.editMarker(m);
                 }
             });
@@ -244,16 +258,6 @@ public class SFSMarker extends Marker implements Marker.OnMarkerClickListener {
                     msgId
             );
         }
-
-        private class MarkerProgressView extends ProgressDialog {
-
-            public MarkerProgressView(Context context) {
-                super(context);
-                this.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                this.setIndeterminate(true);
-                this.setCanceledOnTouchOutside(true);
-            }
-        };
 
         private FolderOverlay getRelatedFolder() {
             for (int j = 0, len = mMapView.getOverlayManager().size(); j < len; j++) {
