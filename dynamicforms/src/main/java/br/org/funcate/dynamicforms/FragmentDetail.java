@@ -91,8 +91,6 @@ public class FragmentDetail extends Fragment {
     private String selectedFormName;
     private JSONObject sectionObject;
     private long noteId = -1;
-    private double longitude;
-    private double latitude;
     private String workingDirectory;
     private Bundle existingFeatureData;
 
@@ -113,6 +111,7 @@ public class FragmentDetail extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.details, container, false);
         LinearLayout mainView = (LinearLayout) view.findViewById(R.id.form_linear);
+        FragmentDetailActivity fragmentDetailActivity=null;
         try {
             FragmentActivity activity = getActivity();
             if (selectedFormName == null || sectionObject == null) {
@@ -121,19 +120,15 @@ public class FragmentDetail extends Fragment {
                     selectedFormName = fragmentList.getSelectedItemName();
                     sectionObject = fragmentList.getSectionObject();
                     noteId = fragmentList.getNoteId();
-/*                    longitude = listFragment.getLongitude();
-                    latitude = listFragment.getLatitude();*/
                 } else {
                     if (activity instanceof FragmentDetailActivity) {
                         // case of portrait mode
-                        FragmentDetailActivity fragmentDetailActivity = (FragmentDetailActivity) activity;
+                        fragmentDetailActivity = (FragmentDetailActivity) activity;
                         selectedFormName = fragmentDetailActivity.getFormName();
                         sectionObject = fragmentDetailActivity.getSectionObject();
                         noteId = fragmentDetailActivity.getNoteId();
                         workingDirectory = fragmentDetailActivity.getWorkingDirectory();
                         existingFeatureData = fragmentDetailActivity.getFeatureData();
-/*                        longitude = fragmentDetailActivity.getLongitude();
-                        latitude = fragmentDetailActivity.getLatitude();*/
                     }
                 }
             }
@@ -314,10 +309,10 @@ public class FragmentDetail extends Fragment {
         } catch (ParseException e) {
             e.printStackTrace();
         } catch (Exception e) {
-            //GPLog.error(context, null, e);
             e.printStackTrace();
             Toast.makeText(getActivity().getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
         }
+
         return view;
     }
 

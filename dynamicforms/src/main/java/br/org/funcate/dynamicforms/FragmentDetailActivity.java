@@ -32,15 +32,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import br.org.funcate.dynamicforms.util.LibraryConstants;
 import br.org.funcate.dynamicforms.util.Utilities;
 import br.org.funcate.dynamicforms.views.GPictureView;
 
-import static br.org.funcate.dynamicforms.FormUtilities.ATTR_SECTIONNAME;
 import static br.org.funcate.dynamicforms.FormUtilities.TAG_KEY;
 import static br.org.funcate.dynamicforms.FormUtilities.TAG_TYPE;
 import static br.org.funcate.dynamicforms.FormUtilities.TAG_VALUE;
@@ -65,17 +62,10 @@ import static br.org.funcate.dynamicforms.FormUtilities.TYPE_TIME;
  */
 public class FragmentDetailActivity extends FragmentActivity {
     private String formName;
-    private String sectionObjectString;
     private JSONObject sectionObject;
-    private String sectionName;
-    private double elevation = -9999.0;
     private long pointId;
     private String workingDirectory;
     private Bundle existingFeatureData;
-
-    // this members is used in dynamic form process.
-    private static final String USE_MAPCENTER_POSITION = "USE_MAPCENTER_POSITION";
-    private double[] gpsLocation;
     // --------------------------------------------
 
     @Override
@@ -90,13 +80,8 @@ public class FragmentDetailActivity extends FragmentActivity {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
 
-        //checkPositionCoordinates();
-
-        /*if (savedInstanceState != null) {
-            formName = savedInstanceState.getString(FormUtilities.ATTR_FORMNAME);
-        }*/
         String tags="";
-        String defaultSectionName = "terramobile";// TODO: send this value to FormUtilities
+        String defaultSectionName = FormUtilities.DEFAULT_SESSION_NAME;
 
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
@@ -134,8 +119,6 @@ public class FragmentDetailActivity extends FragmentActivity {
                 coords.put(1,latitude);
             }
 
-            sectionObjectString = sectionObject.toString();
-            sectionName = sectionObject.getString(ATTR_SECTIONNAME);
         } catch (JSONException e) {
             Toast.makeText(getApplicationContext(), "Incorrect form configuration.", Toast.LENGTH_LONG).show();
             System.out.println("Failure on load JSON form from database.");
@@ -165,26 +148,9 @@ public class FragmentDetailActivity extends FragmentActivity {
     }
 
     /**
-     * @return the sectionname.
+     * Access the point identified.
+     * @return the point identified.
      */
-    public String getSectionName() {
-        return sectionObjectString;
-    }
-
-/*    *//**
-     * @return the latitude.
-     *//*
-    public double getLatitude() {
-        return latitude;
-    }
-
-    *//**
-     * @return the longitude.
-     *//*
-    public double getLongitude() {
-        return longitude;
-    }*/
-
     public long getNoteId() {
         return pointId;
     }

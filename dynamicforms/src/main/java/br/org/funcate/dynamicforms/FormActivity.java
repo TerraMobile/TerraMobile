@@ -70,6 +70,7 @@ public class FormActivity extends FragmentActivity {
     private long noteId = -1;
 
     public void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
 
         // make sure the orientation can't be changed once this activity started

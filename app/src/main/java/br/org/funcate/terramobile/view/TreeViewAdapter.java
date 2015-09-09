@@ -99,8 +99,16 @@ public class TreeViewAdapter extends BaseExpandableListAdapter implements View.O
                     break;
                 }
             }
+
+            MainActivity mainActivity = (MainActivity)context;
+            boolean hasGPSLayer = mainActivity.getMainController().getGpsOverlayController().isOverlayAdded();
+            // remove GPS Overlay
+            if(hasGPSLayer) mainActivity.getMainController().getGpsOverlayController().removeGPSTrackerLayer();
             //Correct the layer order by the GPKGLayer index.
             menuMapController.updateOverlaysOrder(LayersService.composeLinearLayerList(ChildItem));
+            // re adding GPS Overlay
+            if(hasGPSLayer) mainActivity.getMainController().getGpsOverlayController().addGPSTrackerLayer();
+
 
        }
         catch (LowMemoryException e) {

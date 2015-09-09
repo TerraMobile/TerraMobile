@@ -17,6 +17,7 @@ import org.osmdroid.tileprovider.util.SimpleInvalidationHandler;
 import org.osmdroid.tileprovider.util.SimpleRegisterReceiver;
 import org.osmdroid.util.BoundingBoxE6;
 import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.DirectedLocationOverlay;
 import org.osmdroid.views.overlay.Overlay;
 import org.osmdroid.views.overlay.TilesOverlay;
 
@@ -109,7 +110,7 @@ public class MenuMapController {
                 || layer.getType()==GpkgLayer.Type.EDITABLE)
         {
 
-            addVectorLayer(layer);;
+            addVectorLayer(layer);
 
         } else
           if(layer.getType()==GpkgLayer.Type.TILES)
@@ -218,5 +219,4 @@ public class MenuMapController {
         LayersService.sortOverlayByGPKGLayer(mapView.getOverlays(), orderedLayers);
         mapView.invalidate();
     }
-
 }

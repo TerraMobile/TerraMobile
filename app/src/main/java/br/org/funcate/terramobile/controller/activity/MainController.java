@@ -1,6 +1,7 @@
 package br.org.funcate.terramobile.controller.activity;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
@@ -51,10 +52,13 @@ public class MainController {
 
     private MainActivity mainActivity;
     private MenuMapController menuMapController;
+    private GPSOverlayController gpsOverlayController;
+
     public MainController(MainActivity mainActivity)
     {
         this.mainActivity = mainActivity;
         this.menuMapController = new MenuMapController(mainActivity);
+        this.gpsOverlayController = new GPSOverlayController(mainActivity);
     }
 
     public String getServerURL()
@@ -110,6 +114,10 @@ public class MainController {
         FragmentManager fm = this.mainActivity.getSupportFragmentManager();
         MapFragment fragment = (MapFragment)fm.findFragmentById(R.id.content_frame);
         return fragment;
+    }
+
+    public GPSOverlayController getGpsOverlayController() {
+        return this.gpsOverlayController;
     }
 
 }

@@ -1,11 +1,13 @@
 package br.org.funcate.terramobile.controller.activity.settings;
 
 import android.os.Bundle;
+import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
 
 import br.org.funcate.terramobile.R;
+import br.org.funcate.terramobile.util.Message;
 
 /**
  * Fragment that shows the settings of the system
@@ -13,10 +15,30 @@ import br.org.funcate.terramobile.R;
  * Created by marcelo on 5/25/15.
  */
 public class SettingsFragment extends PreferenceFragment{
+
+    private GPSSettingController gpsSettingController;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.settings);
+
+        SettingsActivity activity = (SettingsActivity)getActivity();
+        if(activity!=null) {
+            gpsSettingController = activity.getGPSSettingController();
+            if (gpsSettingController != null) {
+                Boolean stateLocation = gpsSettingController.getGPSLocationState();
+                Boolean stateCenter = gpsSettingController.getGPSCenterState();
+                if (stateLocation != null) {
+                    CheckBoxPreference preference = (CheckBoxPreference)findPreference("keep_gps_location");
+                    preference.setChecked(stateLocation);
+                }
+                if (stateCenter != null) {
+                    CheckBoxPreference preference = (CheckBoxPreference)findPreference("keep_gps_center");
+                    preference.setChecked(stateCenter);
+                }
+            }
+        }
     }
 
     @Override
@@ -31,22 +53,26 @@ public class SettingsFragment extends PreferenceFragment{
             serverURLFragment.setCancelable(true);
             serverURLFragment.show(getActivity().getFragmentManager(), "serverURL");
         }
+        if(preference.getKey().equalsIgnoreCase("keep_gps_location")) {
+            CheckBoxPreference checkBoxPreference = (CheckBoxPreference)preference;
+            boolean state = checkBoxPreference.isChecked();
+            if(gpsSettingController!=null) {
+                gpsSettingController.saveGPSLocation(state);
+                gpsSettingController.applyGPSLocation(state);
+            }else{
+                Message.showErrorMessage(getActivity(), R.string.title_activity_settings, R.string.settings_update_exception);
+            }
+        }
+        if(preference.getKey().equalsIgnoreCase("keep_gps_center")) {
+            CheckBoxPreference checkBoxPreference = (CheckBoxPreference)preference;
+            boolean state = checkBoxPreference.isChecked();
+            if(gpsSettingController!=null) {
+                gpsSettingController.saveKeepCenter(state);
+                gpsSettingController.applyKeepCenter(state);
+            }else{
+                Message.showErrorMessage(getActivity(), R.string.title_activity_settings, R.string.settings_update_exception);
+            }
+        }
         return super.onPreferenceTreeClick(preferenceScreen, preference);
     }
-
-//    @Override
-//    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-//        SettingsDAO settingsDAO = new SettingsDAO(getActivity());
-//        Settings settings = settingsDAO.getById(1);
-//        if (settings != null) {
-//            if (key.equals("serverURL")) {
-//                settings.setUrl(sharedPreferences.getString(key, ""));
-//            } else if (key.equals("userName")) {
-//                settings.setUserName(sharedPreferences.getString(key, ""));
-//            } else if (key.equals("password")) {
-//                settings.setPassword(sharedPreferences.getString(key, ""));
-//            }
-//            settingsDAO.update(settings);
-//        }
-//    }
 }

@@ -2,9 +2,11 @@ package br.org.funcate.terramobile.controller.activity;
 
 import android.app.ActionBar;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.AssetManager;
+import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -25,25 +27,16 @@ import android.widget.ExpandableListView;
 import android.widget.TextView;
 
 import org.opengis.geometry.BoundingBox;
-import org.xml.sax.SAXException;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
 
-import javax.xml.parsers.ParserConfigurationException;
-
-import br.org.funcate.dynamicforms.util.FileUtilities;
 import br.org.funcate.terramobile.R;
-import br.org.funcate.terramobile.configuration.ViewContextParameters;
 import br.org.funcate.terramobile.controller.activity.settings.SettingsActivity;
 import br.org.funcate.terramobile.model.db.ApplicationDatabase;
 import br.org.funcate.terramobile.model.db.DatabaseFactory;
+import br.org.funcate.terramobile.model.db.dao.ProjectDAO;
 import br.org.funcate.terramobile.model.domain.Project;
 import br.org.funcate.terramobile.model.domain.Setting;
-import br.org.funcate.terramobile.model.db.dao.ProjectDAO;
-import br.org.funcate.terramobile.model.db.dao.SettingsDAO;
 import br.org.funcate.terramobile.model.exception.DAOException;
 import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
 import br.org.funcate.terramobile.model.exception.ProjectException;
@@ -51,6 +44,7 @@ import br.org.funcate.terramobile.model.exception.SettingsException;
 import br.org.funcate.terramobile.model.service.LayersService;
 import br.org.funcate.terramobile.model.service.ProjectsService;
 import br.org.funcate.terramobile.model.service.SettingsService;
+import br.org.funcate.terramobile.util.GlobalParameters;
 import br.org.funcate.terramobile.util.Message;
 import br.org.funcate.terramobile.util.ResourceHelper;
 import br.org.funcate.terramobile.util.Util;
@@ -60,12 +54,9 @@ public class MainActivity extends FragmentActivity {
 
     private ActionBar actionBar;
 
-    private CharSequence mDrawerTitle;
     private CharSequence mTitle;
 
     private TreeView treeView;
-
-    private ViewContextParameters parameters=new ViewContextParameters();
 
     private Project mProject;
 
@@ -77,6 +68,10 @@ public class MainActivity extends FragmentActivity {
     private MainController mainController;
 
     private MarkerInfoWindowController markerInfoWindowController;
+
+    private FeatureInfoPanelController featureInfoPanelController;
+
+    private BroadcastReceiver mMainActivityReceiver;
 
     /**
      * Temporary variable to test GPKG
@@ -98,6 +93,13 @@ public class MainActivity extends FragmentActivity {
         mainController = new MainController(this);
 
         markerInfoWindowController=new MarkerInfoWindowController(this);
+
+        featureInfoPanelController = new FeatureInfoPanelController(this);
+
+        mMainActivityReceiver = new MainActivityReceiver();
+
+        IntentFilter filter = new IntentFilter(GlobalParameters.ACTION_BROADCAST_MAIN_ACTIVITY);
+        this.registerReceiver(mMainActivityReceiver, filter);
 
         PreferenceManager.setDefaultValues(this, R.xml.settings, false);
 
@@ -158,15 +160,14 @@ public class MainActivity extends FragmentActivity {
             Message.showErrorMessage(this, R.string.error, e.getMessage());
         }
 
-        mTitle = mDrawerTitle = getTitle();
+        mTitle = getTitle();
         DrawerLayout mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         // set a custom shadow that overlays the action_bar content when the drawer opens
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
 
         int ActionBarTitleID = Resources.getSystem().getIdentifier("action_bar_title", "id", "android");
         TextView ActionBarTextView = (TextView) this.findViewById(ActionBarTitleID);
-        ActionBarTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX,
-                getResources().getDimension(R.dimen.title_text_size));
+        ActionBarTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.title_text_size));
 
         actionBar.setDisplayHomeAsUpEnabled(true);
         // ActionBarDrawerToggle ties together the proper interactions
@@ -184,7 +185,7 @@ public class MainActivity extends FragmentActivity {
             }
 
             public void onDrawerOpened(View drawerView) {
-                actionBar.setTitle(mDrawerTitle);
+                actionBar.setTitle(mTitle);
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             }
         };
@@ -196,14 +197,36 @@ public class MainActivity extends FragmentActivity {
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        this.unregisterReceiver(this.mMainActivityReceiver);
+    }
+
+    @Override
     public void onBackPressed() {
         this.finish();
         System.exit(0);
         return;
     }
 
-    public ViewContextParameters getParameters(){
-        return parameters;
+    @Override
+    public void onPause() {
+        System.out.println("MainActivity - onPause");
+        super.onPause();
+        // disableGPSTrackerLayer unregister location events listener too.
+        if(getMainController().getGpsOverlayController().isOverlayAdded()) {
+            getMainController().getGpsOverlayController().disableGPSTrackerLayer();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        System.out.println("MainActivity - onResume");
+        super.onResume();
+        // enableGPSTrackerLayer register location events listener too.
+        if(getMainController().getGpsOverlayController().isOverlayAdded()) {
+            getMainController().getGpsOverlayController().enableGPSTrackerLayer();
+        }
     }
 
     @Override
@@ -224,7 +247,7 @@ public class MainActivity extends FragmentActivity {
         if(mDrawerList==null) return false;
 
         MenuItem menuItem = menu.findItem(R.id.project);
-        menuItem.setTitle(mProject != null?mProject.toString():"Project");
+        menuItem.setTitle(mProject != null ? mProject.toString() : "Project");
 
         // If the nav drawer is open, hide action items related to the content view
         return super.onPrepareOptionsMenu(menu);
@@ -256,7 +279,7 @@ public class MainActivity extends FragmentActivity {
             case R.id.tooglesfsbboxquery:
                 this.useNewOverlaySFS=!this.useNewOverlaySFS;
                 break;
-           case R.id.exit:
+            case R.id.exit:
                 this.finish();
                 System.exit(0);
                 break;
@@ -269,9 +292,6 @@ public class MainActivity extends FragmentActivity {
     private void insertMapView() {
         // update the action_bar content by replacing fragments
         Fragment fragment = new MapFragment();
-/*        Bundle args = new Bundle();
-        args.putStringArrayList(MapFragment.mLayers);
-        fragment.setArguments(args);*/
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
     }
@@ -429,5 +449,27 @@ public class MainActivity extends FragmentActivity {
         this.mainController = mainController;
     }
 
+    public FeatureInfoPanelController getFeatureInfoPanelController() {
+        return featureInfoPanelController;
+    }
 
+
+    private class MainActivityReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            if(intent.hasExtra(GlobalParameters.STATE_GPS_LOCATION)) {
+                Boolean showGPSLocation = intent.getBooleanExtra(GlobalParameters.STATE_GPS_LOCATION, false);
+                if (showGPSLocation) {
+                    getMainController().getGpsOverlayController().addGPSTrackerLayer();
+                } else {
+                    getMainController().getGpsOverlayController().removeGPSTrackerLayer();
+                }
+            }
+            if(intent.hasExtra(GlobalParameters.STATE_GPS_CENTER)) {
+                Boolean showGPSLocationOnCenter = intent.getBooleanExtra(GlobalParameters.STATE_GPS_CENTER, false);
+                getMainController().getGpsOverlayController().setKeepOnCenter(showGPSLocationOnCenter);
+            }
+        }
+    }
 }

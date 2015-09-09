@@ -1,23 +1,11 @@
 package br.org.funcate.terramobile.util;
 
 import android.content.res.Resources;
-import android.os.Environment;
-import android.util.Log;
 import android.util.TypedValue;
 
-import com.vividsolutions.jts.util.CollectionUtil;
-
-import java.io.File;
-import java.io.FileFilter;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.MissingResourceException;
 
-import br.org.funcate.dynamicforms.FormActivity;
-import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
-import br.org.funcate.terramobile.model.exception.TerraMobileException;
 
 /**
  * Created by bogo on 23/04/15.
