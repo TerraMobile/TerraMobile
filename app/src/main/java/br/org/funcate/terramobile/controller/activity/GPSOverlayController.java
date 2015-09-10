@@ -94,9 +94,12 @@ public class GPSOverlayController {
         if(mapView==null) return;
         if(!gpsLayer.isEnabled()) gpsLayer.setEnabled(true);
         registerOnService();
-        GeoPoint lastKnownPoint = new GeoPoint(GPSService.getLastKnownLocation(mapView.getContext()));
-        gpsLayer.setLocation(lastKnownPoint);
-        mapView.invalidate();
+        Location location = GPSService.getLastKnownLocation(mapView.getContext());
+        if(location!=null) {
+            GeoPoint lastKnownPoint = new GeoPoint(location);
+            gpsLayer.setLocation(lastKnownPoint);
+            mapView.invalidate();
+        }
     }
 
     /**

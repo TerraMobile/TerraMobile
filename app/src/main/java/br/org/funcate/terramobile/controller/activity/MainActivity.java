@@ -92,7 +92,7 @@ public class MainActivity extends FragmentActivity {
 
         mainController = new MainController(this);
 
-        markerInfoWindowController=new MarkerInfoWindowController(this);
+        markerInfoWindowController = new MarkerInfoWindowController(this);
 
         featureInfoPanelController = new FeatureInfoPanelController(this);
 
@@ -371,6 +371,14 @@ public class MainActivity extends FragmentActivity {
             clearCurrentProject();
             return true;
         }
+
+        // remove GPS Overlay of the map
+        boolean hasGPSEnabledOnMap = getMainController().getGpsOverlayController().isOverlayAdded();
+        if(hasGPSEnabledOnMap) getMainController().getGpsOverlayController().removeGPSTrackerLayer();
+
+        // remove all infoWindow
+        markerInfoWindowController.closeAllInfoWindows();
+
         this.mProject = project;
 
         treeView.refreshTreeView();
@@ -394,6 +402,9 @@ public class MainActivity extends FragmentActivity {
                 bb = LayersService.getLayersMaxExtent(getTreeView().getLayers());
             }
             mainController.getMenuMapController().panTo(bb);
+
+            // reinsert GPSOverlay if it is enable in Settings
+            if(hasGPSEnabledOnMap) getMainController().getGpsOverlayController().addGPSTrackerLayer();
 
         } catch (SettingsException e)
         {
