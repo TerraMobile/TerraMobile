@@ -243,6 +243,16 @@ public interface LibraryConstants {
     String PREFS_KEY_CAMERA_IMAGENAME = "PREFS_KEY_CAMERA_IMAGENAME"; //$NON-NLS-1$
 
     /**
+     * Key used to define the best width to resample the output camera image.
+     */
+    String BEST_WIDTH_IMG = "WIDTH_OUTPUT_IMAGE";
+
+    /**
+     * Key used to define the best height to resample the output camera image.
+     */
+    String BEST_HEIGHT_IMG = "HEIGHT_OUTPUT_IMAGE";
+
+    /**
      * Key used to pass image data bytes.
      */
     String PREFS_KEY_IMAGEDATA = "PREFS_KEY_IMAGEDATA"; //$NON-NLS-1$

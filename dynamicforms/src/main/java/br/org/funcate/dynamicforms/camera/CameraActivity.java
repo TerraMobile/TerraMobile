@@ -21,6 +21,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -71,13 +72,18 @@ public class CameraActivity extends Activity {
     private static final int CAMERA_PIC_REQUEST = 1337;
     private String imageFilePath;
     private Date currentDate;
+    /*
     private double lon;
     private double lat;
     private double elevation;
-    private int lastImageMediastoreId;
     private long noteId = -1;
+    */
+    private int lastImageMediastoreId;
     private OrientationSensor orientationSensor;
     private String workingDirectory;
+
+/*    private int bestWidthImg;// LibraryConstants.BEST_WIDTH_IMG
+    private int bestHeightImg;// LibraryConstants.BEST_HEIGHT_IMG*/
 
     public String getWorkingDirectory() {
         return workingDirectory;
@@ -102,10 +108,14 @@ public class CameraActivity extends Activity {
                     imageSaveFolder = new File(imageSaveFolderTmp);
                 }
                 imageName = extras.getString(LibraryConstants.PREFS_KEY_CAMERA_IMAGENAME);
+/*                bestWidthImg = extras.getInt(LibraryConstants.BEST_WIDTH_IMG);
+                bestHeightImg = extras.getInt(LibraryConstants.BEST_HEIGHT_IMG);*/
+                /*
                 noteId = extras.getLong(LibraryConstants.SELECTED_POINT_ID);
                 lon = extras.getDouble(LibraryConstants.LONGITUDE);
                 lat = extras.getDouble(LibraryConstants.LATITUDE);
                 elevation = extras.getDouble(LibraryConstants.ELEVATION);
+                */
             } else {
                 throw new RuntimeException("Not implemented yet...");
             }
@@ -160,8 +170,27 @@ public class CameraActivity extends Activity {
             Intent intent = getIntent();
             File imageFile = new File(imageFilePath);
             if (imageFile.exists()) {
+
                 intent.putExtra(LibraryConstants.OBJECT_EXISTS, true);
                 intent.putExtra(FormUtilities.PHOTO_COMPLETE_PATH, imageFile.getAbsolutePath());
+                double azimuth = orientationSensor.getAzimuthDegrees();
+                intent.putExtra(LibraryConstants.AZIMUTH, azimuth);
+
+                /*
+                boolean ret = true;
+                if(imageFile.length() > ImageUtilities.MAX_IMAGE_FILE_SIZE) {
+                    ret = ImageUtilities.resampleImage(bestWidthImg, bestHeightImg, imageFilePath);
+                }
+
+                if(!ret) {
+                    intent.putExtra(LibraryConstants.OBJECT_EXISTS, false);
+                }else {
+                    intent.putExtra(LibraryConstants.OBJECT_EXISTS, true);
+                    intent.putExtra(FormUtilities.PHOTO_COMPLETE_PATH, imageFile.getAbsolutePath());
+                    double azimuth = orientationSensor.getAzimuthDegrees();
+                    intent.putExtra(LibraryConstants.AZIMUTH, azimuth);
+                }*/
+
               /*  try {
                     byte[][] imageAndThumbnailArray = ImageUtilities.getImageAndThumbnailFromPath(imageFilePath, 5);
 

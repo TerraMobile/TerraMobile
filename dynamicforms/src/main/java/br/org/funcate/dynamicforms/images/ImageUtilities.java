@@ -22,10 +22,12 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
 
+import br.org.funcate.dynamicforms.util.FileUtilities;
 import br.org.funcate.dynamicforms.util.TimeUtilities;
 
 /**
@@ -34,7 +36,7 @@ import br.org.funcate.dynamicforms.util.TimeUtilities;
  * @author Andrea Antonello (www.hydrologis.com)
  */
 public class ImageUtilities {
-    public static final int MAXBLOBSIZE = 1900000;
+    public static final int MAX_IMAGE_FILE_SIZE = 2097152; //2097152=(2*1024*1024) 2MB
     public static final int THUMBNAILWIDTH = 100;
 
     public static String getSketchImageName(Date date) {
@@ -143,6 +145,27 @@ public class ImageUtilities {
         return imageAndThumbNail;
     }
 
+    /**
+     * This method overwrites the original file.
+     * @param targetW, the output width
+     * @param targetH, the output height
+     * @param imagePath, the path to input file image
+     * @return true in sucess or false otherwise
+     */
+    public static boolean resampleImage(int targetW, int targetH, String imagePath) {
+        Bitmap outputBitmap = getScaledBitmap(targetW, targetH, imagePath);
+        if(outputBitmap==null) return false;
+        byte[] blob = getBlobFromBitmap(outputBitmap);
+        if(blob.length<=0) return false;
+        try {
+
+            writeImageDataToFile(blob, imagePath);
+        }catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
 
     public static Bitmap getScaledBitmap(int targetW, int targetH, String imagePath) {
 
@@ -193,18 +216,21 @@ public class ImageUtilities {
     }
 
     /**
-     * Write am image to disk.
+     * Write am image to disk. If exists File into the path, this will remove.
      *
      * @param imageData the data to write.
      * @param imagePath the path to write to.
      * @throws IOException
      */
     public static void writeImageDataToFile(byte[] imageData, String imagePath) throws IOException {
-        FileOutputStream fout = new FileOutputStream(imagePath);
-        try {
-            fout.write(imageData);
-        } finally {
-            fout.close();
+        File img = new File(imagePath);
+        if(img.exists() && img.delete()) {
+            FileOutputStream fout = new FileOutputStream(imagePath);
+            try {
+                fout.write(imageData);
+            } finally {
+                fout.close();
+            }
         }
     }
 }
