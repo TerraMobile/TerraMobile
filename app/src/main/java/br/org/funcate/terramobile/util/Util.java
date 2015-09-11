@@ -8,6 +8,7 @@ import android.media.MediaScannerConnection;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Environment;
+import android.text.TextUtils;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -110,6 +111,20 @@ public class Util {
         File file = new File(path);
         file.mkdirs();
         return file;
+    }
+
+    public static File getRemovableStorage() {
+        String value = System.getenv("SECONDARY_STORAGE");
+        if (!TextUtils.isEmpty(value)) {
+            String[] paths = value.split(":");
+            for (String path : paths) {
+                File file = new File(path);
+                if (file.isDirectory()) {
+                    return file;
+                }
+            }
+        }
+        return null; // Most likely, a removable micro sdcard doesn't exist
     }
 
     /**

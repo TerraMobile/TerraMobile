@@ -30,9 +30,11 @@ import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.GridLayout;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -183,14 +185,17 @@ public class GPictureView extends View implements GView {
         ScrollView.LayoutParams scrollLayoutParams = new ScrollView.LayoutParams(LayoutParams.MATCH_PARENT,
                 LayoutParams.WRAP_CONTENT);
         scrollView.setLayoutParams(scrollLayoutParams);
+        scrollView.setHorizontalScrollBarEnabled(true);
+        scrollView.setOverScrollMode(HorizontalScrollView.OVER_SCROLL_ALWAYS);
         parentView.addView(scrollView);
 
         imageLayout = new LinearLayout(activity);
         LinearLayout.LayoutParams imageLayoutParams = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
                 LayoutParams.WRAP_CONTENT);
         imageLayout.setLayoutParams(imageLayoutParams);
-        imageLayout.setPadding(15,5,15,5);
+        imageLayout.setPadding(15, 5, 15, 5);
         imageLayout.setOrientation(LinearLayout.HORIZONTAL);
+        imageLayout.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
         scrollView.addView(imageLayout);
 
         updateValueForm();

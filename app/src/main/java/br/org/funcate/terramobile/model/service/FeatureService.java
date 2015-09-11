@@ -60,6 +60,8 @@ public class FeatureService {
             }else if(Date.class.getName().equals(typeClass)){
                 Date date = (Date)o;
                 s = DateUtil.serializeDate(date);
+            }else if(typeClass.equals("com.vividsolutions.jts.geom.Geometry")){
+                s = ((com.vividsolutions.jts.geom.Geometry)o).getGeometryType();
             }else if(typeClass.equals("[Ljava.lang.Byte;")){
                 byte[] photo=(byte[])o;
                 bundle.putByteArray(typeName.toString(), photo);
@@ -71,6 +73,7 @@ public class FeatureService {
                 featureKeys.add(typeName.toString());
             }
         }
+
         bundle.putStringArrayList(FEATURE_DATA_KEYS, featureKeys);
         return bundle;
     }

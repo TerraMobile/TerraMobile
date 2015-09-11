@@ -1,39 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical" >
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scroll_info_panel"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" >
 
-    <ScrollView
-        android:id="@+id/info_panel_scroll"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content" >
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:stretchColumns="1"
+        android:layout_marginLeft="10dip"
+        android:layout_marginRight="10dip"
+        android:layout_marginBottom="30dip"
+        android:id="@+id/info_panel_table">
 
-        <LinearLayout
-            android:id="@+id/info_panel_linear"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:measureWithLargestChild="false">
+            <TableRow android:background="@color/info_panel_background">
+                <!-- Column 1 -->
+                <TextView
+                    android:id="@+id/head_label_info"
+                    android:text="@string/head_label_info"
+                    android:textSize="@dimen/head_label_size"
+                    android:layout_width="0dip"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
+                    android:textStyle="bold"
+                    />
 
-            <TextView
-                android:text="@string/default_feature_info_msg"
-                android:id="@+id/default_text_info"
-                android:textSize="45dip"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:visibility="gone" />
+                <!-- Column 2 -->
+                <TextView
+                    android:id="@+id/head_value_info"
+                    android:text="@string/head_value_info"
+                    android:textSize="@dimen/head_value_size"
+                    android:layout_width="0dip"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
+                    android:textStyle="bold"
+                    />
 
-            <GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:id="@+id/table_values"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:columnOrderPreserved="false">
+            </TableRow>
 
+            <TableRow>
 
-            </GridLayout>
+                <TextView
+                    android:text="@string/default_feature_info_msg"
+                    android:id="@+id/default_text_info"
+                    android:textSize="@dimen/not_found_size"
+                    android:layout_width="0dip"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="6"
+                    android:visibility="gone" />
 
-        </LinearLayout>
-    </ScrollView>
+            </TableRow>
 
-</LinearLayout>
+    </TableLayout>
+</ScrollView>
