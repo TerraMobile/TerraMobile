@@ -114,7 +114,6 @@ public class GPictureView extends View implements GView {
     }
 
     /**
-     * @param noteId                the id of the note this image belows to.
      * @param fragmentDetail        the fragment detail  to use.
      * @param attrs                 attributes.
      * @param requestCode           the code for starting the activity with result.
@@ -123,7 +122,7 @@ public class GPictureView extends View implements GView {
      * @param pictures              the value are the ids and binary data of the images.
      * @param constraintDescription constraints
      */
-    public GPictureView(final long noteId, final FragmentDetail fragmentDetail, AttributeSet attrs, final int requestCode, LinearLayout parentView, String label, Map<String, Object> pictures,
+    public GPictureView(final FragmentDetail fragmentDetail, AttributeSet attrs, final int requestCode, LinearLayout parentView, String label, Map<String, Object> pictures,
                         String constraintDescription) {
         super(fragmentDetail.getActivity(), attrs);
 
@@ -158,25 +157,13 @@ public class GPictureView extends View implements GView {
 
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(activity);
-                //double[] gpsLocation = PositionUtilities.getGpsLocationFromPreferences(preferences);
 
                 String imageName = ImageUtilities.getCameraImageName(null);
                 Intent cameraIntent = new Intent(activity, CameraActivity.class);
                 cameraIntent.putExtra(LibraryConstants.PREFS_KEY_CAMERA_IMAGENAME, imageName);
-                /*cameraIntent.putExtra(LibraryConstants.BEST_WIDTH_IMG, bestWidthSize);
-                cameraIntent.putExtra(LibraryConstants.BEST_HEIGHT_IMG, bestHeightSize);*/
 
                 cameraIntent.putExtra(FormUtilities.MAIN_APP_WORKING_DIRECTORY, fragmentDetail.getWorkingDirectory());
 
-               /*
-               cameraIntent.putExtra(LibraryConstants.SELECTED_POINT_ID, noteId);
-               if (gpsLocation != null) {
-                    cameraIntent.putExtra(LibraryConstants.LATITUDE, gpsLocation[1]);
-                    cameraIntent.putExtra(LibraryConstants.LONGITUDE, gpsLocation[0]);
-                    cameraIntent.putExtra(LibraryConstants.ELEVATION, gpsLocation[2]);
-                }
-                */
                 fragmentDetail.startActivityForResult(cameraIntent, requestCode);
             }
         });
@@ -220,7 +207,7 @@ public class GPictureView extends View implements GView {
             while (itKeys.hasNext()) {
 
                 final String imageId = itKeys.next();
-                //Bitmap thumbnail = null;
+
                 if(!_pictures.containsKey(imageId)) {
                     // TODO: Here, write a log in logfile
                     continue;
@@ -241,12 +228,7 @@ public class GPictureView extends View implements GView {
                             imageLayout.addView(getImageView(context, thumbnail, imageId));
                         }
                     }, increaseTime*1000+1000);
-
-                    /*byte[] image = ImageUtilities.getImageFromPath(imagePath, 2);
-                    Bitmap imageBitmap = ImageUtilities.getBitmapFromBlob(image);
-                    thumbnail = ImageUtilities.makeThumbnail(imageBitmap);*/
                 }
-                //imageLayout.addView(getImageView(context, thumbnail, imageId));
             }
         }
         if(newImagesFromCamera != null && newImagesFromCamera.size() > 0) {
@@ -281,12 +263,6 @@ public class GPictureView extends View implements GView {
                         }
                     }
                 }, increaseTime*1000+1000);
-
-                /*byte[] image = ImageUtilities.getImageFromPath(imagePath, 2);
-                Bitmap imageBitmap = ImageUtilities.getBitmapFromBlob(image);
-                Bitmap thumbnail = ImageUtilities.makeThumbnail(imageBitmap);
-
-                imageLayout.addView(getImageView(context, thumbnail, imageId));*/
 
                 if(!addedIdsToImageViews.containsValue(imagePath))
                     addedIdsToImageViews.put(imageId, imagePath);
@@ -466,14 +442,14 @@ public class GPictureView extends View implements GView {
             double azimuth = data.getDoubleExtra(LibraryConstants.AZIMUTH, 0);
 
             String uuid = java.util.UUID.randomUUID().toString();
-            if(ImageUtilities.isImagePath(imgPath)) {
+            /*if(ImageUtilities.isImagePath(imgPath)) {
                 File img = new File(imgPath);
                 long imgSize=img.length();
                 if(imgSize > ImageUtilities.MAX_IMAGE_FILE_SIZE) {
                     // TODO: implement a method to reduce image
                     return;
                 }
-            }
+            }*/
 
             newImagesFromCamera.put(uuid, imgPath);
             updateValueForm();

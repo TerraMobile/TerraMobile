@@ -460,7 +460,6 @@ public class FormUtilities {
     /**
      * Adds a {@link GPictureView} to the supplied mainView.
      *
-     * @param noteId                the note id this form belogs to.
      * @param fragmentDetail        the fragmentDetail.
      * @param requestCode           the code to use for activity return.
      * @param mainView              the main view to which to add the new widget to.
@@ -469,9 +468,9 @@ public class FormUtilities {
      * @param constraintDescription constraint
      * @return the added view.
      */
-    public static GView addPictureView(long noteId, FragmentDetail fragmentDetail, int requestCode, LinearLayout mainView, String label, Map<String, Object> pictures,
+    public static GView addPictureView(FragmentDetail fragmentDetail, int requestCode, LinearLayout mainView, String label, Map<String, Object> pictures,
                                        String constraintDescription) {
-        return new GPictureView(noteId, fragmentDetail, null, requestCode, mainView, label, pictures, constraintDescription);
+        return new GPictureView(fragmentDetail, null, requestCode, mainView, label, pictures, constraintDescription);
     }
 
     /**
