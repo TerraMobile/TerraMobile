@@ -40,7 +40,6 @@ public class TreeViewController {
 
     public TreeViewController(Context context, MainController mainController) throws InvalidAppConfigException {
         this.context=context;
-        this.resources=context.getResources();
         this.mainController = mainController;
     }
 
@@ -72,7 +71,7 @@ public class TreeViewController {
         GpkgLayer grpItem;
         grpItem=new GpkgLayer();
         grpItem.setName(grp[0]);
-        grpItem.setType(GpkgLayer.Type.TILES);
+        grpItem.setType(GpkgLayer.Type.FEATURES);
         grpItem.setGeoPackage(null);
         groupItem.add(grpItem);
 
@@ -81,30 +80,12 @@ public class TreeViewController {
         grpItem.setType(GpkgLayer.Type.EDITABLE);
         grpItem.setGeoPackage(null);
         groupItem.add(grpItem);
-
-        grpItem=new GpkgLayer();
-        grpItem.setName(grp[2]);
-        grpItem.setType(GpkgLayer.Type.FEATURES);
-        grpItem.setGeoPackage(null);
-        groupItem.add(grpItem);
     }
 
     private void setChildGroupData() {
-        ArrayList<GpkgLayer> childBaseLayers = new ArrayList<GpkgLayer>();
-        ArrayList<GpkgLayer> childCollectLayers = new ArrayList<GpkgLayer>();
+        ArrayList<GpkgLayer> childLayers = new ArrayList<GpkgLayer>();
         ArrayList<GpkgLayer> childEditableLayers = new ArrayList<GpkgLayer>();
         ArrayList<GpkgLayer> childOnlineLayers = new ArrayList<GpkgLayer>();
-        /**
-         * Add menu items from strings resource file.
-         */
-//        String[] items=ResourceUtil.getStringArrayResource(this.resources,R.array.menu_items);
-//        int len=items.length;
-//        TerraMobileMenuToolItem toolItem;
-//        for (int i = 0; i < len; i++) {
-//            toolItem=new TerraMobileMenuToolItem(items[i], i);
-//            childTools.add(toolItem);
-//        }
-//        childItem.add(childTools);
 
         // get list layers from GeoPackage
         ArrayList<GpkgLayer> layers = null;
@@ -137,11 +118,11 @@ public class TreeViewController {
 
             switch (l.getType()){
                 case FEATURES:{
-                    childCollectLayers.add(l);
+                    childLayers.add(l);
                     break;
                 }
                 case TILES:{
-                    childBaseLayers.add(l);
+                    childLayers.add(l);
                     break;
                 }
                 case EDITABLE:{
@@ -165,15 +146,12 @@ public class TreeViewController {
 
         }
 
-        if(childCollectLayers.isEmpty())
-            childCollectLayers.add(getNotFoundMenuLayerItem());
-        if(childBaseLayers.isEmpty())
-            childBaseLayers.add(getNotFoundMenuLayerItem());
+        if(childLayers.isEmpty())
+            childLayers.add(getNotFoundMenuLayerItem());
         if(childEditableLayers.isEmpty())
             childEditableLayers.add(getNotFoundMenuLayerItem());
 
-        childItem.add(childBaseLayers);
-        childItem.add(childCollectLayers);
+        childItem.add(childLayers);
         childItem.add(childEditableLayers);
     }
 
@@ -191,18 +169,15 @@ public class TreeViewController {
 
     private void populateDefaultNotFoundLayer() {
 
-        ArrayList<GpkgLayer> childBaseLayers = new ArrayList<GpkgLayer>();
-        ArrayList<GpkgLayer> childCollectLayers = new ArrayList<GpkgLayer>();
+        ArrayList<GpkgLayer> childLayers = new ArrayList<GpkgLayer>();
         ArrayList<GpkgLayer> childEditableLayers = new ArrayList<GpkgLayer>();
         ArrayList<GpkgLayer> childOnlineLayers = new ArrayList<GpkgLayer>();
 
-        childBaseLayers.add(getNotFoundMenuLayerItem());
-        childCollectLayers.add(getNotFoundMenuLayerItem());
+        childLayers.add(getNotFoundMenuLayerItem());
         childEditableLayers.add(getNotFoundMenuLayerItem());
         childOnlineLayers.add(getNotFoundMenuLayerItem());
 
-        childItem.add(childBaseLayers);
-        childItem.add(childCollectLayers);
+        childItem.add(childLayers);
         childItem.add(childEditableLayers);
         childItem.add(childOnlineLayers);
     }
