@@ -63,7 +63,7 @@ public class MenuMapController {
         if(child.getGeoPackage().isGPKGValid(false)) {
             if(child.getOsmOverLayer()==null)
             {
-                MapView mapView = (MapView) ((MainActivity) context).findViewById(R.id.mapview);
+                MapView mapView = mapFragment.getMapView();
 
                 final MapTileProviderBasic tileProvider = new MapTileProviderBasic(context);
 
@@ -94,7 +94,7 @@ public class MenuMapController {
 
         if(layer!=null)
         {
-            MapView mapView = (MapView) ((MainActivity) context).findViewById(R.id.mapview);
+            MapView mapView = mapFragment.getMapView();
             mapView.getOverlays().remove(layer.getOsmOverLayer());
             layer.setOsmOverLayer(null);
             currentBaseLayer=null;
@@ -146,7 +146,7 @@ public class MenuMapController {
 
         if(child.getOsmOverLayer()==null) {
 
-            MapView mapView = (MapView) ((MainActivity) context).findViewById(R.id.mapview);
+            MapView mapView = mapFragment.getMapView();
 
             Style defaultStyle = StyleService.loadStyle(context, child.getGeoPackage().getDatabaseFileName(),child);
             System.out.println("======================§§§§§§§ USE NEW OVERLAY SFS = " + ((MainActivity) context).useNewOverlaySFS);
@@ -182,7 +182,7 @@ public class MenuMapController {
 
         if(child.getOsmOverLayer()!=null)
         {
-            MapView mapView = (MapView) ((MainActivity) context).findViewById(R.id.mapview);
+            MapView mapView = mapFragment.getMapView();
             mapView.getOverlays().remove(child.getOsmOverLayer());
             child.setOsmOverLayer(null);
             mapView.invalidate();
@@ -196,7 +196,7 @@ public class MenuMapController {
      */
     public void panTo(BoundingBox bb)
     {
-        MapView mapView = (MapView) ((MainActivity) context).findViewById(R.id.mapview);
+        MapView mapView = mapFragment.getMapView();
         BoundingBoxE6 bbe6 = GeoUtil.convertToBoundingBoxE6(bb);
         mapView.zoomToBoundingBox(bbe6);
     }
@@ -215,7 +215,7 @@ public class MenuMapController {
     }
     public void updateOverlaysOrder(ArrayList<GpkgLayer> orderedLayers)
     {
-        MapView mapView = (MapView) ((MainActivity) context).findViewById(R.id.mapview);
+        MapView mapView = mapFragment.getMapView();
         LayersService.sortOverlayByGPKGLayer(mapView.getOverlays(), orderedLayers);
         mapView.invalidate();
     }
