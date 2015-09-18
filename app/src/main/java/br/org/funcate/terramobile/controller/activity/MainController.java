@@ -62,12 +62,18 @@ public class MainController {
     private MenuMapController menuMapController;
     private GPSOverlayController gpsOverlayController;
     private TreeViewController treeViewController;
+    private MarkerInfoWindowController markerInfoWindowController;
+
+    private FeatureInfoPanelController featureInfoPanelController;
+
     private Project currentProject;
 
     public MainController(MainActivity mainActivity) throws InvalidAppConfigException {
         this.mainActivity = mainActivity;
         this.menuMapController = new MenuMapController(mainActivity, this);
         this.gpsOverlayController = new GPSOverlayController(mainActivity);
+        this.markerInfoWindowController = new MarkerInfoWindowController(mainActivity);
+        this.featureInfoPanelController = new FeatureInfoPanelController(mainActivity);
         treeViewController = new TreeViewController(this.mainActivity, this);
     }
 
@@ -144,6 +150,14 @@ public class MainController {
             clearCurrentProject();
             return true;
         }
+
+        // remove GPS Overlay of the map
+        boolean hasGPSEnabledOnMap = getGpsOverlayController().isOverlayAdded();
+        if(hasGPSEnabledOnMap) getGpsOverlayController().removeGPSTrackerLayer();
+
+        // remove all infoWindow
+        markerInfoWindowController.closeAllInfoWindows();
+
         this.currentProject = project;
 
         getTreeViewController().refreshTreeView();
@@ -167,6 +181,8 @@ public class MainController {
                 bb = LayersService.getLayersMaxExtent(getTreeViewController().getAllLayers());
             }
             getMenuMapController().panTo(bb);
+
+            if(hasGPSEnabledOnMap) getGpsOverlayController().addGPSTrackerLayer();
 
             getTreeViewController().enableInitialLayers();
 
@@ -279,6 +295,24 @@ public class MainController {
     {
         return currentProject;
     }
+
+    public MarkerInfoWindowController getMarkerInfoWindowController() {
+        return markerInfoWindowController;
+    }
+
+    public void setMarkerInfoWindowController(MarkerInfoWindowController markerInfoWindowController) {
+        this.markerInfoWindowController = markerInfoWindowController;
+    }
+
+
+    public FeatureInfoPanelController getFeatureInfoPanelController() {
+        return featureInfoPanelController;
+    }
+
+    public void setFeatureInfoPanelController(FeatureInfoPanelController featureInfoPanelController) {
+        this.featureInfoPanelController = featureInfoPanelController;
+    }
+
 
 
 }

@@ -47,7 +47,7 @@ public class SFSMarker extends Marker implements Marker.OnMarkerClickListener {
         this.setOnMarkerClickListener(this);
         this.setInfoWindow(new TMMarkerInfoWindow(R.layout.marker_info_window,
                 mapView,
-                ((MainActivity) mapView.getContext()).getMarkerInfoWindowController()
+                ((MainActivity) mapView.getContext()).getMainController().getMarkerInfoWindowController()
         ));
         this.setTitle("Centered on " + this.getPosition().getLatitude() + "," + this.getPosition().getLongitude());
         this.mMainActivity = (MainActivity) mapView.getContext();

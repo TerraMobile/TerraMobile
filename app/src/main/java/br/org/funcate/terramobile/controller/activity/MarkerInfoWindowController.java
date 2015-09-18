@@ -11,6 +11,7 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 
 import org.opengis.feature.simple.SimpleFeature;
+import org.osmdroid.bonuspack.overlays.InfoWindow;
 import org.osmdroid.bonuspack.overlays.Marker;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
@@ -64,12 +65,15 @@ public class MarkerInfoWindowController {
     }
 
     private void hideProgress() {
-        pgrInfoWindow.setVisibility(View.GONE);
-        btnEditMarker.setVisibility(View.VISIBLE);
+        // in create mode, does not display the info Window of the new marker
+        if(pgrInfoWindow!=null && btnEditMarker!=null) {
+            pgrInfoWindow.setVisibility(View.GONE);
+            btnEditMarker.setVisibility(View.VISIBLE);
+        }
     }
 
     public void editMarker(Marker marker) {
-        startActivityForm(((SFSMarker)marker).getMarkerId().longValue());
+        startActivityForm(((SFSMarker) marker).getMarkerId().longValue());
     }
 
     public void deleteMarker(Marker marker) throws TerraMobileException {
@@ -266,7 +270,12 @@ public class MarkerInfoWindowController {
             return;
         }
 
-        FeatureInfoPanelController controller = mainActivity.getFeatureInfoPanelController();
+        FeatureInfoPanelController controller = mainActivity.getMainController().getFeatureInfoPanelController();
         controller.startFeatureInfoPanel(editableLayer, featureID);
+    }
+
+    public void closeAllInfoWindows() {
+        MapView mapView = getMapView();
+        if(mapView!=null) InfoWindow.closeAllInfoWindowsOn(mapView);
     }
 }

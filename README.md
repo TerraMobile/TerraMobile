@@ -1,7 +1,7 @@
 # TerraMobile
 ## Make clone from repository
 
-    $ git clone https://github.com/FUNCATE/TerraMobile.git
+    $ git clone https://github.com/TerraMobile/TerraMobile.git
 
 ## Dependencies
 

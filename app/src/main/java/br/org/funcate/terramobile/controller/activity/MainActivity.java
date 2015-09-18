@@ -62,10 +62,6 @@ public class MainActivity extends FragmentActivity {
 
     private MainController mainController;
 
-    private MarkerInfoWindowController markerInfoWindowController;
-
-    private FeatureInfoPanelController featureInfoPanelController;
-
     private BroadcastReceiver mMainActivityReceiver;
 
     /**
@@ -76,7 +72,7 @@ public class MainActivity extends FragmentActivity {
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        this.markerInfoWindowController.makeSomeProcessWithResult(requestCode, resultCode, data);
+        getMainController().getMarkerInfoWindowController().makeSomeProcessWithResult(requestCode, resultCode, data);
     }
 
     @Override
@@ -84,10 +80,6 @@ public class MainActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         actionBar = getActionBar();
-
-        markerInfoWindowController=new MarkerInfoWindowController(this);
-
-        featureInfoPanelController = new FeatureInfoPanelController(this);
 
         mMainActivityReceiver = new MainActivityReceiver();
 
@@ -221,7 +213,7 @@ public class MainActivity extends FragmentActivity {
                 projectListFragment.show(getFragmentManager(), "packageList");
                 return true;
             case R.id.acquire_new_point:
-                this.markerInfoWindowController.startActivityForm();
+                getMainController().getMarkerInfoWindowController().startActivityForm();
                 break;
             case R.id.settings:
                 startActivity(new Intent(this, SettingsActivity.class));
@@ -314,16 +306,9 @@ public class MainActivity extends FragmentActivity {
         return mainController;
     }
 
-    public MarkerInfoWindowController getMarkerInfoWindowController() { return markerInfoWindowController; }
-
     public void setMainController(MainController mainController) {
         this.mainController = mainController;
     }
-
-    public FeatureInfoPanelController getFeatureInfoPanelController() {
-        return featureInfoPanelController;
-    }
-
 
     private class MainActivityReceiver extends BroadcastReceiver {
         @Override

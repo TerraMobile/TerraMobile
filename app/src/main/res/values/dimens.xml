@@ -3,6 +3,10 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <!-- To use on FeatureInfoPanel -->
-    <dimen name="label_size">16dp</dimen>
-    <dimen name="text_size">16dp</dimen>
+    <dimen name="head_label_size">27sp</dimen>
+    <dimen name="head_value_size">27sp</dimen>
+    <integer name="label_size">23</integer>
+    <integer name="value_size">23</integer>
+    <dimen name="not_found_size">23sp</dimen>
+
 </resources>

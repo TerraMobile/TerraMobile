@@ -21,15 +21,23 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
+import android.widget.GridLayout;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,6 +48,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -73,13 +82,17 @@ public class GPictureView extends View implements GView {
      */
     private Map<String, Object> _pictures;
 
-    private List<String> addedImages = new ArrayList<String>();
+    private Map<String, String> newImagesFromCamera = new HashMap<String, String>();
 
-    private Map<Integer, String> addedIdsToImageViews = new HashMap<Integer, String>();
+    private Map<String, String> addedIdsToImageViews = new HashMap<String, String>();
 
     private LinearLayout imageLayout;
 
     private FragmentDetail mFragmentDetail;
+
+    /* configuration to 3032x2008 - 6 Megapixel */
+    final private int bestWidthSize = 3032;
+    final private int bestHeightSize = 2008;
 
     public static int PICTURE_VIEW_RESULT;
 
@@ -101,7 +114,6 @@ public class GPictureView extends View implements GView {
     }
 
     /**
-     * @param noteId                the id of the note this image belows to.
      * @param fragmentDetail        the fragment detail  to use.
      * @param attrs                 attributes.
      * @param requestCode           the code for starting the activity with result.
@@ -110,7 +122,7 @@ public class GPictureView extends View implements GView {
      * @param pictures              the value are the ids and binary data of the images.
      * @param constraintDescription constraints
      */
-    public GPictureView(final long noteId, final FragmentDetail fragmentDetail, AttributeSet attrs, final int requestCode, LinearLayout parentView, String label, Map<String, Object> pictures,
+    public GPictureView(final FragmentDetail fragmentDetail, AttributeSet attrs, final int requestCode, LinearLayout parentView, String label, Map<String, Object> pictures,
                         String constraintDescription) {
         super(fragmentDetail.getActivity(), attrs);
 
@@ -125,6 +137,7 @@ public class GPictureView extends View implements GView {
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT,
                 LayoutParams.WRAP_CONTENT);
         layoutParams.setMargins(10, 10, 10, 10);
+        textLayout.setPadding(10,5,10,5);
         textLayout.setLayoutParams(layoutParams);
         textLayout.setOrientation(LinearLayout.VERTICAL);
         parentView.addView(textLayout);
@@ -144,19 +157,13 @@ public class GPictureView extends View implements GView {
 
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(activity);
-                //double[] gpsLocation = PositionUtilities.getGpsLocationFromPreferences(preferences);
 
                 String imageName = ImageUtilities.getCameraImageName(null);
                 Intent cameraIntent = new Intent(activity, CameraActivity.class);
                 cameraIntent.putExtra(LibraryConstants.PREFS_KEY_CAMERA_IMAGENAME, imageName);
-                cameraIntent.putExtra(LibraryConstants.SELECTED_POINT_ID, noteId);
+
                 cameraIntent.putExtra(FormUtilities.MAIN_APP_WORKING_DIRECTORY, fragmentDetail.getWorkingDirectory());
-               /* if (gpsLocation != null) {
-                    cameraIntent.putExtra(LibraryConstants.LATITUDE, gpsLocation[1]);
-                    cameraIntent.putExtra(LibraryConstants.LONGITUDE, gpsLocation[0]);
-                    cameraIntent.putExtra(LibraryConstants.ELEVATION, gpsLocation[2]);
-                }*/
+
                 fragmentDetail.startActivityForResult(cameraIntent, requestCode);
             }
         });
@@ -165,15 +172,17 @@ public class GPictureView extends View implements GView {
         ScrollView.LayoutParams scrollLayoutParams = new ScrollView.LayoutParams(LayoutParams.MATCH_PARENT,
                 LayoutParams.WRAP_CONTENT);
         scrollView.setLayoutParams(scrollLayoutParams);
+        scrollView.setHorizontalScrollBarEnabled(true);
+        scrollView.setOverScrollMode(HorizontalScrollView.OVER_SCROLL_ALWAYS);
         parentView.addView(scrollView);
 
         imageLayout = new LinearLayout(activity);
         LinearLayout.LayoutParams imageLayoutParams = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
-                LayoutParams.WRAP_CONTENT) ;
-        imageLayoutParams.setMargins(10, 10, 10, 10);
-        imageLayoutParams.leftMargin=20;
+                LayoutParams.WRAP_CONTENT);
         imageLayout.setLayoutParams(imageLayoutParams);
+        imageLayout.setPadding(15, 5, 15, 5);
         imageLayout.setOrientation(LinearLayout.HORIZONTAL);
+        imageLayout.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
         scrollView.addView(imageLayout);
 
         updateValueForm();
@@ -189,6 +198,7 @@ public class GPictureView extends View implements GView {
     public void refresh(final Context context) throws Exception {
 
         imageLayout.removeAllViewsInLayout();
+        int increaseTime = 0;// using on runnable
 
         if (_pictures != null && _pictures.size() > 0) {
 
@@ -196,63 +206,103 @@ public class GPictureView extends View implements GView {
             Iterator<String> itKeys = imageKeys.iterator();
             while (itKeys.hasNext()) {
 
-                String imageId = itKeys.next();
-                Bitmap thumbnail = null;
+                final String imageId = itKeys.next();
+
                 if(!_pictures.containsKey(imageId)) {
                     // TODO: Here, write a log in logfile
                     continue;
                 }else {
-                    String imagePath = (String) _pictures.get(imageId);
-                    byte[] image = ImageUtilities.getImageFromPath(imagePath, 2);
-                    Bitmap imageBitmap = ImageUtilities.getBitmapFromBlob(image);
-                    thumbnail = ImageUtilities.makeThumbnail(imageBitmap);
+                    final String imagePath = (String) _pictures.get(imageId);
+                    final ProgressBar pgBar = getProgressBar(context);
+                    imageLayout.addView(pgBar);
+                    increaseTime++;
+
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        public void run() {
+
+                            byte[] image = ImageUtilities.getImageFromPath(imagePath, 2);
+                            Bitmap imageBitmap = ImageUtilities.getBitmapFromBlob(image);
+                            Bitmap thumbnail = ImageUtilities.makeThumbnail(imageBitmap);
+                            pgBar.setVisibility(View.GONE);
+                            imageLayout.addView(getImageView(context, thumbnail, imageId));
+                        }
+                    }, increaseTime*1000+1000);
                 }
-                //byte[] image = (byte[])_pictures.get(imageId);
-                //Bitmap imageBitmap = ImageUtilities.getBitmapFromBlob(image);
-                //Bitmap thumbnail = ImageUtilities.makeThumbnail(imageBitmap);
-                int viewID = new Integer(imageId).intValue();
-                imageLayout.addView(getImageView(context, thumbnail, viewID));
             }
         }
-        if (addedImages.size() > 0) {
-            for (String imagePath : addedImages) {
-                byte[] image = ImageUtilities.getImageFromPath(imagePath, 2);
-                Bitmap imageBitmap = ImageUtilities.getBitmapFromBlob(image);
-                Bitmap thumbnail = ImageUtilities.makeThumbnail(imageBitmap);
+        if(newImagesFromCamera != null && newImagesFromCamera.size() > 0) {
+            Set<String> imageKeys = newImagesFromCamera.keySet();
+            Iterator<String> itKeys = imageKeys.iterator();
+            while (itKeys.hasNext()) {
 
-                imageLayout.addView(getImageView(context, thumbnail, thumbnail.getGenerationId()));
+                final String imageId = itKeys.next();
+                final String imagePath = newImagesFromCamera.get(imageId);
+                final ProgressBar pgBar = getProgressBar(context);
+                imageLayout.addView(pgBar);
+                increaseTime++;
+
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    public void run() {
+                        File imageFile = new File(imagePath);
+                        if (imageFile.exists()) {
+                            if (imageFile.length() > ImageUtilities.MAX_IMAGE_FILE_SIZE) {
+                                if(!ImageUtilities.resampleImage(bestWidthSize, bestHeightSize, imagePath)) {
+                                    pgBar.setVisibility(View.GONE);
+                                    Bitmap bitmapError = BitmapFactory.decodeResource(getResources(),R.drawable.ic_stat_action_highlight_remove);
+                                    imageLayout.addView(getImageView(context, bitmapError, imageId));
+                                    return;
+                                }
+                            }
+                            byte[] image = ImageUtilities.getImageFromPath(imagePath, 2);
+                            Bitmap imageBitmap = ImageUtilities.getBitmapFromBlob(image);
+                            Bitmap thumbnail = ImageUtilities.makeThumbnail(imageBitmap);
+                            pgBar.setVisibility(View.GONE);
+                            imageLayout.addView(getImageView(context, thumbnail, imageId));
+                        }
+                    }
+                }, increaseTime*1000+1000);
+
                 if(!addedIdsToImageViews.containsValue(imagePath))
-                    addedIdsToImageViews.put(thumbnail.getGenerationId(), imagePath);
+                    addedIdsToImageViews.put(imageId, imagePath);
             }
         }
-
-        /*if ( (_pictures == null || _pictures.size() == 0) && (addedImages == null || addedImages.size() == 0) ) {
-            imageLayout.removeAllViewsInLayout();
-        }*/
-
 
         imageLayout.invalidate();
 
     }
 
-    public ImageView getImageView(final Context context, final Bitmap thumbnail, int ID) {
+    public ProgressBar getProgressBar(final Context context) {
+        ProgressBar progressBar = new ProgressBar(context);
+        // Get the Drawable custom_progressbar
+        Drawable draw=getResources().getDrawable(R.drawable.customprogressbar);
+        // set the drawable as progress drawable
+        progressBar.setProgressDrawable(draw);
+        progressBar.setVisibility(View.VISIBLE);
+        progressBar.setPadding(5, 5, 5, 5);
+        progressBar.setLayoutParams(new LinearLayout.LayoutParams(102, 102));
+        return progressBar;
+    }
+
+    public ImageView getImageView(final Context context, final Bitmap thumbnail, String uuid) {
         ImageView imageView = new ImageView(context);
         imageView.setLayoutParams(new LinearLayout.LayoutParams(102, 102));
         imageView.setPadding(5, 5, 5, 5);
         imageView.setImageBitmap(thumbnail);
         imageView.setBackgroundDrawable(getResources().getDrawable(R.drawable.border_black_1px));
-        imageView.setId(ID);
+        imageView.setTag(uuid);
         imageView.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                int photoId = v.getId();
+                String photoId = (String)v.getTag();
 
                 FragmentActivity activity = mFragmentDetail.getActivity();
                 Intent intent = new Intent(activity, PictureActivity.class);
 
                 if(addedIdsToImageViews.containsKey(photoId)){// pictures on session
                     intent.putExtra(FormUtilities.PICTURE_PATH_VIEW, addedIdsToImageViews.get(photoId));
-                }else if(_pictures.containsKey(String.valueOf(photoId))) {// pictures from database
-                    intent.putExtra(FormUtilities.PICTURE_DB_VIEW, (String)_pictures.get(String.valueOf(photoId)));// Image temporary path
+                }else if(_pictures.containsKey(photoId)) {// pictures from database
+                    intent.putExtra(FormUtilities.PICTURE_DB_VIEW, (String)_pictures.get(photoId));// Image temporary path
                 }
                 if(intent.hasExtra(FormUtilities.PICTURE_PATH_VIEW) || intent.hasExtra(FormUtilities.PICTURE_DB_VIEW)) {
                     intent.putExtra(FormUtilities.PICTURE_BITMAP_ID, photoId);
@@ -263,13 +313,6 @@ public class GPictureView extends View implements GView {
 
 
                 /*
-                if(addedIdsToImageViews.containsKey(photoId)){// pictures on session
-                    String imagePath = addedIdsToImageViews.remove(photoId);
-                    addedImages.remove(imagePath);
-                }else if(_pictures.containsKey(photoId)) {// pictures from database
-                    _pictures.remove(photoId);
-                }
-
                 JSONArray form = null;
                 try {
                     form = mFragmentDetail.getSelectedForm();
@@ -329,7 +372,7 @@ public class GPictureView extends View implements GView {
 
     /**
      * Encode from the picture control variables to json format.
-     * Using addedImages and _pictures to create the json:
+     * Using newImagesFromCamera and _pictures to create the json:
      *
      * {added_paths:'path1,path2,path3', removed_ids:'10,32'}
      *
@@ -338,10 +381,12 @@ public class GPictureView extends View implements GView {
     private String encodeToJson() {
 
         String imagePaths = "";
-        if(addedImages!=null) {
-            Iterator<String> iterator = addedImages.iterator();
-            while (iterator.hasNext())
-                imagePaths += (imagePaths.isEmpty() ? "" : FormUtilities.SEMICOLON) + iterator.next();
+        if(newImagesFromCamera != null) {
+            Set<String> imageKeys = newImagesFromCamera.keySet();
+            Iterator<String> itKeys = imageKeys.iterator();
+            while (itKeys.hasNext()) {
+                imagePaths += (imagePaths.isEmpty() ? "" : FormUtilities.SEMICOLON) + newImagesFromCamera.get(itKeys.next());
+            }
         }
 
         imagePaths = "'"+FormUtilities.TAG_ADDED_IMG+"'"+FormUtilities.COLON+"'"+imagePaths+"'";
@@ -389,10 +434,24 @@ public class GPictureView extends View implements GView {
 
         Boolean hasPhoto = data.getBooleanExtra(LibraryConstants.OBJECT_EXISTS, false);
         String imgPath = "";
-        if(hasPhoto) {
+        if(hasPhoto) {// response of the CameraActivity with one image
 
             imgPath = data.getStringExtra(FormUtilities.PHOTO_COMPLETE_PATH);
-            addedImages.add(imgPath);
+
+            // TODO: save azimuth on database together with the picture.
+            double azimuth = data.getDoubleExtra(LibraryConstants.AZIMUTH, 0);
+
+            String uuid = java.util.UUID.randomUUID().toString();
+            /*if(ImageUtilities.isImagePath(imgPath)) {
+                File img = new File(imgPath);
+                long imgSize=img.length();
+                if(imgSize > ImageUtilities.MAX_IMAGE_FILE_SIZE) {
+                    // TODO: implement a method to reduce image
+                    return;
+                }
+            }*/
+
+            newImagesFromCamera.put(uuid, imgPath);
             updateValueForm();
 
             try {
@@ -404,17 +463,17 @@ public class GPictureView extends View implements GView {
         }
         if(data.hasExtra(FormUtilities.PICTURE_RESPONSE_REMOVE_VIEW)) {
             Boolean hasPictureRemoved = data.getBooleanExtra(FormUtilities.PICTURE_RESPONSE_REMOVE_VIEW, false);
-            if(!hasPictureRemoved) {
+            if(!hasPictureRemoved) {// response of the PictureActivity, used to remove image
                 return;
             }
 
-            Integer photoId = data.getIntExtra(FormUtilities.PICTURE_BITMAP_ID, -1);
+            String photoId = data.getStringExtra(FormUtilities.PICTURE_BITMAP_ID);
 
             if(addedIdsToImageViews.containsKey(photoId)){// pictures on session
-                String imagePath = addedIdsToImageViews.remove(photoId);
-                addedImages.remove(imagePath);
-            }else if(_pictures.containsKey(photoId.toString())) {// pictures from database
-                _pictures.remove(photoId.toString());
+                addedIdsToImageViews.remove(photoId);
+                newImagesFromCamera.remove(photoId);
+            }else if(_pictures.containsKey(photoId)) {// pictures from database
+                _pictures.remove(photoId);
             }
 
             updateValueForm();

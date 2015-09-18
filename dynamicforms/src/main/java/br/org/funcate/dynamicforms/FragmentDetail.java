@@ -268,7 +268,7 @@ public class FragmentDetail extends Fragment {
                                 value.put(keyMap, imagePath);
                             }
                         }
-                        addedView = FormUtilities.addPictureView(noteId, this, requestCode, mainView, label, value, constraintDescription);
+                        addedView = FormUtilities.addPictureView(this, requestCode, mainView, label, value, constraintDescription);
                     }
                      /*else if (type.equals(TYPE_SKETCH)) {
                         addedView = FormUtilities.addSketchView(noteId, this, requestCode, mainView, label, value, constraintDescription);

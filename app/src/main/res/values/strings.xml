@@ -116,4 +116,7 @@
     <string name="failure_on_save_new_location">Failure on save the new location.</string>
     <!-- Location services -->
     <string name="disabled_provider">Your location provider is disabled.</string>
+    <!-- Info panel to display feature attributes -->
+    <string name="head_label_info">Label</string>
+    <string name="head_value_info">Value</string>
 </resources>

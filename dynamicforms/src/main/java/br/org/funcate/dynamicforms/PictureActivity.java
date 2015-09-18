@@ -17,7 +17,7 @@ public class PictureActivity extends FragmentActivity {
 
     private String _picturePath;
     private String _pictureTmpPath;
-    private int _bitmapID;
+    private String _bitmapID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +31,7 @@ public class PictureActivity extends FragmentActivity {
             _pictureTmpPath = getIntent().getStringExtra(FormUtilities.PICTURE_DB_VIEW);
         }
 
-        _bitmapID = getIntent().getIntExtra(FormUtilities.PICTURE_BITMAP_ID, -1);
+        _bitmapID = getIntent().getStringExtra(FormUtilities.PICTURE_BITMAP_ID);
 
         setContentView(R.layout.fragment_picture);
     }
@@ -53,7 +53,7 @@ public class PictureActivity extends FragmentActivity {
         finish();
     }
 
-    public int getBitmapID() {
+    public String getBitmapID() {
         return _bitmapID;
     }
 

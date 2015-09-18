@@ -37,7 +37,7 @@ public class FeatureInfoPanelController {
         }
         Bundle featureDataValues = FeatureService.featureAttrsToBundle(feature);
         Intent intent = new Intent(mainActivity.getApplicationContext(), FeatureInfoPanelActivity.class);
-        intent.putExtra(FeatureService.FEATURE_DATA_CONTENT ,featureDataValues);
+        intent.putExtra(FeatureService.FEATURE_DATA_CONTENT, featureDataValues);
         mainActivity.startActivity(intent);
     }
 
