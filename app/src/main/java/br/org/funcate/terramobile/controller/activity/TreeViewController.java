@@ -12,9 +12,13 @@ import br.org.funcate.jgpkg.exception.QueryException;
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
 import br.org.funcate.terramobile.model.exception.InvalidGeopackageException;
+import br.org.funcate.terramobile.model.exception.LowMemoryException;
+import br.org.funcate.terramobile.model.exception.SettingsException;
+import br.org.funcate.terramobile.model.exception.StyleException;
 import br.org.funcate.terramobile.model.exception.TerraMobileException;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
 import br.org.funcate.terramobile.model.service.AppGeoPackageService;
+import br.org.funcate.terramobile.model.service.LayersService;
 import br.org.funcate.terramobile.util.DevUtil;
 import br.org.funcate.terramobile.util.Message;
 import br.org.funcate.terramobile.util.ResourceHelper;
@@ -23,7 +27,7 @@ import br.org.funcate.terramobile.view.TreeViewAdapter;
 /**
  * Created by Andre Carvalho on 28/04/15.
  */
-public class TreeView {
+public class TreeViewController {
 
     private ExpandableListView mDrawerList;
     private ArrayList<GpkgLayer> groupItem = new ArrayList<GpkgLayer>();
@@ -32,14 +36,15 @@ public class TreeView {
     private Resources resources;
     private TreeViewAdapter treeViewAdapter;
     private GpkgLayer selectedEditableLayer;
+    private MainController mainController;
 
-    public TreeView(Context context) throws InvalidAppConfigException {
+    public TreeViewController(Context context, MainController mainController) throws InvalidAppConfigException {
         this.context=context;
         this.resources=context.getResources();
-        initTreeView();
+        this.mainController = mainController;
     }
 
-    private void initTreeView() throws InvalidAppConfigException {
+    public void initTreeView() throws InvalidAppConfigException {
         setGroupData();
         setChildGroupData();
         try {
@@ -104,10 +109,15 @@ public class TreeView {
         // get list layers from GeoPackage
         ArrayList<GpkgLayer> layers = null;
         try {
-            layers = AppGeoPackageService.getLayers(this.context);
+            //layers = AppGeoPackageService.getLayers(this.context);
+            layers = LayersService.getLayers(this.context);
         } catch (InvalidGeopackageException e) {
             Message.showErrorMessage((MainActivity) this.context, R.string.failure_title_msg, e.getMessage());
         } catch (QueryException e) {
+            Message.showErrorMessage((MainActivity)this.context, R.string.failure_title_msg, e.getMessage());
+        } catch (SettingsException e) {
+            Message.showErrorMessage((MainActivity)this.context, R.string.failure_title_msg, e.getMessage());
+        } catch (InvalidAppConfigException e) {
             Message.showErrorMessage((MainActivity)this.context, R.string.failure_title_msg, e.getMessage());
         }
 
@@ -151,6 +161,8 @@ public class TreeView {
 
                 }
             }
+
+
         }
 
         if(childCollectLayers.isEmpty())
@@ -223,13 +235,45 @@ public class TreeView {
      * Return all layers, from all groups (Base, Gathering and Overlays
      * @return
      */
-    public ArrayList<GpkgLayer> getLayers() {
+    public ArrayList<GpkgLayer> getAllLayers() {
         ArrayList<GpkgLayer> layers = new ArrayList<GpkgLayer>();
         for (int i = 0; i < childItem.size(); i++) {
             layers.addAll(childItem.get(i));
         }
 
         return layers;
+    }
+
+    public ArrayList<ArrayList<GpkgLayer>> getLayersWithGroups() {
+      return childItem;
+    }
+
+    public void enableInitialLayers()
+    {
+
+        for(int i = 0; i < childItem.size(); i++) {
+            ArrayList<GpkgLayer> layers = childItem.get(i);
+            for (int j = 0; j < layers.size(); j++) {
+                if(layers.get(j).isEnabled())
+                {
+                    try {
+                        mainController.getMenuMapController().enableLayer(layers.get(j));
+                    } catch (StyleException e) {
+                        e.printStackTrace();
+                        Message.showErrorMessage(((MainActivity) context), R.string.error, e.getMessage());
+                    } catch (InvalidAppConfigException e) {
+                        e.printStackTrace();
+                        Message.showErrorMessage(((MainActivity) context), R.string.error, e.getMessage());
+                    } catch (TerraMobileException e) {
+                        e.printStackTrace();
+                        Message.showErrorMessage(((MainActivity) context), R.string.error, e.getMessage());
+                    } catch (LowMemoryException e) {
+                        e.printStackTrace();
+                        Message.showErrorMessage(((MainActivity) context), R.string.error, e.getMessage());
+                    }
+                }
+            }
+        }
     }
 
 }

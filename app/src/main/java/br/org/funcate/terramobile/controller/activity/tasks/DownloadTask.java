@@ -144,7 +144,7 @@ public class DownloadTask extends AsyncTask<String, String, Boolean> {
         try {
             if(android.os.Debug.isDebuggerConnected()) android.os.Debug.waitForDebugger(); // Para debugar é preciso colocar um breakpoint nessa linha
 
-                mainActivity.getTreeView().refreshTreeView();
+                mainActivity.getMainController().getTreeViewController().refreshTreeView();
 
             String projectName = mFiles.get(0);// The project is the last not_downloaded geopackage file.
 
@@ -157,7 +157,7 @@ public class DownloadTask extends AsyncTask<String, String, Boolean> {
             project.setDownloaded(1);
             projectDAO.insert(project);
 
-            mainActivity.setProject(projectDAO.getByName(projectName));
+            mainActivity.getMainController().setCurrentProject(projectDAO.getByName(projectName));
 
             if(mainActivity.getProgressDialog() != null && mainActivity.getProgressDialog().isShowing()) {
                 if (aBoolean) {

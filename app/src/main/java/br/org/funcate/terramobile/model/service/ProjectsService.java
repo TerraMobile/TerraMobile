@@ -7,6 +7,10 @@ import com.augtech.geoapi.geometry.BoundingBoxImpl;
 import org.opengis.geometry.BoundingBox;
 import org.osmdroid.util.GeoPoint;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.model.db.ApplicationDatabase;
 import br.org.funcate.terramobile.model.db.DatabaseFactory;
@@ -33,14 +37,14 @@ public class ProjectsService {
     /**
      * This method retrieve from project the initial default bbox center.
      * @param context
-     * @param databasePath
+     * @param projectPath
      */
-   public static BoundingBox getProjectDefaultBoundingBox(Context context, String databasePath) throws InvalidAppConfigException, ProjectException {
+   public static BoundingBox getProjectDefaultBoundingBox(Context context, String projectPath) throws InvalidAppConfigException, ProjectException {
        try {
-           Setting xmin = SettingsService.get(context,"default_xmin",databasePath);
-           Setting ymin = SettingsService.get(context,"default_ymin",databasePath);
-           Setting xmax = SettingsService.get(context,"default_xmax",databasePath);
-           Setting ymax = SettingsService.get(context,"default_ymax",databasePath);
+           Setting xmin = SettingsService.get(context,"default_xmin",projectPath);
+           Setting ymin = SettingsService.get(context,"default_ymin",projectPath);
+           Setting xmax = SettingsService.get(context,"default_xmax",projectPath);
+           Setting ymax = SettingsService.get(context,"default_ymax",projectPath);
 
            if(xmin!=null && ymin!=null && xmax!=null && ymax!=null)
            {
@@ -54,5 +58,54 @@ public class ProjectsService {
        return null;
 
    }
+
+    /**
+     * This method retrieve the project description from the project GPKG file.
+     * @param context
+     * @param projectPath
+     */
+    public static String getDescription(Context context, String projectPath) throws InvalidAppConfigException, ProjectException {
+        String descStr = "";
+        try {
+            Setting descriptionSetting = SettingsService.get(context,"description",projectPath);
+
+                if(descriptionSetting!=null)
+                {
+                    descStr = descriptionSetting.getValue();
+                }
+
+            } catch (SettingsException e) {
+            throw new ProjectException(ResourceHelper.getStringResource(R.string.failed_getting_project_setting),e);
+        }
+        return descStr;
+
+    }
+
+    /**
+     * This method retrieve the project description from the project GPKG file.
+     * @param context
+     * @param projectPath
+     */
+    public static Date getCreationDate(Context context, String projectPath) throws InvalidAppConfigException, ProjectException {
+        Date creationDate = null;
+        try {
+            Setting dateSetting = SettingsService.get(context,"creation_date",projectPath);
+
+            if(dateSetting!=null)
+            {
+                SimpleDateFormat dateFormat = new SimpleDateFormat();
+                creationDate = dateFormat.parse(dateSetting.getValue());
+            }
+
+        } catch (SettingsException e) {
+            throw new ProjectException(ResourceHelper.getStringResource(R.string.failed_getting_project_setting),e);
+        } catch (ParseException e) {
+            throw new ProjectException(ResourceHelper.getStringResource(R.string.failed_getting_project_creation_date),e);
+        }
+        return creationDate;
+
+    }
+
+
 
 }

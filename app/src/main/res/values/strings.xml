@@ -87,8 +87,10 @@
     <string name="style_insert_exception">Unable to insert SLD style on database.</string>
     <string name="style_update_exception">Unable to update SLD style on database.</string>
     <string name="style_query_exception">Unable to get SLD style from database.</string>
+    <string name="layer_setting_query_exception">Unable to get layer settings from database.</string>
     <string name="invalid_database_exception">Invalid database instance.</string>
     <string name="failed_getting_project_setting">Failed while getting a project setting.</string>
+    <string name="failed_getting_project_creation_date">Failed getting a project creation date.</string>
     <string name="invalid_project">Unable to load due to invalid project.</string>
     <string name="download_project_first">Please download project first.</string>
     <!-- Message window title -->

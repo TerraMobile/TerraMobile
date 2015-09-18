@@ -61,7 +61,7 @@ public class SFSMarker extends Marker implements Marker.OnMarkerClickListener {
 
     public Long getMarkerId() {
         String markerId = ((SFSPoint)this.getRelatedObject()).mId;
-        String editableLayerName = this.mMainActivity.getTreeView().getSelectedEditableLayer().getName();
+        String editableLayerName = this.mMainActivity.getMainController().getTreeViewController().getSelectedEditableLayer().getName();
         markerId = markerId.replaceFirst(editableLayerName,"");
         return new Long(markerId);
     }

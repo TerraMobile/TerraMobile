@@ -55,11 +55,6 @@ public class MainActivity extends FragmentActivity {
     private ActionBar actionBar;
 
     private CharSequence mTitle;
-
-    private TreeView treeView;
-
-    private Project mProject;
-
     // Progress bar
     private ProgressDialog progressDialog;
 
@@ -90,8 +85,6 @@ public class MainActivity extends FragmentActivity {
         setContentView(R.layout.activity_main);
         actionBar = getActionBar();
 
-        mainController = new MainController(this);
-
         markerInfoWindowController=new MarkerInfoWindowController(this);
 
         featureInfoPanelController = new FeatureInfoPanelController(this);
@@ -105,60 +98,15 @@ public class MainActivity extends FragmentActivity {
 
         ResourceHelper.setResources(getResources());
 
-        File directory = Util.getDirectory(this.getResources().getString(R.string.app_workspace_dir));
+        try
+        {
+            mainController = new MainController(this);
 
-        try {
-
-            SettingsService.initApplicationSettings(this);
-
-            String currentProjectPath = mainController.getCurrentProject();
-
-            String ext = this.getString(R.string.geopackage_extension);
-            if(currentProjectPath != null) {
-                ProjectDAO projectDAO = new ProjectDAO(DatabaseFactory.getDatabase(this, ApplicationDatabase.DATABASE_NAME));
-                mProject = projectDAO.getByName(currentProjectPath);
-                File currentProject = Util.getGeoPackageByName(directory, ext, currentProjectPath);
-                if(currentProject != null) {
-                    if(mProject == null) {
-                        Project project = new Project();
-                        project.setId(null);
-                        project.setName(currentProjectPath);
-                        project.setFilePath(currentProject.getPath());
-                        projectDAO.insert(project);
-
-                        mProject = projectDAO.getByName(currentProjectPath);
-                    }
-                }
-                else{
-                    if(mProject != null){
-                        if(projectDAO.remove(mProject.getId())){
-                            Log.i("Remove project","Project removed");
-                        }
-                        else
-                            Log.e("Remove project","Couldn't remove the project");
-                    }
-                }
-            }
-
-        } catch (InvalidAppConfigException e) {
-
-            Message.showErrorMessage(this, R.string.error, e.getMessage());
-
-        } catch (SettingsException e) {
-
-            Message.showErrorMessage(this, R.string.error, e.getMessage());
-
-        } catch (DAOException e) {
-            Message.showErrorMessage(this, R.string.error, e.getMessage());
-        }
-
-
-        try {
-            treeView = new TreeView(this);
         } catch (InvalidAppConfigException e) {
             e.printStackTrace();
             Message.showErrorMessage(this, R.string.error, e.getMessage());
         }
+
 
         mTitle = getTitle();
         DrawerLayout mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -194,6 +142,8 @@ public class MainActivity extends FragmentActivity {
         if (savedInstanceState == null) {
             insertMapView();
         }
+
+        mainController.initMain();
     }
 
     @Override
@@ -235,7 +185,7 @@ public class MainActivity extends FragmentActivity {
         inflater.inflate(R.menu.action_bar, menu);
 
         MenuItem menuItem = menu.findItem(R.id.project);
-        menuItem.setTitle(mProject != null ? mProject.toString() : "Project");
+        menuItem.setTitle(mainController.getCurrentProject() != null ? mainController.getCurrentProject().toString() : "Project");
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -243,11 +193,11 @@ public class MainActivity extends FragmentActivity {
     /* Called whenever we call invalidateOptionsMenu() */
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        ExpandableListView mDrawerList=treeView.getUIComponent();
+        ExpandableListView mDrawerList=mainController.getTreeViewController().getUIComponent();
         if(mDrawerList==null) return false;
 
         MenuItem menuItem = menu.findItem(R.id.project);
-        menuItem.setTitle(mProject != null ? mProject.toString() : "Project");
+        menuItem.setTitle(mainController.getCurrentProject() != null ? mainController.getCurrentProject().toString() : "Project");
 
         // If the nav drawer is open, hide action items related to the content view
         return super.onPrepareOptionsMenu(menu);
@@ -290,10 +240,13 @@ public class MainActivity extends FragmentActivity {
     }
 
     private void insertMapView() {
+
         // update the action_bar content by replacing fragments
-        Fragment fragment = new MapFragment();
+        MapFragment fragment = new MapFragment();
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+        fragment.setMenuMapController(mainController.getMenuMapController());
+        mainController.getMenuMapController().setMapFragment(fragment);
     }
 
     @Override
@@ -353,90 +306,8 @@ public class MainActivity extends FragmentActivity {
         return progressDialog;
     }
 
-    public TreeView getTreeView() {
-        return treeView;
-    }
-
     public ProjectListFragment getProjectListFragment() {
         return projectListFragment;
-    }
-
-    public Project getProject() {
-        return mProject;
-    }
-
-    public boolean setProject(Project project) throws InvalidAppConfigException {
-        if(project==null)
-        {
-            clearCurrentProject();
-            return true;
-        }
-        this.mProject = project;
-
-        treeView.refreshTreeView();
-
-        invalidateOptionsMenu();
-
-        try {
-            Setting currentProjectSet = new Setting("current_project", project.getName());
-
-            SettingsService.update(this, currentProjectSet, ApplicationDatabase.DATABASE_NAME);
-
-            getMainController().getMenuMapController().removeAllLayers(true);
-
-            SettingsService.initProjectSettings(this, project);
-
-            BoundingBox bb = ProjectsService.getProjectDefaultBoundingBox(this, project.getFilePath());
-
-            if(bb==null)
-            {
-                //if bb == null include all layers bounding box
-                bb = LayersService.getLayersMaxExtent(getTreeView().getLayers());
-            }
-            mainController.getMenuMapController().panTo(bb);
-
-        } catch (SettingsException e)
-        {
-            e.printStackTrace();
-            Message.showErrorMessage(this, R.string.error, e.getMessage());
-            clearCurrentProject();
-            return false;
-        } catch (ProjectException e)
-        {
-            e.printStackTrace();
-            Message.showErrorMessage(this, R.string.error, e.getMessage());
-            clearCurrentProject();
-            return false;
-        } catch (Exception e)
-        {
-            e.printStackTrace();
-            Message.showErrorMessage(this, R.string.error, R.string.invalid_project);
-            clearCurrentProject();
-            return false;
-        }
-        return true;
-    }
-
-    private void clearCurrentProject()
-    {
-        try {
-            this.mProject = null;
-
-            Setting currentProjectSet = new Setting("current_project", null);
-
-            SettingsService.update(this, currentProjectSet, ApplicationDatabase.DATABASE_NAME);
-
-            treeView.refreshTreeView();
-
-            invalidateOptionsMenu();
-
-        } catch (SettingsException e) {
-            e.printStackTrace();
-            Message.showErrorMessage(this, R.string.error, e.getMessage());
-        } catch (InvalidAppConfigException e) {
-            e.printStackTrace();
-            Message.showErrorMessage(this, R.string.error, e.getMessage());
-        }
     }
 
     public MainController getMainController() {

@@ -2,6 +2,7 @@ package br.org.funcate.terramobile.controller.activity;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.view.View;
 import android.widget.Toast;
 
 import org.opengis.geometry.BoundingBox;
@@ -47,24 +48,22 @@ public class MenuMapController {
     private final int INDEX_BASE_LAYER=0;
     private int lastIndexDrawOrder;
     private GpkgLayer currentBaseLayer;
+    private MainController mainController;
+    private MapFragment mapFragment;
 
-    public MenuMapController(Context context) {
+    public MenuMapController(Context context, MainController mainController) {
         this.context=context;
         this.lastIndexDrawOrder = 0;
         this.currentBaseLayer = null;
+        this.mainController = mainController;
     }
 
     private void addBaseLayer(GpkgLayer child) {
-
-
 
         if(child.getGeoPackage().isGPKGValid(false)) {
             if(child.getOsmOverLayer()==null)
             {
                 MapView mapView = (MapView) ((MainActivity) context).findViewById(R.id.mapview);
-
-
-
 
                 final MapTileProviderBasic tileProvider = new MapTileProviderBasic(context);
 
@@ -147,7 +146,6 @@ public class MenuMapController {
 
         if(child.getOsmOverLayer()==null) {
 
-
             MapView mapView = (MapView) ((MainActivity) context).findViewById(R.id.mapview);
 
             Style defaultStyle = StyleService.loadStyle(context, child.getGeoPackage().getDatabaseFileName(),child);
@@ -205,13 +203,15 @@ public class MenuMapController {
 
     public void removeAllLayers(boolean updateMap)
     {
-        MapView mapView = (MapView) ((MainActivity) context).findViewById(R.id.mapview);
-        mapView.getOverlays().clear();
-        if(updateMap)
+        MapView mapView = mapFragment.getMapView();
+        if(mapView!=null)
         {
-            mapView.invalidate();
+            mapView.getOverlays().clear();
+            if(updateMap)
+            {
+                mapView.invalidate();
+            }
         }
-
     }
     public void updateOverlaysOrder(ArrayList<GpkgLayer> orderedLayers)
     {
@@ -219,4 +219,34 @@ public class MenuMapController {
         LayersService.sortOverlayByGPKGLayer(mapView.getOverlays(), orderedLayers);
         mapView.invalidate();
     }
+
+    public void enableLayer(GpkgLayer layer) throws StyleException, InvalidAppConfigException, TerraMobileException, LowMemoryException {
+        addLayer(layer);
+        //Correct the layer order by the GPKGLayer index.
+        updateOverlaysOrder(LayersService.composeLinearLayerList(mainController.getTreeViewController().getLayersWithGroups()));
+    }
+
+    public void disableLayer(GpkgLayer layer)
+    {
+        removeLayer(layer);
+        //Correct the layer order by the GPKGLayer index.
+        updateOverlaysOrder(LayersService.composeLinearLayerList(mainController.getTreeViewController().getLayersWithGroups()));
+    }
+
+    public MainController getMainController() {
+        return mainController;
+    }
+
+
+    public void setMapFragment(MapFragment mapFragment)
+    {
+        this.mapFragment = mapFragment;
+    }
+
+    public void postMapLoad()
+    {
+
+    }
+
 }
+
