@@ -13,7 +13,7 @@
 
     <ExpandableListView
         android:id="@+id/expandable_tree_view"
-        android:layout_width="400dp"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:choiceMode="singleChoice"

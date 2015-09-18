@@ -67,8 +67,6 @@
     <string name="data_not_found">Not Found</string>
     <!-- Drawer items(layers) -->
     <string-array name="menu_groups">
-        <!--<item name="tools">Tools</item>-->
-        <item name="base_layers">Base Layers</item><!-- This "Group Menu" does not have static items. -->
         <item name="layers">Layers</item><!-- This "Group Menu" does not have static items. -->
         <item name="gathering_layers">Gathering Layers</item><!-- This "Group Menu" does not have static items. -->
     </string-array>

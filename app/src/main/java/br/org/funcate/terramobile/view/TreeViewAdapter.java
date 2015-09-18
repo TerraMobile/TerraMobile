@@ -35,7 +35,6 @@ public class TreeViewAdapter extends BaseExpandableListAdapter implements View.O
     public ArrayList<ArrayList<GpkgLayer>> ChildItem;
     private final Context context;
     private MenuMapController menuMapController;
-    private ArrayList<RadioButton> baseLayerRBList;
     private ArrayList<RadioButton> editableLayerRBList;
 
     public TreeViewAdapter(Context context, ArrayList<GpkgLayer> grpList, ArrayList<ArrayList<GpkgLayer>> childItem) {
@@ -43,7 +42,6 @@ public class TreeViewAdapter extends BaseExpandableListAdapter implements View.O
         this.groupItem = grpList;
         this.ChildItem = childItem;
         this.menuMapController = ((MainActivity) context).getMainController().getMenuMapController();
-        baseLayerRBList = new ArrayList<RadioButton>();
         editableLayerRBList = new ArrayList<RadioButton>();
     }
 
@@ -56,20 +54,9 @@ public class TreeViewAdapter extends BaseExpandableListAdapter implements View.O
     private void exec(View v) {
         GpkgLayer child = (GpkgLayer) v.getTag();
         try{
-            switch (child.getType()){
-                case TILES:{// base
-                    this.unselectAllRadioButtons(baseLayerRBList);
-
-                    RadioButton rBChildBaseLayer = (RadioButton) v;
-                    if (!rBChildBaseLayer.isChecked()) {
-                        if(menuMapController.getBaseLayer() != null)
-                            this.menuMapController.removeLayer(menuMapController.getBaseLayer());
-                        this.menuMapController.addLayer(child);
-                        rBChildBaseLayer.setChecked(true);
-                    }
-                    break;
-                }
-                case FEATURES:{// collect
+            switch (child.getType()) {
+                case TILES:
+                case FEATURES:{// vectors and images
 
                     if (((CheckBox) v).isChecked()) {
                         this.menuMapController.addLayer(child);
@@ -78,7 +65,7 @@ public class TreeViewAdapter extends BaseExpandableListAdapter implements View.O
                     }
                     break;
                 }
-                case EDITABLE:{// editable (vector)
+                case EDITABLE:{// editable (vector points)
                     this.unselectAllRadioButtons(editableLayerRBList);
 
                     TreeView treeView=((MainActivity) this.context).getTreeView();
@@ -166,8 +153,8 @@ public class TreeViewAdapter extends BaseExpandableListAdapter implements View.O
             grpLabel.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                     context.getResources().getDimension(R.dimen.grp_text_size));
             convertView.setTag(groupItem.get(groupPosition));
-        }catch (Exception e){
-            String s= e.getMessage();
+        }catch (Exception e) {
+            e.printStackTrace();
         }
 
         return convertView;
@@ -189,18 +176,6 @@ public class TreeViewAdapter extends BaseExpandableListAdapter implements View.O
         ImageView layerDownImage;
         switch (child.getType()) {
             case TILES:
-                convertView = layoutInflater.inflate(R.layout.child_item_base_layers, null);
-                radioButton = (RadioButton)convertView.findViewById(R.id.rBChildBaseLayer);
-                radioButton.setTextColor(Color.BLACK);
-                radioButton.setText(child.getName());
-                radioButton.setTag(child);
-                radioButton.setChecked(child.getOsmOverLayer()!=null);
-                radioButton.setTextSize(TypedValue.COMPLEX_UNIT_PX,
-                        context.getResources().getDimension(R.dimen.child_text_size));
-                radioButton.setOnClickListener(this);
-                baseLayerRBList.add(radioButton);
-
-                break;
             case FEATURES:
                 convertView = layoutInflater.inflate(R.layout.child_item_layers, null);
                 checkBox = (CheckBox)convertView.findViewById(R.id.cBChildLayer);
@@ -313,7 +288,6 @@ public class TreeViewAdapter extends BaseExpandableListAdapter implements View.O
     {
         ArrayList<GpkgLayer> layers = ChildItem.get(currentGroupPos);
 
-
         if(currentPos!=0) //This condition keeps the layer inside his group
         {
             GpkgLayer currentLayer = layers.get(currentPos);
@@ -346,8 +320,6 @@ public class TreeViewAdapter extends BaseExpandableListAdapter implements View.O
             int currLayerPos = currentLayer.getIndexOverlay();
             currentLayer.setIndexOverlay(downLayer.getIndexOverlay());
             downLayer.setIndexOverlay(currLayerPos);
-
-
 
             //Correct the layer order by the GPKGLayer index.
             LayersService.sortLayersByIndex(layers);
