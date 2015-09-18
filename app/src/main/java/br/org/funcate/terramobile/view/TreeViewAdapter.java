@@ -42,6 +42,10 @@ public class TreeViewAdapter extends BaseExpandableListAdapter implements View.O
         editableLayerRBList = new ArrayList<RadioButton>();
     }
 
+    /**
+     * Call when one radio button or checkbox is selected on list layer.
+     * @param v, selected element radio or checkbox
+     */
     @Override
     public void onClick(View v) {
         exec(v);

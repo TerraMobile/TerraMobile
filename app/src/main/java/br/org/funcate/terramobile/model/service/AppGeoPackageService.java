@@ -186,7 +186,7 @@ public class AppGeoPackageService {
             } else if("tiles".equals(dataTypeField.getValue()))
             {
                 layer.setType(GpkgLayer.Type.TILES);
-                layer.setIndexOverlay(1000);
+                //layer.setIndexOverlay(1000);
             } else
             {
                 //TODO:Verify if it's necessary to stop the process or ignore the current layer iteration

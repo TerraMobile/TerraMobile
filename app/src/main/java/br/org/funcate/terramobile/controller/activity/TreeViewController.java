@@ -1,7 +1,6 @@
 package br.org.funcate.terramobile.controller.activity;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.widget.ExpandableListView;
 import android.widget.Toast;
 
@@ -17,7 +16,6 @@ import br.org.funcate.terramobile.model.exception.SettingsException;
 import br.org.funcate.terramobile.model.exception.StyleException;
 import br.org.funcate.terramobile.model.exception.TerraMobileException;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
-import br.org.funcate.terramobile.model.service.AppGeoPackageService;
 import br.org.funcate.terramobile.model.service.LayersService;
 import br.org.funcate.terramobile.util.DevUtil;
 import br.org.funcate.terramobile.util.Message;
@@ -33,7 +31,6 @@ public class TreeViewController {
     private ArrayList<GpkgLayer> groupItem = new ArrayList<GpkgLayer>();
     private ArrayList<ArrayList<GpkgLayer>> childItem = new ArrayList<ArrayList<GpkgLayer>>();
     private Context context;
-    private Resources resources;
     private TreeViewAdapter treeViewAdapter;
     private GpkgLayer selectedEditableLayer;
     private MainController mainController;
@@ -117,11 +114,8 @@ public class TreeViewController {
             if(null==type) continue;
 
             switch (l.getType()){
+                case TILES:
                 case FEATURES:{
-                    childLayers.add(l);
-                    break;
-                }
-                case TILES:{
                     childLayers.add(l);
                     break;
                 }
@@ -142,8 +136,6 @@ public class TreeViewController {
 
                 }
             }
-
-
         }
 
         if(childLayers.isEmpty())
