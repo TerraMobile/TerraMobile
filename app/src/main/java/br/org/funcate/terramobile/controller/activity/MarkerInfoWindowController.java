@@ -77,7 +77,7 @@ public class MarkerInfoWindowController {
     }
 
     public void deleteMarker(Marker marker) throws TerraMobileException {
-        GpkgLayer layer=this.mainActivity.getTreeView().getSelectedEditableLayer();
+        GpkgLayer layer=this.mainActivity.getMainController().getTreeViewController().getSelectedEditableLayer();
         boolean exec;
 
         try {
@@ -95,7 +95,7 @@ public class MarkerInfoWindowController {
     }
 
     public void moveMarker(Marker marker) throws TerraMobileException {
-        GpkgLayer layer=this.mainActivity.getTreeView().getSelectedEditableLayer();
+        GpkgLayer layer=this.mainActivity.getMainController().getTreeViewController().getSelectedEditableLayer();
         try {
             if(!AppGeoPackageService.updateFeature(layer, marker)) {
                 throw new TerraMobileException(ResourceHelper.getStringResource(R.string.failure_on_save_new_location));
@@ -121,7 +121,7 @@ public class MarkerInfoWindowController {
         GpkgLayer editableLayer;
 
         try{
-            TreeView tv = mainActivity.getTreeView();
+            TreeViewController tv = mainActivity.getMainController().getTreeViewController();
             editableLayer = tv.getSelectedEditableLayer();
             if(editableLayer==null) {
                 Message.showErrorMessage(mainActivity, R.string.failure_title_msg, R.string.missing_editable_layer);
@@ -258,7 +258,7 @@ public class MarkerInfoWindowController {
     public void viewFeatureData(long featureID) {
         GpkgLayer editableLayer;
         try{
-            TreeView tv = mainActivity.getTreeView();
+            TreeViewController tv = mainActivity.getMainController().getTreeViewController();
             editableLayer = tv.getSelectedEditableLayer();
             if(editableLayer==null) {
                 Message.showErrorMessage(mainActivity, R.string.failure_title_msg, R.string.missing_editable_layer);
@@ -270,7 +270,7 @@ public class MarkerInfoWindowController {
             return;
         }
 
-        FeatureInfoPanelController controller = mainActivity.getFeatureInfoPanelController();
+        FeatureInfoPanelController controller = mainActivity.getMainController().getFeatureInfoPanelController();
         controller.startFeatureInfoPanel(editableLayer, featureID);
     }
 

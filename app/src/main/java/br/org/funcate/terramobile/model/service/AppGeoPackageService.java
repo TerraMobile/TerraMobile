@@ -6,11 +6,9 @@ package br.org.funcate.terramobile.model.service;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.text.format.DateFormat;
 import android.util.Log;
 
 import com.augtech.geoapi.feature.SimpleFeatureImpl;
-import com.augtech.geoapi.feature.type.SimpleFeatureTypeImpl;
 import com.augtech.geoapi.geometry.BoundingBoxImpl;
 import com.augtech.geoapi.geopackage.DateUtil;
 import com.augtech.geoapi.geopackage.GeoPackage;
@@ -21,9 +19,7 @@ import com.vividsolutions.jts.geom.Point;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.GeometryType;
-import org.opengis.filter.identity.FeatureId;
 import org.opengis.geometry.BoundingBox;
 import org.opengis.feature.type.Name;
 import org.osmdroid.ResourceProxy;
@@ -57,7 +53,7 @@ import br.org.funcate.jgpkg.exception.QueryException;
 import br.org.funcate.jgpkg.service.GeoPackageService;
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.controller.activity.MainActivity;
-import br.org.funcate.terramobile.controller.activity.TreeView;
+import br.org.funcate.terramobile.controller.activity.TreeViewController;
 import br.org.funcate.terramobile.model.domain.Project;
 import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
 import br.org.funcate.terramobile.model.exception.InvalidGeopackageException;
@@ -101,16 +97,16 @@ public class AppGeoPackageService {
      * @return ArrayList<GpkgLayer> listLayers, the list Layers
      * @throws Exception
      */
-    public static ArrayList<GpkgLayer> getLayers(Context context) throws InvalidGeopackageException, QueryException {
+    public static ArrayList<GpkgLayer> getLayers(Project project, Context context) throws InvalidGeopackageException, QueryException {
 
-        Project prj=((MainActivity) context).getProject();
+
 
         GeoPackage gpkg = null;
 
-        if(prj!=null)
+        if(project!=null)
             try {
 
-                gpkg = GeoPackageService.readGPKG(context, prj.getFilePath());
+                gpkg = GeoPackageService.readGPKG(context, project.getFilePath());
             }catch (Exception e) {
                 throw new InvalidGeopackageException("Invalid GeoPackage file.");
             }
@@ -242,7 +238,7 @@ public class AppGeoPackageService {
 
     public static void storeData(Context context, Bundle formData) throws TerraMobileException, QueryException {
         ArrayList<String> keys = formData.getStringArrayList(LibraryConstants.FORM_KEYS);
-        TreeView tv = ((MainActivity)context).getTreeView();
+        TreeViewController tv = ((MainActivity)context).getMainController().getTreeViewController();
         if(keys==null || keys.isEmpty()){
             throw new TerraMobileException(context.getString(R.string.missing_form_data));
         }else {
@@ -335,7 +331,7 @@ public class AppGeoPackageService {
         return feature;
     }
 
-    private static SimpleFeature makeSimpleFeature(Bundle formData, TreeView tv) {
+    private static SimpleFeature makeSimpleFeature(Bundle formData, TreeViewController tv) {
 
 
         ArrayList<GpkgField> fields = tv.getSelectedEditableLayer().getFields();

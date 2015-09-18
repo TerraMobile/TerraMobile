@@ -69,7 +69,7 @@ public class ProjectListAdapter extends ArrayAdapter<Project> implements Adapter
        // iVMoveToSD.setTag(project);
 
 
-        Project currentProject = ((MainActivity) context).getProject();
+        Project currentProject = ((MainActivity) context).getMainController().getCurrentProject();
         if (currentProject != null && currentProject.toString().equals(project.toString()))
             rBCurrentProject.setChecked(true);
 
@@ -179,7 +179,7 @@ public class ProjectListAdapter extends ArrayAdapter<Project> implements Adapter
             {
 
                 try {
-                    success = ((MainActivity) context).setProject(newCurrentProject);
+                    success = ((MainActivity) context).getMainController().setCurrentProject(newCurrentProject);
                 } catch (InvalidAppConfigException e)
                 {
                     e.printStackTrace();
@@ -253,12 +253,12 @@ public class ProjectListAdapter extends ArrayAdapter<Project> implements Adapter
                                 if (project != null && file != null) {
                                     if (projectDAO.remove(project.getId())) {
                                         if (file.delete()) {
-                                            if (((MainActivity) context).getProject().toString().equals(projectName)) {
+                                            if (((MainActivity) context).getMainController().getCurrentProject().toString().equals(projectName)) {
                                                 try {
                                                     if (Util.getGeoPackageFiles(directory, context.getString(R.string.geopackage_extension)).size() > 0)
-                                                        ((MainActivity) context).setProject(projectDAO.getFirstProject());
+                                                        ((MainActivity) context).getMainController().setCurrentProject(projectDAO.getFirstProject());
                                                     else {
-                                                        ((MainActivity) context).setProject(null);
+                                                        ((MainActivity) context).getMainController().setCurrentProject(null);
                                                     }
                                                 } catch (InvalidAppConfigException e) {
                                                     e.printStackTrace();

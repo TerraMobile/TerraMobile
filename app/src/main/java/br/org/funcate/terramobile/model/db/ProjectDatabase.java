@@ -32,7 +32,21 @@ public class ProjectDatabase extends DatabaseHelper {
         StringBuilder sBCreate = new StringBuilder();
         sBCreate.append("create table if not exists TM_STYLE (");
         sBCreate.append("LAYER_NAME text primary key not null,");
-        sBCreate.append("SLD_XML text);");
+        sBCreate.append("SLD_XML text,");
+        sBCreate.append("CONSTRAINT fk_layer_name FOREIGN KEY (LAYER_NAME) REFERENCES gpkg_contents(table_name));");
+
+
+        this.getWritableDatabase().execSQL(sBCreate.toString());
+    }
+
+    private void initLayerSettingsTable()
+    {
+        StringBuilder sBCreate = new StringBuilder();
+        sBCreate.append("CREATE TABLE IF NOT EXISTS TM_LAYER_SETTINGS (");
+        sBCreate.append("LAYER_NAME text primary key not null,");
+        sBCreate.append("ENABLED boolean not null,");
+        sBCreate.append("POSITION integer not null unique,");
+        sBCreate.append("CONSTRAINT fk_layer_name FOREIGN KEY (LAYER_NAME) REFERENCES gpkg_contents(table_name));");
 
         this.getWritableDatabase().execSQL(sBCreate.toString());
     }
@@ -41,5 +55,6 @@ public class ProjectDatabase extends DatabaseHelper {
     {
         initSettings();
         initStyleTable();
+        initLayerSettingsTable();
     }
 }

@@ -5,21 +5,18 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 
-import org.osmdroid.bonuspack.kml.Style;
-
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.model.db.DatabaseHelper;
-import br.org.funcate.terramobile.model.domain.Setting;
 import br.org.funcate.terramobile.model.exception.DAOException;
 import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
 import br.org.funcate.terramobile.util.ResourceHelper;
 
-public class StyleDAO {
+public class LayerSettingsDAO {
     private DatabaseHelper database;
-    private static final String TABLE_NAME="TM_STYLE";
+    private static final String TABLE_NAME="TM_LAYER_SETTINGS";
 
-    public StyleDAO(DatabaseHelper database) throws InvalidAppConfigException, DAOException {
+    public LayerSettingsDAO(DatabaseHelper database) throws InvalidAppConfigException, DAOException {
         if(database!=null)
         {
             this.database = database;
@@ -30,29 +27,10 @@ public class StyleDAO {
         }
     }
 
-    public boolean insert(String layerName, String sldXML) throws InvalidAppConfigException, DAOException {
-        try {
-            SQLiteDatabase db = database.getWritableDatabase();
-            if (db != null) {
-                    ContentValues contentValues = new ContentValues();
-                    contentValues.put("LAYER_NAME", layerName);
-                    contentValues.put("SLD_XML", sldXML);
-                    if (db.insert(TABLE_NAME, null, contentValues) != -1) {
-                        db.close();
-                        return true;
-                }
-                db.close();
-            }
-            return false;
-        } catch (SQLiteException e) {
-            e.printStackTrace();
-            throw new DAOException(ResourceHelper.getStringResource(R.string.style_insert_exception),e);
-        }
-    }
 
     public boolean update(String layerName, String sldXML) throws InvalidAppConfigException, DAOException {
 
-        SQLiteDatabase db = database.getWritableDatabase();
+       /* SQLiteDatabase db = database.getWritableDatabase();
         try{
             if (db != null) {
                 ContentValues contentValues = new ContentValues();
@@ -68,32 +46,49 @@ public class StyleDAO {
         } catch (SQLiteException e) {
             e.printStackTrace();
             throw new DAOException(ResourceHelper.getStringResource(R.string.style_update_exception),e);
-        }
+        }*/
+        return false;
     }
 
-    public String get(String layerName) throws InvalidAppConfigException, DAOException {
-        String sldXML = null;
+    public boolean load(GpkgLayer layer) throws InvalidAppConfigException, DAOException {
         try {
             SQLiteDatabase db = database.getReadableDatabase();
+
             if(db != null) {
-                Cursor cursor = db.query(TABLE_NAME, new String[]{"SLD_XML"}, "LAYER_NAME = ?", new String[]{layerName}, null, null, null, null);
+
+                Cursor cursor = db.query(TABLE_NAME, new String[]{"ENABLED","POSITION"}, "LAYER_NAME = ?", new String[]{layer.getName()}, null, null, null, null);
+
                 if (cursor != null && cursor.getCount() != 0) {
+
                     cursor.moveToFirst();
-                    sldXML = cursor.getString(0);
+
+                    if(cursor.getInt(0)==1)
+                    {
+                        layer.setEnabled(true);
+                    }
+                    else
+                    {
+                        layer.setEnabled(false);
+                    }
+                    layer.setPosition(cursor.getInt(1));
+
                     cursor.close();
+
+                    db.close();
+
+                    return true;
                 }
                 else
                 {
                     db.close();
-                    return null;
+
+                    return false;
                 }
-                db.close();
-                return sldXML;
             }
-            return null;
         } catch (SQLiteException e) {
             e.printStackTrace();
             throw new DAOException(ResourceHelper.getStringResource(R.string.style_query_exception),e);
         }
+        return false;
     }
 }

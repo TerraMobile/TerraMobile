@@ -36,6 +36,7 @@ import br.org.funcate.jgpkg.exception.QueryException;
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.controller.activity.settings.GPSSettingController;
 import br.org.funcate.terramobile.model.constants.OpenStreetMapConstants;
+import br.org.funcate.terramobile.model.exception.DAOException;
 import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
 import br.org.funcate.terramobile.model.exception.TerraMobileException;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
@@ -68,8 +69,14 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants{
     private ImageButton gpsLocation;
     private ImageButton zoomIn;
     private ImageButton zoomOut;
+    private MenuMapController menuMapController;
 
     private Context context;
+
+    public void setMenuMapController(MenuMapController menuMapController)
+    {
+        this.menuMapController = menuMapController;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -80,9 +87,11 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants{
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
         // inflate and return the layout
         View v = inflater.inflate(R.layout.fragment_map, container, false);
         mMapView = (MapView) v.findViewById(R.id.mapview);
+
         drawingImageView = (ImageView) v.findViewById(R.id.DrawingImageView);
         try {
             drawCross(drawingImageView);
@@ -91,7 +100,6 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants{
             e.printStackTrace();
             Message.showErrorMessage((MainActivity)context, R.string.failure_title_msg, e.getMessage());
         }
-
 
         gpsLocation = (ImageButton) v.findViewById(R.id.Gps);
         gpsLocation.setOnClickListener(new View.OnClickListener() {
@@ -122,7 +130,21 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants{
 
         super.onCreate(savedInstanceState);
 
+        mapLoaded();
+
         return v;
+    }
+
+    private void mapLoaded()
+    {
+
+        try {
+            menuMapController.getMainController().loadCurrentProject();
+        } catch (InvalidAppConfigException e) {
+            Message.showErrorMessage((MainActivity)context, R.string.error, e.getMessage());
+        } catch (DAOException e) {
+            Message.showErrorMessage((MainActivity)context, R.string.error, e.getMessage());
+        }
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
@@ -211,6 +233,11 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants{
         mapView.setMultiTouchControls(multiTouchControls);
 
         mapView.getController().setZoom(initialZoomLevel);
+
+        if(menuMapController==null)
+        {
+            throw new InvalidAppConfigException("Missing MenuMapController on MapFragment map configuration.");
+        }
     }
 
     public void drawCross(ImageView drawingImageView) throws InvalidAppConfigException {
@@ -299,6 +326,11 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants{
                 this.mapView.invalidate();
             }
         }
+    }
+
+    public MapView getMapView()
+    {
+        return mMapView;
     }
 
 }

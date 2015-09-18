@@ -35,6 +35,8 @@ public class GpkgLayer{
     private Overlay osmOverLayer;
     private String mediaTable;// the name of the media table to store medias outside of the SFS spec.
     private Style style;
+    private boolean enabled;
+    private int position;
 
     public GpkgLayer() {
     }
@@ -137,5 +139,21 @@ public class GpkgLayer{
 
     public void setStyle(Style style) {
         this.style = style;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
     }
 }
