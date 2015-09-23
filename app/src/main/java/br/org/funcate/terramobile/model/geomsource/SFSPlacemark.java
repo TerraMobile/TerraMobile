@@ -15,13 +15,15 @@ import org.osmdroid.bonuspack.kml.KmlPolygon;
 import java.util.Map;
 import java.util.Set;
 
+import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
+
 /**
  * Created by bogo on 15/06/15.
  */
 public class SFSPlacemark extends KmlPlacemark {
 
 
-    public SFSPlacemark(SimpleFeature feature)
+    public SFSPlacemark(SimpleFeature feature, GpkgLayer layer)
     {
         super();
         if(feature!=null)
@@ -32,7 +34,7 @@ public class SFSPlacemark extends KmlPlacemark {
             }
             if(feature.getDefaultGeometry()!=null)
             {
-                mGeometry = SFSGeometry.parseSFS(feature);
+                mGeometry = SFSGeometry.parseSFS(feature, layer);
                 mGeometry.mId = mId;
             }
 

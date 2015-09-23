@@ -91,14 +91,6 @@ public class TreeViewAdapter extends BaseExpandableListAdapter implements View.O
                 }
             }
 
-            MainActivity mainActivity = (MainActivity)context;
-            boolean hasGPSLayer = mainActivity.getMainController().getGpsOverlayController().isOverlayAdded();
-            // remove GPS Overlay
-            if(hasGPSLayer) mainActivity.getMainController().getGpsOverlayController().removeGPSTrackerLayer();
-            // re adding GPS Overlay
-            if(hasGPSLayer) mainActivity.getMainController().getGpsOverlayController().addGPSTrackerLayer();
-
-
        }
         catch (LowMemoryException e) {
             e.printStackTrace();

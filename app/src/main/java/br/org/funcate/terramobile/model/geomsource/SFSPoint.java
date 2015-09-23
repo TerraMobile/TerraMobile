@@ -2,16 +2,10 @@ package br.org.funcate.terramobile.model.geomsource;
 
 import android.content.Context;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
 
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
 import org.osmdroid.bonuspack.kml.KmlDocument;
 import org.osmdroid.bonuspack.kml.KmlFeature;
-import org.osmdroid.bonuspack.kml.KmlGeometry;
 import org.osmdroid.bonuspack.kml.KmlPlacemark;
 import org.osmdroid.bonuspack.kml.KmlPoint;
 import org.osmdroid.bonuspack.kml.Style;

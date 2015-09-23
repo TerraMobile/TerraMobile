@@ -87,7 +87,7 @@
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="5dp" />
 
-            <ImageButton android:id="@+id/btn_remove_marker"
+                <ImageButton android:id="@+id/btn_remove_marker"
                     android:background="@android:drawable/ic_menu_delete"
                     android:visibility="visible"
                     android:layout_width="wrap_content"

@@ -28,6 +28,8 @@ import org.osmdroid.views.overlay.Overlay;
 import java.io.Writer;
 import java.util.ArrayList;
 
+import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
+
 /**
  * Created by bogo on 15/06/15.
  */
@@ -53,7 +55,7 @@ public class SFSGeometry extends KmlGeometry {
         return null;
     }
 
-    public static KmlGeometry parseSFS(SimpleFeature feature){
+    public static KmlGeometry parseSFS(SimpleFeature feature, GpkgLayer layer){
         if (feature != null)
         {
             if (feature.getDefaultGeometry() != null)
@@ -61,7 +63,7 @@ public class SFSGeometry extends KmlGeometry {
                 SimpleFeatureType type = feature.getType();
                 Geometry geom = (Geometry) feature.getDefaultGeometry();
 
-                return parseSFS(geom);
+                return parseSFS(geom, layer);
 
             }
         }
@@ -70,11 +72,14 @@ public class SFSGeometry extends KmlGeometry {
 
     }
 
-    public static KmlGeometry parseSFS(Geometry geom){
+    public static KmlGeometry parseSFS(Geometry geom, GpkgLayer layer){
 
         if ("Point".equals(geom.getGeometryType())){
             Point p = (Point) geom;
-            return new SFSPoint(p);
+            if(GpkgLayer.Type.EDITABLE == layer.getType())
+                return new SFSEditablePoint(p);
+            else
+                return new SFSPoint(p);
         } else if ("LineString".equals(geom.getGeometryType())){
             LineString l = (LineString) geom;
             return new SFSLineString(l);
@@ -82,7 +87,7 @@ public class SFSGeometry extends KmlGeometry {
             Polygon p = (Polygon) geom;
             return new SFSPolygon(p);
         } else if ("MultiPoint".equals(geom.getGeometryType()) || "MultiLineString".equals(geom.getGeometryType()) || "MultiPolygon".equals(geom.getGeometryType())){
-            return new SFSMultiGeometry(geom);
+            return new SFSMultiGeometry(geom, layer);
         } else
             return null;
     }

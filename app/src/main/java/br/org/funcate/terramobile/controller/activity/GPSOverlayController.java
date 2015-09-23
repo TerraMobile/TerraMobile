@@ -61,13 +61,6 @@ public class GPSOverlayController {
         return (mapView.getOverlays().contains(gpsLayer) && locationListener!=null);
     }
 
-    public void addGPSTrackerLayer(int location) {
-        mapView = (MapView) ((MainActivity) context).findViewById(R.id.mapview);
-        if(mapView==null) return;
-        mapView.getOverlays().add(location, gpsLayer);
-        enableGPSTrackerLayer();
-    }
-
     public void addGPSTrackerLayer() {
         mapView = (MapView) ((MainActivity) context).findViewById(R.id.mapview);
         if(mapView==null) return;

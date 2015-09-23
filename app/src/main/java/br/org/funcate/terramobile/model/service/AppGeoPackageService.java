@@ -62,7 +62,7 @@ import br.org.funcate.terramobile.model.exception.StyleException;
 import br.org.funcate.terramobile.model.exception.TerraMobileException;
 import br.org.funcate.terramobile.model.geomsource.SFSLayer;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
-import br.org.funcate.terramobile.model.osmbonuspack.overlays.SFSMarker;
+import br.org.funcate.terramobile.model.osmbonuspack.overlays.SFSEditableMarker;
 import br.org.funcate.terramobile.model.tilesource.MapTileGeoPackageProvider;
 import br.org.funcate.terramobile.util.ResourceHelper;
 import br.org.funcate.terramobile.util.Util;
@@ -463,7 +463,7 @@ public class AppGeoPackageService {
 
             List<SimpleFeature> features = GeoPackageService.getGeometries(layer.getGeoPackage(),layer.getName(),null);
 
-            SFSLayer l = new SFSLayer(features);
+            SFSLayer l = new SFSLayer(features, layer);
 
             return l;
 
@@ -519,7 +519,9 @@ public class AppGeoPackageService {
 
     public static boolean updateFeature(GpkgLayer layer, Marker marker) throws InvalidAppConfigException, LowMemoryException, TerraMobileException {
 
-        SimpleFeature feature = getSimpleFeatureInstance(layer, ((SFSMarker) marker).getFeatureId());
+        if(!(marker instanceof SFSEditableMarker)) return false;
+
+        SimpleFeature feature = getSimpleFeatureInstance(layer, ((SFSEditableMarker) marker).getFeatureId());
 
         ArrayList<GpkgField> fields = layer.getFields();
         SimpleFeatureType ft = layer.getFeatureType();

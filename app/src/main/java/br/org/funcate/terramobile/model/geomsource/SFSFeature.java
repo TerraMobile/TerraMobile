@@ -12,6 +12,8 @@ import org.osmdroid.views.overlay.Overlay;
 
 import java.io.Writer;
 
+import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
+
 /**
  * Created by bogo on 15/06/15.
  */
@@ -42,9 +44,9 @@ public class SFSFeature extends KmlFeature {
         return null;
     }
 
-    public static KmlFeature parseSFS(SimpleFeature sfsFeature){
+    public static KmlFeature parseSFS(SimpleFeature sfsFeature, GpkgLayer layer){
         if (sfsFeature == null)
             return null;
-        return new SFSPlacemark(sfsFeature);
+        return new SFSPlacemark(sfsFeature, layer);
    }
 }

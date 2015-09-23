@@ -5,14 +5,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 
-import com.augtech.geoapi.feature.type.GeometryTypeImpl;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
-
-import org.geotools.styling.AbstractSymbolizer;
-import org.geotools.styling.BasicPolygonStyle;
-import org.geotools.styling.ExternalGraphic;
 import org.geotools.styling.ExternalGraphicImpl;
 import org.geotools.styling.FeatureTypeStyle;
 import org.geotools.styling.LineSymbolizer;
@@ -24,16 +16,12 @@ import org.geotools.styling.PolygonSymbolizer;
 import org.geotools.styling.PolygonSymbolizerImpl;
 import org.geotools.styling.Rule;
 import org.geotools.styling.Symbolizer;
-import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.GeometryType;
-import org.opengis.geometry.Geometry;
 import org.opengis.style.GraphicalSymbol;
-import org.osmdroid.bonuspack.kml.KmlFeature;
 import org.osmdroid.bonuspack.kml.Style;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import br.org.funcate.mobile.sld.SLDParser;
 import br.org.funcate.terramobile.model.db.DatabaseFactory;
@@ -42,7 +30,6 @@ import br.org.funcate.terramobile.model.exception.DAOException;
 import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
 import br.org.funcate.terramobile.model.exception.StyleException;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
-import br.org.funcate.terramobile.model.osmbonuspack.overlays.MyKmlStyler;
 import br.org.funcate.terramobile.util.Util;
 
 /**

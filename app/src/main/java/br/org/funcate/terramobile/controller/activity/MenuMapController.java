@@ -45,16 +45,11 @@ import br.org.funcate.terramobile.util.GeoUtil;
 public class MenuMapController {
 
     private final Context context;
-    private final int INDEX_BASE_LAYER=0;
-    private int lastIndexDrawOrder;
-    private GpkgLayer currentBaseLayer;
     private MainController mainController;
     private MapFragment mapFragment;
 
     public MenuMapController(Context context, MainController mainController) {
         this.context=context;
-        this.lastIndexDrawOrder = 0;
-        this.currentBaseLayer = null;
         this.mainController = mainController;
     }
 
@@ -75,14 +70,13 @@ public class MenuMapController {
 
                 final TilesOverlay tilesOverlay = new TilesOverlay(tileProviderArray, context);
                 tilesOverlay.setLoadingBackgroundColor(Color.TRANSPARENT);
-                mapView.getOverlays().add(INDEX_BASE_LAYER,tilesOverlay);
+                mapView.getOverlays().add(tilesOverlay);
                 child.setOsmOverLayer(tilesOverlay);
 
                 tileProvider.setTileRequestCompleteHandler(new SimpleInvalidationHandler(mapView));
                 mapView.setTileSource(tileSource);
                 mapView.setUseDataConnection(false); //  letting osmdroid know you would use it in offline mode, keeps the mapView from loading online tiles using network connection.*/
                 mapView.invalidate();
-                currentBaseLayer=child;
             }
         }else {
             Toast.makeText(context, "Invalid GeoPackage file.", Toast.LENGTH_SHORT).show();
@@ -97,7 +91,6 @@ public class MenuMapController {
             MapView mapView = mapFragment.getMapView();
             mapView.getOverlays().remove(layer.getOsmOverLayer());
             layer.setOsmOverLayer(null);
-            currentBaseLayer=null;
         }
 
         return;
@@ -137,18 +130,13 @@ public class MenuMapController {
         }
     }
 
-
-    public GpkgLayer getBaseLayer() {
-        return currentBaseLayer;
-    }
-
     private void addVectorLayer(GpkgLayer child) throws LowMemoryException, InvalidAppConfigException, TerraMobileException, StyleException {
 
         if(child.getOsmOverLayer()==null) {
 
             MapView mapView = mapFragment.getMapView();
 
-            Style defaultStyle = StyleService.loadStyle(context, child.getGeoPackage().getDatabaseFileName(),child);
+            Style defaultStyle = StyleService.loadStyle(context, child.getGeoPackage().getDatabaseFileName(), child);
             System.out.println("======================§§§§§§§ USE NEW OVERLAY SFS = " + ((MainActivity) context).useNewOverlaySFS);
             if(!((MainActivity) context).useNewOverlaySFS)
             {
@@ -213,10 +201,16 @@ public class MenuMapController {
             }
         }
     }
+
     public void updateOverlaysOrder(ArrayList<GpkgLayer> orderedLayers)
     {
         MapView mapView = mapFragment.getMapView();
+        boolean hasGPSLayer = this.mainController.getGpsOverlayController().isOverlayAdded();
+        // Unregister the listener to service Location and remove GPS Overlay
+        if(hasGPSLayer) this.mainController.getGpsOverlayController().removeGPSTrackerLayer();
         LayersService.sortOverlayByGPKGLayer(mapView.getOverlays(), orderedLayers);
+        // registered Listener to service Location and added GPS Overlay
+        if(hasGPSLayer) this.mainController.getGpsOverlayController().addGPSTrackerLayer();
         mapView.invalidate();
     }
 

@@ -33,7 +33,7 @@ import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
 import br.org.funcate.terramobile.model.exception.LowMemoryException;
 import br.org.funcate.terramobile.model.exception.TerraMobileException;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
-import br.org.funcate.terramobile.model.osmbonuspack.overlays.SFSMarker;
+import br.org.funcate.terramobile.model.osmbonuspack.overlays.SFSEditableMarker;
 import br.org.funcate.terramobile.model.service.AppGeoPackageService;
 import br.org.funcate.terramobile.model.service.FeatureService;
 import br.org.funcate.terramobile.util.Message;
@@ -73,7 +73,7 @@ public class MarkerInfoWindowController {
     }
 
     public void editMarker(Marker marker) {
-        startActivityForm(((SFSMarker) marker).getMarkerId().longValue());
+        startActivityForm(((SFSEditableMarker) marker).getMarkerId().longValue());
     }
 
     public void deleteMarker(Marker marker) throws TerraMobileException {
@@ -81,7 +81,7 @@ public class MarkerInfoWindowController {
         boolean exec;
 
         try {
-            exec = AppGeoPackageService.deleteFeature(layer, ((SFSMarker)marker).getMarkerId());
+            exec = AppGeoPackageService.deleteFeature(layer, ((SFSEditableMarker)marker).getMarkerId());
             if(!exec) {
                 throw new TerraMobileException(ResourceHelper.getStringResource(R.string.feature_not_found));
             }else{
