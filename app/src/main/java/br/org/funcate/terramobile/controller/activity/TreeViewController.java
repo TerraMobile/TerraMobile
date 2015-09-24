@@ -1,7 +1,11 @@
 package br.org.funcate.terramobile.controller.activity;
 
 import android.content.Context;
+import android.support.v4.widget.DrawerLayout;
+import android.util.DisplayMetrics;
+import android.view.ViewGroup;
 import android.widget.ExpandableListView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -20,6 +24,7 @@ import br.org.funcate.terramobile.model.service.LayersService;
 import br.org.funcate.terramobile.util.DevUtil;
 import br.org.funcate.terramobile.util.Message;
 import br.org.funcate.terramobile.util.ResourceHelper;
+import br.org.funcate.terramobile.util.Util;
 import br.org.funcate.terramobile.view.TreeViewAdapter;
 
 /**
@@ -53,7 +58,14 @@ public class TreeViewController {
 
         treeViewAdapter = new TreeViewAdapter(this.context, groupItem, childItem);
         mDrawerList.setAdapter(treeViewAdapter);
+        setWidthToExpandableListView();
         selectedEditableLayer=null;
+    }
+
+    public void setWidthToExpandableListView() {
+        DisplayMetrics displaymetrics = Util.getDisplayDimension((MainActivity) this.context);
+        ViewGroup.LayoutParams params = mDrawerList.getLayoutParams();
+        if(displaymetrics.widthPixels < params.width) params.width = displaymetrics.widthPixels;
     }
 
     public void refreshTreeView() throws InvalidAppConfigException {
