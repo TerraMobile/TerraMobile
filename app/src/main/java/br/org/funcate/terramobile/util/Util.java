@@ -2,6 +2,7 @@ package br.org.funcate.terramobile.util;
 
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.ColorMatrix;
 import android.media.MediaScannerConnection;
@@ -9,6 +10,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Environment;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -111,6 +113,24 @@ public class Util {
         File file = new File(path);
         file.mkdirs();
         return file;
+    }
+
+    /**
+     * Read the DisplayMetrics from an activity.
+     *
+     * To use this:
+     * <code>
+     *   int height = displaymetrics.heightPixels;
+     *   int width = displaymetrics.widthPixels;
+     * </code>
+     *
+     * @param activity, an activity
+     * @return the metrics from a display associated to activity.
+     */
+    public static DisplayMetrics getDisplayDimension(Activity activity) {
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        activity.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+        return displaymetrics;
     }
 
     public static File getRemovableStorage() {
