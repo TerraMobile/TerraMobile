@@ -17,6 +17,7 @@ import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Overlay;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import br.org.funcate.jgpkg.service.GeoPackageService;
@@ -32,6 +33,8 @@ public class SFSLayerOverlay extends Overlay {
     GpkgLayer layer=null;
     Context context=null;
     Style style=null;
+    HashMap<BoundingBox,List<SimpleFeature>> featuresCache = new HashMap<BoundingBox,List<SimpleFeature>>();
+
 
     private SFSLayerOverlay(final Context ctx) {
         super(ctx);
@@ -45,18 +48,29 @@ public class SFSLayerOverlay extends Overlay {
     }
     @Override
     protected void draw(Canvas c, MapView osmv, boolean shadow) {
-        System.out.println("======================§§§§§§§ USING SFSLayerOverlay = " + ((MainActivity) context).useNewOverlaySFS);
+
          if(!shadow)
         {
             try {
                 BoundingBox bb = GeoUtil.convertToBoundingBox(osmv.getBoundingBox());
                 List<SimpleFeature> features = new ArrayList<SimpleFeature>();
-                if(!bb.contains(layer.getBox()))
+
+
+                if(bb.intersects(layer.getBox()))
                 {
-                    features = GeoPackageService.getGeometries(layer.getGeoPackage(), layer.getName(), bb);
-                }
-                else {
-                    features = GeoPackageService.getGeometries(layer.getGeoPackage(), layer.getName(), null);
+                    System.out.println("____----++++====[INTERSECTS]====++++----____");
+                    features = featuresCache.get(bb);
+                    if(features==null)
+                    {
+                        System.out.println("____----++++====[NOT LOAD YET]====++++----____");
+                        features = GeoPackageService.getGeometries(layer.getGeoPackage(), layer.getName(), bb);
+                        featuresCache.put(bb, features);
+                    }
+                    else
+                    {
+                        System.out.println("____----++++====[LOADED!!!!!!!!!!!!!!]====++++----____");
+                    }
+
                 }
                 System.out.println("____----++++====[FEATURES QUERY, SIZE=" + features.size() + "]====++++----____");
                 for (int i = 0; i < features.size(); i++) {
