@@ -43,16 +43,22 @@ public class StyleService {
 
             String sldXML = dao.get(layer.getName());
 
-            org.geotools.styling.Style[] gtStyle = SLDParser.parse(sldXML);
+            if(sldXML!=null)
+            {
+                org.geotools.styling.Style[] gtStyle = SLDParser.parse(sldXML);
 
-            Style osmStyle = convertToOSMStyle(gtStyle[0], layer.getFeatureType().getGeometryDescriptor().getType());
+                Style osmStyle = convertToOSMStyle(gtStyle[0], layer.getFeatureType().getGeometryDescriptor().getType());
 
-            return osmStyle;
+                return osmStyle;
+            }
+            else
+            {
+                return getDefaultStyle();
+            }
 
         } catch (DAOException e) {
             throw new StyleException(e.getMessage(), e);
         }
-
     }
     private static Style convertToOSMStyle(org.geotools.styling.Style style, GeometryType geometryType)
     {
@@ -140,12 +146,8 @@ public class StyleService {
 
        } else
         {
-            //Create default style
-            HashMap<String, Integer> colorMap = Util.getRandomColor();
-            contourColor = Color.rgb(colorMap.get("r"), colorMap.get("g"), colorMap.get("b"));
-            fillColor = Color.argb(80, colorMap.get("r"), colorMap.get("g"), colorMap.get("b"));
-            strokeWidth = 2.0f;
 
+            return getDefaultStyle();
         }
 
         Style osmStyle = new Style(img, contourColor, strokeWidth, fillColor);
@@ -162,6 +164,20 @@ public class StyleService {
 
         }*/
 
+        return osmStyle;
+    }
+
+    private static Style getDefaultStyle()
+    {
+        int fillColor =0;
+        int contourColor =0;
+        float strokeWidth =0;
+        //Create default style
+        HashMap<String, Integer> colorMap = Util.getRandomColor();
+        contourColor = Color.rgb(colorMap.get("r"), colorMap.get("g"), colorMap.get("b"));
+        fillColor = Color.argb(80, colorMap.get("r"), colorMap.get("g"), colorMap.get("b"));
+        strokeWidth = 2.0f;
+        Style osmStyle = new Style(null, contourColor, strokeWidth, fillColor);
         return osmStyle;
     }
 }
