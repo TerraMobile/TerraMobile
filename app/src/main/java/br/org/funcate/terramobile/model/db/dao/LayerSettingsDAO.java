@@ -28,14 +28,15 @@ public class LayerSettingsDAO {
     }
 
 
-    public boolean update(String layerName, String sldXML) throws InvalidAppConfigException, DAOException {
+    public boolean update(String layerName, int visible, int position) throws InvalidAppConfigException, DAOException {
 
-       /* SQLiteDatabase db = database.getWritableDatabase();
+       SQLiteDatabase db = database.getWritableDatabase();
         try{
             if (db != null) {
                 ContentValues contentValues = new ContentValues();
                 contentValues.put("LAYER_NAME", layerName);
-                contentValues.put("SLD_XML", sldXML);
+                contentValues.put("ENABLE", visible);
+                contentValues.put("POSITION", position);
                 if (db.update(TABLE_NAME, contentValues, "LAYER_NAME = ?", new String[]{layerName}) > 0) {
                     db.close();
                     return true;
@@ -46,8 +47,7 @@ public class LayerSettingsDAO {
         } catch (SQLiteException e) {
             e.printStackTrace();
             throw new DAOException(ResourceHelper.getStringResource(R.string.style_update_exception),e);
-        }*/
-        return false;
+        }
     }
 
     public boolean load(GpkgLayer layer) throws InvalidAppConfigException, DAOException {
@@ -90,5 +90,26 @@ public class LayerSettingsDAO {
             throw new DAOException(ResourceHelper.getStringResource(R.string.style_query_exception),e);
         }
         return false;
+    }
+
+    public boolean insert(String layerName, int visible, int position) throws InvalidAppConfigException, DAOException {
+        try {
+            SQLiteDatabase db = database.getWritableDatabase();
+            if (db != null) {
+                ContentValues contentValues = new ContentValues();
+                contentValues.put("LAYER_NAME", layerName);
+                contentValues.put("ENABLE", visible);
+                contentValues.put("POSITION", position);
+                if (db.insert(TABLE_NAME, null, contentValues) != -1) {
+                    db.close();
+                    return true;
+                }
+                db.close();
+            }
+            return false;
+        } catch (SQLiteException e) {
+            e.printStackTrace();
+            throw new DAOException(ResourceHelper.getStringResource(R.string.style_insert_exception),e);
+        }
     }
 }
