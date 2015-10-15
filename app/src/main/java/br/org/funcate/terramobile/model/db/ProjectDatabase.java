@@ -51,10 +51,36 @@ public class ProjectDatabase extends DatabaseHelper {
         this.getWritableDatabase().execSQL(sBCreate.toString());
     }
 
+    private void initGPKGSysTables()
+    {
+        String sCreate =  "CREATE TABLE IF NOT EXISTS gpkg_data_columns (" +
+                " table_name TEXT NOT NULL," +
+                " column_name TEXT NOT NULL," +
+                " name TEXT, title TEXT," +
+                " description TEXT," +
+                " mime_type TEXT," +
+                " constraint_name TEXT," +
+                " CONSTRAINT pk_gdc PRIMARY KEY (table_name, column_name)," +
+                " CONSTRAINT fk_gdc_tn FOREIGN KEY (table_name) REFERENCES gpkg_contents(table_name));";
+        this.getWritableDatabase().execSQL(sCreate);
+
+        sCreate =  "CREATE TABLE IF NOT EXISTS gpkg_data_column_constraints (" +
+                " constraint_name TEXT NOT NULL," +
+                " constraint_type TEXT NOT NULL," +
+                " value TEXT, min NUMERIC," +
+                " minIsInclusive BOOLEAN," +
+                " max NUMERIC," +
+                " maxIsInclusive BOOLEAN," +
+                " CONSTRAINT gdcc_ntv UNIQUE (constraint_name, constraint_type, value));";
+
+        this.getWritableDatabase().execSQL(sCreate);
+    }
+
     protected void initDatabase()
     {
         initSettings();
         initStyleTable();
         initLayerSettingsTable();
+        initGPKGSysTables();
     }
 }
