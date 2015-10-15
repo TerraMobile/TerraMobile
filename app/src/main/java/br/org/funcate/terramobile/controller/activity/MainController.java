@@ -145,6 +145,9 @@ public class MainController {
     }
 
     public boolean setCurrentProject(Project project) throws InvalidAppConfigException {
+
+        DatabaseFactory.getDatabase(mainActivity, project.getFilePath());
+
         if(project==null)
         {
             clearCurrentProject();
@@ -180,7 +183,12 @@ public class MainController {
                 //if bb == null include all layers bounding box
                 bb = LayersService.getLayersMaxExtent(getTreeViewController().getAllLayers());
             }
-            getMenuMapController().panTo(bb);
+
+            if(bb!=null)
+            {
+                getMenuMapController().panTo(bb);
+            }
+
 
             if(hasGPSEnabledOnMap) getGpsOverlayController().addGPSTrackerLayer();
 
