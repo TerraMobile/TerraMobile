@@ -2,6 +2,8 @@ package br.org.funcate.terramobile.model.service;
 
 import android.content.Context;
 
+import com.augtech.geoapi.geometry.BoundingBoxImpl;
+
 import org.opengis.geometry.BoundingBox;
 import org.osmdroid.views.overlay.Overlay;
 
@@ -41,9 +43,14 @@ public class LayersService {
     {
         BoundingBox box=null;
         for (int i = 0; i < layers.size(); i++) {
+            if(!checkBoundingBox(layers.get(i).getBox()))
+            {
+                continue;
+            }
+
             if(box==null)
             {
-                box = layers.get(i).getBox();
+                box = new BoundingBoxImpl(layers.get(i).getBox().getMinX(), layers.get(i).getBox().getMaxX(), layers.get(i).getBox().getMinY(), layers.get(i).getBox().getMaxY());
             }
             else
             {
@@ -110,6 +117,18 @@ public class LayersService {
         }
 
         return layers;
+    }
+
+    private static boolean checkBoundingBox(BoundingBox bb)
+    {
+        if((bb.getMinX()==0.)||
+                (bb.getMaxX()==0.)||
+                (bb.getMinY()==0.)||
+                (bb.getMaxY()==0.))
+        {
+            return false;
+        }
+        return true;
     }
 
 }

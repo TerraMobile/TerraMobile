@@ -193,7 +193,16 @@ public class AppGeoPackageService {
                 throw new InvalidGeopackageException("Invalid layer .");
             }
 
+            if((minX==null)||(maxX==null)||(minY==null)||(maxY==null))
+            {
+                minX=0.;
+                maxX=0.;
+                minY=0.;
+                maxY=0.;
+            }
+
             BoundingBox bb =new BoundingBoxImpl(minX, maxX, minY, maxY);
+
             layer.setBox(bb);
             listLayers.add(layer);
         }
