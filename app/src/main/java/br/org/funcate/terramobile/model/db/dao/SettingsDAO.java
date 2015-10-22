@@ -33,8 +33,8 @@ public class SettingsDAO {
     }
 
     public boolean insert(Setting setting) throws InvalidAppConfigException, DAOException {
+        SQLiteDatabase db = database.getWritableDatabase();
         try {
-            SQLiteDatabase db = database.getWritableDatabase();
             if (db != null) {
                 if (setting != null) {
                     ContentValues contentValues = new ContentValues();
@@ -52,6 +52,12 @@ public class SettingsDAO {
         } catch (SQLiteException e) {
             e.printStackTrace();
             throw new DAOException(ResourceHelper.getStringResource(R.string.settings_insert_exception),e);
+        }
+        finally {
+            if (db != null && db.isOpen())
+            {
+                db.close();
+            }
         }
     }
 
@@ -89,14 +95,22 @@ public class SettingsDAO {
             e.printStackTrace();
             throw new DAOException(ResourceHelper.getStringResource(R.string.settings_update_exception),e);
         }
+        finally {
+            if (db != null && db.isOpen())
+            {
+                db.close();
+            }
+        }
     }
     @Deprecated
     public Setting getById(long id) throws InvalidAppConfigException, DAOException {
+        SQLiteDatabase db = database.getReadableDatabase();
+        Cursor cursor = null;
         try {
-            SQLiteDatabase db = database.getReadableDatabase();
+
             if(db != null) {
                 Setting setting = null;
-                Cursor cursor = db.query(TABLE_NAME, new String[]{"ID", "KEY", "VALUE"}, "ID = ?", new String[]{String.valueOf(id)}, null, null, null, null);
+                cursor = db.query(TABLE_NAME, new String[]{"ID", "KEY", "VALUE"}, "ID = ?", new String[]{String.valueOf(id)}, null, null, null, null);
                 if (cursor != null && cursor.getCount() != 0) {
                     cursor.moveToFirst();
                     setting = new Setting(cursor.getLong(0), cursor.getString(1), cursor.getString(2));
@@ -109,6 +123,16 @@ public class SettingsDAO {
         } catch (SQLiteException e) {
             e.printStackTrace();
             throw new DAOException(ResourceHelper.getStringResource(R.string.settings_query_exception),e);
+        }
+        finally {
+            if (db != null && db.isOpen())
+            {
+                db.close();
+            }
+            if (cursor != null && cursor.isClosed())
+            {
+                cursor.close();
+            }
         }
     }
 
@@ -134,11 +158,12 @@ public class SettingsDAO {
             clauseValue = setting.getKey();
         }
 
-
+        SQLiteDatabase db = database.getReadableDatabase();
+        Cursor cursor = null;
         try {
-            SQLiteDatabase db = database.getReadableDatabase();
+
             if(db != null) {
-                Cursor cursor = db.query(TABLE_NAME, new String[]{"ID", "KEY", "VALUE"}, clause, new String[]{clauseValue}, null, null, null, null);
+                cursor = db.query(TABLE_NAME, new String[]{"ID", "KEY", "VALUE"}, clause, new String[]{clauseValue}, null, null, null, null);
                 if (cursor != null && cursor.getCount() != 0) {
                     cursor.moveToFirst();
                     setting = new Setting(cursor.getLong(0), cursor.getString(1), cursor.getString(2));
@@ -156,6 +181,16 @@ public class SettingsDAO {
         } catch (SQLiteException e) {
             e.printStackTrace();
             throw new DAOException(ResourceHelper.getStringResource(R.string.settings_query_exception),e);
+        }
+        finally {
+            if (db != null && db.isOpen())
+            {
+                db.close();
+            }
+            if (cursor != null && cursor.isClosed())
+            {
+                cursor.close();
+            }
         }
     }
 }

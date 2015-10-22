@@ -33,8 +33,8 @@ public class ProjectDAO {
     }
 
     public boolean insert(Project project) {
+        SQLiteDatabase db = database.getWritableDatabase();
         try {
-            SQLiteDatabase db = database.getWritableDatabase();
             if (db != null) {
                 if (project != null) {
                     ContentValues contentValues = new ContentValues();
@@ -54,6 +54,11 @@ public class ProjectDAO {
         } catch (SQLiteException e) {
             e.printStackTrace();
             return false;
+        } finally {
+            if (db != null && db.isOpen())
+            {
+                db.close();
+            }
         }
     }
 
@@ -80,14 +85,22 @@ public class ProjectDAO {
             e.printStackTrace();
             return false;
         }
+        finally {
+            if (db != null && db.isOpen())
+            {
+                db.close();
+            }
+        }
     }
 
     public Project getByName(String name) {
+        SQLiteDatabase db = database.getReadableDatabase();
+        Cursor cursor = null;
         try {
-            SQLiteDatabase db = database.getReadableDatabase();
+
             Project project = null;
             if(db != null) {
-                Cursor cursor = db.query(TABLE_NAME, new String[]{"ID", "NAME", "FILE_PATH", "UPDATED", "DOWNLOADED"}, "NAME = ?", new String[]{String.valueOf(name)}, null, null, null, null);
+                cursor = db.query(TABLE_NAME, new String[]{"ID", "NAME", "FILE_PATH", "UPDATED", "DOWNLOADED"}, "NAME = ?", new String[]{String.valueOf(name)}, null, null, null, null);
                 if (cursor != null && cursor.getCount() != 0) {
                     cursor.moveToFirst();
                     project = new Project();
@@ -104,6 +117,16 @@ public class ProjectDAO {
         } catch (SQLiteException e) {
             e.printStackTrace();
             return null;
+        }
+        finally {
+            if (db != null && db.isOpen())
+            {
+                db.close();
+            }
+            if (cursor != null && cursor.isClosed())
+            {
+                cursor.close();
+            }
         }
     }
 

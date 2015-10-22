@@ -41,18 +41,23 @@ public class LayerSettingsDAO {
                     db.close();
                     return true;
                 }
-                db.close();
             }
             return false;
         } catch (SQLiteException e) {
             e.printStackTrace();
             throw new DAOException(ResourceHelper.getStringResource(R.string.style_update_exception),e);
         }
+        finally {
+            if (db != null && db.isOpen())
+            {
+                db.close();
+            }
+        }
     }
 
     public boolean load(GpkgLayer layer) throws InvalidAppConfigException, DAOException {
+        SQLiteDatabase db = database.getReadableDatabase();
         try {
-            SQLiteDatabase db = database.getReadableDatabase();
 
             if(db != null) {
 
@@ -89,13 +94,19 @@ public class LayerSettingsDAO {
             e.printStackTrace();
             throw new DAOException(ResourceHelper.getStringResource(R.string.style_query_exception),e);
         }
+        finally {
+            if (db != null && db.isOpen())
+            {
+                db.close();
+            }
+        }
         return false;
     }
 
     public boolean insert(String layerName, int visible, int position) throws InvalidAppConfigException, DAOException {
+        SQLiteDatabase db = database.getWritableDatabase();
         try {
-            SQLiteDatabase db = database.getWritableDatabase();
-            if (db != null) {
+           if (db != null) {
                 ContentValues contentValues = new ContentValues();
                 contentValues.put("LAYER_NAME", layerName);
                 contentValues.put("ENABLE", visible);
@@ -110,6 +121,12 @@ public class LayerSettingsDAO {
         } catch (SQLiteException e) {
             e.printStackTrace();
             throw new DAOException(ResourceHelper.getStringResource(R.string.style_insert_exception),e);
+        }
+        finally {
+            if (db != null && db.isOpen())
+            {
+                db.close();
+            }
         }
     }
 }

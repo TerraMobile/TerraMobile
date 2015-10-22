@@ -33,7 +33,6 @@ public class SFSLayerOverlay extends Overlay {
     GpkgLayer layer=null;
     Context context=null;
     Style style=null;
-    HashMap<BoundingBox,List<SimpleFeature>> featuresCache = new HashMap<BoundingBox,List<SimpleFeature>>();
 
 
     private SFSLayerOverlay(final Context ctx) {
@@ -51,90 +50,11 @@ public class SFSLayerOverlay extends Overlay {
 
          if(!shadow)
         {
-            try {
-                BoundingBox bb = GeoUtil.convertToBoundingBox(osmv.getBoundingBox());
-                List<SimpleFeature> features = new ArrayList<SimpleFeature>();
-
-
-                if(bb.intersects(layer.getBox()))
-                {
-                    System.out.println("____----++++====[INTERSECTS]====++++----____");
-                    features = featuresCache.get(bb);
-                    if(features==null)
-                    {
-                        System.out.println("____----++++====[NOT LOAD YET]====++++----____");
-                        features = GeoPackageService.getGeometries(layer.getGeoPackage(), layer.getName(), bb);
-                        featuresCache.put(bb, features);
-                    }
-                    else
-                    {
-                        System.out.println("____----++++====[LOADED!!!!!!!!!!!!!!]====++++----____");
-                    }
-
-                }
-                System.out.println("____----++++====[FEATURES QUERY, SIZE=" + features.size() + "]====++++----____");
-                for (int i = 0; i < features.size(); i++) {
-                    draw(features.get(i), c, osmv);
-                }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            new Thread(new SFSOverlayThread(layer, context, style, c, osmv)).start();
         }
     }
 
-    private void draw(SimpleFeature feature, Canvas c, MapView osmv)
-    {
 
-        if (feature != null)
-        {
-            if (feature.getDefaultGeometry() != null)
-            {
-                SimpleFeatureType type = feature.getType();
-                Geometry geom = (Geometry) feature.getDefaultGeometry();
-
-                draw(geom, c, osmv);
-            }
-        }
-
-    }
-    private void draw(Geometry geom, Canvas c, MapView osmv)
-    {
-        if ("Point".equals(geom.getGeometryType())){
-            Point p = (Point) geom;
-            //return new SFSPoint(p);
-        } else if ("LineString".equals(geom.getGeometryType())){
-            LineString l = (LineString) geom;
-            SFSLineStringOverlay overlay = new SFSLineStringOverlay(context, l);
-            if(style!=null)
-            {
-                overlay.setStyle(style);
-            }
-            overlay.draw(c, osmv, false);
-        } else if ("Polygon".equals(geom.getGeometryType())){
-            Polygon p = (Polygon) geom;
-            SFSPolygonOverlay overlay = new SFSPolygonOverlay(context, p);
-            if(style!=null)
-            {
-                overlay.setStyle(style);
-            }
-            overlay.draw(c, osmv, false);
-        } else if ("MultiPoint".equals(geom.getGeometryType()) || "MultiLineString".equals(geom.getGeometryType()) || "MultiPolygon".equals(geom.getGeometryType())){
-            drawMulti(geom, c, osmv);
-        }
-    }
-    private void drawMulti(Geometry geometry, Canvas c, MapView osmv)
-    {
-        if(geometry!=null) {
-
-            GeometryCollection collection=  (GeometryCollection) geometry;
-            for (int i = 0; i < collection.getNumGeometries(); i++)
-            {
-                Geometry geom = collection.getGeometryN(i);
-                draw(geom, c, osmv);
-            }
-        }
-    }
     public void setStyle(Style style)
     {
         this.style = style;

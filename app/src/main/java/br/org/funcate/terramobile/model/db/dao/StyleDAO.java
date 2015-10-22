@@ -31,8 +31,8 @@ public class StyleDAO {
     }
 
     public boolean insert(String layerName, String sldXML) throws InvalidAppConfigException, DAOException {
+        SQLiteDatabase db = database.getWritableDatabase();
         try {
-            SQLiteDatabase db = database.getWritableDatabase();
             if (db != null) {
                     ContentValues contentValues = new ContentValues();
                     contentValues.put("LAYER_NAME", layerName);
@@ -47,6 +47,12 @@ public class StyleDAO {
         } catch (SQLiteException e) {
             e.printStackTrace();
             throw new DAOException(ResourceHelper.getStringResource(R.string.style_insert_exception),e);
+        }
+        finally {
+            if (db != null && db.isOpen())
+            {
+                db.close();
+            }
         }
     }
 
@@ -69,14 +75,21 @@ public class StyleDAO {
             e.printStackTrace();
             throw new DAOException(ResourceHelper.getStringResource(R.string.style_update_exception),e);
         }
+        finally {
+            if (db != null && db.isOpen())
+            {
+                db.close();
+            }
+        }
     }
 
     public String get(String layerName) throws InvalidAppConfigException, DAOException {
         String sldXML = null;
+        SQLiteDatabase db = database.getReadableDatabase();
+        Cursor cursor = null;
         try {
-            SQLiteDatabase db = database.getReadableDatabase();
             if(db != null) {
-                Cursor cursor = db.query(TABLE_NAME, new String[]{"SLD_XML"}, "LAYER_NAME = ?", new String[]{layerName}, null, null, null, null);
+                cursor = db.query(TABLE_NAME, new String[]{"SLD_XML"}, "LAYER_NAME = ?", new String[]{layerName}, null, null, null, null);
                 if (cursor != null && cursor.getCount() != 0) {
                     cursor.moveToFirst();
                     sldXML = cursor.getString(0);
@@ -94,6 +107,16 @@ public class StyleDAO {
         } catch (SQLiteException e) {
             e.printStackTrace();
             throw new DAOException(ResourceHelper.getStringResource(R.string.style_query_exception),e);
+        }
+        finally {
+            if (db != null && db.isOpen())
+            {
+                db.close();
+            }
+            if (cursor != null && cursor.isClosed())
+            {
+                cursor.close();
+            }
         }
     }
 }
