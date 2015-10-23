@@ -22,6 +22,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.Message;
 import android.support.v4.app.FragmentActivity;
 import android.view.KeyEvent;
 import android.view.View;
@@ -85,15 +86,14 @@ public class FragmentDetailActivity extends FragmentActivity {
 
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
-        Double latitude=0.0;
-        Double longitude=0.0;
+        String geojsonTags = "";
         if (extras != null) {
             pointId = extras.getLong(LibraryConstants.SELECTED_POINT_ID);
             formName = extras.getString(FormUtilities.ATTR_FORMNAME);
             tags = extras.getString(FormUtilities.ATTR_JSON_TAGS);
-            if(extras.containsKey(FormUtilities.TYPE_LATITUDE)) {
-                latitude = extras.getDouble(FormUtilities.TYPE_LATITUDE);
-                longitude = extras.getDouble(FormUtilities.TYPE_LONGITUDE);
+
+            if(extras.containsKey(FormUtilities.ATTR_GEOJSON_TAGS)) {
+                geojsonTags = extras.getString(FormUtilities.ATTR_GEOJSON_TAGS);
             }
             // here are the attribute values from feature to populate form in edit operation
             if(extras.containsKey(FormUtilities.ATTR_DATA_VALUES)) {
@@ -105,23 +105,19 @@ public class FragmentDetailActivity extends FragmentActivity {
         try {
             sectionObject = TagsManager.getInstance(tags).getSectionByName(defaultSectionName);
 
-            if(!sectionObject.has(FormUtilities.GEOJSON_TAG_GEOM)) {
-                JSONObject geojson = new JSONObject();
-                geojson.put(FormUtilities.GEOJSON_TAG_TYPE,FormUtilities.GEOJSON_TYPE_POINT);
-                JSONArray coords = new JSONArray("["+longitude+","+latitude+"]");
-                geojson.put(FormUtilities.GEOJSON_TAG_COORDINATES, coords);
-                sectionObject.put(FormUtilities.GEOJSON_TAG_GEOM, geojson);
-
-            }else{
-                JSONObject geojson = sectionObject.getJSONObject(FormUtilities.GEOJSON_TAG_GEOM);
-                JSONArray coords = geojson.getJSONArray(FormUtilities.GEOJSON_TAG_COORDINATES);
-                coords.put(0, longitude);
-                coords.put(1,latitude);
+            if(sectionObject==null) {
+                Toast.makeText(getApplicationContext(), "Failure on get form session.", Toast.LENGTH_LONG).show();
+                System.out.println("Failure on load JSON form from database.");
+                this.finish();
             }
+
+            JSONObject geojson = new JSONObject(geojsonTags);
+            sectionObject.put(FormUtilities.ATTR_GEOJSON_TAGS, geojson);
 
         } catch (JSONException e) {
             Toast.makeText(getApplicationContext(), "Incorrect form configuration.", Toast.LENGTH_LONG).show();
             System.out.println("Failure on load JSON form from database.");
+            e.printStackTrace();
             this.finish();
         }
 
@@ -266,19 +262,9 @@ public class FragmentDetailActivity extends FragmentActivity {
             formData.putStringArrayList(LibraryConstants.FORM_KEYS, keys);
         }
 
-        JSONObject geojsonGeometry = sectionObject.getJSONObject(FormUtilities.GEOJSON_TAG_GEOM);
-        if(geojsonGeometry.has(FormUtilities.GEOJSON_TAG_TYPE)) {
-            String type = geojsonGeometry.getString(FormUtilities.GEOJSON_TAG_TYPE);
-            JSONArray jsonCoords = geojsonGeometry.getJSONArray(FormUtilities.GEOJSON_TAG_COORDINATES);
-
-            formData.putString(FormUtilities.GEOJSON_TAG_TYPE, type);
-            int coordLen = jsonCoords.length();
-            double[] coords = new double[coordLen];
-
-            for (int i = 0; i < coordLen; i++) {
-                coords[i]=((Double)jsonCoords.get(i)).doubleValue();
-            }
-            formData.putDoubleArray(FormUtilities.GEOJSON_TYPE_POINT,coords);
+        if(sectionObject.has(FormUtilities.ATTR_GEOJSON_TAGS)) {
+            JSONObject geojsonGeometry = sectionObject.getJSONObject(FormUtilities.ATTR_GEOJSON_TAGS);
+            formData.putString(FormUtilities.ATTR_GEOJSON_TAGS, geojsonGeometry.toString());
         }
 
         if(pointId>=0){

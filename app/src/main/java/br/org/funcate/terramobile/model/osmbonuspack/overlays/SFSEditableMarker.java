@@ -53,10 +53,14 @@ public class SFSEditableMarker extends Marker implements Marker.OnMarkerClickLis
         return true;
     }
 
-    public Long getMarkerId() {
+    public Long getMarkerId() throws TerraMobileException, InvalidAppConfigException {
         String markerId = ((SFSPoint)this.getRelatedObject()).mId;
-        String editableLayerName = this.mMainActivity.getMainController().getTreeViewController().getSelectedEditableLayer().getName();
-        markerId = markerId.replaceFirst(editableLayerName, "");
+        if(markerId!=null) {
+            String editableLayerName = this.mMainActivity.getMainController().getTreeViewController().getSelectedEditableLayer().getName();
+            markerId = markerId.replaceFirst(editableLayerName, "");
+        }else{
+            throw new TerraMobileException( ResourceHelper.getStringResource(R.string.failure_on_identify_marker) );
+        }
         return new Long(markerId);
     }
 
@@ -195,7 +199,16 @@ public class SFSEditableMarker extends Marker implements Marker.OnMarkerClickLis
             ImageButton btnMoreInfo = (ImageButton) mView.findViewById(R.id.bubble_moreinfo);
             btnMoreInfo.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    long featureID = mMarker.getMarkerId();
+                    long featureID = 0;
+                    try {
+                        featureID = mMarker.getMarkerId();
+                    } catch (TerraMobileException e) {
+                        e.printStackTrace();
+                        Message.showErrorMessage((MainActivity) mMapView.getContext(), R.string.fail, e.getMessage());
+                    }catch (InvalidAppConfigException e){
+                        e.printStackTrace();
+                        Message.showErrorMessage((MainActivity) mMapView.getContext(), R.string.fail, e.getMessage());
+                    }
                     markerInfoWindowController.viewFeatureData(featureID);
                 }
             });

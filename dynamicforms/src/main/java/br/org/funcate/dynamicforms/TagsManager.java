@@ -136,7 +136,7 @@ public class TagsManager {
             tagsManager = new TagsManager();
             tagsManager.getTags(tags);
         }
-        if (tagsManager == null) throw new JSONException("The formulary configuration is invalid.");
+        if (tagsManager == null) throw new JSONException("The forms configuration is invalid.");
         return tagsManager;
     }
     /**
@@ -169,7 +169,15 @@ public class TagsManager {
 
         if (!tags.isEmpty()) {
             sectionsMap.clear();
-            JSONArray sectionsArrayObj = new JSONArray(tags);
+            JSONArray sectionsArrayObj=null;
+            try {
+                if('['!=tags.charAt(0)) {
+                    tags = "["+tags+"]";
+                }
+                sectionsArrayObj = new JSONArray(tags);
+            }catch (Exception e) {
+                e.printStackTrace();
+            }
             int tagsNum = sectionsArrayObj.length();
             for (int i = 0; i < tagsNum; i++) {
                 JSONObject jsonObject = sectionsArrayObj.getJSONObject(i);

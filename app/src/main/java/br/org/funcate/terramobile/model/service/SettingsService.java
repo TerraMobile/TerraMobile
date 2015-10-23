@@ -5,7 +5,6 @@ import android.content.Context;
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.model.db.ApplicationDatabase;
 import br.org.funcate.terramobile.model.db.DatabaseFactory;
-import br.org.funcate.terramobile.model.db.DatabaseHelper;
 import br.org.funcate.terramobile.model.db.ProjectDatabase;
 import br.org.funcate.terramobile.model.db.dao.SettingsDAO;
 import br.org.funcate.terramobile.model.domain.Project;
@@ -13,7 +12,6 @@ import br.org.funcate.terramobile.model.domain.Setting;
 import br.org.funcate.terramobile.model.exception.DAOException;
 import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
 import br.org.funcate.terramobile.model.exception.SettingsException;
-import br.org.funcate.terramobile.model.exception.TerraMobileException;
 import br.org.funcate.terramobile.util.ResourceHelper;
 
 /**
