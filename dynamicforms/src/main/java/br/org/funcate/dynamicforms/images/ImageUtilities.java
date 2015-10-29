@@ -150,7 +150,7 @@ public class ImageUtilities {
      * @param targetW, the output width
      * @param targetH, the output height
      * @param imagePath, the path to input file image
-     * @return true in sucess or false otherwise
+     * @return true in success or false otherwise
      */
     public static boolean resampleImage(int targetW, int targetH, String imagePath) {
         Bitmap outputBitmap = getScaledBitmap(targetW, targetH, imagePath);

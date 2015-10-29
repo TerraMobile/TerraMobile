@@ -19,21 +19,16 @@ package br.org.funcate.dynamicforms.views;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Handler;
-import android.preference.PreferenceManager;
-import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
-import android.widget.GridLayout;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -44,14 +39,10 @@ import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -60,12 +51,8 @@ import br.org.funcate.dynamicforms.FragmentDetail;
 import br.org.funcate.dynamicforms.PictureActivity;
 import br.org.funcate.dynamicforms.R;
 import br.org.funcate.dynamicforms.camera.CameraActivity;
-import br.org.funcate.dynamicforms.exceptions.CollectFormException;
 import br.org.funcate.dynamicforms.images.ImageUtilities;
-import br.org.funcate.dynamicforms.markers.MarkersUtilities;
 import br.org.funcate.dynamicforms.util.LibraryConstants;
-import br.org.funcate.dynamicforms.util.PositionUtilities;
-import br.org.funcate.dynamicforms.util.ResourcesManager;
 
 import static br.org.funcate.dynamicforms.FormUtilities.COLON;
 import static br.org.funcate.dynamicforms.FormUtilities.UNDERSCORE;
