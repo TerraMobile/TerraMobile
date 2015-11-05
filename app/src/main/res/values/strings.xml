@@ -112,6 +112,7 @@
     <string name="title_fail_message_marker">Warning</string>
     <string name="failure_on_remove_marker">Failure on remove Marker.</string>
     <string name="failure_on_save_new_location">Failure on save the new location.</string>
+    <string name="failure_on_identify_marker">Failure on identify the Marker.</string>
     <!-- Location services -->
     <string name="disabled_provider">Your location provider is disabled.</string>
     <!-- Info panel to display feature attributes -->

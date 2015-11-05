@@ -325,15 +325,19 @@ public class FormUtilities {
     /**
      * The following types are part of the geojson inserted in config JSONObject form
      */
-    public static final String GEOJSON_TAG_GEOM = "geometry";
     public static final String GEOJSON_TAG_TYPE = "type";
     public static final String GEOJSON_TAG_COORDINATES = "coordinates";
     public static final String GEOJSON_TYPE_POINT = "Point";
+    public static final String GEOJSON_TYPE_MULTIPOINT = "MultiPoint";
     public static final String GEOJSON_TYPE_LINESTRING = "LineString";
     public static final String GEOJSON_TYPE_POLYGON = "Polygon";
 
     public static final String GEOM_ID = "geometry_id";
 
+    /**
+     * Code to pass value between MainActivity and FragmentDetailActivity
+     */
+    public static final String ATTR_GEOJSON_TAGS = "geojson_tags";
 
     /**
      * Checks if the type is a special one.

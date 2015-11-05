@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="gt-xsd-core-13.2">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/sldparser/libs/gt-xsd-core-13.2.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

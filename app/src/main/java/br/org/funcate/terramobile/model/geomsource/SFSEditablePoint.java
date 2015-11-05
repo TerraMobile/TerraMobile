@@ -27,6 +27,7 @@ public class SFSEditablePoint extends SFSPoint {
         marker.setSnippet(kmlPlacemark.mDescription);
         marker.setSubDescription(kmlPlacemark.getExtendedDataAsText());
         marker.setPosition(this.getPosition());
+        this.mId=kmlPlacemark.mId;
         marker.setRelatedObject(this);
         if(styler == null) {
             this.applyDefaultStyling(marker, defaultStyle, kmlPlacemark, kmlDocument, map);

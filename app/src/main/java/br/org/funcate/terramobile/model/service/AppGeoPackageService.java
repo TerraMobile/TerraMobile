@@ -15,8 +15,12 @@ import com.augtech.geoapi.geopackage.GeoPackage;
 import com.augtech.geoapi.geopackage.GpkgField;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.Point;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.GeometryType;
@@ -340,7 +344,7 @@ public class AppGeoPackageService {
         return feature;
     }
 
-    private static SimpleFeature makeSimpleFeature(Bundle formData, TreeViewController tv) {
+    private static SimpleFeature makeSimpleFeature(Bundle formData, TreeViewController tv) throws JSONException, TerraMobileException {
 
 
         ArrayList<GpkgField> fields = tv.getSelectedEditableLayer().getFields();
@@ -357,13 +361,38 @@ public class AppGeoPackageService {
 
         GeometryFactory factory=new GeometryFactory();
 
-        if(geometryType.getName().toString().equalsIgnoreCase(FormUtilities.GEOJSON_TYPE_POINT) &&
-                formData.getString(FormUtilities.GEOJSON_TAG_TYPE).equalsIgnoreCase(FormUtilities.GEOJSON_TYPE_POINT)) {
-            double[] c = formData.getDoubleArray(FormUtilities.GEOJSON_TYPE_POINT);
-            Coordinate coordinate = new Coordinate(c[0],c[1]);
-            Point point = factory.createPoint(coordinate);
-            Name geomColName = ft.getGeometryDescriptor().getName();
-            attrs[ft.indexOf(geomColName)]=point;
+        if(formData.containsKey(FormUtilities.ATTR_GEOJSON_TAGS)) {
+            String geojsonTags = formData.getString(FormUtilities.ATTR_GEOJSON_TAGS);
+            JSONObject geojsonGeometry = new JSONObject(geojsonTags);
+            String geojsonGeometryType = geojsonGeometry.getString(FormUtilities.GEOJSON_TAG_TYPE);
+            JSONArray geojsonCoordinates = geojsonGeometry.getJSONArray(FormUtilities.GEOJSON_TAG_COORDINATES);
+
+            if ( !geometryType.getName().toString().equalsIgnoreCase(geojsonGeometryType) ) {
+                throw new TerraMobileException("Geometry type is incompatible.");
+            }
+
+            if(geojsonGeometryType.equalsIgnoreCase(FormUtilities.GEOJSON_TYPE_POINT)) {
+                Coordinate coordinate = new Coordinate(geojsonCoordinates.getDouble(0), geojsonCoordinates.getDouble(1));
+                Point point = factory.createPoint(coordinate);
+                Name geomColName = ft.getGeometryDescriptor().getName();
+                attrs[ft.indexOf(geomColName)] = point;
+
+            }else if(geojsonGeometryType.equalsIgnoreCase(FormUtilities.GEOJSON_TYPE_MULTIPOINT)) {
+
+                int geomSize = geojsonCoordinates.length();
+                Coordinate[] coordinates = new Coordinate[geomSize];
+                for (int i = 0; i < geomSize; i++) {
+                    JSONArray geojsonCoordinate = geojsonCoordinates.getJSONArray(i);
+                    Coordinate coordinate = new Coordinate(geojsonCoordinate.getDouble(0), geojsonCoordinate.getDouble(1));
+                    coordinates[i]=coordinate;
+                }
+                MultiPoint multiPoint = factory.createMultiPoint(coordinates);
+                Name geomColName = ft.getGeometryDescriptor().getName();
+                attrs[ft.indexOf(geomColName)] = multiPoint;
+
+            }else {
+                throw new TerraMobileException("Geometry type is wrong.");
+            }
         }
 
         ArrayList<String> formKeys = formData.getStringArrayList(LibraryConstants.FORM_KEYS);

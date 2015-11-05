@@ -10,6 +10,8 @@ import android.widget.ProgressBar;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.opengis.feature.simple.SimpleFeature;
 import org.osmdroid.bonuspack.overlays.InfoWindow;
 import org.osmdroid.bonuspack.overlays.Marker;
@@ -73,7 +75,19 @@ public class MarkerInfoWindowController {
     }
 
     public void editMarker(Marker marker) {
-        startActivityForm(((SFSEditableMarker) marker).getMarkerId().longValue());
+        Long markerId = null;
+        try {
+            markerId = ((SFSEditableMarker) marker).getMarkerId().longValue();
+        }catch (TerraMobileException e){
+            e.printStackTrace();
+            Message.showErrorMessage(mainActivity, R.string.fail, e.getMessage());
+            return;
+        }catch (InvalidAppConfigException e){
+            e.printStackTrace();
+            Message.showErrorMessage(mainActivity, R.string.fail, e.getMessage());
+            return;
+        }
+        startActivityForm(markerId);
     }
 
     public void deleteMarker(Marker marker) throws TerraMobileException {
@@ -117,8 +131,9 @@ public class MarkerInfoWindowController {
 
     public void startActivityForm(long pointID) {
 
-        GeoPoint point=null;
+        ArrayList<GeoPoint> geoPoints=null;
         GpkgLayer editableLayer;
+        String geometryType = "";
 
         try{
             TreeViewController tv = mainActivity.getMainController().getTreeViewController();
@@ -162,10 +177,16 @@ public class MarkerInfoWindowController {
 
             if (feature!=null && feature.getDefaultGeometry() != null) {
                 geom = (Geometry) feature.getDefaultGeometry();
-                if(geom!=null && geom.getGeometryType().equals("Point")) {
-                    Coordinate[] coords = geom.getCoordinates();
-                    if(coords.length>0 && coords.length==1)
-                        point = new GeoPoint(coords[0].y, coords[0].x);
+                if(geom!=null) {
+                    geometryType=geom.getGeometryType();
+                    if(geometryType.equals(FormUtilities.GEOJSON_TYPE_POINT) || geometryType.equals(FormUtilities.GEOJSON_TYPE_MULTIPOINT)) {
+                        Coordinate[] coords = geom.getCoordinates();
+                        int coordsLength = coords.length;
+                        geoPoints=new ArrayList<GeoPoint>(coordsLength);
+                        for (int i = 0; i < coordsLength; i++) {
+                            geoPoints.add( new GeoPoint(coords[i].y, coords[i].x) );
+                        }
+                    }
                 }
                 formDataValues = FeatureService.featureAttrsToBundle(feature);
                 if(images!=null && !images.isEmpty()) {
@@ -174,7 +195,8 @@ public class MarkerInfoWindowController {
                 }
             }
         }else {
-            point = (GeoPoint) getMapView().getMapCenter();
+            geoPoints=new ArrayList<GeoPoint>(1);
+            geoPoints.add((GeoPoint) getMapView().getMapCenter());
         }
 
         try {
@@ -183,9 +205,28 @@ public class MarkerInfoWindowController {
             // The form name attribute, provided by JSON, shall be the same name of the editable layer.
             formIntent.putExtra(FormUtilities.ATTR_FORMNAME, editableLayer.getName());
             formIntent.putExtra(FormUtilities.ATTR_JSON_TAGS, editableLayer.getJSON());
-            if(point!=null) {
-                formIntent.putExtra(FormUtilities.TYPE_LATITUDE, point.getLatitude());
-                formIntent.putExtra(FormUtilities.TYPE_LONGITUDE, point.getLongitude());
+
+            if(geoPoints!=null) {
+
+                JSONObject geojson = new JSONObject();
+
+                if(geometryType.equals(FormUtilities.GEOJSON_TYPE_POINT))
+                    geojson.put(FormUtilities.GEOJSON_TAG_TYPE,FormUtilities.GEOJSON_TYPE_POINT);
+                else if(geometryType.equals(FormUtilities.GEOJSON_TYPE_MULTIPOINT))
+                    geojson.put(FormUtilities.GEOJSON_TAG_TYPE,FormUtilities.GEOJSON_TYPE_MULTIPOINT);
+
+                JSONArray coordinates = new JSONArray();
+                Iterator<GeoPoint> it = geoPoints.iterator();
+                while (it.hasNext()) {
+                    GeoPoint gp = it.next();
+                    JSONArray coordinate = new JSONArray();
+                    coordinate.put(gp.getLongitude());
+                    coordinate.put(gp.getLatitude());
+                    coordinates.put(coordinate);
+                }
+                geojson.put(FormUtilities.GEOJSON_TAG_COORDINATES, coordinates);
+                String str_geojson = geojson.toString();
+                formIntent.putExtra(FormUtilities.ATTR_GEOJSON_TAGS, str_geojson);
             }
             if(formDataValues!=null) {
                 formIntent.putExtra(FormUtilities.ATTR_DATA_VALUES, formDataValues);

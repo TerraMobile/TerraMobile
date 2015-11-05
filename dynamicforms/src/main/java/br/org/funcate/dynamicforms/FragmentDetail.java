@@ -70,7 +70,6 @@ import static br.org.funcate.dynamicforms.FormUtilities.TYPE_INTEGER;
 import static br.org.funcate.dynamicforms.FormUtilities.TYPE_LABEL;
 import static br.org.funcate.dynamicforms.FormUtilities.TYPE_LABELWITHLINE;
 import static br.org.funcate.dynamicforms.FormUtilities.TYPE_PICTURES;
-import static br.org.funcate.dynamicforms.FormUtilities.TYPE_SKETCH;
 import static br.org.funcate.dynamicforms.FormUtilities.TYPE_STRING;
 import static br.org.funcate.dynamicforms.FormUtilities.TYPE_STRINGAREA;
 import static br.org.funcate.dynamicforms.FormUtilities.TYPE_STRINGCOMBO;
