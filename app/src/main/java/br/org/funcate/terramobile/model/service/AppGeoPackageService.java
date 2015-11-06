@@ -215,39 +215,6 @@ public class AppGeoPackageService {
         return listLayers;
     }
 
-    public static void createGeoPackageTileSourceOverlay(GpkgLayer layer, Context context) {
-
-        MapView mapView = (MapView) ((MainActivity) context).findViewById(R.id.mapview);
-        mapView.setMaxZoomLevel(18);
-        mapView.setBuiltInZoomControls(true);
-        mapView.setMultiTouchControls(true);
-
-
-        System.out.println("Overlay size:" + mapView.getOverlayManager().size());
-
-/*        OnlineTileSourceBase mapQuestTileSource = TileSourceFactory.MAPQUESTOSM;
-        String tileSourcePath = mapQuestTileSource.OSMDROID_PATH.getAbsolutePath() + "/";*/
-
-        final MapTileProviderBasic tileProvider = new MapTileProviderBasic(context);
-
-        final ITileSource tileSource = new XYTileSource("Mapnik", ResourceProxy.string.mapnik, 1, 18, 256, ".png", new String[] {"http://tile.openstreetmap.org/"});
-
-        MapTileModuleProviderBase moduleProvider = new MapTileGeoPackageProvider(tileSource, layer.getName(), layer.getGeoPackage());
-        SimpleRegisterReceiver simpleReceiver = new SimpleRegisterReceiver(context);
-        MapTileProviderArray tileProviderArray = new MapTileProviderArray(tileSource, simpleReceiver, new MapTileModuleProviderBase[] { moduleProvider });
-
-/*        tileProvider.setTileSource(tileSource);*/
-        final TilesOverlay tilesOverlay = new TilesOverlay(tileProviderArray, context);
-        tilesOverlay.setLoadingBackgroundColor(Color.TRANSPARENT);
-        mapView.getOverlays().add(tilesOverlay);
-
-        //mapView.getOverlayManager().overlaysReversed();
-        //mapView.getTileProvider().clearTileCache();
-        tileProvider.setTileRequestCompleteHandler(new SimpleInvalidationHandler(mapView));
-        mapView.setTileSource(tileSource);
-        mapView.setUseDataConnection(false); //  letting osmdroid know you would use it in offline mode, keeps the mapView from loading online tiles using network connection.*/
-        mapView.invalidate();
-    }
 
     public static void storeData(Context context, Bundle formData) throws TerraMobileException, QueryException {
         ArrayList<String> keys = formData.getStringArrayList(LibraryConstants.FORM_KEYS);

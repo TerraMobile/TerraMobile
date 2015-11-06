@@ -37,6 +37,7 @@ import br.org.funcate.terramobile.model.service.StyleService;
 import br.org.funcate.terramobile.model.service.AppGeoPackageService;
 import br.org.funcate.terramobile.model.tilesource.MapTileGeoPackageProvider;
 import br.org.funcate.terramobile.model.tilesource.MapTileProviderArrayGeoPackage;
+import br.org.funcate.terramobile.model.tilesource.TerraMobileInvalidationHandler;
 import br.org.funcate.terramobile.util.GeoUtil;
 
 /**
@@ -60,20 +61,17 @@ public class MenuMapController {
             {
                 MapView mapView = mapFragment.getMapView();
 
-                final MapTileProviderBasic tileProvider = new MapTileProviderBasic(context);
-
                 final ITileSource tileSource = new XYTileSource("Mapnik", ResourceProxy.string.mapnik, 1, 18, 256, ".png", new String[] {"http://tile.openstreetmap.org/"});
                 MapTileModuleProviderBase moduleProvider = new MapTileGeoPackageProvider(tileSource, child.getName(), child.getGeoPackage());
                 SimpleRegisterReceiver simpleReceiver = new SimpleRegisterReceiver(context);
 
                 MapTileProviderArray tileProviderArray = new MapTileProviderArrayGeoPackage(tileSource, simpleReceiver, new MapTileModuleProviderBase[] { moduleProvider }, ((MainActivity) this.context).getMainController().getMapFragment());
-
+                tileProviderArray.setTileRequestCompleteHandler(new TerraMobileInvalidationHandler(mapView));
                 final TilesOverlay tilesOverlay = new TilesOverlay(tileProviderArray, context);
                 tilesOverlay.setLoadingBackgroundColor(Color.TRANSPARENT);
                 mapView.getOverlays().add(tilesOverlay);
                 child.setOsmOverLayer(tilesOverlay);
 
-                tileProvider.setTileRequestCompleteHandler(new SimpleInvalidationHandler(mapView));
                 mapView.setTileSource(tileSource);
                 mapView.setUseDataConnection(false); //  letting osmdroid know you would use it in offline mode, keeps the mapView from loading online tiles using network connection.*/
                 mapView.invalidate();
