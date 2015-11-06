@@ -321,6 +321,28 @@ public class MainController {
         this.featureInfoPanelController = featureInfoPanelController;
     }
 
+    /**
+     * When MapView is initialized this method is called. Use this method to trigger any initialization feature
+     */
+    public void onMapViewInitialized()
+    {
+        getMapFragment().configureMapView();
+
+        try {
+
+            menuMapController.getMainController().loadCurrentProject();
+
+        } catch (InvalidAppConfigException e) {
+
+            Message.showErrorMessage(mainActivity, R.string.error, e.getMessage());
+
+        } catch (DAOException e) {
+
+            Message.showErrorMessage(mainActivity, R.string.error, e.getMessage());
+        }
+
+    }
+
 
 
 }

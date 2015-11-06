@@ -23,6 +23,8 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
+import com.augtech.geoapi.geometry.BoundingBoxImpl;
+
 import org.osmdroid.ResourceProxy;
 import org.osmdroid.tileprovider.tilesource.ITileSource;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
@@ -63,7 +65,7 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants{
     // ===========================================================
 
     private SharedPreferences mPrefs;
-    private MapView mMapView;
+    private TerraMobileMapView mMapView;
     private ImageView drawingImageView;
 
     private ImageButton gpsLocation;
@@ -90,12 +92,20 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants{
 
         // inflate and return the layout
         View v = inflater.inflate(R.layout.fragment_map, container, false);
-        mMapView = (MapView) v.findViewById(R.id.mapview);
+        mMapView = (TerraMobileMapView) v.findViewById(R.id.mapview);
+
+        mMapView.setMainController(menuMapController.getMainController());
 
         drawingImageView = (ImageView) v.findViewById(R.id.DrawingImageView);
         try {
             drawCross(drawingImageView);
-            configureMapView(mMapView);
+
+            if(menuMapController==null)
+            {
+                throw new InvalidAppConfigException("Missing MenuMapController on MapFragment map configuration.");
+            }
+
+
         } catch (InvalidAppConfigException e) {
             e.printStackTrace();
             Message.showErrorMessage((MainActivity)context, R.string.failure_title_msg, e.getMessage());
@@ -130,21 +140,7 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants{
 
         super.onCreate(savedInstanceState);
 
-        mapLoaded();
-
         return v;
-    }
-
-    private void mapLoaded()
-    {
-
-        try {
-            menuMapController.getMainController().loadCurrentProject();
-        } catch (InvalidAppConfigException e) {
-            Message.showErrorMessage((MainActivity)context, R.string.error, e.getMessage());
-        } catch (DAOException e) {
-            Message.showErrorMessage((MainActivity)context, R.string.error, e.getMessage());
-        }
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
@@ -216,29 +212,7 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants{
         }
     }
 
-    public void configureMapView(MapView mapView) throws InvalidAppConfigException {
-        double x = ResourceHelper.getDoubleResource(R.dimen.default_map_center_x);
-        double y = ResourceHelper.getDoubleResource(R.dimen.default_map_center_y);
 
-        int initialZoomLevel = 5;
-        int maxZoomLevel = ResourceHelper.getIntResource(R.integer.default_max_zoom_level);
-
-        boolean builtInZoomControls= ResourceHelper.getBooleanResource(R.bool.default_built_in_zoom_controls);
-        boolean multiTouchControls= ResourceHelper.getBooleanResource(R.bool.default_multi_touch_controls);
-
-        GeoPoint gPt = new GeoPoint(x,y);
-
-        mapView.getController().animateTo(gPt);
-        mapView.setMaxZoomLevel(maxZoomLevel);
-        mapView.setMultiTouchControls(multiTouchControls);
-
-        mapView.getController().setZoom(initialZoomLevel);
-
-        if(menuMapController==null)
-        {
-            throw new InvalidAppConfigException("Missing MenuMapController on MapFragment map configuration.");
-        }
-    }
 
     public void drawCross(ImageView drawingImageView) throws InvalidAppConfigException {
         Bitmap bitmap = Bitmap.createBitmap(getActivity().getWindowManager()
@@ -331,6 +305,33 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants{
     public MapView getMapView()
     {
         return mMapView;
+    }
+
+    public void configureMapView() {
+
+        double x = 0;
+        try {
+            x = ResourceHelper.getDoubleResource(R.dimen.default_map_center_x);
+
+            double y = ResourceHelper.getDoubleResource(R.dimen.default_map_center_y);
+
+            int initialZoomLevel = 5;
+            int maxZoomLevel = ResourceHelper.getIntResource(R.integer.default_max_zoom_level);
+
+            boolean builtInZoomControls= ResourceHelper.getBooleanResource(R.bool.default_built_in_zoom_controls);
+            boolean multiTouchControls= ResourceHelper.getBooleanResource(R.bool.default_multi_touch_controls);
+
+            GeoPoint gPt = new GeoPoint(x,y);
+            getMapView().getController().setZoom(initialZoomLevel);
+            getMapView().getController().setCenter(gPt);
+            getMapView().setMaxZoomLevel(maxZoomLevel);
+            getMapView().setMultiTouchControls(multiTouchControls);
+
+        } catch (InvalidAppConfigException e) {
+            Message.showErrorMessage((MainActivity)context, R.string.error, e.getMessage());
+        }
+
+
     }
 
 }
