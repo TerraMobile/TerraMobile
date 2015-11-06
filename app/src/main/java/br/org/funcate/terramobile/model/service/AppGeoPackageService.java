@@ -10,7 +10,6 @@ import android.util.Log;
 
 import com.augtech.geoapi.feature.SimpleFeatureImpl;
 import com.augtech.geoapi.geometry.BoundingBoxImpl;
-import com.augtech.geoapi.geopackage.DateUtil;
 import com.augtech.geoapi.geopackage.GeoPackage;
 import com.augtech.geoapi.geopackage.GpkgField;
 import com.vividsolutions.jts.geom.Coordinate;
@@ -24,8 +23,8 @@ import org.json.JSONObject;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.GeometryType;
-import org.opengis.geometry.BoundingBox;
 import org.opengis.feature.type.Name;
+import org.opengis.geometry.BoundingBox;
 import org.osmdroid.ResourceProxy;
 import org.osmdroid.bonuspack.overlays.Marker;
 import org.osmdroid.tileprovider.MapTileProviderArray;
@@ -40,7 +39,6 @@ import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.TilesOverlay;
 
 import java.io.File;
-import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -403,12 +401,15 @@ public class AppGeoPackageService {
             GpkgField field = getFieldByName(fields, key);
             if(field==null) continue;
             String dbType = field.getFieldType();
+
+            dbType = AppGeoPackageService.mappingAffinityDBType(dbType);
+
             String formType = formTypes.get(i);
             int index = ft.indexOf(key);
 
             if(index<0) continue;
 
-            if ("DOUBLE".equalsIgnoreCase(dbType)) {
+            if ("REAL".equalsIgnoreCase(dbType)) {
                 Double d = formData.getDouble(key);
                 attrs[index]=d;
             } else if ("TEXT".equalsIgnoreCase(dbType)) {
@@ -416,12 +417,32 @@ public class AppGeoPackageService {
                 attrs[index]=s;
             } else if ("INTEGER".equalsIgnoreCase(dbType)) {
 
-                if(formType.equalsIgnoreCase(dbType)) {
+                if("INTEGER".equalsIgnoreCase(formType)) {
                     Integer in = formData.getInt(key);
                     attrs[index]=in;
                 }else {
-                    Boolean b = formData.getBoolean(key);
-                    attrs[index]=b;
+                    Boolean aBoolean = formData.getBoolean(key);
+                    attrs[index]=aBoolean;
+                }
+            } else if ("NUMERIC".equalsIgnoreCase(dbType)) {
+
+                if("BOOLEAN".equalsIgnoreCase(formType)) {
+                    Boolean aBoolean = formData.getBoolean(key);
+                    attrs[index]=aBoolean;
+                }else if("DATE".equalsIgnoreCase(formType)) {
+                    String date = formData.getString(key);
+                    Date dt = stringToDate(date);
+                    if (dt == null) {
+                        dt = new Date();
+                    }
+                    attrs[index]=dt;
+                }else if("DATETIME".equalsIgnoreCase(formType)) {
+                    String date = formData.getString(key);
+                    Date dt = stringToDate(date);
+                    if (dt == null) {
+                        dt = new Date();
+                    }
+                    attrs[index]=dt;
                 }
             } else if ("BLOB".equalsIgnoreCase(dbType)) {
                 if( !key.equals(feature.getFeatureType().getGeometryDescriptor().getName())) {
@@ -433,37 +454,46 @@ public class AppGeoPackageService {
                         attrs[index]=null;
                     }
                 }
-            } else if ("BOOLEAN".equalsIgnoreCase(dbType)) {
-                Boolean aBoolean = formData.getBoolean(key);
-                attrs[index]=aBoolean;
-            } else if ("DATE".equalsIgnoreCase(dbType)) {
-                String date = formData.getString(key);
-                Date dt = stringToDate(date);
-                if (dt == null) {
-                    dt = new Date();
-                }
-                attrs[index]=dt;
-            } else if ("TIME".equalsIgnoreCase(dbType)) {
-                String date = formData.getString(key);
-                if (!date.equals("")) {
-                    date = "0000-00-00T" + date;
-                }
-                Time dt = DateUtil.deserializeSqlTime(date);
-                if (dt == null) {
-                    dt = new Time(Long.decode(date));
-                }
-                attrs[index]=dt;
-            } else if ("DATETIME".equalsIgnoreCase(dbType)) {
-                String date = formData.getString(key);
-                Date dt = stringToDate(date);
-                if (dt == null) {
-                    dt = new Date();
-                }
-                attrs[index]=dt;
             }
         }
         feature.setAttributes(attrs);
         return feature;
+    }
+
+    /**
+     * Method to map data types from table for affinity data types used on sqlite mechanisms.
+     * <pre>
+     * Determination Of Column Affinity.
+     * The affinity of a column is determined by the declared type of the column, according to the following rules in the order shown:
+     *  - If the declared type contains the string "INT" then it is assigned INTEGER affinity.
+     *  - If the declared type of the column contains any of the strings "CHAR", "CLOB", or "TEXT" then that column has TEXT affinity. Notice that the type VARCHAR contains the string "CHAR" and is thus assigned TEXT affinity.
+     *  - If the declared type for a column contains the string "BLOB" or if no type is specified then the column has affinity BLOB.
+     *  - If the declared type for a column contains any of the strings "REAL", "FLOA", or "DOUB" then the column has REAL affinity.
+     *  - Otherwise, the affinity is NUMERIC.
+     *
+     * Note that the order of the rules for determining column affinity is important. A column whose declared type is "CHARINT" will match both rules 1 and 2 but the first rule takes precedence and so the column affinity will be INTEGER.
+     * </pre>
+     * @see <a href="https://www.sqlite.org/datatype3.html">www.sqlite.org/datatype3.html</a>
+     * @return originalDBType, the original column data type read from table.
+     */
+    private static String mappingAffinityDBType(String originalDBType) {
+
+        String affinityDBType="";
+        originalDBType = originalDBType.toUpperCase();
+
+        if(originalDBType.contains("INT")) {
+            affinityDBType = "INTEGER";
+        }else if(originalDBType.contains("CHAR") || originalDBType.contains("CLOB") || originalDBType.contains("TEXT")) {
+            affinityDBType = "TEXT";
+        }else if(originalDBType.contains("BLOB") || originalDBType.isEmpty()) {
+            affinityDBType = "BLOB";
+        }else if(originalDBType.contains("REAL") || originalDBType.contains("FLOA") || originalDBType.contains("DOUB")) {
+            affinityDBType = "REAL";
+        }else {
+            affinityDBType = "NUMERIC";
+        }
+
+        return affinityDBType;
     }
 
     /**

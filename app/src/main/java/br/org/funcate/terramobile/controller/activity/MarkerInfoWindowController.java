@@ -13,6 +13,9 @@ import com.vividsolutions.jts.geom.Geometry;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.GeometryDescriptor;
+import org.opengis.feature.type.GeometryType;
 import org.osmdroid.bonuspack.overlays.InfoWindow;
 import org.osmdroid.bonuspack.overlays.Marker;
 import org.osmdroid.util.GeoPoint;
@@ -197,6 +200,10 @@ public class MarkerInfoWindowController {
         }else {
             geoPoints=new ArrayList<GeoPoint>(1);
             geoPoints.add((GeoPoint) getMapView().getMapCenter());
+            SimpleFeatureType featureType = editableLayer.getFeatureType();
+            GeometryDescriptor geometryDescriptor = featureType.getGeometryDescriptor();
+            GeometryType defaultGeometryType = geometryDescriptor.getType();
+            geometryType = defaultGeometryType.getDescription().toString();
         }
 
         try {
@@ -210,9 +217,9 @@ public class MarkerInfoWindowController {
 
                 JSONObject geojson = new JSONObject();
 
-                if(geometryType.equals(FormUtilities.GEOJSON_TYPE_POINT))
+                if(geometryType.equalsIgnoreCase(FormUtilities.GEOJSON_TYPE_POINT))
                     geojson.put(FormUtilities.GEOJSON_TAG_TYPE,FormUtilities.GEOJSON_TYPE_POINT);
-                else if(geometryType.equals(FormUtilities.GEOJSON_TYPE_MULTIPOINT))
+                else if(geometryType.equalsIgnoreCase(FormUtilities.GEOJSON_TYPE_MULTIPOINT))
                     geojson.put(FormUtilities.GEOJSON_TAG_TYPE,FormUtilities.GEOJSON_TYPE_MULTIPOINT);
 
                 JSONArray coordinates = new JSONArray();
