@@ -24,9 +24,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -132,10 +136,12 @@ public class TagsManager {
      * @throws Exception if something goes wrong.
      */
     public static synchronized TagsManager getInstance(String tags) throws JSONException {
-        if (tagsManager == null) {
+        /*if (tagsManager == null) {
             tagsManager = new TagsManager();
             tagsManager.getTags(tags);
-        }
+        }*/
+        tagsManager = new TagsManager();
+        tagsManager.getTags(tags);
         if (tagsManager == null) throw new JSONException("The forms configuration is invalid.");
         return tagsManager;
     }
@@ -174,7 +180,9 @@ public class TagsManager {
                 if('['!=tags.charAt(0)) {
                     tags = "["+tags+"]";
                 }
-                sectionsArrayObj = new JSONArray(tags);
+
+                sectionsArrayObj = new JSONArray(readStringUsingEncoding(tags));
+
             }catch (Exception e) {
                 e.printStackTrace();
             }
@@ -187,6 +195,18 @@ public class TagsManager {
                 }
             }
         }
+    }
+
+    private String readStringUsingEncoding(String tags) throws IOException {
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(tags.getBytes());
+        BufferedReader r = new BufferedReader(new InputStreamReader(inputStream, "ISO8859-1"));
+        inputStream.close();
+        StringBuilder total = new StringBuilder();
+        String line;
+        while ((line = r.readLine()) != null) {
+            total.append(line);
+        }
+        return total.toString();
     }
 
     /**
