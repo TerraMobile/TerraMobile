@@ -117,7 +117,7 @@ public class MenuMapController {
                 || layer.getType()==GpkgLayer.Type.EDITABLE)
         {
 
-            removeVectorLayer(layer);;
+            removeVectorLayer(layer);
 
         } else
         if(layer.getType()==GpkgLayer.Type.TILES)

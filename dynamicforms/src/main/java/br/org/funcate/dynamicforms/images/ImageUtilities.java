@@ -27,7 +27,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
 
-import br.org.funcate.dynamicforms.util.FileUtilities;
 import br.org.funcate.dynamicforms.util.TimeUtilities;
 
 /**
@@ -146,46 +145,65 @@ public class ImageUtilities {
     }
 
     /**
-     * This method overwrites the original file.
-     * @param targetW, the output width
-     * @param targetH, the output height
+     * This method will reduce the original image to the predefined dimensions.
+     * If size this file is greater than the max size defined by MAX_IMAGE_FILE_SIZE,
+     * then the reduce factor is applied until this file be reduced to minor size.
+     * This overwrites the original file.
      * @param imagePath, the path to input file image
-     * @return true in sucess or false otherwise
+     * @return true in success or false otherwise
      */
-    public static boolean resampleImage(int targetW, int targetH, String imagePath) {
-        Bitmap outputBitmap = getScaledBitmap(targetW, targetH, imagePath);
-        if(outputBitmap==null) return false;
-        byte[] blob = getBlobFromBitmap(outputBitmap);
-        if(blob.length<=0) return false;
-        try {
+    public static boolean resampleImage(String imagePath) throws Throwable {
+        File imageFile = new File(imagePath);
+        int reductionFactor=90;
 
-            writeImageDataToFile(blob, imagePath);
-        }catch (IOException e) {
-            e.printStackTrace();
-            return false;
+        while (imageFile.length() > ImageUtilities.MAX_IMAGE_FILE_SIZE) {
+
+            try {
+                Bitmap outputBitmap = ImageUtilities.getScaledBitmap(imagePath, reductionFactor);
+                if (outputBitmap == null) return false;
+                byte[] blob = ImageUtilities.getBlobFromBitmap(outputBitmap, reductionFactor);
+                if (blob==null || blob.length <= 0) return false;
+                writeImageDataToFile(blob, imagePath);
+                blob=null;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return false;
+            }
+            imageFile = new File(imagePath);
+            reductionFactor -= 10;
         }
+
         return true;
     }
 
-    public static Bitmap getScaledBitmap(int targetW, int targetH, String imagePath) {
 
+    /**
+     * Rescale one image to reduce the size.
+     * @param imagePath, the path to JPEG image file
+     * @return The smaller Bitmap.
+     */
+    public static Bitmap getScaledBitmap(String imagePath, int reductionFactor) throws Throwable {
+
+        // Get the dimensions of the bitmap
+        BitmapFactory.Options bmOptions = getImageDimensions(imagePath);
+        int targetW = Math.round(bmOptions.outWidth * reductionFactor / 100);
+        int targetH = Math.round(bmOptions.outHeight * reductionFactor / 100);
+
+        Bitmap outputBitmap =  Bitmap.createScaledBitmap(BitmapFactory.decodeFile(imagePath), targetW, targetH, false);
+
+        return outputBitmap;
+    }
+
+    public static BitmapFactory.Options getImageDimensions(String imagePath) {
         // Get the dimensions of the bitmap
         BitmapFactory.Options bmOptions = new BitmapFactory.Options();
         bmOptions.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(imagePath, bmOptions);
-        int photoW = bmOptions.outWidth;
-        int photoH = bmOptions.outHeight;
-
-        // Determine how much to scale down the image
-        int scaleFactor = Math.min(photoW / targetW, photoH / targetH);
-
-        // Decode the image file into a Bitmap sized to fill the View
-        bmOptions.inJustDecodeBounds = false;
-        bmOptions.inSampleSize = scaleFactor;
-        bmOptions.inPurgeable = true;
-
-        Bitmap bitmap = BitmapFactory.decodeFile(imagePath, bmOptions);
-        return bitmap;
+        //String imageType = bmOptions.outMimeType;
+        return bmOptions;
     }
 
     public static Bitmap makeThumbnail(Bitmap image) {
@@ -206,12 +224,15 @@ public class ImageUtilities {
         return bitmap;
     }
 
-    public static byte[] getBlobFromBitmap(Bitmap image) {
+    public static byte[] getBlobFromBitmap(Bitmap image, int jpegQuality) throws IOException {
 
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        image.compress(Bitmap.CompressFormat.JPEG, 90, stream);
+        if(!image.compress(Bitmap.CompressFormat.JPEG, jpegQuality, stream)) {
+            stream.close();
+            return null;
+        }
         byte[] imageBytes = stream.toByteArray();
-
+        stream.close();
         return imageBytes;
     }
 
