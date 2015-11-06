@@ -1,0 +1,26 @@
+package br.org.funcate.terramobile.model.tilesource;
+
+import org.osmdroid.tileprovider.MapTile;
+
+import android.os.Handler;
+import android.os.Message;
+import android.view.View;
+
+public class TerraMobileInvalidationHandler extends Handler {
+
+    private final View mView;
+
+    public TerraMobileInvalidationHandler(final View pView) {
+        super();
+        mView = pView;
+    }
+
+    @Override
+    public void handleMessage(final Message msg) {
+        switch (msg.what) {
+            case MapTile.MAPTILE_SUCCESS_ID:
+              //  mView.invalidate();
+                break;
+        }
+    }
+}
