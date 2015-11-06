@@ -209,10 +209,33 @@ public class GPictureView extends View implements GView {
                         public void run() {
 
                             byte[] image = ImageUtilities.getImageFromPath(imagePath, 2);
-                            Bitmap imageBitmap = ImageUtilities.getBitmapFromBlob(image);
-                            Bitmap thumbnail = ImageUtilities.makeThumbnail(imageBitmap);
+                            if(image!=null && image.length > 0) {
+                                Bitmap imageBitmap = ImageUtilities.getBitmapFromBlob(image);
+                                try {
+                                    image=null;
+                                }catch (Throwable t) {
+                                    t.printStackTrace();
+                                    getDefaultBitmap();
+                                    return;
+                                }
+
+                                Bitmap thumbnail = ImageUtilities.makeThumbnail(imageBitmap);
+                                if(imageBitmap.isRecycled()) imageBitmap.recycle();
+                                pgBar.setVisibility(View.GONE);
+                                imageLayout.addView(getImageView(context, thumbnail, imageId));
+                                imageLayout.invalidate();
+                                if(thumbnail.isRecycled()) thumbnail.recycle();
+                            }else{
+                                getDefaultBitmap();
+                            }
+                            return;
+                        }
+                        public void getDefaultBitmap(){
                             pgBar.setVisibility(View.GONE);
-                            imageLayout.addView(getImageView(context, thumbnail, imageId));
+                            Bitmap bitmapError = BitmapFactory.decodeResource(getResources(), R.drawable.ic_stat_action_highlight_remove);
+                            imageLayout.addView(getImageView(context, bitmapError, imageId));
+                            imageLayout.invalidate();
+                            if(bitmapError.isRecycled()) bitmapError.recycle();
                         }
                     }, increaseTime*1000+1000);
                 }
@@ -232,22 +255,39 @@ public class GPictureView extends View implements GView {
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
                     public void run() {
-                        File imageFile = new File(imagePath);
-                        if (imageFile.exists()) {
-                            if (imageFile.length() > ImageUtilities.MAX_IMAGE_FILE_SIZE) {
-                                if(!ImageUtilities.resampleImage(bestWidthSize, bestHeightSize, imagePath)) {
-                                    pgBar.setVisibility(View.GONE);
-                                    Bitmap bitmapError = BitmapFactory.decodeResource(getResources(),R.drawable.ic_stat_action_highlight_remove);
-                                    imageLayout.addView(getImageView(context, bitmapError, imageId));
+                        try {
+                            File imageFile = new File(imagePath);
+                            if (imageFile.exists()) {
+                                if (!ImageUtilities.resampleImage(imagePath)) {
+                                    getDefaultBitmap();
                                     return;
                                 }
+                                byte[] image = ImageUtilities.getImageFromPath(imagePath, 2);
+                                if(image!=null) {
+                                    Bitmap imageBitmap = ImageUtilities.getBitmapFromBlob(image);
+                                    image = null;
+                                    Bitmap thumbnail = ImageUtilities.makeThumbnail(imageBitmap);
+                                    imageBitmap = null;
+                                    pgBar.setVisibility(View.GONE);
+                                    imageLayout.addView(getImageView(context, thumbnail, imageId));
+                                    thumbnail = null;
+                                    imageLayout.invalidate();
+                                }else{
+                                    getDefaultBitmap();
+                                }
                             }
-                            byte[] image = ImageUtilities.getImageFromPath(imagePath, 2);
-                            Bitmap imageBitmap = ImageUtilities.getBitmapFromBlob(image);
-                            Bitmap thumbnail = ImageUtilities.makeThumbnail(imageBitmap);
-                            pgBar.setVisibility(View.GONE);
-                            imageLayout.addView(getImageView(context, thumbnail, imageId));
+                        }catch (Throwable e){
+                            e.printStackTrace();
+                            getDefaultBitmap();
+                            return;
                         }
+                        return;
+                    }
+                    public void getDefaultBitmap(){
+                        pgBar.setVisibility(View.GONE);
+                        Bitmap bitmapError = BitmapFactory.decodeResource(getResources(), R.drawable.ic_stat_action_highlight_remove);
+                        imageLayout.addView(getImageView(context, bitmapError, imageId));
+                        imageLayout.invalidate();
                     }
                 }, increaseTime*1000+1000);
 
