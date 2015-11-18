@@ -159,7 +159,6 @@ public class MarkerInfoWindowController {
         if(pointID>=0) {
             try {
                 feature = AppGeoPackageService.getFeature(editableLayer, pointID);
-                images = AppGeoPackageService.getImagesFromDatabase(editableLayer, pointID);
             } catch (InvalidAppConfigException e) {
                 e.printStackTrace();
                 Message.showErrorMessage(mainActivity, R.string.failure_title_msg, e.getMessage());
@@ -176,6 +175,16 @@ public class MarkerInfoWindowController {
                 e.printStackTrace();
                 Message.showErrorMessage(mainActivity, R.string.failure_title_msg, R.string.error_start_form);
                 return;
+            }
+
+            try {
+                images = AppGeoPackageService.getImagesFromDatabase(editableLayer, pointID);
+            } catch (TerraMobileException e) {
+                e.printStackTrace();
+                images = null;
+            } catch (Exception e) {
+                e.printStackTrace();
+                images = null;
             }
 
             if (feature!=null && feature.getDefaultGeometry() != null) {
