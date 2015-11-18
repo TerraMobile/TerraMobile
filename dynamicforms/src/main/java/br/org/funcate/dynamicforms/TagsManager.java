@@ -24,13 +24,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -181,7 +177,7 @@ public class TagsManager {
                     tags = "["+tags+"]";
                 }
 
-                sectionsArrayObj = new JSONArray(readStringUsingEncoding(tags));
+                sectionsArrayObj = new JSONArray(tags);
 
             }catch (Exception e) {
                 e.printStackTrace();
@@ -195,18 +191,6 @@ public class TagsManager {
                 }
             }
         }
-    }
-
-    private String readStringUsingEncoding(String tags) throws IOException {
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(tags.getBytes());
-        BufferedReader r = new BufferedReader(new InputStreamReader(inputStream, "ISO8859-1"));
-        inputStream.close();
-        StringBuilder total = new StringBuilder();
-        String line;
-        while ((line = r.readLine()) != null) {
-            total.append(line);
-        }
-        return total.toString();
     }
 
     /**
