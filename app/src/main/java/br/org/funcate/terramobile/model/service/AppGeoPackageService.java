@@ -139,7 +139,7 @@ public class AppGeoPackageService {
                 throw new InvalidGeopackageException("Invalid number of field on GPKG content table. ");
             }
 
-            layer.setIndexOverlay(i);
+            layer.setPosition(i);
 
             String layerName=null;
             GpkgField dataTypeField = null;
@@ -185,7 +185,7 @@ public class AppGeoPackageService {
                     layer.setFields(GeoPackageService.getLayerFields(gpkg, layerName));
                     layer.setFeatureType(GeoPackageService.getLayerFeatureType(gpkg, layerName));
                     layer.setMediaTable(tmConfigEditableLayer.getMediaTableConfig(layerName));
-                    layer.setIndexOverlay(0);
+                    layer.setPosition(0);
                 }
             } else if("tiles".equals(dataTypeField.getValue()))
             {

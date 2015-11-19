@@ -249,6 +249,9 @@ public class TreeViewController {
                     } catch (LowMemoryException e) {
                         e.printStackTrace();
                         Message.showErrorMessage(((MainActivity) context), R.string.error, e.getMessage());
+                    } catch (SettingsException e) {
+                        e.printStackTrace();
+                        Message.showErrorMessage(((MainActivity) context), R.string.error, e.getMessage());
                     }
                 }
             }

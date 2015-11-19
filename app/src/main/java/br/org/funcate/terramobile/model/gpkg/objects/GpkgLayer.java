@@ -26,7 +26,6 @@ public class GpkgLayer{
     private String name;
     private Type type;
     private GeoPackage geoPackage;
-    private int indexOverlay;
     private BoundingBox box;
     private Integer srsId;
     private String JSON;
@@ -67,14 +66,6 @@ public class GpkgLayer{
 
     public void setGeoPackage(GeoPackage geoPackage) {
         this.geoPackage = geoPackage;
-    }
-
-    public int getIndexOverlay() {
-        return indexOverlay;
-    }
-
-    public void setIndexOverlay(int indexOverlay) {
-        this.indexOverlay = indexOverlay;
     }
 
     public BoundingBox getBox()

@@ -91,6 +91,10 @@
     <string name="failed_getting_project_creation_date">Failed getting a project creation date.</string>
     <string name="invalid_project">Unable to load due to invalid project.</string>
     <string name="download_project_first">Please download project first.</string>
+    <string name="layer_settings_insert_exception">Unable to insert layer settings on database.</string>
+    <string name="layer_settings_update_exception">Unable to update layer settings on database.</string>
+    <string name="layer_settings_query_exception">Unable to get layer settings from database.</string>
+
     <!-- Message window title -->
     <string name="error">Error</string>
     <string name="success">Success</string>

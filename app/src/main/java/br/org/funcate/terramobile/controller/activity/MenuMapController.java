@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
 import br.org.funcate.terramobile.model.exception.LowMemoryException;
+import br.org.funcate.terramobile.model.exception.SettingsException;
 import br.org.funcate.terramobile.model.exception.StyleException;
 import br.org.funcate.terramobile.model.exception.TerraMobileException;
 import br.org.funcate.terramobile.model.geomsource.SFSLayer;
@@ -200,8 +201,7 @@ public class MenuMapController {
         }
     }
 
-    public void updateOverlaysOrder(ArrayList<GpkgLayer> orderedLayers)
-    {
+    public void updateOverlaysOrder(ArrayList<GpkgLayer> orderedLayers) throws SettingsException, InvalidAppConfigException {
         MapView mapView = mapFragment.getMapView();
         boolean hasGPSLayer = this.mainController.getGpsOverlayController().isOverlayAdded();
         // Unregister the listener to service Location and remove GPS Overlay
@@ -210,16 +210,19 @@ public class MenuMapController {
         // registered Listener to service Location and added GPS Overlay
         if(hasGPSLayer) this.mainController.getGpsOverlayController().addGPSTrackerLayer();
         mapView.invalidate();
+        LayersService.updateLayerSettings(context, mainController.getCurrentProject(), orderedLayers);
     }
 
-    public void enableLayer(GpkgLayer layer) throws StyleException, InvalidAppConfigException, TerraMobileException, LowMemoryException {
+
+    public void enableLayer(GpkgLayer layer) throws StyleException, InvalidAppConfigException, TerraMobileException, LowMemoryException, SettingsException {
+        layer.setEnabled(true);
         addLayer(layer);
         //Correct the layer order by the GPKGLayer index.
         updateOverlaysOrder(LayersService.composeLinearLayerList(mainController.getTreeViewController().getLayersWithGroups()));
     }
 
-    public void disableLayer(GpkgLayer layer)
-    {
+    public void disableLayer(GpkgLayer layer) throws SettingsException, InvalidAppConfigException {
+        layer.setEnabled(false);
         removeLayer(layer);
         //Correct the layer order by the GPKGLayer index.
         updateOverlaysOrder(LayersService.composeLinearLayerList(mainController.getTreeViewController().getLayersWithGroups()));

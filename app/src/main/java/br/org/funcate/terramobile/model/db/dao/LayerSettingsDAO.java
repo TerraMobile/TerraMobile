@@ -5,6 +5,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 
+import java.util.ArrayList;
+
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.model.db.DatabaseHelper;
 import br.org.funcate.terramobile.model.exception.DAOException;
@@ -35,7 +37,7 @@ public class LayerSettingsDAO {
             if (db != null) {
                 ContentValues contentValues = new ContentValues();
                 contentValues.put("LAYER_NAME", layerName);
-                contentValues.put("ENABLE", visible);
+                contentValues.put("ENABLED", visible);
                 contentValues.put("POSITION", position);
                 if (db.update(TABLE_NAME, contentValues, "LAYER_NAME = ?", new String[]{layerName}) > 0) {
                     db.close();
@@ -46,11 +48,11 @@ public class LayerSettingsDAO {
             return false;
         } catch (SQLiteException e) {
             e.printStackTrace();
-            throw new DAOException(ResourceHelper.getStringResource(R.string.style_update_exception),e);
+            throw new DAOException(ResourceHelper.getStringResource(R.string.layer_settings_update_exception),e);
         }
     }
 
-    public boolean load(GpkgLayer layer) throws InvalidAppConfigException, DAOException {
+       public boolean load(GpkgLayer layer) throws InvalidAppConfigException, DAOException {
         try {
             SQLiteDatabase db = database.getReadableDatabase();
 
@@ -87,18 +89,18 @@ public class LayerSettingsDAO {
             }
         } catch (SQLiteException e) {
             e.printStackTrace();
-            throw new DAOException(ResourceHelper.getStringResource(R.string.style_query_exception),e);
+            throw new DAOException(ResourceHelper.getStringResource(R.string.layer_settings_query_exception),e);
         }
         return false;
     }
 
-    public boolean insert(String layerName, int visible, int position) throws InvalidAppConfigException, DAOException {
+    private boolean insert(String layerName, int visible, int position) throws InvalidAppConfigException, DAOException {
         try {
             SQLiteDatabase db = database.getWritableDatabase();
             if (db != null) {
                 ContentValues contentValues = new ContentValues();
                 contentValues.put("LAYER_NAME", layerName);
-                contentValues.put("ENABLE", visible);
+                contentValues.put("ENABLED", visible);
                 contentValues.put("POSITION", position);
                 if (db.insert(TABLE_NAME, null, contentValues) != -1) {
                     db.close();
@@ -109,7 +111,37 @@ public class LayerSettingsDAO {
             return false;
         } catch (SQLiteException e) {
             e.printStackTrace();
-            throw new DAOException(ResourceHelper.getStringResource(R.string.style_insert_exception),e);
+            throw new DAOException(ResourceHelper.getStringResource(R.string.layer_settings_insert_exception),e);
+        }
+    }
+
+    public boolean insertAll(ArrayList<GpkgLayer> layers) throws InvalidAppConfigException, DAOException {
+        boolean success=true;
+        for (int i = 0; i < layers.size(); i++) {
+            success = insert(layers.get(i).getName(),layers.get(i).isEnabled()?1:0, layers.get(i).getPosition());
+            if(!success)
+            {
+                return false;
+            }
+        }
+        return success;
+    }
+
+    public boolean deleteAll() throws InvalidAppConfigException, DAOException {
+        try {
+            SQLiteDatabase db = database.getWritableDatabase();
+            if (db != null) {
+
+                if (db.delete(TABLE_NAME, null, null) != -1) {
+                    db.close();
+                    return true;
+                }
+                db.close();
+            }
+            return false;
+        } catch (SQLiteException e) {
+            e.printStackTrace();
+            throw new DAOException(ResourceHelper.getStringResource(R.string.layer_settings_insert_exception),e);
         }
     }
 }
