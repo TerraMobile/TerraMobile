@@ -2,7 +2,6 @@ package br.org.funcate.terramobile.controller.activity;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.view.View;
 import android.widget.Toast;
 
 import org.opengis.geometry.BoundingBox;
@@ -10,21 +9,17 @@ import org.osmdroid.ResourceProxy;
 import org.osmdroid.bonuspack.kml.KmlDocument;
 import org.osmdroid.bonuspack.kml.Style;
 import org.osmdroid.tileprovider.MapTileProviderArray;
-import org.osmdroid.tileprovider.MapTileProviderBasic;
 import org.osmdroid.tileprovider.modules.MapTileModuleProviderBase;
 import org.osmdroid.tileprovider.tilesource.ITileSource;
 import org.osmdroid.tileprovider.tilesource.XYTileSource;
-import org.osmdroid.tileprovider.util.SimpleInvalidationHandler;
 import org.osmdroid.tileprovider.util.SimpleRegisterReceiver;
 import org.osmdroid.util.BoundingBoxE6;
 import org.osmdroid.views.MapView;
-import org.osmdroid.views.overlay.DirectedLocationOverlay;
 import org.osmdroid.views.overlay.Overlay;
 import org.osmdroid.views.overlay.TilesOverlay;
 
 import java.util.ArrayList;
 
-import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
 import br.org.funcate.terramobile.model.exception.LowMemoryException;
 import br.org.funcate.terramobile.model.exception.SettingsException;
@@ -33,9 +28,9 @@ import br.org.funcate.terramobile.model.exception.TerraMobileException;
 import br.org.funcate.terramobile.model.geomsource.SFSLayer;
 import br.org.funcate.terramobile.model.geomsource.overlay.SFSLayerOverlay;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
+import br.org.funcate.terramobile.model.service.AppGeoPackageService;
 import br.org.funcate.terramobile.model.service.LayersService;
 import br.org.funcate.terramobile.model.service.StyleService;
-import br.org.funcate.terramobile.model.service.AppGeoPackageService;
 import br.org.funcate.terramobile.model.tilesource.MapTileGeoPackageProvider;
 import br.org.funcate.terramobile.model.tilesource.MapTileProviderArrayGeoPackage;
 import br.org.funcate.terramobile.model.tilesource.TerraMobileInvalidationHandler;
@@ -224,6 +219,7 @@ public class MenuMapController {
     public void disableLayer(GpkgLayer layer) throws SettingsException, InvalidAppConfigException {
         layer.setEnabled(false);
         removeLayer(layer);
+        mainController.getMarkerInfoWindowController().closeAllInfoWindows();
         //Correct the layer order by the GPKGLayer index.
         updateOverlaysOrder(LayersService.composeLinearLayerList(mainController.getTreeViewController().getLayersWithGroups()));
     }
@@ -236,11 +232,6 @@ public class MenuMapController {
     public void setMapFragment(MapFragment mapFragment)
     {
         this.mapFragment = mapFragment;
-    }
-
-    public void postMapLoad()
-    {
-
     }
 
 }

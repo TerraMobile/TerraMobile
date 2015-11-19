@@ -132,10 +132,12 @@ public class TagsManager {
      * @throws Exception if something goes wrong.
      */
     public static synchronized TagsManager getInstance(String tags) throws JSONException {
-        if (tagsManager == null) {
+        /*if (tagsManager == null) {
             tagsManager = new TagsManager();
             tagsManager.getTags(tags);
-        }
+        }*/
+        tagsManager = new TagsManager();
+        tagsManager.getTags(tags);
         if (tagsManager == null) throw new JSONException("The forms configuration is invalid.");
         return tagsManager;
     }
@@ -174,7 +176,9 @@ public class TagsManager {
                 if('['!=tags.charAt(0)) {
                     tags = "["+tags+"]";
                 }
+
                 sectionsArrayObj = new JSONArray(tags);
+
             }catch (Exception e) {
                 e.printStackTrace();
             }
