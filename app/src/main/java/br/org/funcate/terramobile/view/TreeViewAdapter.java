@@ -20,6 +20,7 @@ import br.org.funcate.terramobile.controller.activity.MenuMapController;
 import br.org.funcate.terramobile.controller.activity.TreeViewController;
 import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
 import br.org.funcate.terramobile.model.exception.LowMemoryException;
+import br.org.funcate.terramobile.model.exception.SettingsException;
 import br.org.funcate.terramobile.model.exception.StyleException;
 import br.org.funcate.terramobile.model.exception.TerraMobileException;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
@@ -103,6 +104,9 @@ public class TreeViewAdapter extends BaseExpandableListAdapter implements View.O
             e.printStackTrace();
             Message.showErrorMessage(((MainActivity) context), R.string.error, e.getMessage());
         } catch (StyleException e) {
+            e.printStackTrace();
+            Message.showErrorMessage(((MainActivity) context), R.string.error, e.getMessage());
+        } catch (SettingsException e) {
             e.printStackTrace();
             Message.showErrorMessage(((MainActivity) context), R.string.error, e.getMessage());
         }
@@ -282,6 +286,7 @@ public class TreeViewAdapter extends BaseExpandableListAdapter implements View.O
 
     private void moveLayerUp(int currentGroupPos, int currentPos)
     {
+
         ArrayList<GpkgLayer> layers = childItem.get(currentGroupPos);
 
         if(currentPos!=0) //This condition keeps the layer inside his group
@@ -289,15 +294,23 @@ public class TreeViewAdapter extends BaseExpandableListAdapter implements View.O
             GpkgLayer currentLayer = layers.get(currentPos);
             GpkgLayer upLayer = layers.get(currentPos-1);
 
-            //Changing GpkgLayer index overlay
-            int currLayerPos = currentLayer.getIndexOverlay();
-            currentLayer.setIndexOverlay(upLayer.getIndexOverlay());
-            upLayer.setIndexOverlay(currLayerPos);
+            int tempPosition = currentLayer.getPosition();
+            currentLayer.setPosition(upLayer.getPosition());
+            upLayer.setPosition(tempPosition);
 
             //Correct the layer order by the GPKGLayer index.
-            LayersService.sortLayersByIndex(layers);
-            menuMapController.updateOverlaysOrder(LayersService.composeLinearLayerList(childItem));
+            LayersService.sortLayersByPosition(layers);
 
+
+            try {
+                menuMapController.updateOverlaysOrder(LayersService.composeLinearLayerList(childItem));
+            } catch (SettingsException e) {
+                e.printStackTrace();
+                Message.showErrorMessage(((MainActivity) context), R.string.error, e.getMessage());
+            } catch (InvalidAppConfigException e) {
+                e.printStackTrace();
+                Message.showErrorMessage(((MainActivity) context), R.string.error, e.getMessage());
+            }
             notifyDataSetChanged();
         }
     }
@@ -309,17 +322,24 @@ public class TreeViewAdapter extends BaseExpandableListAdapter implements View.O
         {
             GpkgLayer currentLayer = layers.get(currentPos);
             GpkgLayer downLayer = layers.get(currentPos+1);
-/*            layers.set(currentPos, downLayer);
-            layers.set(currentPos+1, currentLayer);*/
 
-            //Changing GpkgLayer index overlay
-            int currLayerPos = currentLayer.getIndexOverlay();
-            currentLayer.setIndexOverlay(downLayer.getIndexOverlay());
-            downLayer.setIndexOverlay(currLayerPos);
+            int tempPosition = currentLayer.getPosition();
+            currentLayer.setPosition(downLayer.getPosition());
+            downLayer.setPosition(tempPosition);
 
             //Correct the layer order by the GPKGLayer index.
-            LayersService.sortLayersByIndex(layers);
-            menuMapController.updateOverlaysOrder(LayersService.composeLinearLayerList(childItem));
+            LayersService.sortLayersByPosition(layers);
+
+            try {
+                menuMapController.updateOverlaysOrder(LayersService.composeLinearLayerList(childItem));
+            } catch (SettingsException e) {
+                e.printStackTrace();
+                Message.showErrorMessage(((MainActivity) context), R.string.error, e.getMessage());
+            } catch (InvalidAppConfigException e) {
+                e.printStackTrace();
+                Message.showErrorMessage(((MainActivity) context), R.string.error, e.getMessage());
+            }
+
 
             notifyDataSetChanged();
         }

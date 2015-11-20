@@ -60,11 +60,11 @@ public class LayersService {
         return box;
     }
 
-    public static void sortLayersByIndex(ArrayList<GpkgLayer> layers) {
+    public static void sortLayersByPosition(ArrayList<GpkgLayer> layers) {
         Collections.sort(layers, new Comparator<GpkgLayer>() {
             @Override
             public int compare(GpkgLayer gpkgLayer, GpkgLayer gpkgLayer2) {
-                if (gpkgLayer.getIndexOverlay() > gpkgLayer2.getIndexOverlay()) {
+                if (gpkgLayer.getPosition() > gpkgLayer2.getPosition()) {
                     return 1;
                 } else {
                     return -1;
@@ -90,7 +90,8 @@ public class LayersService {
         for (int i = 0; i < gpkgLayers.size(); i++) {
             layers.addAll(gpkgLayers.get(i));
         }
-        sortLayersByIndex(layers);
+        //sortLayersByIndex(layers);
+        sortLayersByPosition(layers);
         return layers;
     }
 
@@ -114,6 +115,7 @@ public class LayersService {
         {
             layers = AppGeoPackageService.getLayers(prj, context);
             loadLayersSettings(context, prj, layers);
+            sortLayersByPosition(layers);
         }
 
         return layers;
@@ -131,4 +133,21 @@ public class LayersService {
         return true;
     }
 
+    public static void updateLayerSettings(Context context, Project project, ArrayList<GpkgLayer> layers) throws InvalidAppConfigException, SettingsException {
+        try {
+            LayerSettingsDAO layerSettingsDAO = new LayerSettingsDAO(DatabaseFactory.getDatabase(context, project.getFilePath()));
+
+            if(layerSettingsDAO.deleteAll())
+            {
+             /*   for (int i = 0; i < layers.size(); i++) {
+                    GpkgLayer l = layers.get(i);
+                    layerSettingsDAO.update(l.getName(), l.isEnabled()?1:0, l.getPosition());
+                    System.err.println("--------------====== "+l.getName() + " : " + l.getPosition());
+                }*/
+                layerSettingsDAO.insertAll(layers);
+            }
+        }  catch (DAOException e) {
+            throw new SettingsException(e.getMessage(), e);
+        }
+    }
 }
