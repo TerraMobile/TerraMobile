@@ -40,6 +40,7 @@ import br.org.funcate.terramobile.model.exception.TerraMobileException;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
 import br.org.funcate.terramobile.model.osmbonuspack.overlays.SFSEditableMarker;
 import br.org.funcate.terramobile.model.service.AppGeoPackageService;
+import br.org.funcate.terramobile.model.service.EditableLayerService;
 import br.org.funcate.terramobile.model.service.FeatureService;
 import br.org.funcate.terramobile.util.Message;
 import br.org.funcate.terramobile.util.ResourceHelper;
@@ -178,7 +179,7 @@ public class MarkerInfoWindowController {
             }
 
             try {
-                images = AppGeoPackageService.getImagesFromDatabase(editableLayer, pointID);
+                images = EditableLayerService.getImagesFromDatabase(editableLayer, pointID);
             } catch (TerraMobileException e) {
                 e.printStackTrace();
                 images = null;
@@ -295,7 +296,7 @@ public class MarkerInfoWindowController {
         if (resultCode == Activity.RESULT_OK && requestCode == FORM_RESULT_CODE) {
             Bundle extras = data.getBundleExtra(LibraryConstants.PREFS_KEY_FORM);
             try {
-                AppGeoPackageService.storeData(mainActivity, extras);
+                EditableLayerService.storeData(mainActivity, extras);
             }catch (TerraMobileException tme) {
                 tme.printStackTrace();
                 Message.showErrorMessage(mainActivity, R.string.error, R.string.missing_form_data);
