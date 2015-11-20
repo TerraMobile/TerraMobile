@@ -75,7 +75,6 @@ public class TreeViewAdapter extends BaseExpandableListAdapter implements View.O
                     GpkgLayer ed = treeView.getSelectedEditableLayer();
                     if(ed!=null)
                         menuMapController.disableLayer(ed);
-                    treeView.setSelectedEditableLayer(child);
 
                     RadioButton rBChildGatheringLayer = (RadioButton) v;
                     if (!rBChildGatheringLayer.isChecked()) {

@@ -22,9 +22,11 @@ import java.util.AbstractList;
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.controller.activity.MainActivity;
 import br.org.funcate.terramobile.controller.activity.MarkerInfoWindowController;
+import br.org.funcate.terramobile.controller.activity.TreeViewController;
 import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
 import br.org.funcate.terramobile.model.exception.TerraMobileException;
 import br.org.funcate.terramobile.model.geomsource.SFSPoint;
+import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
 import br.org.funcate.terramobile.model.service.GPSService;
 import br.org.funcate.terramobile.util.CallbackConfirmMessage;
 import br.org.funcate.terramobile.util.Message;
@@ -56,7 +58,12 @@ public class SFSEditableMarker extends Marker implements Marker.OnMarkerClickLis
     public Long getMarkerId() throws TerraMobileException, InvalidAppConfigException {
         String markerId = ((SFSPoint)this.getRelatedObject()).mId;
         if(markerId!=null) {
-            String editableLayerName = this.mMainActivity.getMainController().getTreeViewController().getSelectedEditableLayer().getName();
+            TreeViewController treeViewController = this.mMainActivity.getMainController().getTreeViewController();
+            GpkgLayer editableLayer = treeViewController.getSelectedEditableLayer();
+            if(editableLayer==null) {
+                throw new TerraMobileException( ResourceHelper.getStringResource(R.string.failure_on_identify_marker) );
+            }
+            String editableLayerName = treeViewController.getSelectedEditableLayer().getName();
             markerId = markerId.replaceFirst(editableLayerName, "");
         }else{
             throw new TerraMobileException( ResourceHelper.getStringResource(R.string.failure_on_identify_marker) );
