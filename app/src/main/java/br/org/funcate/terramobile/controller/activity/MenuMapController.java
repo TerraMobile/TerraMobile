@@ -62,13 +62,13 @@ public class MenuMapController {
                 SimpleRegisterReceiver simpleReceiver = new SimpleRegisterReceiver(context);
 
                 MapTileProviderArray tileProviderArray = new MapTileProviderArrayGeoPackage(tileSource, simpleReceiver, new MapTileModuleProviderBase[] { moduleProvider }, ((MainActivity) this.context).getMainController().getMapFragment());
-                tileProviderArray.setTileRequestCompleteHandler(new TerraMobileInvalidationHandler(mapView));
+                tileProviderArray.setTileRequestCompleteHandler(new TerraMobileInvalidationHandler(null));
                 final TilesOverlay tilesOverlay = new TilesOverlay(tileProviderArray, context);
                 tilesOverlay.setLoadingBackgroundColor(Color.TRANSPARENT);
                 mapView.getOverlays().add(tilesOverlay);
                 child.setOsmOverLayer(tilesOverlay);
 
-                mapView.setTileSource(tileSource);
+               // mapView.setTileSource(tileSource);
                 mapView.setUseDataConnection(false); //  letting osmdroid know you would use it in offline mode, keeps the mapView from loading online tiles using network connection.*/
                 mapView.invalidate();
             }

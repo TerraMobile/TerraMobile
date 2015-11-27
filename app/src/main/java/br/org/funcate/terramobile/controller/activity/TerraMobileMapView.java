@@ -3,6 +3,7 @@ package br.org.funcate.terramobile.controller.activity;
 import android.content.Context;
 import android.os.Handler;
 import android.util.AttributeSet;
+import android.view.View;
 
 import com.augtech.geoapi.geometry.BoundingBoxImpl;
 
@@ -30,7 +31,6 @@ public class TerraMobileMapView extends MapView {
         //super(context, attrs);
     }
 
-
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         super.onLayout(changed, l, t, r, b);
@@ -41,6 +41,7 @@ public class TerraMobileMapView extends MapView {
             mainController.onMapViewInitialized();
             initialized = true;
         }
+        ((TerraMobileInvalidationHandler)getTileRequestCompleteHandler()).setMapView(this);
        /* try {
             configureMapView(this);
         } catch (InvalidAppConfigException e) {
@@ -57,4 +58,5 @@ public class TerraMobileMapView extends MapView {
     {
         super.invalidate();
     }
+
 }

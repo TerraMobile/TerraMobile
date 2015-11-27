@@ -8,7 +8,7 @@ import android.view.View;
 
 public class TerraMobileInvalidationHandler extends Handler {
 
-    private final View mView;
+    private View mView;
 
     public TerraMobileInvalidationHandler(final View pView) {
         super();
@@ -19,8 +19,15 @@ public class TerraMobileInvalidationHandler extends Handler {
     public void handleMessage(final Message msg) {
         switch (msg.what) {
             case MapTile.MAPTILE_SUCCESS_ID:
-              //  mView.invalidate();
+                if(mView!=null)
+                {
+                    mView.invalidate();
+                }
                 break;
         }
+    }
+
+    public void setMapView(View mView) {
+        this.mView = mView;
     }
 }
