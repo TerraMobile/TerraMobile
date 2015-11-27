@@ -212,6 +212,9 @@ public class MenuMapController {
     public void enableLayer(GpkgLayer layer) throws StyleException, InvalidAppConfigException, TerraMobileException, LowMemoryException, SettingsException {
         layer.setEnabled(true);
         addLayer(layer);
+        if(layer.isEditable()) {
+            mainController.getTreeViewController().setSelectedEditableLayer(layer);
+        }
         //Correct the layer order by the GPKGLayer index.
         updateOverlaysOrder(LayersService.composeLinearLayerList(mainController.getTreeViewController().getLayersWithGroups()));
     }
@@ -219,7 +222,9 @@ public class MenuMapController {
     public void disableLayer(GpkgLayer layer) throws SettingsException, InvalidAppConfigException {
         layer.setEnabled(false);
         removeLayer(layer);
-        mainController.getMarkerInfoWindowController().closeAllInfoWindows();
+        if(layer.isEditable()) {
+            mainController.getMarkerInfoWindowController().closeAllInfoWindows();
+        }
         //Correct the layer order by the GPKGLayer index.
         updateOverlaysOrder(LayersService.composeLinearLayerList(mainController.getTreeViewController().getLayersWithGroups()));
     }

@@ -6,7 +6,6 @@ import com.augtech.geoapi.geopackage.GpkgField;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.geometry.BoundingBox;
 import org.osmdroid.bonuspack.kml.Style;
-import org.osmdroid.util.BoundingBoxE6;
 import org.osmdroid.views.overlay.Overlay;
 
 import java.util.ArrayList;
@@ -58,6 +57,10 @@ public class GpkgLayer{
 
     public void setType(Type type) {
         this.type = type;
+    }
+
+    public boolean isEditable() {
+        return Type.EDITABLE.equals(this.type);
     }
 
     public GeoPackage getGeoPackage() {
