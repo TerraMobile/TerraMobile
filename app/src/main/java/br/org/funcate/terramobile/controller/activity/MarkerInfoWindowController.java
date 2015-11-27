@@ -34,6 +34,7 @@ import br.org.funcate.dynamicforms.images.ImageUtilities;
 import br.org.funcate.dynamicforms.util.LibraryConstants;
 import br.org.funcate.jgpkg.exception.QueryException;
 import br.org.funcate.terramobile.R;
+import br.org.funcate.terramobile.model.exception.DAOException;
 import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
 import br.org.funcate.terramobile.model.exception.LowMemoryException;
 import br.org.funcate.terramobile.model.exception.TerraMobileException;
@@ -179,8 +180,14 @@ public class MarkerInfoWindowController {
             }
 
             try {
-                images = EditableLayerService.getImagesFromDatabase(editableLayer, pointID);
+                images = EditableLayerService.getImagesFromDatabase(mainActivity, editableLayer, pointID);
             } catch (TerraMobileException e) {
+                e.printStackTrace();
+                images = null;
+            } catch (DAOException e) {
+                e.printStackTrace();
+                images = null;
+            } catch (InvalidAppConfigException e) {
                 e.printStackTrace();
                 images = null;
             } catch (Exception e) {
@@ -190,9 +197,12 @@ public class MarkerInfoWindowController {
 
             if (feature!=null && feature.getDefaultGeometry() != null) {
                 geom = (Geometry) feature.getDefaultGeometry();
+                SimpleFeatureType featureType = feature.getFeatureType();
+                GeometryDescriptor geometryDescriptor = featureType.getGeometryDescriptor();
+                GeometryType defaultGeometryType = geometryDescriptor.getType();
+                geometryType = defaultGeometryType.getDescription().toString();
                 if(geom!=null) {
-                    geometryType=geom.getGeometryType();
-                    if(geometryType.equals(FormUtilities.GEOJSON_TYPE_POINT) || geometryType.equals(FormUtilities.GEOJSON_TYPE_MULTIPOINT)) {
+                    if(geometryType.equalsIgnoreCase(FormUtilities.GEOJSON_TYPE_POINT) || geometryType.equalsIgnoreCase(FormUtilities.GEOJSON_TYPE_MULTIPOINT)) {
                         Coordinate[] coords = geom.getCoordinates();
                         int coordsLength = coords.length;
                         geoPoints=new ArrayList<GeoPoint>(coordsLength);
@@ -302,6 +312,9 @@ public class MarkerInfoWindowController {
                 Message.showErrorMessage(mainActivity, R.string.error, R.string.missing_form_data);
             }catch (QueryException qe) {
                 qe.printStackTrace();
+                Message.showErrorMessage(mainActivity, R.string.error, R.string.error_while_storing_form_data);
+            }catch (DAOException de) {
+                de.printStackTrace();
                 Message.showErrorMessage(mainActivity, R.string.error, R.string.error_while_storing_form_data);
             }
             this.mainActivity.getMainController().getMapFragment().updateMap();

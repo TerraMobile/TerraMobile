@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 
 import com.augtech.geoapi.feature.SimpleFeatureImpl;
+import com.augtech.geoapi.geopackage.GeoPackage;
 import com.augtech.geoapi.geopackage.GpkgField;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -33,6 +34,7 @@ import br.org.funcate.jgpkg.service.GeoPackageService;
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.controller.activity.MainActivity;
 import br.org.funcate.terramobile.controller.activity.TreeViewController;
+import br.org.funcate.terramobile.model.exception.DAOException;
 import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
 import br.org.funcate.terramobile.model.exception.StyleException;
 import br.org.funcate.terramobile.model.exception.TerraMobileException;
@@ -50,7 +52,7 @@ public class EditableLayerService {
      * @throws TerraMobileException
      * @throws QueryException
      */
-    public static void storeData(Context context, Bundle formData) throws TerraMobileException, QueryException {
+    public static void storeData(Context context, Bundle formData) throws TerraMobileException, QueryException, DAOException {
         ArrayList<String> keys = formData.getStringArrayList(LibraryConstants.FORM_KEYS);
         TreeViewController tv = ((MainActivity)context).getMainController().getTreeViewController();
         if(keys==null || keys.isEmpty()){
@@ -60,9 +62,12 @@ public class EditableLayerService {
                 SimpleFeature feature = makeSimpleFeature(formData, tv);
                 ArrayList<String> databaseImages = getOldImagesFromForm(formData);
                 ArrayList<Object> insertImages = getNewImagesFromForm(formData);
-                GeoPackageService.writeLayerFeature(tv.getSelectedEditableLayer().getGeoPackage(), tv.getSelectedEditableLayer().getMediaTable(), feature, databaseImages, insertImages);
+                GeoPackage geoPackage = tv.getSelectedEditableLayer().getGeoPackage();
+                long featureID = GeoPackageService.writeLayerFeature(geoPackage, feature);
+                String mediaTable = tv.getSelectedEditableLayer().getMediaTable();
+                MediaService.writePictures(context, geoPackage, mediaTable, databaseImages, insertImages, featureID);
 
-                ((MainActivity)context).getMainController().getMenuMapController().removeLayer(tv.getSelectedEditableLayer());
+                ((MainActivity) context).getMainController().getMenuMapController().removeLayer(tv.getSelectedEditableLayer());
                 ((MainActivity)context).getMainController().getMenuMapController().addLayer(tv.getSelectedEditableLayer());
 
             }catch (Exception e) {
@@ -84,15 +89,16 @@ public class EditableLayerService {
 
     /**
      * Get all pictures associated to one Feature using their ID.
+     * @param context, The application context.
      * @param layer, The vector layer that contains the Feature.
      * @param featureID, The identity of the Feature.
      * @return A HashMap that contains the key and binary data to the pictures.
      * @throws TerraMobileException
      */
-    public static Map<String, Object> getImagesFromDatabase(GpkgLayer layer, long featureID) throws TerraMobileException {
+    public static Map<String, Object> getImagesFromDatabase(Context context, GpkgLayer layer, long featureID) throws TerraMobileException, InvalidAppConfigException, DAOException {
         Map<String, Object> images;
         try{
-            images = MediaService.getMedias(layer.getGeoPackage(), layer.getMediaTable(), featureID);
+            images = MediaService.getMedias(context, layer.getGeoPackage(), layer.getMediaTable(), featureID);
         }catch (QueryException qe){
             qe.printStackTrace();
             throw new TerraMobileException(qe.getMessage());
