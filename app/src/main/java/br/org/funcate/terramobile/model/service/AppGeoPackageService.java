@@ -74,7 +74,7 @@ public class AppGeoPackageService {
         }
 
         ArrayList<ArrayList<GpkgField>> layersList = GeoPackageService.getGpkgFieldsContents(gpkg, null, "");
-        TMConfigEditableLayer tmConfigEditableLayer = GeoPackageService.getTMConfigEditableLayer(gpkg);
+        TMConfigEditableLayer tmConfigEditableLayer = EditableLayerService.getTMConfigEditableLayer(gpkg);
         ArrayList<GpkgLayer> listLayers=new ArrayList<GpkgLayer>();
         GpkgLayer layer;
 
