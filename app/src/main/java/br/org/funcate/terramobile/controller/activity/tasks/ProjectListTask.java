@@ -97,7 +97,7 @@ public class ProjectListTask extends AsyncTask<String, String, JSONObject> {
 
             ArrayList<Project> aLItems = new ArrayList<Project>();
             ArrayList<File> files = Util.getGeoPackageFiles(appPath, mainActivity.getString(R.string.geopackage_extension));
-            if(!files.isEmpty()) {
+            if(files!=null && !files.isEmpty()) {
                 for (File file : files) {
                     String destinationFilePath = appPath.getPath() + "/" + file.getName();
 
