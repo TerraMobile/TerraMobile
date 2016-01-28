@@ -78,4 +78,13 @@ public class ProjectListFragment extends DialogFragment{
         return ((ProjectListAdapter)lVProject.getAdapter()).getDownloadTask();
     }
 
+    @Override
+    public void onActivityCreated(Bundle arg0) {
+        if (getDialog() == null) {  // Returns mDialog
+            // Tells DialogFragment to not use the fragment as a dialog, and so won't try to use mDialog
+            setShowsDialog(false);
+        }
+        super.onActivityCreated(arg0);  // Will now complete and not crash
+    }
+
 }
