@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:clickable="true"
         android:focusable="false"
-        android:enabled="false"/>
+        android:enabled="true"/>
     <TextView
         android:id="@+id/upLoadLayerName"
         android:layout_width="0dp"

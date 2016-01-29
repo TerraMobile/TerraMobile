@@ -10,6 +10,9 @@ import com.augtech.geoapi.feature.SimpleFeatureImpl;
 import com.augtech.geoapi.geometry.BoundingBoxImpl;
 import com.augtech.geoapi.geopackage.GeoPackage;
 import com.augtech.geoapi.geopackage.GpkgField;
+import com.augtech.geoapi.geopackage.GpkgTable;
+import com.augtech.geoapi.geopackage.table.FeaturesTable;
+import com.augtech.geoapi.geopackage.table.TilesTable;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
@@ -264,5 +267,28 @@ public class AppGeoPackageService {
             throw new TerraMobileException(ResourceHelper.getStringResource(R.string.read_features_exception), e);
         }
     }
+
+    public static void createGeopackageForUpload(Context context, Project project, ArrayList<GpkgLayer> layers)
+    {
+        String tempGPKGName = project.getFilePath().replace(".gpkg", "_forupload.gpkg");
+        GeoPackage uploadGPKG = GeoPackageService.readGPKG(context, tempGPKGName);
+        for (int i = 0; i < layers.size(); i++) {
+            GpkgLayer layer = layers.get(i);
+            try {
+
+                FeaturesTable fromFeaturesTable = (FeaturesTable) layer.getGeoPackage().getUserTable(layer.getName(), GpkgTable.TABLE_TYPE_FEATURES );
+                FeaturesTable toFeaturesTable =uploadGPKG.createFeaturesTable(fromFeaturesTable.getSchema(), layers.get(i).getBox());
+                List<SimpleFeature> features = layer.getGeoPackage().getFeatures(layer.getName());
+                uploadGPKG.insertFeatures(features);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+
+        }
+    }
+
+
 
 }

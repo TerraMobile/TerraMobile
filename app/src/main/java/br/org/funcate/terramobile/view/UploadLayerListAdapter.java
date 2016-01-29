@@ -60,6 +60,7 @@ public class UploadLayerListAdapter extends ArrayAdapter<GpkgLayer> implements A
 
         tvUploadLayerName.setText(layer.getName());
         cbUploadLayer.setTag(layer);
+        convertView.setTag(layer);
 
         return convertView;
     }
@@ -68,15 +69,9 @@ public class UploadLayerListAdapter extends ArrayAdapter<GpkgLayer> implements A
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//        selectProject.onClick(view);
-/*
-        this.clearProjectSelection((ListView)parent);
-        RadioButton button = (RadioButton)view.findViewById(R.id.rBCurrentProject);
-        this.selectProject(button);
-*/
 
         CheckBox checkBox = (CheckBox)view.findViewById(R.id.cbUploadLayer);
-        checkBox.setEnabled(true);
+        checkBox.setChecked(true);
 
     }
 
@@ -84,5 +79,6 @@ public class UploadLayerListAdapter extends ArrayAdapter<GpkgLayer> implements A
     public boolean onItemLongClick(final AdapterView<?> parent, View view, final int position, long id) {
       return false;
     }
+
 
 }

@@ -11,6 +11,7 @@ import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
 
@@ -26,6 +27,7 @@ import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
 import br.org.funcate.terramobile.model.service.AppGeoPackageService;
 import br.org.funcate.terramobile.model.service.LayersService;
 import br.org.funcate.terramobile.model.tilesource.TerraMobileInvalidationHandler;
+import br.org.funcate.terramobile.util.Message;
 import br.org.funcate.terramobile.view.ProjectListAdapter;
 import br.org.funcate.terramobile.view.UploadLayerListAdapter;
 
@@ -89,23 +91,34 @@ public class UploadProjectFragment extends DialogFragment{
             }
         });*/
 
-        return new AlertDialog.Builder(getActivity())
-                .setNegativeButton(R.string.close, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dismiss();
-                    }
-                }).setPositiveButton(R.string.upload, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        uploadProject();
-                        dismiss();
-                    }
-                })
-                .setView(view)
-                .setTitle(R.string.project_upload)
-                .setCancelable(true)
-                .create();
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+        builder.setNegativeButton(R.string.close, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dismiss();
+            }
+        });
+        builder.setView(view);
+        builder.setTitle(R.string.project_upload);
+        builder.setCancelable(false);
+        builder.setPositiveButton(R.string.upload, null);
+        final AlertDialog dialog = builder.create();
+
+
+        dialog.show();
+
+        Button b = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+        b.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (uploadProject()) {
+                    dismiss();
+                }
+            }
+        });
+
+        return dialog;
     }
 
     public void setProject(Project project)
@@ -149,6 +162,27 @@ public class UploadProjectFragment extends DialogFragment{
 
     private boolean uploadProject()
     {
-       return false;
+        ListView listView = (ListView)view.findViewById(R.id.layersListView);
+        ArrayList<GpkgLayer> layers = new ArrayList<GpkgLayer>();
+        for (int i = 0; i < listView.getCount(); i++) {
+            GpkgLayer layer = (GpkgLayer) listView.getChildAt(i).getTag();
+            CheckBox cb = (CheckBox) listView.getChildAt(i).findViewById(R.id.cbUploadLayer);
+            if(cb.isChecked())
+            {
+                layers.add(layer);
+            }
+        }
+
+        if(layers.size()==0)
+        {
+            Message.showSuccessMessage(getActivity(), R.string.fail, R.string.error_uploding_missing_layers);
+            return false;
+        }
+
+
+        AppGeoPackageService.createGeopackageForUpload(getActivity(), this.project ,layers);
+
+
+       return true;
     }
 }
