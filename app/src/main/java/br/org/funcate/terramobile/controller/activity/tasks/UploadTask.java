@@ -74,9 +74,6 @@ public class UploadTask extends AsyncTask<String, String, Boolean> {
                 return false;
             }
 
-
-
-
             URL url = new URL(urlToUpload[0]);
             URLConnection urlConnection = url.openConnection();
             urlConnection.setConnectTimeout(5000);
@@ -92,8 +89,9 @@ public class UploadTask extends AsyncTask<String, String, Boolean> {
             OutputStream outputStream = urlConnection.getOutputStream();
             PrintWriter writer = new PrintWriter(new OutputStreamWriter(outputStream), true);
 
-            addFilePart(originFile.getName(), originFile, writer, outputStream);
+            addFormField("filename",originFile.getName(), writer, outputStream);
 
+            addFilePart(originFile.getName(), originFile, writer, outputStream);
 
             return true;
         }catch (IOException e) {
@@ -130,6 +128,23 @@ public class UploadTask extends AsyncTask<String, String, Boolean> {
         inputStream.close();
 
         writer.append(LINE_FEED);
+        writer.flush();
+    }
+
+    /**
+     * Adds a form field to the request
+     *
+     * @param name  field name
+     * @param value field value
+     */
+    public void addFormField(String name, String value, PrintWriter writer, OutputStream out) {
+        writer.append("--" + boundary).append(LINE_FEED);
+        writer.append("Content-Disposition: form-data; name=\"" + name + "\"")
+                .append(LINE_FEED);
+        writer.append("Content-Type: text/plain; charset=").append(
+                LINE_FEED);
+        writer.append(LINE_FEED);
+        writer.append(value).append(LINE_FEED);
         writer.flush();
     }
 
