@@ -24,6 +24,7 @@ import org.opengis.geometry.BoundingBox;
 import org.osmdroid.bonuspack.overlays.Marker;
 import org.osmdroid.util.GeoPoint;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -268,9 +269,14 @@ public class AppGeoPackageService {
         }
     }
 
-    public static void createGeopackageForUpload(Context context, Project project, ArrayList<GpkgLayer> layers)
+    public static String createGeopackageForUpload(Context context, Project project, ArrayList<GpkgLayer> layers)
     {
         String tempGPKGName = project.getFilePath().replace(".gpkg", "_forupload.gpkg");
+        if((new File(tempGPKGName)).exists())
+        {
+            (new File(tempGPKGName)).delete();
+        }
+
         GeoPackage uploadGPKG = GeoPackageService.readGPKG(context, tempGPKGName);
         for (int i = 0; i < layers.size(); i++) {
             GpkgLayer layer = layers.get(i);
@@ -287,6 +293,7 @@ public class AppGeoPackageService {
 
 
         }
+        return tempGPKGName;
     }
 
 

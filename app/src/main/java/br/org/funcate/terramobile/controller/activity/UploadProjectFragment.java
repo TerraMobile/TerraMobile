@@ -21,6 +21,8 @@ import br.org.funcate.jgpkg.exception.QueryException;
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.controller.activity.settings.ServerURLController;
 import br.org.funcate.terramobile.controller.activity.settings.SettingsActivity;
+import br.org.funcate.terramobile.controller.activity.tasks.DownloadTask;
+import br.org.funcate.terramobile.controller.activity.tasks.UploadTask;
 import br.org.funcate.terramobile.model.domain.Project;
 import br.org.funcate.terramobile.model.exception.InvalidGeopackageException;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
@@ -180,9 +182,11 @@ public class UploadProjectFragment extends DialogFragment{
         }
 
 
-        AppGeoPackageService.createGeopackageForUpload(getActivity(), this.project ,layers);
+        String fileName = AppGeoPackageService.createGeopackageForUpload(getActivity(), this.project ,layers);
 
+        final String serverURL  = ((MainActivity) getActivity()).getMainController().getServerURL();
 
+        UploadTask uploadTask = (UploadTask) new UploadTask(fileName, (MainActivity)getActivity()).execute(serverURL + "/addprojects/userName/" + fileName);;
        return true;
     }
 }
