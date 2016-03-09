@@ -150,6 +150,8 @@ public class SFSEditableMarker extends Marker implements Marker.OnMarkerClickLis
 
             if(!GPSService.registerListener(mMapView.getContext(), locationListener)) {
                 Message.showErrorMessage((MainActivity)mMapView.getContext(),R.string.fail,R.string.disabled_provider);
+                if(progressDialog.isShowing())
+                    progressDialog.dismiss();
             }
         }
 
