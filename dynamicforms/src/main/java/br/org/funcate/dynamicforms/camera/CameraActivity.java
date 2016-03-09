@@ -21,7 +21,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -153,6 +152,7 @@ public class CameraActivity extends Activity {
             startActivityForResult(cameraIntent, CAMERA_PIC_REQUEST);
         } catch (Exception e) {
             //GPLog.error(this, null, e);
+            e.printStackTrace();
             Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
             /*Utilities.errorDialog(this, e, new Runnable() {
                 @Override
@@ -271,6 +271,7 @@ public class CameraActivity extends Activity {
                     cameraDoubleFile.delete();
                 } catch (IOException e) {
                     //GPLog.error(this, null, e);
+                    e.printStackTrace();
                     Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
                 }
             }
@@ -280,6 +281,7 @@ public class CameraActivity extends Activity {
             }
         } catch (Exception e) {
             //GPLog.error(this, null, e);
+            e.printStackTrace();
             Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
