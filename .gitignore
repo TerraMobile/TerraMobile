@@ -5,7 +5,6 @@
 # git commit -m "modify .gitignore and reset index"
 # Now commit it.
 
-*.gradle
 /local.properties
 .idea/
 .DS_Store
@@ -39,6 +38,3 @@ proguard/
 # Log Files
 *.log
 
-# my ignore files
-app/src/main/AndroidManifest.xml
-app/src/main/res/values/georesource.xml
