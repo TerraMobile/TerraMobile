@@ -1,6 +1,6 @@
-.gradle
+*.gradle
 /local.properties
-#.idea
+.idea/
 .DS_Store
 /build
 *.iml
@@ -31,3 +31,7 @@ proguard/
 
 # Log Files
 *.log
+
+# my ignore files
+app/src/main/AndroidManifest.xml
+app/src/main/res/values/georesource.xml

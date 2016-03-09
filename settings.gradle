@@ -1,3 +1,0 @@
-include ':app', ':AugTech_GeoAPI', ':JGPKG', ':dynamicforms', ':sldparser'
-project(':AugTech_GeoAPI').projectDir = new File('Java-OpenMobility/AugTech_GeoAPI')
-project(':JGPKG').projectDir = new File('Java-OpenMobility/JGPKG')
