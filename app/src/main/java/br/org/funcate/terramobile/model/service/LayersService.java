@@ -150,4 +150,18 @@ public class LayersService {
             throw new SettingsException(e.getMessage(), e);
         }
     }
+
+    public static ArrayList<GpkgLayer>  getEditableLayers(ArrayList<GpkgLayer> allLayers)
+    {
+        ArrayList<GpkgLayer> editableLayers = new ArrayList<GpkgLayer>();
+
+        for (int i = 0; i < allLayers.size(); i++) {
+            if (allLayers.get(i).getType()== GpkgLayer.Type.EDITABLE)
+            {
+                editableLayers.add(allLayers.get(i));
+            }
+        }
+        return editableLayers;
+
+    }
 }

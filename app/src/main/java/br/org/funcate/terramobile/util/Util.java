@@ -4,8 +4,6 @@ package br.org.funcate.terramobile.util;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.ColorMatrix;
-import android.media.MediaScannerConnection;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Environment;
@@ -107,12 +105,22 @@ public class Util {
      */
     public static File getDirectory(String directory) {
         if (directory==null) return null;
-        String path = Environment.getExternalStorageDirectory().toString();
-        path += directory.startsWith("/") ? "" : "/";
-        path += directory.endsWith("/") ? directory : directory + "/";
+        String path = "";
+        if(Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
+            path = Environment.getExternalStorageDirectory().toString();
+        }else{
+            path = Environment.getDataDirectory().getAbsolutePath();
+        }
         File file = new File(path);
-        file.mkdirs();
-        return file;
+        if(file!=null && file.canWrite()) {
+            path += directory.startsWith("/") ? "" : "/";
+            path += directory.endsWith("/") ? directory : directory + "/";
+            file = new File(path);
+            file.mkdirs();
+            if (file.isDirectory())
+                return file;
+        }
+        return null;
     }
 
     /**

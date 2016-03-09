@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="terramobile_url">http://terrabrasilis.info/TerraMobileServer/tmserver/projectservices</string>
+    <string name="app_workspace_dir">TerraMobile</string>
+    <string name="app_workspace_temp_dir">TerraMobile/Temp</string>
+    <string name="geopackage_extension">.gpkg</string>
+    <item name="default_map_center_x" format="float" type="dimen">-15.1656563</item>
+    <item name="default_map_center_y" format="float" type="dimen">-47.9116195</item>
+    <integer name="default_max_zoom_level">18</integer>
+    <bool name="default_built_in_zoom_controls">true</bool>
+    <bool name="default_multi_touch_controls">true</bool>
+    <integer name="default_initial_zoom_level">7</integer>
+    <integer name="offsetCross">20</integer>
+</resources>

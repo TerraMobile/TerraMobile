@@ -3,6 +3,7 @@ package br.org.funcate.terramobile.view;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,8 @@ import java.util.ArrayList;
 
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.controller.activity.MainActivity;
+import br.org.funcate.terramobile.controller.activity.ProjectListFragment;
+import br.org.funcate.terramobile.controller.activity.UploadProjectFragment;
 import br.org.funcate.terramobile.controller.activity.tasks.DownloadTask;
 import br.org.funcate.terramobile.model.db.ApplicationDatabase;
 import br.org.funcate.terramobile.model.db.DatabaseFactory;
@@ -56,6 +59,7 @@ public class ProjectListAdapter extends ArrayAdapter<Project> implements Adapter
 
         TextView tVProject = (TextView) convertView.findViewById(R.id.tVProjectName);
         ImageView iVDownloaded = (ImageView) convertView.findViewById(R.id.iVDownloaded);
+        ImageView iVUploaded = (ImageView) convertView.findViewById(R.id.iVUploaded);
         //ImageView iVMoveToSD = (ImageView) convertView.findViewById(R.id.iVMoveToSD);
 //        ImageView iVUpdated = (ImageView)convertView.findViewById(R.id.iVUpdated);
 
@@ -66,6 +70,7 @@ public class ProjectListAdapter extends ArrayAdapter<Project> implements Adapter
         RadioButton rBCurrentProject = (RadioButton) convertView.findViewById(R.id.rBCurrentProject);
         rBCurrentProject.setTag(project);
         iVDownloaded.setTag(project);
+        iVUploaded.setTag(project);
        // iVMoveToSD.setTag(project);
 
 
@@ -80,8 +85,14 @@ public class ProjectListAdapter extends ArrayAdapter<Project> implements Adapter
             iVDownloaded.setImageResource(R.drawable.downloaded);
         }
 
+        //Testar pra ver qdo já foi enviado
+        iVUploaded.setImageResource(R.drawable.uploaded);
+
         iVDownloaded.setOnClickListener(onDownloadIconClick);
        // iVMoveToSD.setOnClickListener(onMoveToSDCard);
+
+        iVUploaded.setOnClickListener(onUploadIconClick);
+
 
         rBCurrentProject.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -164,6 +175,22 @@ public class ProjectListAdapter extends ArrayAdapter<Project> implements Adapter
                 }
             } else
                 Message.showErrorMessage((MainActivity) context, R.string.error, R.string.no_connection);
+
+        }
+    };
+
+    private View.OnClickListener onUploadIconClick = new View.OnClickListener() {
+        public void onClick(View v) {
+            if (Util.isConnected(context)) {
+                final Project project = (Project) v.getTag();
+
+                UploadProjectFragment uploadFragment = UploadProjectFragment.newInstance();
+                uploadFragment.setProject(project);
+                uploadFragment.show(((MainActivity) context).getFragmentManager(), "packageList");
+
+            } else {
+                Message.showErrorMessage((MainActivity) context, R.string.error, R.string.no_connection);
+            }
 
         }
     };
