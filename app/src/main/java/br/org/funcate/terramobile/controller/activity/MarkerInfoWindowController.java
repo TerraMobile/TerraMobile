@@ -211,7 +211,7 @@ public class MarkerInfoWindowController {
                         }
                     }
                 }
-                formDataValues = FeatureService.featureAttrsToBundle(feature);
+                formDataValues = FeatureService.featureAttrsToBundle(feature, "");
                 if(images!=null && !images.isEmpty()) {
                     Bundle b = mediaToBundle(formDataValues, images);
                     if(b!=null) formDataValues = b;
