@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+
+    This controls are used in create, update and remove operation over gathering layer.
+    Following values are defined to identify this operations:
+
+    | object_id  |  tm_status  |  GeoObject  |
+    __________________________________________
+    | if exist   |     0      |  unchanged   |
+    | if exist   |     1      |  changed     |
+    | if exist   |     2      |  removed     |
+    |   any      |     3*     |    sent      |
+    |   null     |    any*    |    new       |
+
+    * When send features signed with tm_status==2 to server, remove it from the original geopackage (not implemented yet).
+    ** convention 0 by default
+    -->
+    <string name="point_obj_id_column">object_id</string>
+    <string name="point_status_column">tm_status</string>
+    <integer name="point_status_unchanged">0</integer><!-- default value -->
+    <integer name="point_status_changed">1</integer>
+    <integer name="point_status_removed">2</integer>
+    <integer name="point_status_send">3</integer>
+</resources>

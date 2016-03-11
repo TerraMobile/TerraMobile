@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import br.org.funcate.jgpkg.service.GeoPackageService;
-import br.org.funcate.terramobile.controller.activity.MainActivity;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
 import br.org.funcate.terramobile.util.GeoUtil;
 
@@ -63,7 +62,7 @@ public class SFSLayerOverlay extends Overlay {
                     if(features==null)
                     {
                         System.out.println("____----++++====[NOT LOAD YET]====++++----____");
-                        features = GeoPackageService.getGeometries(layer.getGeoPackage(), layer.getName(), bb);
+                        features = GeoPackageService.getGeometries(layer.getGeoPackage(), layer.getName(), layer.getDefaultFilter(), bb);
                         featuresCache.put(bb, features);
                     }
                     else

@@ -13,4 +13,5 @@
     <string name="btn_form_remove">Remove</string>
     <string name="btn_form_cancel">Cancel</string>
     <string name="wait_form_start">Waiting form...</string>
+    <string name="session_object_exception">An error occurred while read a session from json configuration form.</string>
 </resources>
