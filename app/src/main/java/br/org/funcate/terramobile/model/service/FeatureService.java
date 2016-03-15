@@ -13,6 +13,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import br.org.funcate.terramobile.util.JsonUtil;
+
 /**
  * Created by Andre Carvalho on 27/08/15.
  */
@@ -29,12 +31,13 @@ public class FeatureService {
      * @param feature, a feature
      * @return a Bundle with feature data attributes.
      */
-    public static Bundle featureAttrsToBundle(SimpleFeature feature) {
+    public static Bundle featureAttrsToBundle(SimpleFeature feature, String jsonForm) {
 
         List<Object> attrs = feature.getAttributes();
         if(attrs.size()<=0) return null;
         List<AttributeType> featureTypes = feature.getFeatureType().getTypes();
         ArrayList<String> featureKeys = new ArrayList<String>();
+        ArrayList<String> jsonKeys = JsonUtil.getKeysForm(jsonForm);
 
         Iterator<AttributeType> itTypes = featureTypes.iterator();
         Bundle bundle = new Bundle(attrs.size());
@@ -68,7 +71,8 @@ public class FeatureService {
                 featureKeys.add(typeName.toString());
             }
 
-            if(s!=null) {
+            // If attribute has value and exist in attribute list from json form or list attribute from json form is empty.
+            if(s!=null && ( jsonKeys.isEmpty() || jsonKeys.contains(typeName.toString()) ) ) {
                 bundle.putString(typeName.toString(), s);
                 featureKeys.add(typeName.toString());
             }

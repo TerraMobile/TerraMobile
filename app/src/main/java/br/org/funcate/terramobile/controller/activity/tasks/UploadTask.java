@@ -4,18 +4,22 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -75,7 +79,7 @@ public class UploadTask extends AsyncTask<String, String, Boolean> {
             }
 
             URL url = new URL(urlToUpload[0]);
-            URLConnection urlConnection = url.openConnection();
+            HttpURLConnection urlConnection = (HttpURLConnection)url.openConnection();
             urlConnection.setConnectTimeout(5000);
             urlConnection.setUseCaches(false);
             urlConnection.setDoOutput(true); // indicates POST method
@@ -92,6 +96,8 @@ public class UploadTask extends AsyncTask<String, String, Boolean> {
             addFormField("filename",originFile.getName(), writer, outputStream);
 
             addFilePart(originFile.getName(), originFile, writer, outputStream);
+
+            finish(writer, urlConnection);
 
             return true;
         }catch (IOException e) {
@@ -155,6 +161,31 @@ public class UploadTask extends AsyncTask<String, String, Boolean> {
     protected void onCancelled(Boolean aBoolean) {
         super.onCancelled(aBoolean);
         Message.showSuccessMessage(mainActivity, R.string.success, R.string.download_cancelled);
+    }
+
+    private List<String> finish(PrintWriter writer, HttpURLConnection conn) throws IOException {
+        List<String> response = new ArrayList<String>();
+
+        writer.append(LINE_FEED).flush();
+        writer.append("--" + boundary + "--").append(LINE_FEED);
+        writer.close();
+
+        // checks server's status code first
+        int status = conn.getResponseCode();
+        if (status == HttpURLConnection.HTTP_OK) {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(
+                    conn.getInputStream()));
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                response.add(line);
+            }
+            reader.close();
+            conn.disconnect();
+        } else {
+            throw new IOException("Server returned non-OK status: " + status);
+        }
+
+        return response;
     }
 
 }

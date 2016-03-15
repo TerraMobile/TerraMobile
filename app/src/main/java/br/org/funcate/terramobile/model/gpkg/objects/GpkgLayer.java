@@ -9,6 +9,11 @@ import org.osmdroid.bonuspack.kml.Style;
 import org.osmdroid.views.overlay.Overlay;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+
+import br.org.funcate.terramobile.R;
+import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
+import br.org.funcate.terramobile.util.ResourceHelper;
 
 /**
  * Created by Andre Carvalho on 29/04/15.
@@ -42,6 +47,47 @@ public class GpkgLayer{
     public GpkgLayer(GeoPackage geoPackage) {
         this.geoPackage=geoPackage;
     }
+
+    /**
+     * Build a filter that select all features that state is not removed.
+     * It is used on normal operations.
+     * See the file "gatheringconfig.xml" to more info.
+     * @return a where clause based on gathering configuration to all editable layers or empty to others.
+     */
+    public String getDefaultFilter() {
+
+        String filter="";
+        if(this.isEditable()){
+            String statusKey;
+            int statusValue;
+            try {
+                statusKey = ResourceHelper.getStringResource(R.string.point_status_column);
+                statusValue = ResourceHelper.getIntResource(R.integer.point_status_removed);
+            } catch (InvalidAppConfigException e) {
+                e.printStackTrace();
+                statusKey="tm_status";
+                statusValue=2;
+            }
+            GpkgField gpkgField = getAttributeByName(statusKey);
+            if(gpkgField!=null) {
+                filter=statusKey + "!=" + statusValue;
+            }
+        }
+        return filter;
+    }
+
+    /**
+     * This filters get all features to send: created, changed and removed.
+     * This exclude unchanged and send features.
+     * It is used on select feature to upload data.
+     * See the file "gatheringconfig.xml" to more info.
+     * @return a where clause based on gathering configuration to all editable layers or empty to others.
+     */
+    public String getSendFilter() {
+        String filter = "object_id is null OR (object_id is not null AND tm_status between 1 and 2)";
+        return filter;
+    }
+
 
     public String getName() {
         return name;
@@ -119,6 +165,7 @@ public class GpkgLayer{
     public void setOsmOverLayer(Overlay osmOverLayer) {
         this.osmOverLayer = osmOverLayer;
     }
+
     public String getMediaTable() {
         return mediaTable;
     }
@@ -149,5 +196,18 @@ public class GpkgLayer{
 
     public void setPosition(int position) {
         this.position = position;
+    }
+
+    private GpkgField getAttributeByName(String name) {
+
+        Iterator<GpkgField> it = fields.iterator();
+        GpkgField gpkgField=null;
+        while(it.hasNext()) {
+            gpkgField = it.next();
+            if(gpkgField.getFieldName().equals(name)) {
+                break;
+            }
+        }
+        return gpkgField;
     }
 }
