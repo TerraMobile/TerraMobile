@@ -5,10 +5,13 @@ package br.org.funcate.terramobile.model.domain;
  */
 public class Project {
     private Integer id;
+    private String UUID;
     private String name;
     private String filePath;
     private int downloaded;
     private int updated;
+    private String description;
+    private int status;
 
     public String getName() {
         return this.name;
@@ -55,4 +58,28 @@ public class Project {
         this.downloaded = downloaded;
     }
 
+
+    public String getUUID() {
+        return UUID;
+    }
+
+    public void setUUID(String UUID) {
+        this.UUID = UUID;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
 }

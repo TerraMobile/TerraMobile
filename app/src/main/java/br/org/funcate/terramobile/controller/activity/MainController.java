@@ -12,6 +12,7 @@ import com.augtech.geoapi.geopackage.DateUtil;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 
+import org.apache.http.impl.cookie.IgnoreSpecFactory;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -102,7 +103,7 @@ public class MainController {
         try {
 
             Setting setting = SettingsService.get(mainActivity, key, ApplicationDatabase.DATABASE_NAME);
-
+            new IgnoreSpecFactory();
             if(setting!=null)
             {
                 return setting.getValue();
