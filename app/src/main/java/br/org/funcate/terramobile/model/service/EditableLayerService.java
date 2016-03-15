@@ -47,6 +47,7 @@ import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
 import br.org.funcate.terramobile.model.exception.StyleException;
 import br.org.funcate.terramobile.model.exception.TerraMobileException;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
+import br.org.funcate.terramobile.util.ResourceHelper;
 
 /**
  * Created by Andre Carvalho on 19/11/15.
@@ -393,6 +394,32 @@ public class EditableLayerService {
 
         ArrayList<String> formKeys = formData.getStringArrayList(LibraryConstants.FORM_KEYS);
         ArrayList<String> formTypes = formData.getStringArrayList(LibraryConstants.FORM_TYPES);
+
+        // adding control attribute into form key list
+        String statusKey;
+        String objIdKey;
+        int statusValue;
+        try {
+            statusKey = ResourceHelper.getStringResource(R.string.point_status_column);
+            objIdKey = ResourceHelper.getStringResource(R.string.point_obj_id_column);
+            String objIdValue="";
+            if(formData.containsKey(FormUtilities.ATTR_DATA_VALUES)) {
+                Bundle existingFeatureData = formData.getBundle(FormUtilities.ATTR_DATA_VALUES);
+                objIdValue = existingFeatureData.getString(objIdKey);
+            }
+
+            if(objIdValue!=null && !objIdValue.isEmpty()) {// Update the feature that was loaded from official database
+                statusValue = ResourceHelper.getIntResource(R.integer.point_status_changed);
+            }else{
+                statusValue = ResourceHelper.getIntResource(R.integer.point_status_unchanged);
+            }
+
+        } catch (InvalidAppConfigException e) {
+            e.printStackTrace();
+            statusKey = "tm_status";
+            statusValue=0;// default status, unchanged
+        }
+        attrs[ft.indexOf(statusKey)]=statusValue;
 
         for (int i = 0, len = formKeys.size(); i < len; i++) {
             String key = formKeys.get(i);

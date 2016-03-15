@@ -97,10 +97,40 @@ public class MarkerInfoWindowController {
 
     public void deleteMarker(Marker marker) throws TerraMobileException {
         GpkgLayer layer=this.mainActivity.getMainController().getTreeViewController().getSelectedEditableLayer();
-        boolean exec;
+        boolean exec=false;
 
         try {
-            exec = AppGeoPackageService.deleteFeature(layer, ((SFSEditableMarker)marker).getMarkerId());
+
+            long featureID = ((SFSEditableMarker)marker).getMarkerId();
+            SimpleFeature feature=null;
+            try {
+                feature = AppGeoPackageService.getFeature(layer, featureID);
+            } catch (InvalidAppConfigException e) {
+                e.printStackTrace();
+            } catch (LowMemoryException e) {
+                e.printStackTrace();
+            } catch (TerraMobileException e) {
+                e.printStackTrace();
+            }
+
+            String statusKey;
+            String objIdKey;
+            try {
+                statusKey = ResourceHelper.getStringResource(R.string.point_status_column);
+                objIdKey = ResourceHelper.getStringResource(R.string.point_obj_id_column);
+                String objIdValue=(String)feature.getAttribute(objIdKey);
+
+                if(objIdValue!=null && !objIdValue.isEmpty()) {// Update the feature that was loaded from official database
+                    feature.setAttribute(statusKey, ResourceHelper.getIntResource(R.integer.point_status_removed));
+                    exec = AppGeoPackageService.setRemovedFeature(layer, feature);
+                }else{
+                    exec = AppGeoPackageService.deleteFeature(layer, ((SFSEditableMarker)marker).getMarkerId());
+                }
+
+            } catch (InvalidAppConfigException e) {
+                e.printStackTrace();
+            }
+
             if(!exec) {
                 throw new TerraMobileException(ResourceHelper.getStringResource(R.string.feature_not_found));
             }else{
@@ -211,7 +241,7 @@ public class MarkerInfoWindowController {
                         }
                     }
                 }
-                formDataValues = FeatureService.featureAttrsToBundle(feature);
+                formDataValues = FeatureService.featureAttrsToBundle(feature, "");
                 if(images!=null && !images.isEmpty()) {
                     Bundle b = mediaToBundle(formDataValues, images);
                     if(b!=null) formDataValues = b;

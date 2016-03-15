@@ -10,9 +10,6 @@ import com.augtech.geoapi.feature.SimpleFeatureImpl;
 import com.augtech.geoapi.geometry.BoundingBoxImpl;
 import com.augtech.geoapi.geopackage.GeoPackage;
 import com.augtech.geoapi.geopackage.GpkgField;
-import com.augtech.geoapi.geopackage.GpkgTable;
-import com.augtech.geoapi.geopackage.table.FeaturesTable;
-import com.augtech.geoapi.geopackage.table.TilesTable;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
@@ -179,7 +176,7 @@ public class AppGeoPackageService {
 
         try {
 
-            List<SimpleFeature> features = GeoPackageService.getGeometries(layer.getGeoPackage(),layer.getName(),null);
+            List<SimpleFeature> features = GeoPackageService.getGeometries(layer.getGeoPackage(),layer.getName(), layer.getDefaultFilter(), null);
 
             SFSLayer l = new SFSLayer(features, layer);
 
@@ -269,6 +266,26 @@ public class AppGeoPackageService {
         }
     }
 
+    public static boolean setRemovedFeature(GpkgLayer layer, SimpleFeature feature) throws InvalidAppConfigException, LowMemoryException, TerraMobileException {
+
+        if(!(feature instanceof SimpleFeatureImpl)) return false;
+
+        try {
+
+            return GeoPackageService.updateFeature(layer.getGeoPackage(), feature);
+
+        }
+        catch (OutOfMemoryError e)
+        {
+            e.printStackTrace();
+            throw new LowMemoryException(ResourceHelper.getStringResource(R.string.read_features_out_of_memory_exception));
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            throw new TerraMobileException(ResourceHelper.getStringResource(R.string.read_features_exception), e);
+        }
+    }
+
     public static String createGeopackageForUpload(Context context, Project project, ArrayList<GpkgLayer> layers)
     {
         String tempGPKGName = project.getFilePath().replace(".gpkg", "_forupload.gpkg");
@@ -282,9 +299,10 @@ public class AppGeoPackageService {
             GpkgLayer layer = layers.get(i);
             try {
 
-                FeaturesTable fromFeaturesTable = (FeaturesTable) layer.getGeoPackage().getUserTable(layer.getName(), GpkgTable.TABLE_TYPE_FEATURES );
-                FeaturesTable toFeaturesTable =uploadGPKG.createFeaturesTable(fromFeaturesTable.getSchema(), layers.get(i).getBox());
-                List<SimpleFeature> features = layer.getGeoPackage().getFeatures(layer.getName());
+                //FeaturesTable fromFeaturesTable = (FeaturesTable) layer.getGeoPackage().getUserTable(layer.getName(), GpkgTable.TABLE_TYPE_FEATURES );
+                // FeaturesTable toFeaturesTable =uploadGPKG.createFeaturesTable(fromFeaturesTable.getSchema(), layers.get(i).getBox());
+
+                List<SimpleFeature> features = layer.getGeoPackage().getFeatures(layer.getName(), layer.getSendFilter());
                 uploadGPKG.insertFeatures(features);
 
             } catch (Exception e) {

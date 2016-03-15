@@ -35,7 +35,9 @@ public class FeatureInfoPanelController {
         } catch (TerraMobileException e) {
             e.printStackTrace();
         }
-        Bundle featureDataValues = FeatureService.featureAttrsToBundle(feature);
+
+        String jsonForm = layer.getJSON();
+        Bundle featureDataValues = FeatureService.featureAttrsToBundle(feature, jsonForm);
         Intent intent = new Intent(mainActivity.getApplicationContext(), FeatureInfoPanelActivity.class);
         intent.putExtra(FeatureService.FEATURE_DATA_CONTENT, featureDataValues);
         mainActivity.startActivity(intent);

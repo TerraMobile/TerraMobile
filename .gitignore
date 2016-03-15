@@ -1,6 +1,12 @@
-.gradle
+# Using following commands to apply gitignore changes into git index.
+#
+# git rm -r --cached .
+# git add .
+# git commit -m "modify .gitignore and reset index"
+# Now commit it.
+
 /local.properties
-#.idea
+.idea/
 .DS_Store
 /build
 *.iml
@@ -31,3 +37,4 @@ proguard/
 
 # Log Files
 *.log
+

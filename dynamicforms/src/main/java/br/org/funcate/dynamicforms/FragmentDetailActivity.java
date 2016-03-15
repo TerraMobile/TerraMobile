@@ -22,7 +22,6 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.os.Message;
 import android.support.v4.app.FragmentActivity;
 import android.view.KeyEvent;
 import android.view.View;
@@ -181,9 +180,17 @@ public class FragmentDetailActivity extends FragmentActivity {
             detailFragment.storeFormItems(false);
         }
 
+        if(sectionObject==null) {
+            throw new Exception(this.getString(R.string.session_object_exception));
+        }
+
         // extract and check constraints
         List<String> availableFormNames = TagsManager.getFormNames4Section(sectionObject);
         Bundle formData = null;
+
+        if(availableFormNames.isEmpty()) {
+            throw new Exception(this.getString(R.string.session_object_exception));
+        }
 
         for (String formNameIt : availableFormNames) {
             JSONObject formObject = TagsManager.getForm4Name(formNameIt, sectionObject);
@@ -213,14 +220,14 @@ public class FragmentDetailActivity extends FragmentActivity {
                     type = jsonObject.getString(TAG_TYPE).trim();
                 }
 
-                if(!key.equals("") && !value.equals("") && !type.equals("")) {
+                if (!key.equals("") && !value.equals("") && !type.equals("")) {
 
-                    insertKey=true;
+                    insertKey = true;
 
                     if (type.equals(TYPE_STRING)) {
-                        formData.putString(key,value);
+                        formData.putString(key, value);
                     } else if (type.equals(TYPE_STRINGAREA)) {
-                        formData.putString(key,value);
+                        formData.putString(key, value);
                     } else if (type.equals(TYPE_DOUBLE)) {
                         formData.putDouble(key, new Double(value));
                     } else if (type.equals(TYPE_INTEGER)) {
@@ -230,28 +237,28 @@ public class FragmentDetailActivity extends FragmentActivity {
                     } else if (type.equals(TYPE_TIME)) {
                         formData.putString(key, value);
                     } else if (type.equals(TYPE_LABEL)) {
-                        insertKey=false;
+                        insertKey = false;
                         //formData.putString(key, value);
                     } else if (type.equals(TYPE_LABELWITHLINE)) {
-                        insertKey=false;
+                        insertKey = false;
                         //formData.putString(key, value);
                     } else if (type.equals(TYPE_BOOLEAN)) {
                         formData.putBoolean(key, new Boolean(value));
                     } else if (type.equals(TYPE_STRINGCOMBO)) {
-                        formData.putString(key,value);
+                        formData.putString(key, value);
                     } else if (type.equals(TYPE_CONNECTEDSTRINGCOMBO)) {
-                        formData.putString(key,value);
+                        formData.putString(key, value);
                     } else if (type.equals(TYPE_STRINGMULTIPLECHOICE)) {
-                        insertKey=false;
+                        insertKey = false;
                         //formData.putString(key,value);
                     } else if (type.equals(TYPE_PICTURES)) {
-                        insertKey=false;
+                        insertKey = false;
                         // Using the new key to represent a list of image paths. It is manipulated on posterior time.
                         //formData.putString(key,value);
                         decodeFromJson(value, formData);
                     }
 
-                    if(insertKey) {
+                    if (insertKey) {
                         keys.add(key);
                         types.add(type);
                     }
@@ -260,17 +267,24 @@ public class FragmentDetailActivity extends FragmentActivity {
             }
             formData.putStringArrayList(LibraryConstants.FORM_TYPES, types);
             formData.putStringArrayList(LibraryConstants.FORM_KEYS, keys);
+
+            if (sectionObject.has(FormUtilities.ATTR_GEOJSON_TAGS)) {
+                JSONObject geojsonGeometry = sectionObject.getJSONObject(FormUtilities.ATTR_GEOJSON_TAGS);
+                formData.putString(FormUtilities.ATTR_GEOJSON_TAGS, geojsonGeometry.toString());
+            }
+
+            if (pointId >= 0) {
+                formData.putLong(FormUtilities.GEOM_ID, pointId);
+            }
+
+            if (existingFeatureData != null) {
+                formData.putBundle(FormUtilities.ATTR_DATA_VALUES, existingFeatureData);
+            }
         }
 
-        if(sectionObject.has(FormUtilities.ATTR_GEOJSON_TAGS)) {
-            JSONObject geojsonGeometry = sectionObject.getJSONObject(FormUtilities.ATTR_GEOJSON_TAGS);
-            formData.putString(FormUtilities.ATTR_GEOJSON_TAGS, geojsonGeometry.toString());
+        if(formData==null){
+            throw new Exception(this.getString(R.string.session_object_exception));
         }
-
-        if(pointId>=0){
-            formData.putLong(FormUtilities.GEOM_ID, pointId);
-        }
-
         Intent intent = getIntent();
         intent.putExtra(LibraryConstants.PREFS_KEY_FORM, formData);
         setResult(Activity.RESULT_OK, intent);
