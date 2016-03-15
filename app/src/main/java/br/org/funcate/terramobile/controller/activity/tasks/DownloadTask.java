@@ -1,5 +1,6 @@
 package br.org.funcate.terramobile.controller.activity.tasks;
 
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -42,6 +43,8 @@ public class DownloadTask extends AsyncTask<String, String, Boolean> {
 
     private String fileName;
 
+    private boolean error;
+
     public DownloadTask(String downloadDestinationFilePath, String unzipDestinationFilePath, String fileName, MainActivity mainActivity) {
         this.mainActivity = mainActivity;
         this.unzipDestinationFilePath = unzipDestinationFilePath;
@@ -69,11 +72,11 @@ public class DownloadTask extends AsyncTask<String, String, Boolean> {
         }
         destinationFile = new File(downloadDestinationFilePath);
         try {
-            if (!destinationFile.exists())
-                if(!destinationFile.createNewFile()){
+            if (!destinationFile.exists()) {
+                if (!destinationFile.createNewFile()) {
                     return null;
                 }
-            else {
+            }else {
                 if(destinationFile.delete()) {
                     if(!destinationFile.createNewFile())
                         return null;
@@ -88,8 +91,18 @@ public class DownloadTask extends AsyncTask<String, String, Boolean> {
             urlConnection.connect();
 
             int totalSize = urlConnection.getContentLength();
-
-            InputStream inputStream = new BufferedInputStream(url.openStream());
+            if(totalSize == -1){
+                this.cancel(true);
+                error = true;
+                return false;
+            }
+            InputStream is = urlConnection.getInputStream();
+            if(is == null) {
+                this.cancel(true);
+                error = true;
+                return false;
+            }
+            InputStream inputStream = new BufferedInputStream(is);
             OutputStream fileOutput = new FileOutputStream(destinationFile);
 
             byte buffer[] = new byte[1024];
@@ -128,13 +141,17 @@ public class DownloadTask extends AsyncTask<String, String, Boolean> {
             return true;
         }catch (IOException e) {
             e.printStackTrace();
+            this.cancel(true);
+            error = true;
             if(destinationFile.exists())
                 destinationFile.delete();
             return false;
         }catch (IllegalArgumentException e){
             e.printStackTrace();
+            this.cancel(true);
             if(destinationFile.exists())
                 destinationFile.delete();
+            error = true;
             return false;
         }
     }
@@ -198,7 +215,12 @@ public class DownloadTask extends AsyncTask<String, String, Boolean> {
         super.onCancelled(aBoolean);
         if(destinationFile.exists()) {
             if(destinationFile.delete())
-                Message.showSuccessMessage(mainActivity, R.string.success, R.string.download_cancelled);
+                if(mainActivity.getProgressDialog().isShowing())
+                    mainActivity.getProgressDialog().dismiss();
+                if(error)
+                    Message.showErrorMessage(mainActivity, R.string.error, R.string.download_failed);
+                else
+                    Message.showSuccessMessage(mainActivity, R.string.success, R.string.download_cancelled);
         }
     }
 

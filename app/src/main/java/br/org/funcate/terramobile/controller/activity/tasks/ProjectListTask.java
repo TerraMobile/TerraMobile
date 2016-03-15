@@ -45,6 +45,7 @@ public class ProjectListTask extends AsyncTask<String, String, JSONObject> {
     }
 
     protected JSONObject doInBackground(String... url) {
+        if(android.os.Debug.isDebuggerConnected()) android.os.Debug.waitForDebugger(); // Para debugar é preciso colocar um breakpoint nessa linha
         String packagesUrl = url[0];
         JSONObject jsonObject;
         String jsonContent;
@@ -110,6 +111,13 @@ public class ProjectListTask extends AsyncTask<String, String, JSONObject> {
                 }
             }
 
+            if(!aLItems.isEmpty())
+                mainActivity.getProjectListFragment().setListItems(aLItems);
+            else {
+                mainActivity.getProjectListFragment().dismiss();
+                Message.showErrorMessage(mainActivity, R.string.error, R.string.projects_not_found);
+            }
+
             if (jsonObject != null) {
                 JSONArray packages = jsonObject.getJSONArray("packages");
                 for (int cont = 0; cont < packages.length(); cont++) {
@@ -128,14 +136,6 @@ public class ProjectListTask extends AsyncTask<String, String, JSONObject> {
                         aLItems.add(project);
                     }
                 }
-            }
-//             else
-//                Message.showErrorMessage(mainActivity, R.string.error, R.string.connection_failed);
-            if(!aLItems.isEmpty())
-                mainActivity.getProjectListFragment().setListItems(aLItems);
-            else {
-                mainActivity.getProjectListFragment().dismiss();
-                Message.showErrorMessage(mainActivity, R.string.error, R.string.projects_not_found);
             }
         } catch (JSONException e) {
             Message.showErrorMessage(mainActivity, R.string.error, R.string.connection_failed);

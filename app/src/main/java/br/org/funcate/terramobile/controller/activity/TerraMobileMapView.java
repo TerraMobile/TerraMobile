@@ -1,33 +1,31 @@
 package br.org.funcate.terramobile.controller.activity;
 
 import android.content.Context;
-import android.os.Handler;
 import android.util.AttributeSet;
-import android.view.View;
-
-import com.augtech.geoapi.geometry.BoundingBoxImpl;
+import android.view.MotionEvent;
+import android.widget.Toast;
 
 import org.osmdroid.DefaultResourceProxyImpl;
-import org.osmdroid.ResourceProxy;
-import org.osmdroid.tileprovider.MapTileProviderBase;
+import org.osmdroid.bonuspack.overlays.MapEventsOverlay;
+import org.osmdroid.bonuspack.overlays.MapEventsReceiver;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 
-import br.org.funcate.terramobile.R;
-import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
 import br.org.funcate.terramobile.model.tilesource.TerraMobileInvalidationHandler;
-import br.org.funcate.terramobile.util.ResourceHelper;
 
 /**
  * Created by bogo on 05/11/15.
  */
-public class TerraMobileMapView extends MapView {
+public class TerraMobileMapView extends MapView implements MapEventsReceiver {
 
     private MainController mainController;
     private boolean initialized=false;
-
+    private Context context;
     public TerraMobileMapView(Context context, AttributeSet attrs) {
         super(context, 256, new DefaultResourceProxyImpl(context), null, new TerraMobileInvalidationHandler(null), attrs);
+        this.context = context;
+        MapEventsOverlay mapEventsOverlay = new MapEventsOverlay(context, this);
+        this.getOverlays().add(0, mapEventsOverlay);
         //super(context, attrs);
     }
 
@@ -59,4 +57,14 @@ public class TerraMobileMapView extends MapView {
         super.invalidate();
     }
 
+    @Override
+    public boolean singleTapConfirmedHelper(GeoPoint geoPoint) {
+        Toast.makeText(this.context, "Tap on (" + geoPoint.getLatitude() + "," + geoPoint.getLongitude() + ")", Toast.LENGTH_SHORT).show();
+        return false;
+    }
+
+    @Override
+    public boolean longPressHelper(GeoPoint geoPoint) {
+        return false;
+    }
 }
