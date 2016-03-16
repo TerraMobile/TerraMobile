@@ -29,6 +29,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -74,7 +75,7 @@ public class EditableLayerService {
                 GeoPackage geoPackage = tv.getSelectedEditableLayer().getGeoPackage();
                 long featureID = GeoPackageService.writeLayerFeature(geoPackage, feature);
                 String mediaTable = tv.getSelectedEditableLayer().getMediaTable();
-                MediaService.writePictures(context, geoPackage, mediaTable, databaseImages, insertImages, featureID);
+                MediaService.updatePictures(context, geoPackage, mediaTable, databaseImages, insertImages, featureID);
 
                 ((MainActivity) context).getMainController().getMenuMapController().removeLayer(tv.getSelectedEditableLayer());
                 ((MainActivity)context).getMainController().getMenuMapController().addLayer(tv.getSelectedEditableLayer());
@@ -122,6 +123,7 @@ public class EditableLayerService {
                 boolean isValid = EditableLayerService.validateEditableLayerConfiguration(gpkg, id, json, mediaTable);
                 if(isValid) {
                     json = removeUnprintableCharacters(json);
+                    if(mediaTable == null || mediaTable.isEmpty()) mediaTable = id + "_picture_data";
                     tmConfigEditableLayer.addConfig(id, json, mediaTable);
                     EditableLayerService.removeTriggersOfTable(gpkg, id);
                 }
@@ -167,8 +169,7 @@ public class EditableLayerService {
             if (mediaTable == null || mediaTable.isEmpty()) {
 
                 mediaTable = layerName + "_picture_data";
-                EditableLayerService.createMediaTable(gpkg, layerName, mediaTable);
-                isValid = true;
+                isValid = EditableLayerService.createMediaTable(gpkg, layerName, mediaTable);
 
             } else {
 
@@ -179,8 +180,7 @@ public class EditableLayerService {
                     String tableName = c.getString(0);
                     c.close();
                     if(tableName==null || tableName.isEmpty() || !tableName.equals(mediaTable)) {
-                        EditableLayerService.createMediaTable(gpkg, layerName, mediaTable);
-                        isValid = true;
+                        isValid = EditableLayerService.createMediaTable(gpkg, layerName, mediaTable);
                     }
                 } else {
                     c.close();
@@ -225,7 +225,7 @@ public class EditableLayerService {
         return str;
     }
 
-    private static void createMediaTable(GeoPackage gpkg, String layerName, String mediaTable) throws Exception {
+    public static boolean createMediaTable(GeoPackage gpkg, String layerName, String mediaTable) throws Exception {
 
         FeaturesTable userTable = (FeaturesTable) gpkg.getUserTable(layerName, GpkgTable.TABLE_TYPE_FEATURES);
         String layerPK = userTable.getPrimaryKey(gpkg);
@@ -234,16 +234,51 @@ public class EditableLayerService {
                 " PK_UID INTEGER PRIMARY KEY AUTOINCREMENT,"+
                 " feature_id INTEGER NOT NULL,"+
                 " picture BLOB,"+
-                " picture_mime_type TEXT,"+
-                " CONSTRAINT fk_feature_id FOREIGN KEY (feature_id) REFERENCES "+layerName+"("+layerPK+") ON DELETE CASCADE);";
+                " picture_mime_type TEXT";
 
-        gpkg.getDatabase().execSQL(mediaTableStmt);
+        if(!layerPK.equals("rowid")) {
+            mediaTableStmt += ", CONSTRAINT fk_feature_id FOREIGN KEY (feature_id) REFERENCES " + layerName + "(" + layerPK + ") ON DELETE CASCADE);";
+        }else {
+            mediaTableStmt += ");";
+        }
 
         String updateTmLayerFormConfigStmt = "UPDATE tm_layer_form SET tm_media_table='"+mediaTable+"' WHERE gpkg_layer_identify='"+layerName+"';";
 
-        gpkg.getDatabase().execSQL(updateTmLayerFormConfigStmt);
+        String[] statements = new String[2];
+        statements[0]=mediaTableStmt;
+        statements[1]=updateTmLayerFormConfigStmt;
+        return gpkg.getDatabase().execSQLWithRollback(statements);
     }
 
+    public static boolean existMedias(Context context,
+                                      GeoPackage geoPackage,
+                                      String mediaTable) throws InvalidAppConfigException, DAOException {
+
+        return MediaService.existMediasOnTable(context, geoPackage, mediaTable);
+
+    }
+
+    public static boolean transferMedias(Context context,
+                                         GpkgLayer layerInput,
+                                         GpkgLayer layerOutput,
+                                         List<SimpleFeature> features) throws InvalidAppConfigException, TerraMobileException, DAOException, Exception {
+
+        Iterator<SimpleFeature> iterator = features.iterator();
+        while(iterator.hasNext()) {
+            SimpleFeature sf = iterator.next();
+            long fid = new Long(sf.getID()).longValue();
+
+            Map<String, Object> imgs = EditableLayerService.getImagesFromDatabase(context, layerInput, fid);
+            if(imgs!=null && !imgs.isEmpty()) {
+                ArrayList<Object> images = (ArrayList<Object>) imgs.values();
+                if(MediaService.insertPictures(context, layerOutput.getGeoPackage(), layerOutput.getMediaTable(), images, fid)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 
     public static boolean removeTriggersOfTable(GeoPackage gpkg, String tableName) throws Exception {
         boolean exec=false;
