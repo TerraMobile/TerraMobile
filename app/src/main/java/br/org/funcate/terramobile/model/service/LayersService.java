@@ -10,6 +10,7 @@ import org.osmdroid.views.overlay.Overlay;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 
 import br.org.funcate.jgpkg.exception.QueryException;
@@ -162,6 +163,32 @@ public class LayersService {
             }
         }
         return editableLayers;
+
+    }
+
+
+    private static void getLayerSettings(Context context, Project project, String layerName) throws SettingsException, InvalidAppConfigException {
+        try {
+            LayerSettingsDAO layerSettingsDAO = new LayerSettingsDAO(DatabaseFactory.getDatabase(context, project.getFilePath()));
+
+           HashMap<String, String> layerSettings = layerSettingsDAO.get(layerName);
+
+        }  catch (DAOException e) {
+            throw new SettingsException(e.getMessage(), e);
+        }
+    }
+
+    public static boolean checkForModifiedLayer(Context context, Project project) throws SettingsException, InvalidAppConfigException {
+        try {
+            LayerSettingsDAO layerSettingsDAO = new LayerSettingsDAO(DatabaseFactory.getDatabase(context, project.getFilePath()));
+
+            boolean modifiedLayer= layerSettingsDAO.hasModifiedLayer();
+
+            return modifiedLayer;
+
+        }  catch (DAOException e) {
+            throw new SettingsException(e.getMessage(), e);
+        }
 
     }
 }

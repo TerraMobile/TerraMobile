@@ -12,6 +12,8 @@ public class Project {
     private int updated;
     private String description;
     private int status;
+    private boolean modified;
+    private boolean onTheAppOnly;
 
     public Project()
     {
@@ -86,5 +88,21 @@ public class Project {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public boolean isModified() {
+        return modified;
+    }
+
+    public void setModified(boolean modified) {
+        this.modified = modified;
+    }
+
+    public boolean isOnTheAppOnly() {
+        return onTheAppOnly;
+    }
+
+    public void setOnTheAppOnly(boolean onTheAppOnly) {
+        this.onTheAppOnly = onTheAppOnly;
     }
 }

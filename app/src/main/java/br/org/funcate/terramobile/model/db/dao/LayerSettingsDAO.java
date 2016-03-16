@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.model.db.DatabaseHelper;
@@ -58,7 +59,7 @@ public class LayerSettingsDAO {
 
             if(db != null) {
 
-                Cursor cursor = db.query(TABLE_NAME, new String[]{"ENABLED","POSITION"}, "LAYER_NAME = ?", new String[]{layer.getName()}, null, null, null, null);
+                Cursor cursor = db.query(TABLE_NAME, new String[]{"ENABLED","POSITION, MODIFIED"}, "LAYER_NAME = ?", new String[]{layer.getName()}, null, null, null, null);
 
                 if (cursor != null && cursor.getCount() != 0) {
 
@@ -73,6 +74,15 @@ public class LayerSettingsDAO {
                         layer.setEnabled(false);
                     }
                     layer.setPosition(cursor.getInt(1));
+
+                    if(cursor.getInt(2)==1)
+                    {
+                        layer.setModified(true);
+                    }
+                    else
+                    {
+                        layer.setModified(false);
+                    }
 
                     cursor.close();
 
@@ -143,5 +153,65 @@ public class LayerSettingsDAO {
             e.printStackTrace();
             throw new DAOException(ResourceHelper.getStringResource(R.string.layer_settings_insert_exception),e);
         }
+    }
+
+    public HashMap<String, String> get(String layerName) throws InvalidAppConfigException, DAOException {
+        HashMap<String, String> settings = new HashMap<String, String>();
+
+        try {
+            SQLiteDatabase db = database.getReadableDatabase();
+
+            if(db != null) {
+
+                Cursor cursor = db.query(TABLE_NAME, new String[]{"ENABLED","POSITION, MODIFIED"}, "LAYER_NAME = ?", new String[]{layerName}, null, null, null, null);
+
+                if (cursor != null && cursor.getCount() != 0) {
+
+                    cursor.moveToFirst();
+
+                    settings.put("enabled", Integer.toString(cursor.getInt(0)));
+                    settings.put("position", Integer.toString(cursor.getInt(1)));
+                    settings.put("modified", Integer.toString(cursor.getInt(2)));
+
+                    cursor.close();
+
+                    db.close();
+
+                }
+                else
+                {
+                    db.close();
+                }
+            }
+        } catch (SQLiteException e) {
+            e.printStackTrace();
+            throw new DAOException(ResourceHelper.getStringResource(R.string.layer_settings_query_exception),e);
+        }
+        return settings;
+    }
+
+    public boolean hasModifiedLayer() throws InvalidAppConfigException, DAOException {
+        boolean hasModifiedLayer= false;
+
+        try {
+            SQLiteDatabase db = database.getReadableDatabase();
+
+            if(db != null) {
+
+                Cursor cursor = db.query(TABLE_NAME, new String[]{"ENABLED","POSITION, MODIFIED"}, "MODIFIED = ?", new String[]{"1"}, null, null, null, null);
+
+                if (cursor != null && cursor.getCount() != 0) {
+                    hasModifiedLayer=true;
+                }
+                else
+                {
+                    hasModifiedLayer=false;
+                }
+            }
+        } catch (SQLiteException e) {
+            e.printStackTrace();
+            throw new DAOException(ResourceHelper.getStringResource(R.string.layer_settings_query_exception),e);
+        }
+        return hasModifiedLayer;
     }
 }

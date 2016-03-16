@@ -3,11 +3,9 @@ package br.org.funcate.terramobile.view;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewParent;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
@@ -20,16 +18,16 @@ import java.util.ArrayList;
 
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.controller.activity.MainActivity;
-import br.org.funcate.terramobile.controller.activity.ProjectListFragment;
 import br.org.funcate.terramobile.controller.activity.UploadProjectFragment;
 import br.org.funcate.terramobile.controller.activity.tasks.DownloadTask;
 import br.org.funcate.terramobile.model.db.ApplicationDatabase;
 import br.org.funcate.terramobile.model.db.DatabaseFactory;
 import br.org.funcate.terramobile.model.domain.Project;
 import br.org.funcate.terramobile.model.db.dao.ProjectDAO;
-import br.org.funcate.terramobile.model.db.dao.SettingsDAO;
 import br.org.funcate.terramobile.model.exception.DAOException;
 import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
+import br.org.funcate.terramobile.model.exception.ProjectException;
+import br.org.funcate.terramobile.model.service.ProjectsService;
 import br.org.funcate.terramobile.util.Message;
 import br.org.funcate.terramobile.util.Util;
 
@@ -60,8 +58,6 @@ public class ProjectListAdapter extends ArrayAdapter<Project> implements Adapter
         TextView tVProject = (TextView) convertView.findViewById(R.id.tVProjectName);
         ImageView iVDownloaded = (ImageView) convertView.findViewById(R.id.iVDownloaded);
         ImageView iVUploaded = (ImageView) convertView.findViewById(R.id.iVUploaded);
-        //ImageView iVMoveToSD = (ImageView) convertView.findViewById(R.id.iVMoveToSD);
-//        ImageView iVUpdated = (ImageView)convertView.findViewById(R.id.iVUpdated);
 
         Project project = (Project) projectList.get(position);
 
@@ -80,18 +76,76 @@ public class ProjectListAdapter extends ArrayAdapter<Project> implements Adapter
 
         File directory = Util.getDirectory(context.getResources().getString(R.string.app_workspace_dir));
         File projectFile = Util.getGeoPackageByName(directory, context.getResources().getString(R.string.geopackage_extension), project.getName());
+
+/*
         if(project.isDownloaded() != 0 && projectFile != null){
             rBCurrentProject.setEnabled(true);
             iVDownloaded.setImageResource(R.drawable.downloaded);
         }
+*/
+        //Download and upload icon rules
+        //If project not downloaded yet
 
-        //Testar pra ver qdo já foi enviado
-        iVUploaded.setImageResource(R.drawable.uploaded);
+        try {
 
-        iVDownloaded.setOnClickListener(onDownloadIconClick);
-       // iVMoveToSD.setOnClickListener(onMoveToSDCard);
+            if(project.isDownloaded()==0 && projectFile == null)
+            {
+                iVDownloaded.setImageResource(R.drawable.download_enabled);
+                iVUploaded.setImageResource(R.drawable.upload_disabled);
 
-        iVUploaded.setOnClickListener(onUploadIconClick);
+                iVDownloaded.setOnClickListener(onDownloadIconClick);
+            }
+            else
+            {
+                //If project already downloaded
+                //if project hasn't UUID
+                if(project.getUUID()==null||project.getUUID().isEmpty())
+                {
+                    iVUploaded.setImageResource(R.drawable.invalid_project);
+                    iVDownloaded.setVisibility(View.INVISIBLE);
+
+                }
+                else
+                {
+                    //Has UUID, but is not on the server anymore
+                    if(project.isOnTheAppOnly())
+                    {
+                        iVDownloaded.setImageResource(R.drawable.download_disabled);
+                        iVUploaded.setImageResource(R.drawable.upload_disabled);
+                    }
+                    else
+                    {
+                        //Project is on the server and in the client and has no modification
+                        if(!ProjectsService.isProjectModified(context, project))
+                        {
+                            iVDownloaded.setImageResource(R.drawable.download_enabled);
+                            iVUploaded.setImageResource(R.drawable.upload_disabled);
+
+                            iVDownloaded.setOnClickListener(onDownloadIconClick);
+                        }
+                        else
+                        {
+                            iVDownloaded.setImageResource(R.drawable.download_enabled_warning);
+                            iVUploaded.setImageResource(R.drawable.upload_enabled);
+
+                            iVDownloaded.setOnClickListener(onDownloadIconClick);
+                            iVUploaded.setOnClickListener(onUploadIconClick);
+                        }
+
+
+                    }
+                }
+
+            }
+
+        } catch (InvalidAppConfigException e) {
+            e.printStackTrace();
+            Message.showErrorMessage(((MainActivity) context), R.string.error, e.getMessage());
+        } catch (ProjectException e) {
+            e.printStackTrace();
+            Message.showErrorMessage(((MainActivity) context), R.string.error, e.getMessage());
+        }
+
 
 
         rBCurrentProject.setOnClickListener(new View.OnClickListener() {

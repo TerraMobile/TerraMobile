@@ -23,13 +23,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingRight="5dp"
-        android:src="@drawable/not_downloaded" />
+        android:src="@drawable/download_disabled" />
     <ImageView
         android:id="@+id/iVUploaded"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingRight="5dp"
-        android:src="@drawable/not_uploaded" />
+        android:src="@drawable/upload_disabled" />
         />
+    />
 
 </LinearLayout>

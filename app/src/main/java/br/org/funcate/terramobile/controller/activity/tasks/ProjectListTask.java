@@ -148,6 +148,7 @@ public class ProjectListTask extends AsyncTask<String, String, JSONObject> {
                     project.setName(file.getName());
                     project.setFilePath(destinationFilePath);
                     project.setDownloaded(1);
+                    project.setOnTheAppOnly(true);
 
                     String status="";
                     String UUID="";
@@ -202,6 +203,15 @@ public class ProjectListTask extends AsyncTask<String, String, JSONObject> {
                         project.setDescription(description);
                         aLItems.add(project);
                     }
+                    //Set the project that is not only on the server
+                    for (Project project:aLItems) {
+                        if(project.getUUID().equalsIgnoreCase(id))
+                        {
+                            project.setOnTheAppOnly(false);
+                            break;
+                        }
+                    }
+
                 }
             }
 
