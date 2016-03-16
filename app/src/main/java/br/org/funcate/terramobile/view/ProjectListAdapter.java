@@ -150,7 +150,7 @@ public class ProjectListAdapter extends ArrayAdapter<Project> implements Adapter
                     builder.setPositiveButton(R.string.yes,
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
-                                    downloadTask = (DownloadTask) new DownloadTask(tempFilePath, projectFilePath, fileName, (MainActivity) context).execute(serverURL + "/getprojects/userName/" + fileName);
+                                    downloadTask = (DownloadTask) new DownloadTask(tempFilePath, projectFilePath, fileName, project.getUUID(), project.getStatus(), (MainActivity) context).execute(serverURL + "downloadprojects");
 //                              else
 //                                   Message.showErrorMessage(context, R.string.error, R.string.not_logged);
                                 }
@@ -165,7 +165,7 @@ public class ProjectListAdapter extends ArrayAdapter<Project> implements Adapter
                     alertDialog.show();
                 }
                 else {
-                    downloadTask = (DownloadTask) new DownloadTask(tempFilePath, projectFilePath, fileName, (MainActivity) context).execute(serverURL + "/getprojects/userName/" + fileName);
+                    downloadTask = (DownloadTask) new DownloadTask(tempFilePath, projectFilePath, fileName, project.getUUID(), project.getStatus(), (MainActivity) context).execute(serverURL + "downloadproject");
 //                else
 //                    Message.showErrorMessage(context, R.string.error, R.string.not_logged);
                 }

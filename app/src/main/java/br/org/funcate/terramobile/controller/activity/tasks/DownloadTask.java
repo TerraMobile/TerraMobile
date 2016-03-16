@@ -3,13 +3,31 @@ package br.org.funcate.terramobile.controller.activity.tasks;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.StatusLine;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.StringBody;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
+import org.json.JSONObject;
+
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
@@ -40,15 +58,21 @@ public class DownloadTask extends AsyncTask<String, String, Boolean> {
 
     private File destinationFile;
 
-    private String fileName;
+    private String projectFileName;
+
+    private String projectUUID;
+
+    private int projectStatus;
 
     private boolean error;
 
-    public DownloadTask(String downloadDestinationFilePath, String unzipDestinationFilePath, String fileName, MainActivity mainActivity) {
+    public DownloadTask(String downloadDestinationFilePath, String unzipDestinationFilePath, String projectFileName, String projectUUID, int projectStatus, MainActivity mainActivity) {
         this.mainActivity = mainActivity;
         this.unzipDestinationFilePath = unzipDestinationFilePath;
         this.downloadDestinationFilePath = downloadDestinationFilePath;
-        this.fileName = fileName;
+        this.projectFileName = projectFileName;
+        this.projectUUID = projectUUID;
+        this.projectStatus = projectStatus;
         mFiles = new ArrayList<String>();
     }
 
@@ -83,61 +107,108 @@ public class DownloadTask extends AsyncTask<String, String, Boolean> {
                 else return null;
             }
 
-            URL url = new URL(urlToDownload[0]);
-            URLConnection urlConnection = url.openConnection();
-            urlConnection.setConnectTimeout(5000);
-            urlConnection.setReadTimeout(5000);
-            urlConnection.connect();
+            HttpParams httpParams = new BasicHttpParams();
 
-            int totalSize = urlConnection.getContentLength();
-            if(totalSize == -1){
-                this.cancel(true);
-                error = true;
-                return false;
-            }
-            InputStream is = urlConnection.getInputStream();
-            if(is == null) {
-                this.cancel(true);
-                error = true;
-                return false;
-            }
-            InputStream inputStream = new BufferedInputStream(is);
-            OutputStream fileOutput = new FileOutputStream(destinationFile);
+            HttpConnectionParams.setConnectionTimeout(httpParams, 5000);
 
-            byte buffer[] = new byte[1024];
+            HttpConnectionParams.setSoTimeout(httpParams, 5000);
 
-            int bufferLength;
-            long total = 0;
-            while ((bufferLength = inputStream.read(buffer)) != -1) {
-                if(isCancelled()) {
-                    fileOutput.flush();
-                    fileOutput.close();
-                    inputStream.close();
+            HttpClient httpClient = new DefaultHttpClient(httpParams);
+
+            HttpPost httpPost = new HttpPost(urlToDownload[0]);
+
+            ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+
+            MultipartEntityBuilder entityBuilder = MultipartEntityBuilder.create().setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
+
+            entityBuilder.addPart("projectStatus", new StringBody(Integer.toString(projectStatus), ContentType.TEXT_PLAIN));
+
+            entityBuilder.addPart("projectId", new StringBody(projectUUID, ContentType.TEXT_PLAIN));
+
+            entityBuilder.addPart("projectName", new StringBody(projectFileName, ContentType.TEXT_PLAIN));
+
+            entityBuilder.addPart("user", new StringBody("userName", ContentType.TEXT_PLAIN));
+
+            entityBuilder.addPart("password", new StringBody("password", ContentType.TEXT_PLAIN));
+
+            httpPost.setEntity(entityBuilder.build());
+
+            HttpResponse response = httpClient.execute(httpPost);
+
+            StatusLine statusLine = response.getStatusLine();
+
+            int statusCode = statusLine.getStatusCode();
+
+            if (statusCode == 200) {
+
+                StringBuilder stringBuilder = new StringBuilder();
+
+                HttpEntity httpEntity = response.getEntity();
+
+                InputStream content = httpEntity.getContent();
+
+
+                long totalSize = httpEntity.getContentLength();
+                if(totalSize == -1){
+                    this.cancel(true);
+                    error = true;
                     return false;
                 }
-                total += bufferLength;
-                publishProgress("" + (int) ((total * 100) / totalSize), mainActivity.getString(R.string.downloading));
-                fileOutput.write(buffer, 0, bufferLength);
+
+                if(content == null) {
+                    this.cancel(true);
+                    error = true;
+                    return false;
+                }
+
+                InputStream inputStream = new BufferedInputStream(content);
+                OutputStream fileOutput = new FileOutputStream(destinationFile);
+
+                byte buffer[] = new byte[1024];
+
+                int bufferLength;
+                long total = 0;
+                while ((bufferLength = inputStream.read(buffer)) != -1) {
+                    if(isCancelled()) {
+                        fileOutput.flush();
+                        fileOutput.close();
+                        inputStream.close();
+                        return false;
+                    }
+                    total += bufferLength;
+                    publishProgress("" + (int) ((total * 100) / totalSize), mainActivity.getString(R.string.downloading));
+                    fileOutput.write(buffer, 0, bufferLength);
+                }
+                fileOutput.flush();
+                fileOutput.close();
+
+                String ext = mainActivity.getString(R.string.geopackage_extension);
+
+                if(downloadDestinationFilePath.endsWith(ext))
+                    mFiles.add(downloadDestinationFilePath.substring(downloadDestinationFilePath.lastIndexOf(File.separatorChar)+1, downloadDestinationFilePath.length()));
+                else
+                    mFiles = this.unzip(new File(downloadDestinationFilePath), new File(unzipDestinationFilePath));
+
+                unzipDestinationFilePath += "/" +projectFileName;
+
+                if(destinationFile.exists()) {
+                    publishProgress("99", mainActivity.getString(R.string.copying_file));
+                    Util.copyFile(downloadDestinationFilePath, unzipDestinationFilePath);
+                    destinationFile.delete();
+                }
+
+                return true;
+
             }
-            fileOutput.flush();
-            fileOutput.close();
-
-            String ext = mainActivity.getString(R.string.geopackage_extension);
-
-            if(downloadDestinationFilePath.endsWith(ext))
-                mFiles.add(downloadDestinationFilePath.substring(downloadDestinationFilePath.lastIndexOf(File.separatorChar)+1, downloadDestinationFilePath.length()));
             else
-                mFiles = this.unzip(new File(downloadDestinationFilePath), new File(unzipDestinationFilePath));
-
-            unzipDestinationFilePath += "/" +fileName;
-
-            if(destinationFile.exists()) {
-                publishProgress("99", mainActivity.getString(R.string.copying_file));
-                Util.copyFile(downloadDestinationFilePath, unzipDestinationFilePath);
-                destinationFile.delete();
+            {
+                this.cancel(true);
+                error = true;
+                if(destinationFile.exists())
+                    destinationFile.delete();
+                return false;
             }
 
-            return true;
         }catch (IOException e) {
             e.printStackTrace();
             this.cancel(true);
