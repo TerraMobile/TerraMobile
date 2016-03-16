@@ -3,14 +3,10 @@ package br.org.funcate.terramobile.controller.activity.tasks;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -20,19 +16,10 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.controller.activity.MainActivity;
-import br.org.funcate.terramobile.model.db.ApplicationDatabase;
-import br.org.funcate.terramobile.model.db.DatabaseFactory;
-import br.org.funcate.terramobile.model.db.dao.ProjectDAO;
-import br.org.funcate.terramobile.model.domain.Project;
-import br.org.funcate.terramobile.model.exception.DAOException;
-import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
 import br.org.funcate.terramobile.util.Message;
-import br.org.funcate.terramobile.util.Util;
 
 /**
  * This AsyncTask upload a geopackage from the server

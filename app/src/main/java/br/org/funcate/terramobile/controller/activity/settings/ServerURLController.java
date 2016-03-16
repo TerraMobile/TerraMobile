@@ -4,7 +4,6 @@ import android.app.Fragment;
 import android.content.Context;
 
 import br.org.funcate.terramobile.R;
-import br.org.funcate.terramobile.controller.activity.MainActivity;
 import br.org.funcate.terramobile.model.db.ApplicationDatabase;
 import br.org.funcate.terramobile.model.domain.Setting;
 import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;

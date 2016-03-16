@@ -1,12 +1,7 @@
 package br.org.funcate.terramobile.model.geomsource;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LineString;
 
-import org.opengis.feature.simple.SimpleFeature;
-import org.osmdroid.bonuspack.kml.KmlGeometry;
 import org.osmdroid.bonuspack.kml.KmlLineString;
 
 /**

@@ -5,20 +5,13 @@ import android.content.Context;
 import com.augtech.geoapi.geometry.BoundingBoxImpl;
 
 import org.opengis.geometry.BoundingBox;
-import org.osmdroid.util.GeoPoint;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import br.org.funcate.terramobile.R;
-import br.org.funcate.terramobile.model.db.ApplicationDatabase;
-import br.org.funcate.terramobile.model.db.DatabaseFactory;
-import br.org.funcate.terramobile.model.db.ProjectDatabase;
-import br.org.funcate.terramobile.model.db.dao.SettingsDAO;
-import br.org.funcate.terramobile.model.domain.Project;
 import br.org.funcate.terramobile.model.domain.Setting;
-import br.org.funcate.terramobile.model.exception.DAOException;
 import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
 import br.org.funcate.terramobile.model.exception.ProjectException;
 import br.org.funcate.terramobile.model.exception.SettingsException;

@@ -1,9 +1,6 @@
 package br.org.funcate.terramobile.model.db;
 
 import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 
 /**
  * This class is an extends or generic database helper do be able to use different configuration while access different kinds of database, in this case the app sqlite database

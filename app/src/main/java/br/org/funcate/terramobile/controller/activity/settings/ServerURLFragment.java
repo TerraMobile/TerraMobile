@@ -11,8 +11,6 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import br.org.funcate.terramobile.R;
-import br.org.funcate.terramobile.controller.activity.MainActivity;
-import br.org.funcate.terramobile.model.db.dao.SettingsDAO;
 
 /**
  * DialogFragment to show the user's credentials form on the settings menu

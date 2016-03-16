@@ -1,8 +1,6 @@
 package br.org.funcate.terramobile.model.osmbonuspack.overlays;
 
 
-import android.graphics.Color;
-
 import org.osmdroid.bonuspack.kml.KmlDocument;
 import org.osmdroid.bonuspack.kml.KmlFeature;
 import org.osmdroid.bonuspack.kml.KmlLineString;

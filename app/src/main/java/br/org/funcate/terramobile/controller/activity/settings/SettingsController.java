@@ -1,9 +1,6 @@
 package br.org.funcate.terramobile.controller.activity.settings;
 
-import android.app.Fragment;
 import android.content.Context;
-import android.preference.PreferenceActivity;
-import android.support.v4.app.FragmentActivity;
 
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.model.db.ApplicationDatabase;

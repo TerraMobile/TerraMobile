@@ -5,14 +5,10 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 
-import org.osmdroid.bonuspack.kml.Style;
-
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.model.db.DatabaseHelper;
-import br.org.funcate.terramobile.model.domain.Setting;
 import br.org.funcate.terramobile.model.exception.DAOException;
 import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
-import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
 import br.org.funcate.terramobile.util.ResourceHelper;
 
 public class StyleDAO {

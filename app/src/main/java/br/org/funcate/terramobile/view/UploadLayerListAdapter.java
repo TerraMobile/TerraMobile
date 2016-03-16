@@ -1,35 +1,19 @@
 package br.org.funcate.terramobile.view;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.RadioButton;
 import android.widget.TextView;
 
-import java.io.File;
 import java.util.ArrayList;
 
 import br.org.funcate.terramobile.R;
-import br.org.funcate.terramobile.controller.activity.MainActivity;
-import br.org.funcate.terramobile.controller.activity.UploadProjectFragment;
-import br.org.funcate.terramobile.controller.activity.tasks.DownloadTask;
-import br.org.funcate.terramobile.model.db.ApplicationDatabase;
-import br.org.funcate.terramobile.model.db.DatabaseFactory;
-import br.org.funcate.terramobile.model.db.dao.ProjectDAO;
-import br.org.funcate.terramobile.model.domain.Project;
-import br.org.funcate.terramobile.model.exception.DAOException;
-import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
-import br.org.funcate.terramobile.util.Message;
-import br.org.funcate.terramobile.util.Util;
 
 /**
  * Created by marcelo on 6/10/15.

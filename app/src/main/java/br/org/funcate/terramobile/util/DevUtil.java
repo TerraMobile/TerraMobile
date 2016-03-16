@@ -1,7 +1,5 @@
 package br.org.funcate.terramobile.util;
 
-import br.org.funcate.terramobile.model.exception.TerraMobileException;
-
 /**
  * Created by bogo on 27/05/15.
  */

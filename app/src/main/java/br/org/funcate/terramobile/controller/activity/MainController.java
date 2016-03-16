@@ -1,40 +1,13 @@
 package br.org.funcate.terramobile.controller.activity;
 
-import android.app.Activity;
-import android.app.ProgressDialog;
-import android.content.Intent;
-import android.graphics.Point;
-import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
 
-import com.augtech.geoapi.geopackage.DateUtil;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-
 import org.apache.http.impl.cookie.IgnoreSpecFactory;
-import org.opengis.feature.Property;
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.AttributeType;
-import org.opengis.feature.type.Name;
-import org.opengis.feature.type.PropertyType;
 import org.opengis.geometry.BoundingBox;
-import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.MapView;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
 
-import br.org.funcate.dynamicforms.FormUtilities;
-import br.org.funcate.dynamicforms.FragmentDetailActivity;
-import br.org.funcate.dynamicforms.util.LibraryConstants;
-import br.org.funcate.jgpkg.exception.QueryException;
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.model.db.ApplicationDatabase;
 import br.org.funcate.terramobile.model.db.DatabaseFactory;
@@ -43,11 +16,8 @@ import br.org.funcate.terramobile.model.domain.Project;
 import br.org.funcate.terramobile.model.domain.Setting;
 import br.org.funcate.terramobile.model.exception.DAOException;
 import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
-import br.org.funcate.terramobile.model.exception.LowMemoryException;
 import br.org.funcate.terramobile.model.exception.ProjectException;
 import br.org.funcate.terramobile.model.exception.SettingsException;
-import br.org.funcate.terramobile.model.exception.TerraMobileException;
-import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
 import br.org.funcate.terramobile.model.service.LayersService;
 import br.org.funcate.terramobile.model.service.ProjectsService;
 import br.org.funcate.terramobile.model.service.SettingsService;
