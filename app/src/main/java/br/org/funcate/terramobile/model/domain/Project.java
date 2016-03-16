@@ -13,6 +13,11 @@ public class Project {
     private String description;
     private int status;
 
+    public Project()
+    {
+
+    }
+
     public String getName() {
         return this.name;
     }

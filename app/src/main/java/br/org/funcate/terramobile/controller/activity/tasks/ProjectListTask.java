@@ -144,16 +144,12 @@ public class ProjectListTask extends AsyncTask<String, String, JSONObject> {
                     project.setName(file.getName());
                     project.setFilePath(destinationFilePath);
                     project.setDownloaded(1);
+                    project.setUUID("");
+                    project.setStatus(0);
+                    project.setDescription("");
 
                     aLItems.add(project);
                 }
-            }
-
-            if(!aLItems.isEmpty())
-                mainActivity.getProjectListFragment().setListItems(aLItems);
-            else {
-                mainActivity.getProjectListFragment().dismiss();
-                Message.showErrorMessage(mainActivity, R.string.error, R.string.projects_not_found);
             }
 
             if (jsonObject != null) {
@@ -174,10 +170,18 @@ public class ProjectListTask extends AsyncTask<String, String, JSONObject> {
                         project.setFilePath(destinationFilePath);
                         project.setDownloaded(0);
                         project.setStatus(status);
+                        project.setUUID(id);
                         project.setDescription(description);
                         aLItems.add(project);
                     }
                 }
+            }
+
+            if(!aLItems.isEmpty())
+                mainActivity.getProjectListFragment().setListItems(aLItems);
+            else {
+                mainActivity.getProjectListFragment().dismiss();
+                Message.showErrorMessage(mainActivity, R.string.error, R.string.projects_not_found);
             }
         } catch (JSONException e) {
             Message.showErrorMessage(mainActivity, R.string.error, R.string.connection_failed);
