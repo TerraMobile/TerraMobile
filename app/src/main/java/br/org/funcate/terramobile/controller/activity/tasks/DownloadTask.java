@@ -198,6 +198,7 @@ public class DownloadTask extends AsyncTask<String, String, Boolean> {
                     destinationFile.delete();
                 }
 
+
                 return true;
 
             }

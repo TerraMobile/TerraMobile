@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="terramobile_url">http://192.168.0.101:8080/TerraMobileServer/projectservices/</string>
+    <string name="terramobile_url">http://terrabrasilis.info/TerraMobileServer/projectservices/</string>
     <string name="app_workspace_dir">TerraMobile</string>
     <string name="app_workspace_temp_dir">TerraMobile/Temp</string>
     <string name="geopackage_extension">.gpkg</string>

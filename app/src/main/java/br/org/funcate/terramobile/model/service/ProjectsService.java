@@ -106,6 +106,41 @@ public class ProjectsService {
 
     }
 
+    public static String getUUID(Context context, String projectPath) throws InvalidAppConfigException, ProjectException {
+        String UUID = "";
+        try {
+            Setting descriptionSetting = SettingsService.get(context,"project_id",projectPath);
+
+            if(descriptionSetting!=null)
+            {
+                UUID = descriptionSetting.getValue();
+            }
+
+        } catch (SettingsException e) {
+            throw new ProjectException(ResourceHelper.getStringResource(R.string.failed_getting_project_setting),e);
+        }
+        return UUID;
+
+    }
+
+    public static String getStatus(Context context, String projectPath) throws InvalidAppConfigException, ProjectException {
+        String status = "";
+        try {
+            Setting descriptionSetting = SettingsService.get(context,"project_status",projectPath);
+
+            if(descriptionSetting!=null)
+            {
+                status = descriptionSetting.getValue();
+            }
+
+        } catch (SettingsException e) {
+            throw new ProjectException(ResourceHelper.getStringResource(R.string.failed_getting_project_setting),e);
+        }
+        return status;
+
+    }
+
+
 
 
 }
