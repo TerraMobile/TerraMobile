@@ -147,13 +147,15 @@ public class MainController {
 
     public boolean setCurrentProject(Project project) throws InvalidAppConfigException {
 
-        DatabaseFactory.getDatabase(mainActivity, project.getFilePath());
-
         if(project==null)
         {
             clearCurrentProject();
             return true;
         }
+
+        DatabaseFactory.getDatabase(mainActivity, project.getFilePath());
+
+        
 
         // remove GPS Overlay of the map
         boolean hasGPSEnabledOnMap = getGpsOverlayController().isOverlayAdded();

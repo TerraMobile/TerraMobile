@@ -101,8 +101,12 @@ public class LayersService {
             LayerSettingsDAO layerSettingsDAO = new LayerSettingsDAO(DatabaseFactory.getDatabase(context, project.getFilePath()));
 
             for(int i = 0; i < layers.size(); i++) {
+
                 layerSettingsDAO.load(layers.get(i));
+
             }
+
+            enableOnlyOneGatheringLayer(context, project, layers);
 
         }  catch (DAOException e) {
             throw new SettingsException(e.getMessage(), e);
@@ -140,11 +144,6 @@ public class LayersService {
 
             if(layerSettingsDAO.deleteAll())
             {
-             /*   for (int i = 0; i < layers.size(); i++) {
-                    GpkgLayer l = layers.get(i);
-                    layerSettingsDAO.update(l.getName(), l.isEnabled()?1:0, l.getPosition());
-                    System.err.println("--------------====== "+l.getName() + " : " + l.getPosition());
-                }*/
                 layerSettingsDAO.insertAll(layers);
             }
         }  catch (DAOException e) {
@@ -190,5 +189,27 @@ public class LayersService {
             throw new SettingsException(e.getMessage(), e);
         }
 
+    }
+
+    public static void enableOnlyOneGatheringLayer(Context context, Project project, ArrayList<GpkgLayer> layers) throws SettingsException, InvalidAppConfigException {
+        boolean foundEnabled = false;
+        for (GpkgLayer layer:layers) {
+            if(layer.isEditable())
+            {
+                if(layer.isEnabled())
+                {
+                    if(!foundEnabled)
+                    {
+                        foundEnabled = true;
+                    }
+                    else
+                    {
+                        layer.setEnabled(false);
+                    }
+
+                }
+            }
+        }
+        updateLayerSettings(context, project, layers);
     }
 }
