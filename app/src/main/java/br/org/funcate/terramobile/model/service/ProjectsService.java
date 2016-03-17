@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import br.org.funcate.terramobile.R;
+import br.org.funcate.terramobile.model.domain.Project;
 import br.org.funcate.terramobile.model.domain.Setting;
 import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
 import br.org.funcate.terramobile.model.exception.ProjectException;
@@ -99,6 +100,53 @@ public class ProjectsService {
 
     }
 
+    public static String getUUID(Context context, String projectPath) throws InvalidAppConfigException, ProjectException {
+        String UUID = "";
+        try {
+            Setting descriptionSetting = SettingsService.get(context,"project_id",projectPath);
+
+            if(descriptionSetting!=null)
+            {
+                UUID = descriptionSetting.getValue();
+            }
+
+        } catch (SettingsException e) {
+            throw new ProjectException(ResourceHelper.getStringResource(R.string.failed_getting_project_setting),e);
+        }
+        return UUID;
+
+    }
+
+    public static String getStatus(Context context, String projectPath) throws InvalidAppConfigException, ProjectException {
+        String status = "";
+        try {
+            Setting descriptionSetting = SettingsService.get(context,"project_status",projectPath);
+
+            if(descriptionSetting!=null)
+            {
+                status = descriptionSetting.getValue();
+            }
+
+        } catch (SettingsException e) {
+            throw new ProjectException(ResourceHelper.getStringResource(R.string.failed_getting_project_setting),e);
+        }
+        return status;
+
+    }
+
+    public static boolean isProjectModified(Context context, Project project) throws InvalidAppConfigException, ProjectException {
+
+        try
+        {
+            boolean modified = LayersService.checkForModifiedLayer(context, project);
+
+            project.setModified(modified);
+
+            return modified;
+        } catch (SettingsException e) {
+            throw new ProjectException(ResourceHelper.getStringResource(R.string.failed_getting_project_setting),e);
+        }
+    }
 
 
 }

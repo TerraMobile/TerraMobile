@@ -1,10 +1,8 @@
 package br.org.funcate.terramobile.controller.activity;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -17,13 +15,10 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-
-import com.augtech.geoapi.geometry.BoundingBoxImpl;
 
 import org.osmdroid.ResourceProxy;
 import org.osmdroid.tileprovider.tilesource.ITileSource;
@@ -33,18 +28,11 @@ import org.osmdroid.tileprovider.util.CloudmadeUtil;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 
-import br.org.funcate.dynamicforms.util.LibraryConstants;
-import br.org.funcate.jgpkg.exception.QueryException;
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.controller.activity.settings.GPSSettingController;
 import br.org.funcate.terramobile.model.constants.OpenStreetMapConstants;
-import br.org.funcate.terramobile.model.exception.DAOException;
 import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
-import br.org.funcate.terramobile.model.exception.TerraMobileException;
-import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
-import br.org.funcate.terramobile.model.service.AppGeoPackageService;
 import br.org.funcate.terramobile.model.service.GPSService;
-import br.org.funcate.terramobile.model.service.AppGeoPackageService;
 import br.org.funcate.terramobile.util.Message;
 import br.org.funcate.terramobile.util.ResourceHelper;
 
@@ -330,7 +318,6 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants{
         } catch (InvalidAppConfigException e) {
             Message.showErrorMessage((MainActivity)context, R.string.error, e.getMessage());
         }
-
 
     }
 

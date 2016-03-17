@@ -13,10 +13,20 @@ public class Project {
     //public static final int SYNC=2;// Packages whose data was synchronized with the server (never exist in app).
 
     private Integer id;
+    private String UUID;
     private String name;
     private String filePath;
     private int downloaded;
     private int updated;
+    private String description;
+    private int status;
+    private boolean modified;
+    private boolean onTheAppOnly;
+
+    public Project()
+    {
+
+    }
 
     public String getName() {
         return this.name;
@@ -63,4 +73,44 @@ public class Project {
         this.downloaded = downloaded;
     }
 
+
+    public String getUUID() {
+        return UUID;
+    }
+
+    public void setUUID(String UUID) {
+        this.UUID = UUID;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    public boolean isModified() {
+        return modified;
+    }
+
+    public void setModified(boolean modified) {
+        this.modified = modified;
+    }
+
+    public boolean isOnTheAppOnly() {
+        return onTheAppOnly;
+    }
+
+    public void setOnTheAppOnly(boolean onTheAppOnly) {
+        this.onTheAppOnly = onTheAppOnly;
+    }
 }

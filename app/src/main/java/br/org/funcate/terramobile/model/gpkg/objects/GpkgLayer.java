@@ -40,6 +40,7 @@ public class GpkgLayer{
     private Style style;
     private boolean enabled;
     private int position;
+    private boolean modified;
 
     public GpkgLayer() {
     }
@@ -312,5 +313,13 @@ public class GpkgLayer{
             }
         }
         return gpkgField;
+    }
+
+    public boolean isModified() {
+        return modified;
+    }
+
+    public void setModified(boolean modified) {
+        this.modified = modified;
     }
 }

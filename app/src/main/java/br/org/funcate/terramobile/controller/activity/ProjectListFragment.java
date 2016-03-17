@@ -61,7 +61,10 @@ public class ProjectListFragment extends DialogFragment{
         terramobileUrl = ((MainActivity)getActivity()).getMainController().getServerURL();
 
         if(terramobileUrl != null)
-            new ProjectListTask((MainActivity)getActivity()).execute(terramobileUrl + "/getlistfiles/userName");
+        {
+            new ProjectListTask((MainActivity)getActivity()).execute(terramobileUrl + "listprojects");
+        }
+
 
     }
 

@@ -192,9 +192,11 @@ public class UploadProjectFragment extends DialogFragment{
         if(fileName!=null) {
 
             final String serverURL = ((MainActivity) getActivity()).getMainController().getServerURL();
+            //UploadTask uploadTask = (UploadTask) new UploadTask(fileName, (MainActivity)getActivity()).execute(serverURL + "projectupload/");
             UploadTask uploadTask = (UploadTask) new UploadTask(fileName, (MainActivity) getActivity()).execute(serverURL + "/addprojects/userName/" + fileName);
             return true;
         }
         return false;
+
     }
 }
