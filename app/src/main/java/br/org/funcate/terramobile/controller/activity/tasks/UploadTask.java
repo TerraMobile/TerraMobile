@@ -93,7 +93,7 @@ public class UploadTask extends AsyncTask<String, String, Boolean> {
             OutputStream outputStream = urlConnection.getOutputStream();
             PrintWriter writer = new PrintWriter(new OutputStreamWriter(outputStream), true);
 
-            addFormField("filename",originFile.getName(), writer, outputStream);
+            addFormField("fileName",originFile.getName(), writer, outputStream);
 
             addFilePart(originFile.getName(), originFile, writer, outputStream);
 
