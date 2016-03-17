@@ -118,13 +118,15 @@ public class MarkerInfoWindowController {
             try {
                 statusKey = ResourceHelper.getStringResource(R.string.point_status_column);
                 objIdKey = ResourceHelper.getStringResource(R.string.point_obj_id_column);
-                String objIdValue=(String)feature.getAttribute(objIdKey);
+                if(feature!=null) {
+                    String objIdValue = (String) feature.getAttribute(objIdKey);
 
-                if(objIdValue!=null && !objIdValue.isEmpty()) {// Update the feature that was loaded from official database
-                    feature.setAttribute(statusKey, ResourceHelper.getIntResource(R.integer.point_status_removed));
-                    exec = AppGeoPackageService.setRemovedFeature(layer, feature);
-                }else{
-                    exec = AppGeoPackageService.deleteFeature(layer, ((SFSEditableMarker)marker).getMarkerId());
+                    if (objIdValue != null && !objIdValue.isEmpty()) {// Update the feature that was loaded from official database
+                        feature.setAttribute(statusKey, ResourceHelper.getIntResource(R.integer.point_status_removed));
+                        exec = AppGeoPackageService.setRemovedFeature(layer, feature);
+                    } else {
+                        exec = AppGeoPackageService.deleteFeature(layer, ((SFSEditableMarker) marker).getMarkerId());
+                    }
                 }
 
             } catch (InvalidAppConfigException e) {

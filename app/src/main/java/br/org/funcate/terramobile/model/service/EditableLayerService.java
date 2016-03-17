@@ -182,8 +182,9 @@ public class EditableLayerService {
                     if(tableName==null || tableName.isEmpty() || !tableName.equals(mediaTable)) {
                         isValid = EditableLayerService.createMediaTable(gpkg, layerName, mediaTable);
                     }
-                } else {
+                } else {// the result set is empty, then media table not exists.
                     c.close();
+                    isValid = EditableLayerService.createMediaTable(gpkg, layerName, mediaTable);
                 }
             }
         }

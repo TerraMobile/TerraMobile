@@ -3,6 +3,7 @@ package br.org.funcate.terramobile.model.db.dao;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -287,5 +288,30 @@ public class MediaDAO {
         where = fieldFeatureId + "=" + featureID;
 
         return where;
+    }
+
+    public boolean dropTable(String mediaTable) throws InvalidAppConfigException, DAOException {
+        SQLiteDatabase db=null;
+        try {
+            db = database.getWritableDatabase();
+            if (db != null) {
+                db.beginTransaction();
+                String sql = "DROP TABLE "+mediaTable;
+                db.execSQL(sql);
+                db.setTransactionSuccessful();
+            }
+        } catch (SQLiteException e) {
+            e.printStackTrace();
+
+            if(db!=null) db.close();
+
+            throw new DAOException(ResourceHelper.getStringResource(R.string.media_table_delete_exception),e);
+        }
+        if(db!=null) {
+            db.endTransaction();
+            db.close();
+            return true;
+        }
+        return false;
     }
 }

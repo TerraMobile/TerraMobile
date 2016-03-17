@@ -54,7 +54,7 @@ public class GpkgLayer{
      * See the file "gatheringconfig.xml" to more info.
      * @return a where clause based on gathering configuration to all editable layers or empty to others.
      */
-    public String getDefaultFilter() {
+    public String defaultFilter() {
 
         String filter="";
         if(this.isEditable()){
@@ -77,17 +77,120 @@ public class GpkgLayer{
     }
 
     /**
+     * Build a filter that select all features that state is removed.
+     * It is used on remove operation.
+     * See the file "gatheringconfig.xml" to more info.
+     * @return a where clause based on gathering configuration to all editable layers or empty to others.
+     */
+    public String toRemoveFilter() {
+
+        String filter="";
+        if(this.isEditable()){
+            String statusKey;
+            int statusValue;
+            try {
+                statusKey = ResourceHelper.getStringResource(R.string.point_status_column);
+                statusValue = ResourceHelper.getIntResource(R.integer.point_status_removed);
+            } catch (InvalidAppConfigException e) {
+                e.printStackTrace();
+                statusKey="tm_status";
+                statusValue=2;
+            }
+            GpkgField gpkgField = getAttributeByName(statusKey);
+            if(gpkgField!=null) {
+                filter=statusKey + "=" + statusValue;
+            }
+        }
+        return filter;
+    }
+
+    /**
+     * Build a statement used to write a SQL to update the feature state as send.
+     * It is used after build a Geopackage to send to server.
+     * See the file "gatheringconfig.xml" to more info.
+     * @return a set clause based on gathering configuration to all editable layers or empty to others.
+     */
+    public String statementToSetSend() {
+
+        String stmt="";
+        if(this.isEditable()){
+            String statusKey;
+            int statusValue;
+            try {
+                statusKey = ResourceHelper.getStringResource(R.string.point_status_column);
+                statusValue = ResourceHelper.getIntResource(R.integer.point_status_send);
+            } catch (InvalidAppConfigException e) {
+                e.printStackTrace();
+                statusKey="tm_status";
+                statusValue=3;
+            }
+            GpkgField gpkgField = getAttributeByName(statusKey);
+            if(gpkgField!=null) {
+                stmt=statusKey + "=" + statusValue;
+            }
+        }
+        return stmt;
+    }
+
+    /**
      * This filters get all features to send: created, changed and removed.
      * This exclude unchanged and send features.
      * It is used on select feature to upload data.
      * See the file "gatheringconfig.xml" to more info.
      * @return a where clause based on gathering configuration to all editable layers or empty to others.
      */
-    public String getSendFilter() {
-        String filter = "object_id is null OR (object_id is not null AND tm_status between 1 and 2)";
+    public String toSendFilter() {
+        String filter="";
+        if(this.isEditable()){
+            String statusKey;
+            String objectIdKey;
+            int statusChanged;
+            int statusRemoved;
+            try {
+                statusKey = ResourceHelper.getStringResource(R.string.point_status_column);
+                objectIdKey = ResourceHelper.getStringResource(R.string.point_obj_id_column);
+                statusChanged = ResourceHelper.getIntResource(R.integer.point_status_changed);
+                statusRemoved = ResourceHelper.getIntResource(R.integer.point_status_removed);
+            } catch (InvalidAppConfigException e) {
+                e.printStackTrace();
+                statusKey="tm_status";
+                objectIdKey="object_id";
+                statusChanged=1;
+                statusRemoved=2;
+            }
+            GpkgField gpkgFieldStatus = getAttributeByName(statusKey);
+            GpkgField gpkgFieldObjId = getAttributeByName(objectIdKey);
+            if(gpkgFieldStatus!=null && gpkgFieldObjId!=null) {
+                filter=objectIdKey+" is null OR ("+objectIdKey+" is not null AND "+statusKey+" between "+statusChanged+" and "+statusRemoved+")";
+            }
+        }
         return filter;
     }
 
+    public String toUnchangeFilter() {
+        String filter="";
+        if(this.isEditable()){
+            String statusKey;
+            String objectIdKey;
+            int statusUnchanged;
+            try {
+                statusKey = ResourceHelper.getStringResource(R.string.point_status_column);
+                objectIdKey = ResourceHelper.getStringResource(R.string.point_obj_id_column);
+                statusUnchanged = ResourceHelper.getIntResource(R.integer.point_status_unchanged);
+            } catch (InvalidAppConfigException e) {
+                e.printStackTrace();
+                statusKey="tm_status";
+                objectIdKey="object_id";
+                statusUnchanged=1;
+            }
+            GpkgField gpkgFieldStatus = getAttributeByName(statusKey);
+            GpkgField gpkgFieldObjId = getAttributeByName(objectIdKey);
+            if(gpkgFieldStatus!=null && gpkgFieldObjId!=null) {
+                filter=objectIdKey+" is not null AND "+statusKey+" = "+statusUnchanged;
+            }
+        }
+        return filter;
+    }
 
     public String getName() {
         return name;

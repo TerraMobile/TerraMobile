@@ -3,34 +3,28 @@ package br.org.funcate.terramobile.controller.activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.ListView;
 
 import java.util.ArrayList;
 
 import br.org.funcate.jgpkg.exception.QueryException;
 import br.org.funcate.terramobile.R;
-import br.org.funcate.terramobile.controller.activity.settings.ServerURLController;
-import br.org.funcate.terramobile.controller.activity.settings.SettingsActivity;
-import br.org.funcate.terramobile.controller.activity.tasks.DownloadTask;
 import br.org.funcate.terramobile.controller.activity.tasks.UploadTask;
 import br.org.funcate.terramobile.model.domain.Project;
+import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
 import br.org.funcate.terramobile.model.exception.InvalidGeopackageException;
+import br.org.funcate.terramobile.model.exception.StyleException;
+import br.org.funcate.terramobile.model.exception.TerraMobileException;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
 import br.org.funcate.terramobile.model.service.AppGeoPackageService;
 import br.org.funcate.terramobile.model.service.LayersService;
-import br.org.funcate.terramobile.model.tilesource.TerraMobileInvalidationHandler;
 import br.org.funcate.terramobile.util.Message;
-import br.org.funcate.terramobile.view.ProjectListAdapter;
 import br.org.funcate.terramobile.view.UploadLayerListAdapter;
 
 /**
@@ -177,16 +171,30 @@ public class UploadProjectFragment extends DialogFragment{
 
         if(layers.size()==0)
         {
-            Message.showSuccessMessage(getActivity(), R.string.fail, R.string.error_uploding_missing_layers);
+            Message.showErrorMessage(getActivity(), R.string.fail, R.string.error_uploding_missing_layers);
             return false;
         }
 
+        String fileName = null;
+        try {
+            fileName = AppGeoPackageService.createGeopackageForUpload(getActivity(), this.project, layers);
+        } catch (InvalidAppConfigException e) {
+            e.printStackTrace();
+            Message.showErrorMessage(getActivity(), R.string.fail, e.getMessage());
+        } catch (TerraMobileException e) {
+            e.printStackTrace();
+            Message.showErrorMessage(getActivity(), R.string.fail, e.getMessage());
+        } catch (StyleException e) {
+            e.printStackTrace();
+            Message.showErrorMessage(getActivity(), R.string.fail, e.getMessage());
+        }
 
-        String fileName = AppGeoPackageService.createGeopackageForUpload(getActivity(), this.project ,layers);
+        if(fileName!=null) {
 
-        final String serverURL  = ((MainActivity) getActivity()).getMainController().getServerURL();
-
-        UploadTask uploadTask = (UploadTask) new UploadTask(fileName, (MainActivity)getActivity()).execute(serverURL + "/addprojects/userName/" + fileName);;
-       return true;
+            final String serverURL = ((MainActivity) getActivity()).getMainController().getServerURL();
+            UploadTask uploadTask = (UploadTask) new UploadTask(fileName, (MainActivity) getActivity()).execute(serverURL + "/addprojects/userName/" + fileName);
+            return true;
+        }
+        return false;
     }
 }

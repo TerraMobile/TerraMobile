@@ -63,7 +63,7 @@ public class SFSOverlayThread implements Runnable {
                 return;
             }
 
-            features = GeoPackageService.getGeometries(layer.getGeoPackage(), layer.getName(), layer.getDefaultFilter(), bb);
+            features = GeoPackageService.getGeometries(layer.getGeoPackage(), layer.getName(), layer.defaultFilter(), bb);
 
             System.out.println("____----++++====[FEATURES QUERY, SIZE=" + features.size() + "]====++++----____");
             for (int i = 0; i < features.size(); i++) {

@@ -180,4 +180,15 @@ public class StyleService {
         Style osmStyle = new Style(null, contourColor, strokeWidth, fillColor);
         return osmStyle;
     }
+
+    public static boolean deleteReferenceByLayer(Context context, String databasePath, GpkgLayer layer) throws InvalidAppConfigException, StyleException {
+        try {
+            StyleDAO dao = new StyleDAO(DatabaseFactory.getDatabase(context, databasePath));
+
+            return dao.delete(layer.getName());
+
+        } catch (DAOException e) {
+            throw new StyleException(e.getMessage(), e);
+        }
+    }
 }
