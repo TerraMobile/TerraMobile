@@ -12,12 +12,10 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -25,31 +23,24 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import org.opengis.geometry.BoundingBox;
-
-import java.io.File;
+import org.osmdroid.bonuspack.overlays.InfoWindow;
+import org.osmdroid.bonuspack.overlays.MapEventsReceiver;
+import org.osmdroid.bonuspack.overlays.Marker;
+import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.MapView;
 
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.controller.activity.settings.SettingsActivity;
-import br.org.funcate.terramobile.model.db.ApplicationDatabase;
-import br.org.funcate.terramobile.model.db.DatabaseFactory;
-import br.org.funcate.terramobile.model.db.dao.ProjectDAO;
-import br.org.funcate.terramobile.model.domain.Project;
-import br.org.funcate.terramobile.model.domain.Setting;
-import br.org.funcate.terramobile.model.exception.DAOException;
 import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
-import br.org.funcate.terramobile.model.exception.ProjectException;
-import br.org.funcate.terramobile.model.exception.SettingsException;
-import br.org.funcate.terramobile.model.service.LayersService;
-import br.org.funcate.terramobile.model.service.ProjectsService;
-import br.org.funcate.terramobile.model.service.SettingsService;
+import br.org.funcate.terramobile.model.exception.TerraMobileException;
+import br.org.funcate.terramobile.model.osmbonuspack.overlays.SFSEditableMarker;
 import br.org.funcate.terramobile.util.GlobalParameters;
 import br.org.funcate.terramobile.util.Message;
 import br.org.funcate.terramobile.util.ResourceHelper;
-import br.org.funcate.terramobile.util.Util;
 
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends FragmentActivity implements MapEventsReceiver,Marker.OnMarkerClickListener {
     private ActionBarDrawerToggle mDrawerToggle;
 
     private ActionBar actionBar;
@@ -212,7 +203,7 @@ public class MainActivity extends FragmentActivity {
                 projectListFragment = new ProjectListFragment();
                 projectListFragment.show(getFragmentManager(), "packageList");
                 return true;
-            case R.id.acquire_new_point:
+                                                                                                                                                                                                                                                                                                                                                                            case R.id.acquire_new_point:
                 getMainController().getMarkerInfoWindowController().startActivityForm();
                 break;
             case R.id.settings:
@@ -310,6 +301,13 @@ public class MainActivity extends FragmentActivity {
         this.mainController = mainController;
     }
 
+    @Override
+    public boolean onMarkerClick(Marker marker, MapView mapView) {
+        InfoWindow.closeAllInfoWindowsOn(mapView);
+        marker.showInfoWindow();
+        return true;
+    }
+
     private class MainActivityReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -327,5 +325,19 @@ public class MainActivity extends FragmentActivity {
                 getMainController().getGpsOverlayController().setKeepOnCenter(showGPSLocationOnCenter);
             }
         }
+    }
+    @Override
+    public boolean singleTapConfirmedHelper(GeoPoint geoPoint) {
+        MapView mapView = getMainController().getMapFragment().getMapView();
+        if(mapView != null){
+//            mainController.getFeatureInfoPanelController().startFeatureInfoPanel();
+
+        }
+        return true;
+    }
+
+    @Override
+    public boolean longPressHelper(GeoPoint geoPoint) {
+        return false;
     }
 }

@@ -1,8 +1,8 @@
 package br.org.funcate.terramobile.model.tilesource;
 
-import java.io.File;
-import java.io.InputStream;
-import java.util.Random;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 
 import org.osmdroid.ResourceProxy;
 import org.osmdroid.ResourceProxy.string;
@@ -13,9 +13,9 @@ import org.osmdroid.tileprovider.tilesource.ITileSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
+import java.io.File;
+import java.io.InputStream;
+import java.util.Random;
 
 public class CustomBitmapTileSourceBase implements ITileSource,
         OpenStreetMapTileProviderConstants {

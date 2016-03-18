@@ -8,17 +8,12 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LineString;
 
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
 import org.osmdroid.bonuspack.kml.Style;
-import org.osmdroid.bonuspack.overlays.OverlayWithIW;
 import org.osmdroid.bonuspack.overlays.Polygon;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 
 import java.util.ArrayList;
-
-import br.org.funcate.terramobile.model.geomsource.SFSGeometry;
 
 /**
  * Created by bogo on 21/08/15.

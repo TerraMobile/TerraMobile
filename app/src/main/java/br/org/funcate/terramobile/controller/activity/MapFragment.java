@@ -21,6 +21,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import org.osmdroid.ResourceProxy;
+import org.osmdroid.bonuspack.overlays.MapEventsOverlay;
 import org.osmdroid.tileprovider.tilesource.ITileSource;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.tileprovider.tilesource.XYTileSource;
@@ -46,7 +47,7 @@ import org.osmdroid.samplefragments.SampleFactory;*/
  * @author Manuel Stahl
  *
  */
-public class MapFragment extends Fragment implements OpenStreetMapConstants{
+public class MapFragment extends Fragment implements OpenStreetMapConstants {
 
     // ===========================================================
     // Fields
@@ -83,7 +84,7 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants{
         mMapView = (TerraMobileMapView) v.findViewById(R.id.mapview);
 
         mMapView.setMainController(menuMapController.getMainController());
-
+        mMapView.setMapEventsOverlay();
         drawingImageView = (ImageView) v.findViewById(R.id.DrawingImageView);
         try {
             drawCross(drawingImageView);
@@ -109,11 +110,9 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants{
 
 
         zoomIn = (ImageButton) v.findViewById(R.id.ZoomIn);
-        zoomIn.setOnClickListener(new View.OnClickListener()
-        {
+        zoomIn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
                 ZoomIn();
             }
         });
@@ -127,6 +126,7 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants{
         });
 
         super.onCreate(savedInstanceState);
+
 
         return v;
     }
@@ -154,6 +154,7 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants{
         if (CloudmadeUtil.getCloudmadeKey().length() == 0) {
             CloudmadeUtil.retrieveCloudmadeKey(context.getApplicationContext());
         }
+
     }
 
     @Override

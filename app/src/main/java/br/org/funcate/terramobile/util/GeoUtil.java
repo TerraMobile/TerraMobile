@@ -1,16 +1,9 @@
 package br.org.funcate.terramobile.util;
 
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-
 import com.augtech.geoapi.geometry.BoundingBoxImpl;
 
 import org.opengis.geometry.BoundingBox;
 import org.osmdroid.util.BoundingBoxE6;
-
-import java.util.HashMap;
-import java.util.Random;
 
 /**
  * Created by bogo on 30/07/15.

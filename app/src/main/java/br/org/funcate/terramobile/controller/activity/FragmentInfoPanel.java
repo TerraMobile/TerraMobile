@@ -4,16 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.annotation.DimenRes;
 import android.support.v4.app.Fragment;
 import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.GridLayout;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -21,10 +16,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import br.org.funcate.dynamicforms.images.ImageUtilities;
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.model.service.FeatureService;
-import br.org.funcate.terramobile.util.ResourceHelper;
 
 /**
  * Created by Andre Carvalho on 28/08/15.

@@ -1,9 +1,6 @@
 package br.org.funcate.terramobile.model.service;
 
 import android.content.Context;
-import android.hardware.Sensor;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;

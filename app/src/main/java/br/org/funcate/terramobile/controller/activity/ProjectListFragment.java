@@ -15,12 +15,6 @@ import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.controller.activity.tasks.DownloadTask;
 import br.org.funcate.terramobile.controller.activity.tasks.ProjectListTask;
 import br.org.funcate.terramobile.model.domain.Project;
-import br.org.funcate.terramobile.model.db.dao.SettingsDAO;
-import br.org.funcate.terramobile.model.domain.Setting;
-import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
-import br.org.funcate.terramobile.model.exception.SettingsException;
-import br.org.funcate.terramobile.model.service.SettingsService;
-import br.org.funcate.terramobile.util.Message;
 import br.org.funcate.terramobile.util.Util;
 import br.org.funcate.terramobile.view.ProjectListAdapter;
 

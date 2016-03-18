@@ -22,8 +22,8 @@ import br.org.funcate.terramobile.controller.activity.UploadProjectFragment;
 import br.org.funcate.terramobile.controller.activity.tasks.DownloadTask;
 import br.org.funcate.terramobile.model.db.ApplicationDatabase;
 import br.org.funcate.terramobile.model.db.DatabaseFactory;
-import br.org.funcate.terramobile.model.domain.Project;
 import br.org.funcate.terramobile.model.db.dao.ProjectDAO;
+import br.org.funcate.terramobile.model.domain.Project;
 import br.org.funcate.terramobile.model.exception.DAOException;
 import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
 import br.org.funcate.terramobile.model.exception.ProjectException;
@@ -97,6 +97,7 @@ public class ProjectListAdapter extends ArrayAdapter<Project> implements Adapter
             }
             else
             {
+                rBCurrentProject.setEnabled(true);
                 //If project already downloaded
                 //if project hasn't UUID
                 if(project.getUUID()==null||project.getUUID().isEmpty())

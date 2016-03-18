@@ -1,6 +1,5 @@
 package br.org.funcate.terramobile.controller.activity.tasks;
 
-import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -40,8 +39,8 @@ import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.controller.activity.MainActivity;
 import br.org.funcate.terramobile.model.db.ApplicationDatabase;
 import br.org.funcate.terramobile.model.db.DatabaseFactory;
-import br.org.funcate.terramobile.model.domain.Project;
 import br.org.funcate.terramobile.model.db.dao.ProjectDAO;
+import br.org.funcate.terramobile.model.domain.Project;
 import br.org.funcate.terramobile.model.exception.DAOException;
 import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
 import br.org.funcate.terramobile.util.Message;

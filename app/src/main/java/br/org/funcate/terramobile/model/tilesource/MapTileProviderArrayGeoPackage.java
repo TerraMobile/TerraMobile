@@ -8,7 +8,6 @@ import org.osmdroid.tileprovider.MapTileProviderArray;
 import org.osmdroid.tileprovider.MapTileRequestState;
 import org.osmdroid.tileprovider.modules.MapTileModuleProviderBase;
 import org.osmdroid.tileprovider.tilesource.ITileSource;
-import org.osmdroid.views.MapView;
 
 import br.org.funcate.terramobile.controller.activity.MapFragment;
 

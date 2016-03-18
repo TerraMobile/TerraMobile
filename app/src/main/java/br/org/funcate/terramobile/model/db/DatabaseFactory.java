@@ -2,9 +2,6 @@ package br.org.funcate.terramobile.model.db;
 
 import android.content.Context;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Created by bogo on 03/08/15.
  */
