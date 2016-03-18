@@ -25,17 +25,22 @@ import android.widget.ExpandableListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.osmdroid.bonuspack.overlays.InfoWindow;
 import org.osmdroid.bonuspack.overlays.MapEventsReceiver;
+import org.osmdroid.bonuspack.overlays.Marker;
 import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.MapView;
 
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.controller.activity.settings.SettingsActivity;
 import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
+import br.org.funcate.terramobile.model.exception.TerraMobileException;
+import br.org.funcate.terramobile.model.osmbonuspack.overlays.SFSEditableMarker;
 import br.org.funcate.terramobile.util.GlobalParameters;
 import br.org.funcate.terramobile.util.Message;
 import br.org.funcate.terramobile.util.ResourceHelper;
 
-public class MainActivity extends FragmentActivity implements MapEventsReceiver {
+public class MainActivity extends FragmentActivity implements MapEventsReceiver,Marker.OnMarkerClickListener {
     private ActionBarDrawerToggle mDrawerToggle;
 
     private ActionBar actionBar;
@@ -297,16 +302,11 @@ public class MainActivity extends FragmentActivity implements MapEventsReceiver 
     }
 
     @Override
-    public boolean singleTapConfirmedHelper(GeoPoint geoPoint) {
-        Toast.makeText(this, "Tapped", Toast.LENGTH_SHORT).show();
+    public boolean onMarkerClick(Marker marker, MapView mapView) {
+        InfoWindow.closeAllInfoWindowsOn(mapView);
+        marker.showInfoWindow();
         return true;
     }
-
-    @Override
-    public boolean longPressHelper(GeoPoint geoPoint) {
-        return false;
-    }
-
 
     private class MainActivityReceiver extends BroadcastReceiver {
         @Override
@@ -325,5 +325,19 @@ public class MainActivity extends FragmentActivity implements MapEventsReceiver 
                 getMainController().getGpsOverlayController().setKeepOnCenter(showGPSLocationOnCenter);
             }
         }
+    }
+    @Override
+    public boolean singleTapConfirmedHelper(GeoPoint geoPoint) {
+        MapView mapView = getMainController().getMapFragment().getMapView();
+        if(mapView != null){
+//            mainController.getFeatureInfoPanelController().startFeatureInfoPanel();
+
+        }
+        return true;
+    }
+
+    @Override
+    public boolean longPressHelper(GeoPoint geoPoint) {
+        return false;
     }
 }

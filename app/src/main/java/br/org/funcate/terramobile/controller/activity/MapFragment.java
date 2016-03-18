@@ -84,7 +84,7 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants {
         mMapView = (TerraMobileMapView) v.findViewById(R.id.mapview);
 
         mMapView.setMainController(menuMapController.getMainController());
-
+        mMapView.setMapEventsOverlay();
         drawingImageView = (ImageView) v.findViewById(R.id.DrawingImageView);
         try {
             drawCross(drawingImageView);
@@ -155,8 +155,6 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants {
             CloudmadeUtil.retrieveCloudmadeKey(context.getApplicationContext());
         }
 
-        MapEventsOverlay mapEventsOverlay = new MapEventsOverlay(context, (MainActivity)context);
-        mMapView.getOverlays().add(0, mapEventsOverlay);
     }
 
     @Override
