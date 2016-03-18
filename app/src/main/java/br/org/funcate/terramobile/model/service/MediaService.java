@@ -49,12 +49,12 @@ public class MediaService {
      * @param insertImages, The media's list to be inserted. If no medias to insert, use null.
      * @throws QueryException
      */
-    public static void writePictures(Context context,
-                                     GeoPackage geoPackage,
-                                     String mediaTable,
-                                     ArrayList<String> imagesKeep,
-                                     ArrayList<Object> insertImages,
-                                     long featureID) throws DAOException, InvalidAppConfigException, Exception {
+    public static void updatePictures(Context context,
+                                      GeoPackage geoPackage,
+                                      String mediaTable,
+                                      ArrayList<String> imagesKeep,
+                                      ArrayList<Object> insertImages,
+                                      long featureID) throws DAOException, InvalidAppConfigException, Exception {
         long[] insertedMediaIDs;
         int removedRows = 0;
 
@@ -69,5 +69,60 @@ public class MediaService {
             }
         }
         return;
+    }
+
+    /**
+     * Write pictures on database.
+     * @param context the application context.
+     * @param geoPackage, The Database representing the GeoPackage.
+     * @param mediaTable, The name of the media table.
+     * @param featureID, The identify of one feature.
+     * @param insertImages, The media's list to be inserted. If no medias to insert, use null.
+     * @return true on success or false otherwise
+     * @throws QueryException
+     */
+    public static boolean insertPictures(Context context,
+                                     GeoPackage geoPackage,
+                                     String mediaTable,
+                                     ArrayList<Object> insertImages,
+                                     long featureID) throws DAOException, InvalidAppConfigException, Exception {
+        long[] insertedMediaIDs=null;
+
+        MediaDAO dao = new MediaDAO(DatabaseFactory.getDatabase(context, geoPackage.getDatabaseFileName()));
+
+        if (mediaTable != null && !mediaTable.isEmpty()) {
+
+            if (insertImages!=null && !insertImages.isEmpty()) {
+                // TODO: write the number of inserted medias on log. Are used media identifiers??
+                insertedMediaIDs = dao.insertMedias(mediaTable, featureID, insertImages);
+            }
+        }
+        if(insertedMediaIDs!=null && insertedMediaIDs.length>0)
+            return true;
+        else
+            return false;
+    }
+
+
+    public static boolean existMediasOnTable(Context context,
+                                             GeoPackage geoPackage,
+                                             String mediaTable) throws DAOException, InvalidAppConfigException {
+
+        MediaDAO dao = new MediaDAO(DatabaseFactory.getDatabase(context, geoPackage.getDatabaseFileName()));
+
+        if (mediaTable != null && !mediaTable.isEmpty()) {
+
+        }
+        return true;
+    }
+
+    public static boolean dropTable(Context context,
+                                    GeoPackage geoPackage,
+                                    String mediaTable) throws DAOException, InvalidAppConfigException {
+        if (mediaTable != null && !mediaTable.isEmpty()) {
+            MediaDAO dao = new MediaDAO(DatabaseFactory.getDatabase(context, geoPackage.getDatabaseFileName()));
+            return dao.dropTable(mediaTable);
+        }
+        return false;
     }
 }

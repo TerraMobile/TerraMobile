@@ -62,7 +62,7 @@ public class SFSLayerOverlay extends Overlay {
                     if(features==null)
                     {
                         System.out.println("____----++++====[NOT LOAD YET]====++++----____");
-                        features = GeoPackageService.getGeometries(layer.getGeoPackage(), layer.getName(), layer.getDefaultFilter(), bb);
+                        features = GeoPackageService.getGeometries(layer.getGeoPackage(), layer.getName(), layer.defaultFilter(), bb);
                         featuresCache.put(bb, features);
                     }
                     else

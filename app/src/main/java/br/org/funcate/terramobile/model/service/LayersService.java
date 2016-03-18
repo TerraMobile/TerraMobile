@@ -10,6 +10,7 @@ import org.osmdroid.views.overlay.Overlay;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 
 import br.org.funcate.jgpkg.exception.QueryException;
@@ -21,6 +22,7 @@ import br.org.funcate.terramobile.model.exception.DAOException;
 import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
 import br.org.funcate.terramobile.model.exception.InvalidGeopackageException;
 import br.org.funcate.terramobile.model.exception.SettingsException;
+import br.org.funcate.terramobile.model.exception.StyleException;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
 
 /**
@@ -94,8 +96,12 @@ public class LayersService {
             LayerSettingsDAO layerSettingsDAO = new LayerSettingsDAO(DatabaseFactory.getDatabase(context, project.getFilePath()));
 
             for(int i = 0; i < layers.size(); i++) {
+
                 layerSettingsDAO.load(layers.get(i));
+
             }
+
+            enableOnlyOneGatheringLayer(context, project, layers);
 
         }  catch (DAOException e) {
             throw new SettingsException(e.getMessage(), e);
@@ -117,6 +123,7 @@ public class LayersService {
 
     private static boolean checkBoundingBox(BoundingBox bb)
     {
+        if(bb==null) return false;
         if((bb.getMinX()==0.)||
                 (bb.getMaxX()==0.)||
                 (bb.getMinY()==0.)||
@@ -133,11 +140,6 @@ public class LayersService {
 
             if(layerSettingsDAO.deleteAll())
             {
-             /*   for (int i = 0; i < layers.size(); i++) {
-                    GpkgLayer l = layers.get(i);
-                    layerSettingsDAO.update(l.getName(), l.isEnabled()?1:0, l.getPosition());
-                    System.err.println("--------------====== "+l.getName() + " : " + l.getPosition());
-                }*/
                 layerSettingsDAO.insertAll(layers);
             }
         }  catch (DAOException e) {
@@ -157,5 +159,63 @@ public class LayersService {
         }
         return editableLayers;
 
+    }
+
+    public static boolean deleteReferenceByLayer(Context context, String databasePath, GpkgLayer layer) throws InvalidAppConfigException, StyleException {
+        try {
+            LayerSettingsDAO dao = new LayerSettingsDAO(DatabaseFactory.getDatabase(context, databasePath));
+
+            return dao.delete(layer.getName());
+
+        } catch (DAOException e) {
+            throw new StyleException(e.getMessage(), e);
+        }
+    }
+
+    private static void getLayerSettings(Context context, Project project, String layerName) throws SettingsException, InvalidAppConfigException {
+        try {
+            LayerSettingsDAO layerSettingsDAO = new LayerSettingsDAO(DatabaseFactory.getDatabase(context, project.getFilePath()));
+
+           HashMap<String, String> layerSettings = layerSettingsDAO.get(layerName);
+
+        }  catch (DAOException e) {
+            throw new SettingsException(e.getMessage(), e);
+        }
+    }
+
+    public static boolean checkForModifiedLayer(Context context, Project project) throws SettingsException, InvalidAppConfigException {
+        try {
+            LayerSettingsDAO layerSettingsDAO = new LayerSettingsDAO(DatabaseFactory.getDatabase(context, project.getFilePath()));
+
+            boolean modifiedLayer= layerSettingsDAO.hasModifiedLayer();
+
+            return modifiedLayer;
+
+        }  catch (DAOException e) {
+            throw new SettingsException(e.getMessage(), e);
+        }
+
+    }
+
+    public static void enableOnlyOneGatheringLayer(Context context, Project project, ArrayList<GpkgLayer> layers) throws SettingsException, InvalidAppConfigException {
+        boolean foundEnabled = false;
+        for (GpkgLayer layer:layers) {
+            if(layer.isEditable())
+            {
+                if(layer.isEnabled())
+                {
+                    if(!foundEnabled)
+                    {
+                        foundEnabled = true;
+                    }
+                    else
+                    {
+                        layer.setEnabled(false);
+                    }
+
+                }
+            }
+        }
+        updateLayerSettings(context, project, layers);
     }
 }

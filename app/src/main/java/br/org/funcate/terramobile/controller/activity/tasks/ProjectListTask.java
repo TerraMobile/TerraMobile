@@ -31,6 +31,9 @@ import java.util.ArrayList;
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.controller.activity.MainActivity;
 import br.org.funcate.terramobile.model.domain.Project;
+import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
+import br.org.funcate.terramobile.model.exception.ProjectException;
+import br.org.funcate.terramobile.model.service.ProjectsService;
 import br.org.funcate.terramobile.util.Message;
 import br.org.funcate.terramobile.util.Util;
 
@@ -56,6 +59,7 @@ public class ProjectListTask extends AsyncTask<String, String, JSONObject> {
         String jsonContent;
         try {
             if(Util.isConnected(mainActivity)){
+
 
                 HttpParams httpParams = new BasicHttpParams();
 
@@ -139,9 +143,34 @@ public class ProjectListTask extends AsyncTask<String, String, JSONObject> {
                     project.setName(file.getName());
                     project.setFilePath(destinationFilePath);
                     project.setDownloaded(1);
-                    project.setUUID("");
-                    project.setStatus(0);
-                    project.setDescription("");
+                    project.setOnTheAppOnly(true);
+
+                    String status="";
+                    String UUID="";
+                    String description="";
+
+                    try {
+                        UUID= ProjectsService.getUUID(mainActivity, file.getAbsolutePath());
+                        status= ProjectsService.getStatus(mainActivity, file.getAbsolutePath());
+                        description= ProjectsService.getDescription(mainActivity, file.getAbsolutePath());
+                    } catch (InvalidAppConfigException e) {
+                        e.printStackTrace();
+                    } catch (ProjectException e) {
+                        e.printStackTrace();
+                    }
+
+                    project.setUUID(UUID);
+
+                    if(status.isEmpty())
+                    {
+                        project.setStatus(0);
+                    }
+                    else
+                    {
+                        project.setStatus(Integer.parseInt(status));
+                    }
+
+                    project.setDescription(description);
 
                     aLItems.add(project);
                 }
@@ -169,6 +198,15 @@ public class ProjectListTask extends AsyncTask<String, String, JSONObject> {
                         project.setDescription(description);
                         aLItems.add(project);
                     }
+                    //Set the project that is not only on the server
+                    for (Project project:aLItems) {
+                        if(project.getUUID().equalsIgnoreCase(id))
+                        {
+                            project.setOnTheAppOnly(false);
+                            break;
+                        }
+                    }
+
                 }
             }
 

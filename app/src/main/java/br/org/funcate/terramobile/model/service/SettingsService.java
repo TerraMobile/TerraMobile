@@ -72,6 +72,38 @@ public class SettingsService {
 
     }
 
+    /**
+     * Used to generate a SQL script, reading data from TerraMobile Settings Model.
+     * Warning: This function will create a TerraMobile Settings model into your database if is not exist.
+     * @param context, the app context
+     * @param project, the project is used to read a database file path from it.
+     * @return the SQL script in String format when statements split a semicolon.
+     * @throws InvalidAppConfigException
+     * @throws SettingsException
+     */
+    public static String exportSettings(Context context, Project project) throws InvalidAppConfigException, SettingsException {
+
+        ProjectDatabase database = (ProjectDatabase) DatabaseFactory.getDatabase(context, project.getFilePath());
+        return database.exportSettings();
+    }
+
+    /**
+     * Used to import data to TerraMobile Settings Model from a SQL script.
+     * Warning: This function will create a TerraMobile Settings model into your database if is not exist.
+     * The SQLScript is executed in transaction mode.
+     * @param context, the app context
+     * @param project, the project is used to read a database file path from it.
+     * @param sqlScript, the SQL script in String format when statements split a ;
+     * @return true in success or false otherwise
+     * @throws InvalidAppConfigException
+     * @throws SettingsException
+     */
+    public static boolean importSettings(Context context, Project project, String sqlScript) throws InvalidAppConfigException, SettingsException {
+
+        ProjectDatabase database = (ProjectDatabase) DatabaseFactory.getDatabase(context, project.getFilePath());
+        return database.importSettings(sqlScript);
+    }
+
     public static boolean insert(Context context, Setting setting, String databasePath) throws DAOException, InvalidAppConfigException
     {
 
@@ -112,5 +144,7 @@ public class SettingsService {
         }
         return success;
     }
+
+
 
 }

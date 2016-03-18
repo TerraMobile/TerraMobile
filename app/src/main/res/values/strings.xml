@@ -91,6 +91,10 @@
     <string name="style_update_exception">Unable to update SLD style on database.</string>
     <string name="style_query_exception">Unable to get SLD style from database.</string>
     <string name="layer_setting_query_exception">Unable to get layer settings from database.</string>
+    <string name="layer_setting_delete_exception">Unable to delete layer settings from database.</string>
+    <string name="layer_style_delete_exception">Unable to delete layer style from database.</string>
+    <string name="layer_form_delete_exception">Unable to delete layer form from database.</string>
+    <string name="media_table_delete_exception">Unable to delete media table from database.</string>
     <string name="invalid_database_exception">Invalid database instance.</string>
     <string name="failed_getting_project_setting">Failed while getting a project setting.</string>
     <string name="failed_getting_project_creation_date">Failed getting a project creation date.</string>
@@ -99,6 +103,7 @@
     <string name="layer_settings_insert_exception">Unable to insert layer settings on database.</string>
     <string name="layer_settings_update_exception">Unable to update layer settings on database.</string>
     <string name="layer_settings_query_exception">Unable to get layer settings from database.</string>
+    <string name="drop_gpkg_exception">Unable to drop the upload package after fail on send data to server.</string>
 
     <!-- Message window title -->
     <string name="error">Error</string>
@@ -127,4 +132,9 @@
     <!-- Info panel to display feature attributes -->
     <string name="head_label_info">Label</string>
     <string name="head_value_info">Value</string>
+    <string name="send_gpkg_exception">Abort send process after fail on original data update.</string>
+    <string name="no_data_to_send_exception">Not found data to send.</string>
+    <string name="no_layer_to_send_exception">No layer to send.</string>
+    <string name="build_upload_gpkg_exception">Failed to process data to send.</string>
+    <string name="feature_set_status_exception">Failure to set status property toward change value.</string>
 </resources>

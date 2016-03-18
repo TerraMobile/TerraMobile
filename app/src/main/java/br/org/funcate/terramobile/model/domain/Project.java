@@ -4,6 +4,14 @@ package br.org.funcate.terramobile.model.domain;
  * Created by Andre Carvalho on 01/06/15.
  */
 public class Project {
+
+    /**
+     * These attributes refers to states of the GeoPackage.
+     */
+    public static final int NEW=0;// New packages downloaded from server.
+    public static final int UPLOAD=1;// Packages gathering data to sending to server.
+    //public static final int SYNC=2;// Packages whose data was synchronized with the server (never exist in app).
+
     private Integer id;
     private String UUID;
     private String name;
@@ -12,6 +20,8 @@ public class Project {
     private int updated;
     private String description;
     private int status;
+    private boolean modified;
+    private boolean onTheAppOnly;
 
     public Project()
     {
@@ -86,5 +96,21 @@ public class Project {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public boolean isModified() {
+        return modified;
+    }
+
+    public void setModified(boolean modified) {
+        this.modified = modified;
+    }
+
+    public boolean isOnTheAppOnly() {
+        return onTheAppOnly;
+    }
+
+    public void setOnTheAppOnly(boolean onTheAppOnly) {
+        this.onTheAppOnly = onTheAppOnly;
     }
 }

@@ -92,4 +92,23 @@ public class StyleDAO {
             throw new DAOException(ResourceHelper.getStringResource(R.string.style_query_exception),e);
         }
     }
+
+    public boolean delete(String layerName) throws InvalidAppConfigException, DAOException {
+        try {
+            SQLiteDatabase db = database.getWritableDatabase();
+            if (db != null) {
+
+                String[] args = {layerName};
+                if (db.delete(TABLE_NAME, "LAYER_NAME=?", args) != -1) {
+                    db.close();
+                    return true;
+                }
+                db.close();
+            }
+            return false;
+        } catch (SQLiteException e) {
+            e.printStackTrace();
+            throw new DAOException(ResourceHelper.getStringResource(R.string.layer_setting_delete_exception),e);
+        }
+    }
 }

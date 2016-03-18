@@ -288,14 +288,18 @@ public class SFSEditableMarker extends Marker implements Marker.OnMarkerClickLis
             if (overlay instanceof FolderOverlay) {
                 FolderOverlay f = (FolderOverlay) overlay;
                 AbstractList<Overlay> listOverlay = f.getItems();
-                if(listOverlay.size()>0 && listOverlay.get(0) instanceof FolderOverlay) {
-                    for (int i = 0; i < listOverlay.size(); i++) {
-                        FolderOverlay folderOverlay = findMarkersFolder(listOverlay.get(i));
-                        if(folderOverlay!=null) return folderOverlay;
+                if(listOverlay.size()>0) {
+
+                    int index = listOverlay.indexOf(mMarker);
+                    if(index>=0) return f;
+
+                    for (int i = 0, len = listOverlay.size(); i < len; i++) {
+                        if(listOverlay.get(i) instanceof FolderOverlay) {
+                            FolderOverlay folderOverlay = findMarkersFolder(listOverlay.get(i));
+                            if (folderOverlay != null) return folderOverlay;
+                        }
                     }
                 }
-                int index = listOverlay.indexOf(mMarker);
-                if(index>=0) return f;
             }
             return null;
         }

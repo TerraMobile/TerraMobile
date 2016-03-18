@@ -1,6 +1,9 @@
 package br.org.funcate.terramobile.model.db;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
 
 /**
  * This class is an extends or generic database helper do be able to use different configuration while access different kinds of database, in this case each project GPKG sqlite database
@@ -46,6 +49,7 @@ public class ProjectDatabase extends DatabaseHelper {
         sBCreate.append("LAYER_NAME text primary key not null,");
         sBCreate.append("ENABLED boolean not null,");
         sBCreate.append("POSITION integer not null unique,");
+        sBCreate.append("datasource_uri text,");
         sBCreate.append("CONSTRAINT fk_layer_name FOREIGN KEY (LAYER_NAME) REFERENCES gpkg_contents(table_name));");
 
         this.getWritableDatabase().execSQL(sBCreate.toString());
@@ -76,11 +80,147 @@ public class ProjectDatabase extends DatabaseHelper {
         this.getWritableDatabase().execSQL(sCreate);
     }
 
+    private void initLayerFormTable()
+    {
+        StringBuilder sBCreate = new StringBuilder();
+        sBCreate.append("CREATE TABLE IF NOT EXISTS tm_layer_form (");
+        sBCreate.append("tm_conf_id INTEGER PRIMARY KEY AUTOINCREMENT,");
+        sBCreate.append("gpkg_layer_identify TEXT NOT NULL,");
+        sBCreate.append("tm_form TEXT,");
+        sBCreate.append("tm_media_table TEXT,");
+        sBCreate.append("CONSTRAINT fk_layer_identify_id FOREIGN KEY (gpkg_layer_identify) REFERENCES gpkg_contents(table_name));");
+
+        this.getWritableDatabase().execSQL(sBCreate.toString());
+    }
+
+    private String exportTable(String tableName, String pkName, String[] args)
+    {
+        StringBuilder sBSelect = new StringBuilder();
+        StringBuilder sBInto = new StringBuilder();
+        StringBuilder sBValues = new StringBuilder();
+        sBSelect.append("SELECT ");
+        sBSelect.append("\"INSERT INTO "+tableName+" ");
+        sBInto.append("("+pkName);
+        sBValues.append(" VALUES ('\" || "+pkName+" || \"'\" ");
+
+        for (int i=0; i<args.length;i++) {
+            sBInto.append(", "+args[i]);
+            sBValues.append(" || \",\" || ifnull(\"'\" || " + args[i] + " ||\"'\",\"NULL\") ");
+        }
+
+        sBInto.append(")");
+        sBValues.append(" || \"); \" as scpt ");
+        sBSelect.append(sBInto.toString());
+        sBSelect.append(sBValues.toString());
+        sBSelect.append(" FROM "+tableName);
+
+        Cursor c = this.getWritableDatabase().rawQuery(sBSelect.toString(), null);
+        StringBuilder sqlOutput = new StringBuilder();
+
+        if(c.moveToFirst()) {
+            do {
+                sqlOutput.append(c.getString(0));
+            }while (c.moveToNext());
+        }
+        return sqlOutput.toString();
+    }
+
+    /**
+     * Export data from tm_layer_form to SQL INSERT script fragment.
+     */
+    private String exportLayerFormTable()
+    {
+        String tableName="tm_layer_form";
+        String[] args=new String[3];
+        args[0] = "gpkg_layer_identify";
+        args[1] = "tm_form";
+        args[2] = "tm_media_table";
+        String pkName="tm_conf_id";
+        return this.exportTable(tableName, pkName, args);
+    }
+
+    /**
+     * Export data from TM_SETTINGS to SQL INSERT script fragment.
+     */
+    private String exportSettingsTable()
+    {
+        String tableName="TM_SETTINGS";
+        String[] args=new String[2];
+        args[0] = "key";
+        args[1] = "value";
+        String pkName="id";
+        return this.exportTable(tableName, pkName, args);
+    }
+
+    /**
+     * Export data from TM_STYLE to SQL INSERT script fragment.
+     */
+    private String exportStyleTable()
+    {
+        String tableName="TM_STYLE";
+        String[] args=new String[1];
+        args[0] = "SLD_XML";
+        String pkName="LAYER_NAME";
+        return this.exportTable(tableName, pkName, args);
+    }
+
+     /**
+     * Export data from TM_LAYER_SETTINGS to SQL INSERT script fragment.
+     */
+    private String exportLayerSettingsTable()
+    {
+        String tableName="TM_LAYER_SETTINGS";
+        String[] args=new String[3];
+        args[0] = "ENABLED";
+        args[1] = "POSITION";
+        args[2] = "datasource_uri";
+        String pkName="LAYER_NAME";
+        return this.exportTable(tableName, pkName, args);
+    }
+
+
+    public String exportSettings() {
+
+        StringBuilder script = new StringBuilder();
+
+        script.append(this.exportLayerFormTable());
+        script.append(this.exportLayerSettingsTable());
+        script.append(this.exportSettingsTable());
+        script.append(this.exportStyleTable());
+
+        return script.toString();
+    }
+
+    public boolean importSettings(String sqlScript) {
+        if(sqlScript==null && sqlScript.isEmpty()) {
+            return false;
+        }
+        String[] statements = sqlScript.split(";");
+        SQLiteDatabase sqlDB = this.getWritableDatabase();
+        try {
+            sqlDB.beginTransaction();
+            for (String sql : statements) {
+                if(!sql.isEmpty()) sqlDB.execSQL( sql );
+            }
+            sqlDB.setTransactionSuccessful();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }finally {
+            sqlDB.endTransaction();
+        }
+        return true;
+    }
+
+
     protected void initDatabase()
     {
         initSettings();
         initStyleTable();
         initLayerSettingsTable();
         initGPKGSysTables();
+        initLayerFormTable();
     }
+
+
 }
