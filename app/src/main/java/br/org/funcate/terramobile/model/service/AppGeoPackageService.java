@@ -323,13 +323,13 @@ public class AppGeoPackageService {
             throw new TerraMobileException(ResourceHelper.getStringResource(R.string.no_layer_to_send_exception));
         }
 
-        String fileExtension = ResourceHelper.getStringResource(R.string.geopackage_extension);
-        String fileUploadSuffix = ResourceHelper.getStringResource(R.string.geopackage_upload_suffix);
+        String tempGPKGName = project.getUploadFilePath();
 
-        String tempGPKGName = project.getFilePath().replace(fileExtension, fileUploadSuffix + fileExtension);
+        /*
         if ((new File(tempGPKGName)).exists()) {
             (new File(tempGPKGName)).delete();
         }
+        */
 
         String[] originalStatements = new String[ExportLayers.size() * 2];
         String[] uploadStatements = new String[ExportLayers.size()];
@@ -342,7 +342,7 @@ public class AppGeoPackageService {
         }
 
         // load all layers from originalGeoPackage
-        ArrayList<GpkgLayer> gpkgLayers=null;
+        ArrayList<GpkgLayer> gpkgLayers;
         try {
             gpkgLayers = AppGeoPackageService.getLayers(project, context);
         }catch (QueryException e) {
@@ -485,7 +485,7 @@ public class AppGeoPackageService {
 
             // -------------------------------------------------------------------------------------------
             // Change the project_status key in tm_settings to indicate that data content was changed and uploaded to server.
-            Setting setting = null;
+            Setting setting;
             try {
                 setting = SettingsService.get(context, ResourceHelper.getStringResource(R.string.project_status), project.getFilePath());
                 setting.setValue("" + Project.UPLOAD);
@@ -513,6 +513,15 @@ public class AppGeoPackageService {
         }else {
             throw new TerraMobileException(ResourceHelper.getStringResource(R.string.no_data_to_send_exception));
         }
+    }
+
+    public static boolean uploadPackageExists(Project project) throws InvalidAppConfigException {
+
+        String uploadGPKGName = project.getUploadFilePath();
+        if ((new File(uploadGPKGName)).exists()) {
+            return true;
+        }
+        return false;
     }
 
 }

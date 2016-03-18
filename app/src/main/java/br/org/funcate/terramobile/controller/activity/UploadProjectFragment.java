@@ -24,6 +24,7 @@ import br.org.funcate.terramobile.model.exception.TerraMobileException;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
 import br.org.funcate.terramobile.model.service.AppGeoPackageService;
 import br.org.funcate.terramobile.model.service.LayersService;
+import br.org.funcate.terramobile.util.CallbackConfirmMessage;
 import br.org.funcate.terramobile.util.Message;
 import br.org.funcate.terramobile.view.UploadLayerListAdapter;
 
@@ -176,15 +177,27 @@ public class UploadProjectFragment extends DialogFragment{
         }
 
         String fileName = null;
+
         try {
-            fileName = AppGeoPackageService.createGeopackageForUpload(getActivity(), this.project, layers);
+            if(AppGeoPackageService.uploadPackageExists(this.project)) {
+
+                fileName = this.project.getUploadFilePath();
+                Message.showConfirmMessage(getActivity(),R.string.upload, R.string.upload_package_exists, new CallbackUploadMessage(this.project));
+
+            }else {
+
+                try {
+                    fileName = AppGeoPackageService.createGeopackageForUpload(getActivity(), this.project, layers);
+                } catch (TerraMobileException e) {
+                    e.printStackTrace();
+                    Message.showErrorMessage(getActivity(), R.string.fail, e.getMessage());
+                } catch (StyleException e) {
+                    e.printStackTrace();
+                    Message.showErrorMessage(getActivity(), R.string.fail, e.getMessage());
+                }
+            }
+
         } catch (InvalidAppConfigException e) {
-            e.printStackTrace();
-            Message.showErrorMessage(getActivity(), R.string.fail, e.getMessage());
-        } catch (TerraMobileException e) {
-            e.printStackTrace();
-            Message.showErrorMessage(getActivity(), R.string.fail, e.getMessage());
-        } catch (StyleException e) {
             e.printStackTrace();
             Message.showErrorMessage(getActivity(), R.string.fail, e.getMessage());
         }
@@ -192,11 +205,39 @@ public class UploadProjectFragment extends DialogFragment{
         if(fileName!=null) {
 
             final String serverURL = ((MainActivity) getActivity()).getMainController().getServerURL();
-            //UploadTask uploadTask = (UploadTask) new UploadTask(fileName, (MainActivity)getActivity()).execute(serverURL + "projectupload/");
-            UploadTask uploadTask = (UploadTask) new UploadTask(fileName, (MainActivity) getActivity()).execute(serverURL + "/addprojects/userName/" + fileName);
+            UploadTask uploadTask = (UploadTask) new UploadTask(fileName, (MainActivity)getActivity()).execute(serverURL + "projectupload/");
             return true;
         }
         return false;
 
+    }
+
+    class CallbackUploadMessage implements CallbackConfirmMessage {
+
+        private Project project;
+
+        public CallbackUploadMessage(Project project) {
+            this.project=project;
+        }
+
+        @Override
+        public void confirmResponse(boolean response) {
+            if(response) {
+                final String serverURL = ((MainActivity) getActivity()).getMainController().getServerURL();
+                try {
+
+                    UploadTask uploadTask = (UploadTask) new UploadTask(this.project.getUploadFilePath(), (MainActivity)getActivity()).execute(serverURL + "projectupload/");
+
+                } catch (InvalidAppConfigException e) {
+                    e.printStackTrace();
+                    Message.showErrorMessage(getActivity(), R.string.fail, e.getMessage());
+                }
+            }
+        }
+
+        @Override
+        public void setWhoCall(int whoCall) {
+
+        }
     }
 }

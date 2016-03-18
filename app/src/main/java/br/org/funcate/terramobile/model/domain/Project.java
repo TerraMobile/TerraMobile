@@ -1,5 +1,9 @@
 package br.org.funcate.terramobile.model.domain;
 
+import br.org.funcate.terramobile.R;
+import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
+import br.org.funcate.terramobile.util.ResourceHelper;
+
 /**
  * Created by Andre Carvalho on 01/06/15.
  */
@@ -38,6 +42,15 @@ public class Project {
 
     public String getFilePath() {
         return filePath;
+    }
+
+    public String getUploadFilePath() throws InvalidAppConfigException {
+
+        String fileExtension = ResourceHelper.getStringResource(R.string.geopackage_extension);
+        String fileUploadSuffix = ResourceHelper.getStringResource(R.string.geopackage_upload_suffix);
+
+        String uploadGPKGName = this.getFilePath().replace(fileExtension, fileUploadSuffix + fileExtension);
+        return uploadGPKGName;
     }
 
     public void setFilePath(String filePath) {

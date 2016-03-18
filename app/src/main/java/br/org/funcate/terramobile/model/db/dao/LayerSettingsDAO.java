@@ -53,6 +53,26 @@ public class LayerSettingsDAO {
         }
     }
 
+    public boolean updateModified(String layerName, boolean modified) throws InvalidAppConfigException, DAOException {
+
+        SQLiteDatabase db = database.getWritableDatabase();
+        try{
+            if (db != null) {
+                ContentValues contentValues = new ContentValues();
+                contentValues.put("MODIFIED", modified);
+                if (db.update(TABLE_NAME, contentValues, "LAYER_NAME = ?", new String[]{layerName}) > 0) {
+                    db.close();
+                    return true;
+                }
+                db.close();
+            }
+            return false;
+        } catch (SQLiteException e) {
+            e.printStackTrace();
+            throw new DAOException(ResourceHelper.getStringResource(R.string.layer_settings_update_exception),e);
+        }
+    }
+
        public boolean load(GpkgLayer layer) throws InvalidAppConfigException, DAOException {
         try {
             SQLiteDatabase db = database.getReadableDatabase();

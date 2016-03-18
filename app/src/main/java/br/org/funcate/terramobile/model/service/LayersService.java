@@ -134,6 +134,16 @@ public class LayersService {
         return true;
     }
 
+    public static boolean updateModified(Context context, Project project, GpkgLayer layer) throws InvalidAppConfigException, SettingsException {
+        try {
+            LayerSettingsDAO layerSettingsDAO = new LayerSettingsDAO(DatabaseFactory.getDatabase(context, project.getFilePath()));
+
+            return layerSettingsDAO.updateModified(layer.getName(), layer.isModified());
+        }  catch (DAOException e) {
+            throw new SettingsException(e.getMessage(), e);
+        }
+    }
+
     public static void updateLayerSettings(Context context, Project project, ArrayList<GpkgLayer> layers) throws InvalidAppConfigException, SettingsException {
         try {
             LayerSettingsDAO layerSettingsDAO = new LayerSettingsDAO(DatabaseFactory.getDatabase(context, project.getFilePath()));

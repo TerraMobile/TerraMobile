@@ -37,12 +37,14 @@ import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.model.exception.DAOException;
 import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
 import br.org.funcate.terramobile.model.exception.LowMemoryException;
+import br.org.funcate.terramobile.model.exception.SettingsException;
 import br.org.funcate.terramobile.model.exception.TerraMobileException;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
 import br.org.funcate.terramobile.model.osmbonuspack.overlays.SFSEditableMarker;
 import br.org.funcate.terramobile.model.service.AppGeoPackageService;
 import br.org.funcate.terramobile.model.service.EditableLayerService;
 import br.org.funcate.terramobile.model.service.FeatureService;
+import br.org.funcate.terramobile.model.service.LayersService;
 import br.org.funcate.terramobile.util.Message;
 import br.org.funcate.terramobile.util.ResourceHelper;
 import br.org.funcate.terramobile.util.Util;
@@ -107,10 +109,13 @@ public class MarkerInfoWindowController {
                 feature = AppGeoPackageService.getFeature(layer, featureID);
             } catch (InvalidAppConfigException e) {
                 e.printStackTrace();
+                Message.showErrorMessage(mainActivity, R.string.fail, e.getMessage());
             } catch (LowMemoryException e) {
                 e.printStackTrace();
+                Message.showErrorMessage(mainActivity, R.string.fail, e.getMessage());
             } catch (TerraMobileException e) {
                 e.printStackTrace();
+                Message.showErrorMessage(mainActivity, R.string.fail, e.getMessage());
             }
 
             String statusKey;
@@ -136,13 +141,21 @@ public class MarkerInfoWindowController {
             if(!exec) {
                 throw new TerraMobileException(ResourceHelper.getStringResource(R.string.feature_not_found));
             }else{
+                layer.setModified(true);
+                LayersService.updateModified(this.mainActivity, this.mainActivity.getMainController().getCurrentProject(), layer);
                 this.mainActivity.getMainController().getMapFragment().updateMap();
             }
         } catch (InvalidAppConfigException e) {
             e.printStackTrace();
+            Message.showErrorMessage(mainActivity, R.string.fail, e.getMessage());
         } catch (LowMemoryException e) {
             e.printStackTrace();
+            Message.showErrorMessage(mainActivity, R.string.fail, e.getMessage());
+        } catch (SettingsException e) {
+            e.printStackTrace();
+            Message.showErrorMessage(mainActivity, R.string.fail, e.getMessage());
         }
+
     }
 
     public void moveMarker(Marker marker) throws TerraMobileException {
@@ -150,11 +163,17 @@ public class MarkerInfoWindowController {
         try {
             if(!AppGeoPackageService.updateFeature(layer, marker)) {
                 throw new TerraMobileException(ResourceHelper.getStringResource(R.string.failure_on_save_new_location));
+            }else{
+                layer.setModified(true);
+                LayersService.updateModified(this.mainActivity, this.mainActivity.getMainController().getCurrentProject(), layer);
             }
         } catch (InvalidAppConfigException e) {
             e.printStackTrace();
             throw new TerraMobileException(e.getMessage());
         } catch (LowMemoryException e) {
+            e.printStackTrace();
+            throw new TerraMobileException(e.getMessage());
+        } catch (SettingsException e) {
             e.printStackTrace();
             throw new TerraMobileException(e.getMessage());
         }
@@ -339,6 +358,12 @@ public class MarkerInfoWindowController {
             Bundle extras = data.getBundleExtra(LibraryConstants.PREFS_KEY_FORM);
             try {
                 EditableLayerService.storeData(mainActivity, extras);
+
+                TreeViewController tv = mainActivity.getMainController().getTreeViewController();
+                GpkgLayer editableLayer = tv.getSelectedEditableLayer();
+                editableLayer.setModified(true);
+                LayersService.updateModified(this.mainActivity, this.mainActivity.getMainController().getCurrentProject(), editableLayer);
+
             }catch (TerraMobileException tme) {
                 tme.printStackTrace();
                 Message.showErrorMessage(mainActivity, R.string.error, R.string.missing_form_data);
@@ -348,7 +373,14 @@ public class MarkerInfoWindowController {
             }catch (DAOException de) {
                 de.printStackTrace();
                 Message.showErrorMessage(mainActivity, R.string.error, R.string.error_while_storing_form_data);
+            } catch (SettingsException e) {
+                e.printStackTrace();
+                Message.showErrorMessage(mainActivity, R.string.error, e.getMessage());
+            } catch (InvalidAppConfigException e) {
+                e.printStackTrace();
+                Message.showErrorMessage(mainActivity, R.string.error, e.getMessage());
             }
+
             this.mainActivity.getMainController().getMapFragment().updateMap();
         }
     }

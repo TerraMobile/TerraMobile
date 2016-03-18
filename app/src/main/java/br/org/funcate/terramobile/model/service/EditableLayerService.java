@@ -441,7 +441,8 @@ public class EditableLayerService {
             String objIdValue="";
             if(formData.containsKey(FormUtilities.ATTR_DATA_VALUES)) {
                 Bundle existingFeatureData = formData.getBundle(FormUtilities.ATTR_DATA_VALUES);
-                objIdValue = existingFeatureData.getString(objIdKey);
+                if(existingFeatureData!=null)
+                    objIdValue = existingFeatureData.getString(objIdKey);
             }
 
             if(objIdValue!=null && !objIdValue.isEmpty()) {// Update the feature that was loaded from official database
