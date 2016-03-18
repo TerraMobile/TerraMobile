@@ -97,6 +97,7 @@ public class ProjectListAdapter extends ArrayAdapter<Project> implements Adapter
             }
             else
             {
+                rBCurrentProject.setEnabled(true);
                 //If project already downloaded
                 //if project hasn't UUID
                 if(project.getUUID()==null||project.getUUID().isEmpty())
