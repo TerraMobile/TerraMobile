@@ -3,10 +3,30 @@ package br.org.funcate.terramobile.controller.activity.tasks;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.StatusLine;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.StringBody;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
+
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -20,6 +40,7 @@ import java.util.List;
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.controller.activity.MainActivity;
 import br.org.funcate.terramobile.util.Message;
+import br.org.funcate.terramobile.util.Util;
 
 /**
  * This AsyncTask upload a geopackage from the server
@@ -55,7 +76,8 @@ public class UploadTask extends AsyncTask<String, String, Boolean> {
     }
 
     protected Boolean doInBackground(String... urlToUpload) {
-        if(android.os.Debug.isDebuggerConnected()) android.os.Debug.waitForDebugger(); // Para debugar é preciso colocar um breakpoint nessa linha
+        if (android.os.Debug.isDebuggerConnected())
+            android.os.Debug.waitForDebugger(); // Para debugar é preciso colocar um breakpoint nessa linha
 
         if (urlToUpload[0].isEmpty()) {
             Log.e("URL missing", "Variable urlToDownload[0] is empty");
@@ -68,18 +90,55 @@ public class UploadTask extends AsyncTask<String, String, Boolean> {
         }
         originFile = new File(uploadOriginFilePath);
         try {
-            if (!originFile.exists())
-            {
+            if (!originFile.exists()) {
                 Log.e("Path missing", "Variable uploadOriginFilePath is empty");
                 return false;
             }
 
-            URL url = new URL(urlToUpload[0]);
+
+            HttpParams httpParams = new BasicHttpParams();
+
+            HttpConnectionParams.setConnectionTimeout(httpParams, 5000);
+
+            HttpConnectionParams.setSoTimeout(httpParams, 5000);
+
+            HttpClient httpClient = new DefaultHttpClient(httpParams);
+
+            HttpPost httpPost = new HttpPost(urlToUpload[0]);
+
+            ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+
+            MultipartEntityBuilder entityBuilder = MultipartEntityBuilder.create().setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
+
+            entityBuilder.addPart("user", new StringBody("userName", ContentType.TEXT_PLAIN));
+
+            entityBuilder.addPart("password", new StringBody("password", ContentType.TEXT_PLAIN));
+
+            entityBuilder.addPart("file", new FileBody(originFile));
+
+            httpPost.setEntity(entityBuilder.build());
+
+            HttpResponse response = httpClient.execute(httpPost);
+
+            StatusLine statusLine = response.getStatusLine();
+
+            int statusCode = statusLine.getStatusCode();
+
+            if (statusCode == 200) {
+                return true;
+
+            }
+            else
+            {
+                return false;
+            }
+
+           /* URL url = new URL(urlToUpload[0]);
             HttpURLConnection urlConnection = (HttpURLConnection)url.openConnection();
             urlConnection.setConnectTimeout(5000);
             urlConnection.setUseCaches(false);
             urlConnection.setDoOutput(true); // indicates POST method
-            urlConnection.setDoInput(true);
+            urlConnection.setDoInput(true);        return false;
             urlConnection.setReadTimeout(5000);
             urlConnection.setRequestProperty("Content-Type",
                     "multipart/form-data; boundary=" + boundary);
@@ -91,10 +150,10 @@ public class UploadTask extends AsyncTask<String, String, Boolean> {
 
             addFormField("fileName",originFile.getName(), writer, outputStream);
 
-            addFilePart(originFile.getName(), originFile, writer, outputStream);
+            addFilePart("file", originFile, writer, outputStream);
 
-            finish(writer, urlConnection);
-
+            finish(writer, urlConnection);*/
+/*
             return true;
         }catch (IOException e) {
             e.printStackTrace();
@@ -102,52 +161,15 @@ public class UploadTask extends AsyncTask<String, String, Boolean> {
         }catch (IllegalArgumentException e){
             e.printStackTrace();
             return false;
+        }*/
+        } catch (ClientProtocolException e) {
+            e.printStackTrace();
+            return false;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
         }
-    }
-    public void addFilePart(String fieldName, File uploadFile, PrintWriter writer, OutputStream out)
-            throws IOException {
-        String fileName = uploadFile.getName();
-        writer.append("--" + boundary).append(LINE_FEED);
-        writer.append(
-                "Content-Disposition: form-data; name=\"" + fieldName
-                        + "\"; filename=\"" + fileName + "\"")
-                .append(LINE_FEED);
-        writer.append(
-                "Content-Type: "
-                        + URLConnection.guessContentTypeFromName(fileName))
-                .append(LINE_FEED);
-        writer.append("Content-Transfer-Encoding: binary").append(LINE_FEED);
-        writer.append(LINE_FEED);
-        writer.flush();
 
-        FileInputStream inputStream = new FileInputStream(uploadFile);
-        byte[] buffer = new byte[4096];
-        int bytesRead = -1;
-        while ((bytesRead = inputStream.read(buffer)) != -1) {
-            out.write(buffer, 0, bytesRead);
-        }
-        out.flush();
-        inputStream.close();
-
-        writer.append(LINE_FEED);
-        writer.flush();
-    }
-
-    /**
-     * Adds a form field to the request
-     *
-     * @param name  field name
-     * @param value field value
-     */
-    public void addFormField(String name, String value, PrintWriter writer, OutputStream out) {
-        writer.append("--" + boundary).append(LINE_FEED);
-        writer.append("Content-Disposition: form-data; name=\"" + name + "\"")
-                .append(LINE_FEED);
-        writer.append("Content-Type: text/plain; charset=").append(
-                LINE_FEED);
-        writer.append(LINE_FEED);
-        writer.append(value).append(LINE_FEED);
-        writer.flush();
     }
 
     /**
