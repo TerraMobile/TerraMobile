@@ -260,7 +260,7 @@ public class MainActivity extends FragmentActivity implements MapEventsReceiver,
     /**
      * Shows a progress bar with the download progress
      */
-    public void showProgressDialog(String message) {
+    public void showDownloadProgressDialog(String message) {
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage(message);
         progressDialog.setIndeterminate(false);
@@ -278,7 +278,20 @@ public class MainActivity extends FragmentActivity implements MapEventsReceiver,
         progressDialog.show();
     }
 
-    public void showLoadingDialog(String message) {
+    public void showUploadProgressDialog(String message) {
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage(message);
+        progressDialog.setIndeterminate(false);
+        progressDialog.setCancelable(false);
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.setMax(100);
+        progressDialog.setProgress(0);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        progressDialog.show();
+    }
+
+    public void showDefaultLoadingDialog(String message)
+    {
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage(message);
         progressDialog.setCancelable(false);
