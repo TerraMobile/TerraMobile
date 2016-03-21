@@ -1,8 +1,11 @@
 package br.org.funcate.terramobile.model.domain;
 
+import java.io.File;
+
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
 import br.org.funcate.terramobile.util.ResourceHelper;
+import br.org.funcate.terramobile.util.Util;
 
 /**
  * Created by Andre Carvalho on 01/06/15.
@@ -48,9 +51,10 @@ public class Project {
 
         String fileExtension = ResourceHelper.getStringResource(R.string.geopackage_extension);
         String fileUploadSuffix = ResourceHelper.getStringResource(R.string.geopackage_upload_suffix);
+        File tempPath = Util.getDirectory(ResourceHelper.getStringResource(R.string.app_workspace_temp_dir));
+        String applicationTempDir = tempPath.getAbsolutePath();
 
-        String uploadGPKGName = this.getFilePath().replace(fileExtension, fileUploadSuffix + fileExtension);
-        return uploadGPKGName;
+        return applicationTempDir + "/" + this.getName().replace(fileExtension, fileUploadSuffix + fileExtension);
     }
 
     public void setFilePath(String filePath) {
@@ -75,7 +79,8 @@ public class Project {
 
     @Override
     public String toString() {
-        return name.substring(0, name.indexOf('.'));
+        if(name.indexOf('.')<0) return name;
+        else return name.substring(0, name.indexOf('.'));
     }
 
     public int isDownloaded() {
@@ -126,4 +131,5 @@ public class Project {
     public void setOnTheAppOnly(boolean onTheAppOnly) {
         this.onTheAppOnly = onTheAppOnly;
     }
+
 }

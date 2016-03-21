@@ -55,41 +55,6 @@ public class UploadProjectFragment extends DialogFragment{
         view = inflater.inflate(R.layout.fragment_upload_project, null);
         controller=new UploadProjectController();
 
-       /* if(this.project!=null)
-        {
-            return null;
-        }*/
-
-
-
-  //      eTServerURL = (EditText) v.findViewById(R.id.serverURL);
-
-/*        Button btnSave = (Button) v.findViewById(R.id.btnSave);
-        Button btnCancel = (Button) v.findViewById(R.id.btnCancel);*/
-
-/*
-        String serverUrl = ((SettingsActivity)this.getActivity()).getController().getServerURL();
-        if (serverUrl != null)
-            eTServerURL.setText(serverUrl);
-
-        btnSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (validateFields()) {
-                    urlController.save(eTServerURL.getText().toString());
-                    dismiss();
-                }
-            }
-        });
-*/
-
-/*        btnCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dismiss();
-            }
-        });*/
-
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
         builder.setNegativeButton(R.string.close, new DialogInterface.OnClickListener() {
@@ -193,7 +158,7 @@ public class UploadProjectFragment extends DialogFragment{
         try {
             if(AppGeoPackageService.uploadPackageExists(this.project)) {
 
-                Message.showConfirmMessage(getActivity(),R.string.upload, R.string.upload_package_exists, new CallbackUploadMessage(this.project));
+                Message.showConfirmMessage(getActivity(), R.string.upload, R.string.upload_package_exists, new CallbackUploadMessage(this.project));
 
             }else {
 

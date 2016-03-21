@@ -2,12 +2,9 @@ package br.org.funcate.terramobile.controller.activity;
 
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
-import android.widget.Toast;
 
 import org.apache.http.impl.cookie.IgnoreSpecFactory;
 import org.opengis.geometry.BoundingBox;
-import org.osmdroid.bonuspack.overlays.MapEventsReceiver;
-import org.osmdroid.util.GeoPoint;
 
 import java.io.File;
 

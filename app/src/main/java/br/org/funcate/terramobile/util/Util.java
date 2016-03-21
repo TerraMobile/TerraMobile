@@ -71,6 +71,28 @@ public class Util {
             e.printStackTrace();
         }
     }
+
+    public static void moveFile(String inputFile, String outputPath) {
+
+        try {
+            File dir = new File(outputPath);
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+
+            File file = new File(inputFile);
+            String fileName = file.getName();
+            outputPath += "/" + fileName;
+
+            Util.copyFile(inputFile, outputPath);
+
+            file.delete();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * Get the files list from app working directory.
      * @param directory, The reference to working directory.

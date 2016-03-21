@@ -23,7 +23,10 @@ import java.io.IOException;
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.controller.activity.MainActivity;
 import br.org.funcate.terramobile.controller.activity.tasks.httpclient.FileBodyUploadProgress;
+import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
 import br.org.funcate.terramobile.util.Message;
+import br.org.funcate.terramobile.util.ResourceHelper;
+import br.org.funcate.terramobile.util.Util;
 
 /**
  * This AsyncTask upload a geopackage from the server
@@ -50,9 +53,23 @@ public class UploadTask extends AsyncTask<String, String, Boolean> {
     @Override
     protected void onPostExecute(Boolean result) {
         try {
-            mainActivity.getProgressDialog().dismiss();
+            if(result && originFile.exists()) {
+                File uploadedDir = Util.getDirectory(ResourceHelper.getStringResource(R.string.app_workspace_uploaded_dir));
+                Util.moveFile(originFile.getAbsolutePath(), uploadedDir.getAbsolutePath());
+                // and moving the journal file too
+                File originJournalFile = new File(originFile.getAbsolutePath() + "-journal");
+                if(originJournalFile.exists()) {
+                    Util.moveFile(originJournalFile.getAbsolutePath(), uploadedDir.getAbsolutePath());
+                }
+            }
         }catch (Exception e) {
             e.printStackTrace();
+            Log.e("onPostExecute Exception", e.getMessage());
+        } catch (InvalidAppConfigException e) {
+            e.printStackTrace();
+            Log.e("onPostExecute Exception", e.getMessage());
+        }finally {
+            mainActivity.getProgressDialog().dismiss();
         }
     }
 
