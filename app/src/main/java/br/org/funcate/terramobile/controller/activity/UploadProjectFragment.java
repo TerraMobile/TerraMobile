@@ -193,13 +193,20 @@ public class UploadProjectFragment extends DialogFragment{
         try {
             if(AppGeoPackageService.uploadPackageExists(this.project)) {
 
-                fileName = this.project.getUploadFilePath();
                 Message.showConfirmMessage(getActivity(),R.string.upload, R.string.upload_package_exists, new CallbackUploadMessage(this.project));
 
             }else {
 
                 try {
                     fileName = AppGeoPackageService.createGeopackageForUpload(getActivity(), this.project, layers);
+
+                    if(fileName!=null) {
+
+                        final String serverURL = ((MainActivity) getActivity()).getMainController().getServerURL();
+                        UploadTask uploadTask = (UploadTask) new UploadTask(fileName, (MainActivity)getActivity()).execute(serverURL + "uploadproject/");
+                        return true;
+                    }
+
                 } catch (TerraMobileException e) {
                     e.printStackTrace();
                     Message.showErrorMessage(getActivity(), R.string.fail, e.getMessage());
@@ -214,12 +221,7 @@ public class UploadProjectFragment extends DialogFragment{
             Message.showErrorMessage(getActivity(), R.string.fail, e.getMessage());
         }
 
-        if(fileName!=null) {
 
-            final String serverURL = ((MainActivity) getActivity()).getMainController().getServerURL();
-            UploadTask uploadTask = (UploadTask) new UploadTask(fileName, (MainActivity)getActivity()).execute(serverURL + "uploadproject/");
-            return true;
-        }
         return false;
 
     }
@@ -238,7 +240,7 @@ public class UploadProjectFragment extends DialogFragment{
                 final String serverURL = ((MainActivity) getActivity()).getMainController().getServerURL();
                 try {
 
-                    UploadTask uploadTask = (UploadTask) new UploadTask(this.project.getUploadFilePath(), (MainActivity)getActivity()).execute(serverURL + "projectupload/");
+                    UploadTask uploadTask = (UploadTask) new UploadTask(this.project.getUploadFilePath(), (MainActivity)getActivity()).execute(serverURL + "uploadproject/");
 
                 } catch (InvalidAppConfigException e) {
                     e.printStackTrace();
