@@ -147,22 +147,26 @@ public class GpkgLayer{
             String objectIdKey;
             int statusChanged;
             int statusRemoved;
+            int statusSend;
             try {
                 statusKey = ResourceHelper.getStringResource(R.string.point_status_column);
                 objectIdKey = ResourceHelper.getStringResource(R.string.point_obj_id_column);
                 statusChanged = ResourceHelper.getIntResource(R.integer.point_status_changed);
                 statusRemoved = ResourceHelper.getIntResource(R.integer.point_status_removed);
+                statusSend = ResourceHelper.getIntResource(R.integer.point_status_send);
             } catch (InvalidAppConfigException e) {
                 e.printStackTrace();
                 statusKey="tm_status";
                 objectIdKey="object_id";
                 statusChanged=1;
                 statusRemoved=2;
+                statusSend=3;
             }
             GpkgField gpkgFieldStatus = getAttributeByName(statusKey);
             GpkgField gpkgFieldObjId = getAttributeByName(objectIdKey);
             if(gpkgFieldStatus!=null && gpkgFieldObjId!=null) {
-                filter=objectIdKey+" is null OR ("+objectIdKey+" is not null AND "+statusKey+" between "+statusChanged+" and "+statusRemoved+")";
+                filter="("+objectIdKey+" is null AND "+statusKey+"!="+statusSend+") OR ("+objectIdKey+" is not null AND "+
+                        statusKey+" between "+statusChanged+" and "+statusRemoved+")";
             }
         }
         return filter;

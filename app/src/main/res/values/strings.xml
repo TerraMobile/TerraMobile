@@ -134,7 +134,8 @@
     <!-- Info panel to display feature attributes -->
     <string name="head_label_info">Label</string>
     <string name="head_value_info">Value</string>
-    <string name="send_gpkg_exception">Abort send process after fail on original data update.</string>
+    <string name="update_fail_original_gpkg_exception">Sending process is aborted after fail on data update in gathering package.</string>
+    <string name="update_fail_upload_gpkg_exception">Sending process is aborted after fail on data update in upload package.</string>
     <string name="no_data_to_send_exception">Not found data to send.</string>
     <string name="no_layer_to_send_exception">No layer to send.</string>
     <string name="build_upload_gpkg_exception">Failed to process data to send.</string>

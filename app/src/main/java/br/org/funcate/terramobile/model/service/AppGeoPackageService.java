@@ -325,9 +325,6 @@ public class AppGeoPackageService {
 
         String tempGPKGName = project.getUploadFilePath();
 
-        String[] originalStatements = new String[ExportLayers.size() * 2];
-        String[] uploadStatements = new String[ExportLayers.size()];
-
         // Create a GeoPackage to UPLOAD
         Util.copyFile(project.getFilePath(), tempGPKGName);
 
@@ -403,6 +400,10 @@ public class AppGeoPackageService {
         }
 
         GeoPackage originalGPKG = null;
+        ArrayList<GpkgLayer> layerHasData=new ArrayList<GpkgLayer>();
+        ArrayList<String[]> layerStmts=new ArrayList<String[]>();
+        String[] originalStatements = new String[2];
+        String[] uploadStatements = new String[ExportLayers.size()];
 
         for (int i=0, o=0, u=0; i < ExportLayers.size(); i++) {
             GpkgLayer layer = ExportLayers.get(i);
@@ -417,6 +418,8 @@ public class AppGeoPackageService {
                     List<SimpleFeature> features = layer.getGeoPackage().getFeatures(layer.getName(), layer.toSendFilter());
                     if (features.size() > 0) {
 
+                        layerHasData.add(layer);
+
                         // -------------------------------------------------------------------------------------------
                         // Make SQL script to apply changes in original GeoPackage package.
                         StringBuffer sqlStmt = new StringBuffer();
@@ -424,14 +427,15 @@ public class AppGeoPackageService {
                         // remove all features is that tm_status is equal 2. See the file "gatheringconfig.xml" to more info.
                         sqlStmt.append("DELETE FROM [" + layer.getName() + "] ");
                         sqlStmt.append("WHERE " + layer.toRemoveFilter());
-                        originalStatements[o] = sqlStmt.toString();
+                        originalStatements[0] = sqlStmt.toString();
 
                         sqlStmt = new StringBuffer();
 
                         // set all sent features as send status (tm_status=3). See the file "gatheringconfig.xml" to more info.
                         sqlStmt.append("UPDATE [" + layer.getName() + "] SET " + layer.statementToSetSend() + " ");
                         sqlStmt.append("WHERE " + layer.toSendFilter());
-                        originalStatements[o+1] = sqlStmt.toString();
+                        originalStatements[1] = sqlStmt.toString();
+                        layerStmts.add(originalStatements);
                         // end script SQL block.
                         // -------------------------------------------------------------------------------------------
 
@@ -460,19 +464,11 @@ public class AppGeoPackageService {
             }
         }
 
-        if(originalGPKG!=null && originalStatements.length>0 && uploadStatements.length>0) {
-
-            if(!GeoPackageService.execStatements(originalGPKG, originalStatements)) {
-                if(GeoPackageService.dropGPKG(tempGPKGName)) {
-                    throw new TerraMobileException(ResourceHelper.getStringResource(R.string.send_gpkg_exception));
-                }else {
-                    throw new TerraMobileException(ResourceHelper.getStringResource(R.string.drop_gpkg_exception));
-                }
-            }
+        if(originalGPKG!=null && !layerHasData.isEmpty()) {
 
             if(!GeoPackageService.execStatements(uploadGeoPackage, uploadStatements)) {
                 if(GeoPackageService.dropGPKG(tempGPKGName)) {
-                    throw new TerraMobileException(ResourceHelper.getStringResource(R.string.send_gpkg_exception));
+                    throw new TerraMobileException(ResourceHelper.getStringResource(R.string.update_fail_upload_gpkg_exception));
                 }else {
                     throw new TerraMobileException(ResourceHelper.getStringResource(R.string.drop_gpkg_exception));
                 }
@@ -504,11 +500,38 @@ public class AppGeoPackageService {
             }
             // -------------------------------------------------------------------------------------------
 
-            GeoPackageService.execVacuumn(uploadGeoPackage);
+            int i=0;
+            for (GpkgLayer layer : layerHasData) {
+                layer.setModified(false);
+                try {
+
+                    String[] stmts = layerStmts.get(i);
+                    if(!GeoPackageService.execStatements(originalGPKG, stmts)) {
+                        if(GeoPackageService.dropGPKG(tempGPKGName)) {
+                            throw new TerraMobileException(ResourceHelper.getStringResource(R.string.update_fail_original_gpkg_exception));
+                        }else {
+                            throw new TerraMobileException(ResourceHelper.getStringResource(R.string.drop_gpkg_exception));
+                        }
+                    }else{
+                        if(!LayersService.updateModified(context, project, layer)) {
+                            break;
+                        }
+                    }
+                } catch (SettingsException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            GeoPackageService.execVacuum(uploadGeoPackage);
 
             return tempGPKGName;
         }else {
-            throw new TerraMobileException(ResourceHelper.getStringResource(R.string.no_data_to_send_exception));
+            // drop upload package
+            if (GeoPackageService.dropGPKG(tempGPKGName)) {
+                throw new TerraMobileException(ResourceHelper.getStringResource(R.string.no_data_to_send_exception));
+            } else {
+                throw new TerraMobileException(ResourceHelper.getStringResource(R.string.drop_gpkg_exception));
+            }
         }
     }
 
