@@ -3,6 +3,7 @@
     <string name="terramobile_url">http://terrabrasilis.info/TerraMobileServer/projectservices/</string>
     <string name="app_workspace_dir">TerraMobile</string>
     <string name="app_workspace_temp_dir">TerraMobile/Temp</string>
+    <string name="app_workspace_uploaded_dir">TerraMobile/Uploaded</string>
     <string name="geopackage_extension">.gpkg</string>
     <string name="geopackage_upload_suffix">_forupload</string>
     <item name="default_map_center_x" format="float" type="dimen">-15.1656563</item>
