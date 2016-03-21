@@ -124,7 +124,7 @@ public class LayerSettingsDAO {
         return false;
     }
 
-    private boolean insert(String layerName, int visible, int position) throws InvalidAppConfigException, DAOException {
+    private boolean insert(String layerName, int visible, int position, int modified) throws InvalidAppConfigException, DAOException {
         try {
             SQLiteDatabase db = database.getWritableDatabase();
             if (db != null) {
@@ -132,6 +132,7 @@ public class LayerSettingsDAO {
                 contentValues.put("LAYER_NAME", layerName);
                 contentValues.put("ENABLED", visible);
                 contentValues.put("POSITION", position);
+                contentValues.put("MODIFIED", modified);
                 if (db.insert(TABLE_NAME, null, contentValues) != -1) {
                     db.close();
                     return true;
@@ -148,7 +149,7 @@ public class LayerSettingsDAO {
     public boolean insertAll(ArrayList<GpkgLayer> layers) throws InvalidAppConfigException, DAOException {
         boolean success=true;
         for (int i = 0; i < layers.size(); i++) {
-            success = insert(layers.get(i).getName(),layers.get(i).isEnabled()?1:0, layers.get(i).getPosition());
+            success = insert(layers.get(i).getName(),layers.get(i).isEnabled()?1:0, layers.get(i).getPosition(), layers.get(i).isModified()?1:0);
             if(!success)
             {
                 return false;
