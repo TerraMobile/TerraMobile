@@ -228,4 +228,18 @@ public class LayersService {
         }
         updateLayerSettings(context, project, layers);
     }
+
+    public static ArrayList<GpkgLayer> getModifiedLayers(ArrayList<GpkgLayer> layers)
+    {
+        ArrayList<GpkgLayer> modifiedLayers = new ArrayList<GpkgLayer>();
+
+        for (GpkgLayer layer:layers) {
+
+            if(layer.isModified())
+            {
+                modifiedLayers.add(layer);
+            }
+        }
+        return modifiedLayers;
+    }
 }

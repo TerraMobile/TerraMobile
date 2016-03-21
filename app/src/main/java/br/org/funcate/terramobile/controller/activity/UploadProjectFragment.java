@@ -3,6 +3,7 @@ package br.org.funcate.terramobile.controller.activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -19,6 +20,7 @@ import br.org.funcate.terramobile.controller.activity.tasks.UploadTask;
 import br.org.funcate.terramobile.model.domain.Project;
 import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
 import br.org.funcate.terramobile.model.exception.InvalidGeopackageException;
+import br.org.funcate.terramobile.model.exception.SettingsException;
 import br.org.funcate.terramobile.model.exception.StyleException;
 import br.org.funcate.terramobile.model.exception.TerraMobileException;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
@@ -129,20 +131,30 @@ public class UploadProjectFragment extends DialogFragment{
         {
             try {
 
-                ArrayList<GpkgLayer> layers= AppGeoPackageService.getLayers(this.project, getActivity());
+                ArrayList<GpkgLayer> layers= LayersService.getLayers((Context)getActivity());
 
                 ArrayList<GpkgLayer> editableLayers = LayersService.getEditableLayers(layers);
 
+                ArrayList<GpkgLayer> modifiedEditableLayers = LayersService.getModifiedLayers(editableLayers);
+
                 ListView layersList = (ListView)view.findViewById(R.id.layersListView);
 
-                uploadListAdapter = new UploadLayerListAdapter(getActivity(), R.id.layersListView, editableLayers);
+                uploadListAdapter = new UploadLayerListAdapter(getActivity(), R.id.layersListView, modifiedEditableLayers);
 
                 layersList.setAdapter(uploadListAdapter);
 
             } catch (InvalidGeopackageException e) {
                 e.printStackTrace();
+                Message.showErrorMessage(getActivity(), R.string.fail, e.getMessage());
             } catch (QueryException e) {
                 e.printStackTrace();
+                Message.showErrorMessage(getActivity(), R.string.fail, e.getMessage());
+            } catch (SettingsException e) {
+                e.printStackTrace();
+                Message.showErrorMessage(getActivity(), R.string.fail, e.getMessage());
+            } catch (InvalidAppConfigException e) {
+                e.printStackTrace();
+                Message.showErrorMessage(getActivity(), R.string.fail, e.getMessage());
             }
         }
     }
