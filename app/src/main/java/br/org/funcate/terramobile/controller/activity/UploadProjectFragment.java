@@ -55,41 +55,6 @@ public class UploadProjectFragment extends DialogFragment{
         view = inflater.inflate(R.layout.fragment_upload_project, null);
         controller=new UploadProjectController();
 
-       /* if(this.project!=null)
-        {
-            return null;
-        }*/
-
-
-
-  //      eTServerURL = (EditText) v.findViewById(R.id.serverURL);
-
-/*        Button btnSave = (Button) v.findViewById(R.id.btnSave);
-        Button btnCancel = (Button) v.findViewById(R.id.btnCancel);*/
-
-/*
-        String serverUrl = ((SettingsActivity)this.getActivity()).getController().getServerURL();
-        if (serverUrl != null)
-            eTServerURL.setText(serverUrl);
-
-        btnSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (validateFields()) {
-                    urlController.save(eTServerURL.getText().toString());
-                    dismiss();
-                }
-            }
-        });
-*/
-
-/*        btnCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dismiss();
-            }
-        });*/
-
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
         builder.setNegativeButton(R.string.close, new DialogInterface.OnClickListener() {
@@ -193,13 +158,20 @@ public class UploadProjectFragment extends DialogFragment{
         try {
             if(AppGeoPackageService.uploadPackageExists(this.project)) {
 
-                fileName = this.project.getUploadFilePath();
                 Message.showConfirmMessage(getActivity(), R.string.upload, R.string.upload_package_exists, new CallbackUploadMessage(this.project));
 
             }else {
 
                 try {
                     fileName = AppGeoPackageService.createGeopackageForUpload(getActivity(), this.project, layers);
+
+                    if(fileName!=null) {
+
+                        final String serverURL = ((MainActivity) getActivity()).getMainController().getServerURL();
+                        UploadTask uploadTask = (UploadTask) new UploadTask(fileName, (MainActivity)getActivity()).execute(serverURL + "uploadproject/");
+                        return true;
+                    }
+
                 } catch (TerraMobileException e) {
                     e.printStackTrace();
                     Message.showErrorMessage(getActivity(), R.string.fail, e.getMessage());
@@ -214,12 +186,7 @@ public class UploadProjectFragment extends DialogFragment{
             Message.showErrorMessage(getActivity(), R.string.fail, e.getMessage());
         }
 
-        if(fileName!=null) {
 
-            final String serverURL = ((MainActivity) getActivity()).getMainController().getServerURL();
-            UploadTask uploadTask = (UploadTask) new UploadTask(fileName, (MainActivity)getActivity()).execute(serverURL + "uploadproject/");
-            return true;
-        }
         return false;
 
     }
@@ -238,7 +205,7 @@ public class UploadProjectFragment extends DialogFragment{
                 final String serverURL = ((MainActivity) getActivity()).getMainController().getServerURL();
                 try {
 
-                    UploadTask uploadTask = (UploadTask) new UploadTask(this.project.getUploadFilePath(), (MainActivity)getActivity()).execute(serverURL + "projectupload/");
+                    UploadTask uploadTask = (UploadTask) new UploadTask(this.project.getUploadFilePath(), (MainActivity)getActivity()).execute(serverURL + "uploadproject/");
 
                 } catch (InvalidAppConfigException e) {
                     e.printStackTrace();

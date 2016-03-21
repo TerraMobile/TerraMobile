@@ -11,7 +11,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
@@ -23,6 +22,7 @@ import java.io.IOException;
 
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.controller.activity.MainActivity;
+import br.org.funcate.terramobile.controller.activity.tasks.httpclient.FileBodyUploadProgress;
 import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
 import br.org.funcate.terramobile.util.Message;
 import br.org.funcate.terramobile.util.ResourceHelper;
@@ -47,7 +47,7 @@ public class UploadTask extends AsyncTask<String, String, Boolean> {
 
     @Override
     protected void onPreExecute() {
-        mainActivity.showLoadingDialog(mainActivity.getString(R.string.send_project_upload));
+        mainActivity.showUploadProgressDialog(mainActivity.getString(R.string.send_project_upload));
     }
 
     @Override
@@ -112,7 +112,7 @@ public class UploadTask extends AsyncTask<String, String, Boolean> {
 
             entityBuilder.addPart("fileName", new StringBody(originFile.getName(), ContentType.TEXT_PLAIN));
 
-            entityBuilder.addPart("file", new FileBody(originFile));
+            entityBuilder.addPart("file", new FileBodyUploadProgress(originFile, this));
 
             httpPost.setEntity(entityBuilder.build());
 
@@ -148,5 +148,18 @@ public class UploadTask extends AsyncTask<String, String, Boolean> {
         super.onCancelled(aBoolean);
         mainActivity.getProgressDialog().dismiss();
         Message.showSuccessMessage(mainActivity, R.string.success, R.string.download_cancelled);
+    }
+
+    public void updateProgress(int percent)
+    {
+        publishProgress(Integer.toString(percent), mainActivity.getString(R.string.send_project_upload));
+    }
+
+    @Override
+    protected void onProgressUpdate(String... values) {
+        if(mainActivity.getProgressDialog() != null && mainActivity.getProgressDialog().isShowing()) {
+            mainActivity.getProgressDialog().setProgress(Integer.parseInt(values[0]));
+            mainActivity.getProgressDialog().setMessage(values[1]);
+        }
     }
 }
