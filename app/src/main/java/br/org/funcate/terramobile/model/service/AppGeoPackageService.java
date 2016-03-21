@@ -325,12 +325,6 @@ public class AppGeoPackageService {
 
         String tempGPKGName = project.getUploadFilePath();
 
-        /*
-        if ((new File(tempGPKGName)).exists()) {
-            (new File(tempGPKGName)).delete();
-        }
-        */
-
         String[] originalStatements = new String[ExportLayers.size() * 2];
         String[] uploadStatements = new String[ExportLayers.size()];
 
@@ -467,6 +461,7 @@ public class AppGeoPackageService {
         }
 
         if(originalGPKG!=null && originalStatements.length>0 && uploadStatements.length>0) {
+
             if(!GeoPackageService.execStatements(originalGPKG, originalStatements)) {
                 if(GeoPackageService.dropGPKG(tempGPKGName)) {
                     throw new TerraMobileException(ResourceHelper.getStringResource(R.string.send_gpkg_exception));
@@ -508,6 +503,8 @@ public class AppGeoPackageService {
                 }
             }
             // -------------------------------------------------------------------------------------------
+
+            GeoPackageService.execVacuumn(uploadGeoPackage);
 
             return tempGPKGName;
         }else {

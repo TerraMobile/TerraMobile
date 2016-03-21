@@ -182,7 +182,7 @@ public class UploadProjectFragment extends DialogFragment{
             if(AppGeoPackageService.uploadPackageExists(this.project)) {
 
                 fileName = this.project.getUploadFilePath();
-                Message.showConfirmMessage(getActivity(),R.string.upload, R.string.upload_package_exists, new CallbackUploadMessage(this.project));
+                Message.showConfirmMessage(getActivity(), R.string.upload, R.string.upload_package_exists, new CallbackUploadMessage(this.project));
 
             }else {
 
