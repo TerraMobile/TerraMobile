@@ -50,6 +50,7 @@ public class ProjectDatabase extends DatabaseHelper {
         sBCreate.append("ENABLED boolean not null,");
         sBCreate.append("POSITION integer not null unique,");
         sBCreate.append("datasource_uri text,");
+        sBCreate.append("modified INTEGER NOT NULL DEFAULT (0),");
         sBCreate.append("CONSTRAINT fk_layer_name FOREIGN KEY (LAYER_NAME) REFERENCES gpkg_contents(table_name));");
 
         this.getWritableDatabase().execSQL(sBCreate.toString());
