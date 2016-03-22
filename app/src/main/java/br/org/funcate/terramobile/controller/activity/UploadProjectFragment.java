@@ -20,12 +20,14 @@ import br.org.funcate.terramobile.controller.activity.tasks.UploadTask;
 import br.org.funcate.terramobile.model.domain.Project;
 import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
 import br.org.funcate.terramobile.model.exception.InvalidGeopackageException;
+import br.org.funcate.terramobile.model.exception.ProjectException;
 import br.org.funcate.terramobile.model.exception.SettingsException;
 import br.org.funcate.terramobile.model.exception.StyleException;
 import br.org.funcate.terramobile.model.exception.TerraMobileException;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
 import br.org.funcate.terramobile.model.service.AppGeoPackageService;
 import br.org.funcate.terramobile.model.service.LayersService;
+import br.org.funcate.terramobile.model.service.ProjectsService;
 import br.org.funcate.terramobile.util.CallbackConfirmMessage;
 import br.org.funcate.terramobile.util.Message;
 import br.org.funcate.terramobile.view.UploadLayerListAdapter;
@@ -156,7 +158,7 @@ public class UploadProjectFragment extends DialogFragment{
         String fileName = null;
 
         try {
-            if(AppGeoPackageService.uploadPackageExists(this.project)) {
+            if(AppGeoPackageService.uploadPackageExists(getActivity(), this.project)) {
 
                 Message.showConfirmMessage(getActivity(), R.string.upload, R.string.upload_package_exists, new CallbackUploadMessage(this.project));
 
@@ -184,6 +186,9 @@ public class UploadProjectFragment extends DialogFragment{
         } catch (InvalidAppConfigException e) {
             e.printStackTrace();
             Message.showErrorMessage(getActivity(), R.string.fail, e.getMessage());
+        } catch (ProjectException e) {
+            e.printStackTrace();
+            Message.showErrorMessage(getActivity(), R.string.fail, e.getMessage());
         }
 
 
@@ -204,10 +209,13 @@ public class UploadProjectFragment extends DialogFragment{
             if(response) {
                 final String serverURL = ((MainActivity) getActivity()).getMainController().getServerURL();
                 try {
-
-                    UploadTask uploadTask = (UploadTask) new UploadTask(this.project.getUploadFilePath(), (MainActivity)getActivity()).execute(serverURL + "uploadproject/");
+                    String filePath = ProjectsService.getUploadFilePath(getActivity(), project);
+                    UploadTask uploadTask = (UploadTask) new UploadTask(filePath, (MainActivity)getActivity()).execute(serverURL + "uploadproject/");
 
                 } catch (InvalidAppConfigException e) {
+                    e.printStackTrace();
+                    Message.showErrorMessage(getActivity(), R.string.fail, e.getMessage());
+                } catch (ProjectException e) {
                     e.printStackTrace();
                     Message.showErrorMessage(getActivity(), R.string.fail, e.getMessage());
                 }

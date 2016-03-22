@@ -24,6 +24,8 @@ import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.controller.activity.MainActivity;
 import br.org.funcate.terramobile.controller.activity.tasks.httpclient.FileBodyUploadProgress;
 import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
+import br.org.funcate.terramobile.model.exception.SettingsException;
+import br.org.funcate.terramobile.model.service.ProjectsService;
 import br.org.funcate.terramobile.util.Message;
 import br.org.funcate.terramobile.util.ResourceHelper;
 import br.org.funcate.terramobile.util.Util;
@@ -55,12 +57,14 @@ public class UploadTask extends AsyncTask<String, String, Boolean> {
         try {
             if(result && originFile.exists()) {
                 File uploadedDir = Util.getDirectory(ResourceHelper.getStringResource(R.string.app_workspace_uploaded_dir));
+                // move gpkg file from temp to uploaded directory
                 Util.moveFile(originFile.getAbsolutePath(), uploadedDir.getAbsolutePath());
                 // and moving the journal file too
                 File originJournalFile = new File(originFile.getAbsolutePath() + "-journal");
                 if(originJournalFile.exists()) {
                     Util.moveFile(originJournalFile.getAbsolutePath(), uploadedDir.getAbsolutePath());
                 }
+                ProjectsService.setUploadSequence(mainActivity, mainActivity.getMainController().getCurrentProject());
             }
         }catch (Exception e) {
             e.printStackTrace();
@@ -68,7 +72,10 @@ public class UploadTask extends AsyncTask<String, String, Boolean> {
         } catch (InvalidAppConfigException e) {
             e.printStackTrace();
             Log.e("onPostExecute Exception", e.getMessage());
-        }finally {
+        } catch (SettingsException e) {
+            e.printStackTrace();
+            Log.e("onPostExecute Exception", e.getMessage());
+        } finally {
             mainActivity.getProgressDialog().dismiss();
         }
     }

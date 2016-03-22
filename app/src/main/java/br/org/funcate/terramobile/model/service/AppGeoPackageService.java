@@ -36,6 +36,7 @@ import br.org.funcate.terramobile.model.exception.DAOException;
 import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
 import br.org.funcate.terramobile.model.exception.InvalidGeopackageException;
 import br.org.funcate.terramobile.model.exception.LowMemoryException;
+import br.org.funcate.terramobile.model.exception.ProjectException;
 import br.org.funcate.terramobile.model.exception.SettingsException;
 import br.org.funcate.terramobile.model.exception.StyleException;
 import br.org.funcate.terramobile.model.exception.TerraMobileException;
@@ -323,7 +324,14 @@ public class AppGeoPackageService {
             throw new TerraMobileException(ResourceHelper.getStringResource(R.string.no_layer_to_send_exception));
         }
 
-        String tempGPKGName = project.getUploadFilePath();
+
+        String tempGPKGName = null;
+        try {
+            tempGPKGName = ProjectsService.getUploadFilePath(context, project);
+        } catch (ProjectException e) {
+            e.printStackTrace();
+            throw new TerraMobileException(e.getMessage());
+        }
 
         // Create a GeoPackage to UPLOAD
         Util.copyFile(project.getFilePath(), tempGPKGName);
@@ -535,9 +543,9 @@ public class AppGeoPackageService {
         }
     }
 
-    public static boolean uploadPackageExists(Project project) throws InvalidAppConfigException {
+    public static boolean uploadPackageExists(Context context, Project project) throws InvalidAppConfigException, ProjectException {
 
-        String uploadGPKGName = project.getUploadFilePath();
+        String uploadGPKGName = ProjectsService.getUploadFilePath(context, project);
         if ((new File(uploadGPKGName)).exists()) {
             return true;
         }

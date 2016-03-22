@@ -47,14 +47,19 @@ public class Project {
         return filePath;
     }
 
-    public String getUploadFilePath() throws InvalidAppConfigException {
+    public String getUploadTempDir() throws InvalidAppConfigException {
 
-        String fileExtension = ResourceHelper.getStringResource(R.string.geopackage_extension);
-        String fileUploadSuffix = ResourceHelper.getStringResource(R.string.geopackage_upload_suffix);
         File tempPath = Util.getDirectory(ResourceHelper.getStringResource(R.string.app_workspace_temp_dir));
         String applicationTempDir = tempPath.getAbsolutePath();
 
-        return applicationTempDir + "/" + this.getName().replace(fileExtension, fileUploadSuffix + fileExtension);
+        return applicationTempDir;
+    }
+
+    public String nextUploadFileName(String fileUploadSuffix) throws InvalidAppConfigException {
+
+        String fileExtension = ResourceHelper.getStringResource(R.string.geopackage_extension);
+
+        return this.getName().replace(fileExtension, fileUploadSuffix + fileExtension);
     }
 
     public void setFilePath(String filePath) {

@@ -13,6 +13,7 @@ import java.util.Date;
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.model.domain.Project;
 import br.org.funcate.terramobile.model.domain.Setting;
+import br.org.funcate.terramobile.model.exception.DAOException;
 import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
 import br.org.funcate.terramobile.model.exception.ProjectException;
 import br.org.funcate.terramobile.model.exception.SettingsException;
@@ -120,7 +121,7 @@ public class ProjectsService {
     public static String getStatus(Context context, String projectPath) throws InvalidAppConfigException, ProjectException {
         String status = "";
         try {
-            Setting descriptionSetting = SettingsService.get(context,"project_status",projectPath);
+            Setting descriptionSetting = SettingsService.get(context, "project_status", projectPath);
 
             if(descriptionSetting!=null)
             {
@@ -146,6 +147,42 @@ public class ProjectsService {
         } catch (SettingsException e) {
             throw new ProjectException(ResourceHelper.getStringResource(R.string.failed_getting_project_setting),e);
         }
+    }
+
+    public static String getUploadFilePath(Context context, Project project) throws InvalidAppConfigException, ProjectException {
+        String uploadFileSuffix;
+        String key="upload_sequence";
+        Setting setting;
+        try {
+            setting = SettingsService.get(context, key, project.getFilePath());
+        } catch (SettingsException e) {
+            e.printStackTrace();
+            throw new ProjectException(e.getMessage());
+
+        }
+        if(setting==null) {
+            // insert this setting into db
+            setting = new Setting(key, "0");
+            try {
+                SettingsService.insert(context, setting, project.getFilePath());
+            } catch (DAOException e) {
+                e.printStackTrace();
+                throw new ProjectException(ResourceHelper.getStringResource(R.string.failed_upload_file_path_project),e);
+            }
+        }
+        uploadFileSuffix = setting.getValue();
+        String filePath = project.getUploadTempDir() + "/" + project.nextUploadFileName(uploadFileSuffix);
+
+        return filePath;
+    }
+
+    public static boolean setUploadSequence(Context context, Project project) throws InvalidAppConfigException, SettingsException {
+
+        Setting setting = SettingsService.get(context, "upload_sequence", project.getFilePath());
+        int next = Integer.valueOf(setting.getValue());
+        next++;
+        setting.setValue(""+next);
+        return SettingsService.update(context, setting, project.getFilePath());
     }
 
 }
