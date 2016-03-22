@@ -21,7 +21,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import org.osmdroid.ResourceProxy;
-import org.osmdroid.bonuspack.overlays.MapEventsOverlay;
 import org.osmdroid.tileprovider.tilesource.ITileSource;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.tileprovider.tilesource.XYTileSource;
@@ -83,6 +82,8 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants {
         View v = inflater.inflate(R.layout.fragment_map, container, false);
         mMapView = (TerraMobileMapView) v.findViewById(R.id.mapview);
 
+        // TODO: menuMapController is used here before test of this variable. For what reason?
+        // In some scenarios the app crash here.
         mMapView.setMainController(menuMapController.getMainController());
         mMapView.setMapEventsOverlay();
         drawingImageView = (ImageView) v.findViewById(R.id.DrawingImageView);
