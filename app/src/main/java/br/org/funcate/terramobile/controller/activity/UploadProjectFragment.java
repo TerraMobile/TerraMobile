@@ -16,14 +16,13 @@ import java.util.ArrayList;
 
 import br.org.funcate.jgpkg.exception.QueryException;
 import br.org.funcate.terramobile.R;
+import br.org.funcate.terramobile.controller.activity.tasks.BuildUploadGPKGTask;
 import br.org.funcate.terramobile.controller.activity.tasks.UploadTask;
 import br.org.funcate.terramobile.model.domain.Project;
 import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
 import br.org.funcate.terramobile.model.exception.InvalidGeopackageException;
 import br.org.funcate.terramobile.model.exception.ProjectException;
 import br.org.funcate.terramobile.model.exception.SettingsException;
-import br.org.funcate.terramobile.model.exception.StyleException;
-import br.org.funcate.terramobile.model.exception.TerraMobileException;
 import br.org.funcate.terramobile.model.gpkg.objects.GpkgLayer;
 import br.org.funcate.terramobile.model.service.AppGeoPackageService;
 import br.org.funcate.terramobile.model.service.LayersService;
@@ -155,31 +154,17 @@ public class UploadProjectFragment extends DialogFragment{
             return false;
         }
 
-        String fileName = null;
-
         try {
             if(AppGeoPackageService.uploadPackageExists(getActivity(), this.project)) {
 
                 Message.showConfirmMessage(getActivity(), R.string.upload, R.string.upload_package_exists, new CallbackUploadMessage(this.project));
 
             }else {
+                if(this.project!=null && layers!=null && !layers.isEmpty()) {
 
-                try {
-                    fileName = AppGeoPackageService.createGeopackageForUpload(getActivity(), this.project, layers);
-
-                    if(fileName!=null) {
-
-                        final String serverURL = ((MainActivity) getActivity()).getMainController().getServerURL();
-                        UploadTask uploadTask = (UploadTask) new UploadTask(fileName, (MainActivity)getActivity()).execute(serverURL + "uploadproject/");
-                        return true;
-                    }
-
-                } catch (TerraMobileException e) {
-                    e.printStackTrace();
-                    Message.showErrorMessage(getActivity(), R.string.fail, e.getMessage());
-                } catch (StyleException e) {
-                    e.printStackTrace();
-                    Message.showErrorMessage(getActivity(), R.string.fail, e.getMessage());
+                    BuildUploadGPKGTask uploadGPKGTask = new BuildUploadGPKGTask((MainActivity) getActivity(), this.project, layers);
+                    uploadGPKGTask.execute();
+                    return true;
                 }
             }
 
