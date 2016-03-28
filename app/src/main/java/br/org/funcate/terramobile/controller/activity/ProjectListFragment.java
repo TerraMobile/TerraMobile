@@ -84,4 +84,12 @@ public class ProjectListFragment extends DialogFragment{
         super.onActivityCreated(arg0);  // Will now complete and not crash
     }
 
+    @Override
+    public void onDismiss(DialogInterface dialogInterface) {
+        getProjectListAdapter().resetIcon();
+        if(lVProject!=null) {
+            lVProject.invalidateViews();
+        }
+    }
+
 }

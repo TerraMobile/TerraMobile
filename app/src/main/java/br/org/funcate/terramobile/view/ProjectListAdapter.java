@@ -34,7 +34,7 @@ import br.org.funcate.terramobile.util.Util;
 /**
  * Created by marcelo on 6/10/15.
  */
-public class ProjectListAdapter extends ArrayAdapter<Project> implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener{
+public class ProjectListAdapter extends ArrayAdapter<Project> implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
     private Context context;
 
     private ArrayList projectList;
@@ -45,6 +45,18 @@ public class ProjectListAdapter extends ArrayAdapter<Project> implements Adapter
         super(context, textViewResourceId, projectList);
         this.context = context;
         this.projectList = projectList;
+    }
+
+    public void resetIcon() {
+
+        Project currentProject = ((MainActivity) context).getMainController().getCurrentProject();
+        for (Object o : projectList) {
+            Project p = (Project)o;
+            if (currentProject != null && currentProject.toString().equals(p.toString())) {
+                p.setModified(currentProject.isModified());
+                break;
+            }
+        }
     }
 
     @Override

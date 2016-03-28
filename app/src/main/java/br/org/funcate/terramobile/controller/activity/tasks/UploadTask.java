@@ -50,6 +50,10 @@ public class UploadTask extends AsyncTask<String, String, Boolean> {
     @Override
     protected void onPreExecute() {
         mainActivity.showUploadProgressDialog(mainActivity.getString(R.string.send_project_upload));
+        // set a listener to update the current project item.
+        if(mainActivity.getProjectListFragment()!=null) {
+            mainActivity.getProgressDialog().setOnDismissListener(mainActivity.getProjectListFragment());
+        }
     }
 
     @Override
@@ -64,7 +68,7 @@ public class UploadTask extends AsyncTask<String, String, Boolean> {
                 if(originJournalFile.exists()) {
                     Util.moveFile(originJournalFile.getAbsolutePath(), uploadedDir.getAbsolutePath());
                 }
-                ProjectsService.setUploadSequence(mainActivity, mainActivity.getMainController().getCurrentProject());
+                ProjectsService.increaseUploadSequence(mainActivity, mainActivity.getMainController().getCurrentProject());
             }
         }catch (Exception e) {
             e.printStackTrace();

@@ -176,7 +176,7 @@ public class ProjectsService {
         return filePath;
     }
 
-    public static boolean setUploadSequence(Context context, Project project) throws InvalidAppConfigException, SettingsException {
+    public static boolean increaseUploadSequence(Context context, Project project) throws InvalidAppConfigException, SettingsException {
 
         Setting setting = SettingsService.get(context, "upload_sequence", project.getFilePath());
         int next = Integer.valueOf(setting.getValue());
