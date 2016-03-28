@@ -382,6 +382,10 @@ public class AppGeoPackageService {
                 LayersService.deleteReferenceByLayer(context, tempGPKGName, l);
                 LayerFormService.deleteReferenceByLayer(context, tempGPKGName, l);
             }
+            else
+            {
+                LayersService.deleteReferenceByLayer(context, tempGPKGName, l);
+            }
 
             String tableName = l.getName();
             if (!uploadGeoPackage.dropTable(tableName)) {
