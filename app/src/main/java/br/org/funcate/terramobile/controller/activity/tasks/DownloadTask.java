@@ -61,6 +61,8 @@ public class DownloadTask extends AsyncTask<String, String, Boolean> {
 
     private boolean error;
 
+    private int errorMsg;
+
     public DownloadTask(String downloadDestinationFilePath, String unzipDestinationFilePath, String projectFileName, String projectUUID, int projectStatus, MainActivity mainActivity) {
         this.mainActivity = mainActivity;
         this.unzipDestinationFilePath = unzipDestinationFilePath;
@@ -69,6 +71,7 @@ public class DownloadTask extends AsyncTask<String, String, Boolean> {
         this.projectUUID = projectUUID;
         this.projectStatus = projectStatus;
         mFiles = new ArrayList<String>();
+        errorMsg=R.string.download_failed;
     }
 
     @Override
@@ -182,7 +185,13 @@ public class DownloadTask extends AsyncTask<String, String, Boolean> {
                 if(downloadDestinationFilePath.endsWith(ext))
                     mFiles.add(downloadDestinationFilePath.substring(downloadDestinationFilePath.lastIndexOf(File.separatorChar)+1, downloadDestinationFilePath.length()));
                 else
-                    mFiles = this.unzip(new File(downloadDestinationFilePath), new File(unzipDestinationFilePath));
+                {
+                    Log.e("Wrong file extension", "The requested GeoPackage hasn't the expected '.gpkg' extension.");
+                    errorMsg = R.string.invalid_project;
+                    error = true;
+                    return false;
+                }
+
 
                 unzipDestinationFilePath += "/" +projectFileName;
 
@@ -229,31 +238,34 @@ public class DownloadTask extends AsyncTask<String, String, Boolean> {
 
                 mainActivity.getMainController().getTreeViewController().refreshTreeView();
 
-            String projectName = mFiles.get(0);// The project is the last not_downloaded geopackage file.
+            if(mFiles.size()!=0)
+            {
+                String projectName = mFiles.get(0);// The project is the last not_downloaded geopackage file.
 
-            ProjectDAO projectDAO = new ProjectDAO(DatabaseFactory.getDatabase(mainActivity, ApplicationDatabase.DATABASE_NAME));
+                ProjectDAO projectDAO = new ProjectDAO(DatabaseFactory.getDatabase(mainActivity, ApplicationDatabase.DATABASE_NAME));
 
-            Project project = new Project();
-            project.setId(null);
-            project.setName(projectName);
-            project.setFilePath(unzipDestinationFilePath);
-            project.setDownloaded(1);
-            projectDAO.insert(project);
+                Project project = new Project();
+                project.setId(null);
+                project.setName(projectName);
+                project.setFilePath(unzipDestinationFilePath);
+                project.setDownloaded(1);
+                projectDAO.insert(project);
 
-            mainActivity.getMainController().setCurrentProject(projectDAO.getByName(projectName));
+                mainActivity.getMainController().setCurrentProject(projectDAO.getByName(projectName));
+            }
 
             if(mainActivity.getProgressDialog() != null && mainActivity.getProgressDialog().isShowing()) {
                 if (aBoolean) {
                     mainActivity.getProgressDialog().dismiss();
                     mainActivity.getProjectListFragment().dismiss();
-                    Message.showSuccessMessage(mainActivity, R.string.success, R.string.download_success);
+                    Message.showSuccessMessage(mainActivity, R.string.success, errorMsg);
                 } else {
                     mainActivity.getProgressDialog().dismiss();
-                    Message.showErrorMessage(mainActivity, R.string.error, R.string.download_failed);
+                    Message.showErrorMessage(mainActivity, R.string.error, errorMsg);
                 }
             }
             else {
-                Message.showErrorMessage(mainActivity, R.string.error, R.string.download_failed);
+                Message.showErrorMessage(mainActivity, R.string.error, errorMsg);
             }
         } catch (InvalidAppConfigException e) {
             e.printStackTrace();
@@ -288,83 +300,5 @@ public class DownloadTask extends AsyncTask<String, String, Boolean> {
                 else
                     Message.showSuccessMessage(mainActivity, R.string.success, R.string.download_cancelled);
         }
-    }
-
-    /**
-     * Count the number of files on a zip
-     * @param zipFile Zip file
-     * @return The number of files on the zip archive
-     */
-    private long countZipFiles(File zipFile) {
-        long totalFiles = 0;
-        try {
-            ZipInputStream zipInputStream = new ZipInputStream(new BufferedInputStream(new FileInputStream(zipFile)));
-            while (zipInputStream.getNextEntry() != null)
-                totalFiles++;
-            zipInputStream.close();
-            return totalFiles;
-        }catch (FileNotFoundException e) {
-            Log.e("countZipFiles", "File not found");
-            e.printStackTrace();
-            return totalFiles;
-        } catch (IOException e) {
-            Log.e("countZipFiles", "input/output error");
-            e.printStackTrace();
-            return totalFiles;
-        }
-    }
-
-    /**
-     * Unzip an archive
-     * @param zipFile Zip archive
-     * @param targetDirectory Directory to unzip the files
-     * @throws IOException
-     */
-    public ArrayList<String> unzip(File zipFile, File targetDirectory) throws IOException {
-        ZipInputStream zipInputStream = new ZipInputStream(
-                new BufferedInputStream(new FileInputStream(zipFile)));
-
-        ArrayList<String> files=new ArrayList<String>();
-
-        try {
-            ZipEntry zipEntry;
-            int count;
-            byte[] buffer = new byte[8192];
-            int numFiles = 0;
-            long totalFiles = countZipFiles(zipFile);
-
-            while ((zipEntry = zipInputStream.getNextEntry()) != null) {
-                if (zipEntry.isDirectory())
-                    continue;
-
-                numFiles++;
-
-                File file = new File(targetDirectory, zipEntry.getName());
-                FileOutputStream fileOutputStream = new FileOutputStream(file);
-
-                files.add(zipEntry.getName()+mainActivity.getString(R.string.geopackage_extension));
-
-                long total = 0;
-                long totalZipSize = zipEntry.getCompressedSize();
-                while ((count = zipInputStream.read(buffer)) != -1) {
-                    total += count;
-                    publishProgress("" + (int) ((total * 100) / totalZipSize), mainActivity.getResources().getString(R.string.decompressing) + "\n" + mainActivity.getResources().getString(R.string.file) + " " + numFiles + "/" + totalFiles);
-                    fileOutputStream.write(buffer, 0, count);
-                }
-                fileOutputStream.close();
-                zipFile.delete();
-            }
-        }catch (FileNotFoundException e) {
-            Log.e("unzip", "File not found");
-            e.printStackTrace();
-            return null;
-        } catch (IOException e) {
-            Log.e("unzip", "input/output error");
-            e.printStackTrace();
-            return null;
-        } finally {
-            zipInputStream.close();
-        }
-        return files;
     }
 }
