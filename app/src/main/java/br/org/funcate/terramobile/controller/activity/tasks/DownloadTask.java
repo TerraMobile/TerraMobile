@@ -258,7 +258,7 @@ public class DownloadTask extends AsyncTask<String, String, Boolean> {
                 if (aBoolean) {
                     mainActivity.getProgressDialog().dismiss();
                     mainActivity.getProjectListFragment().dismiss();
-                    Message.showSuccessMessage(mainActivity, R.string.success, errorMsg);
+                    Message.showSuccessMessage(mainActivity, R.string.success, R.string.download_success);
                 } else {
                     mainActivity.getProgressDialog().dismiss();
                     Message.showErrorMessage(mainActivity, R.string.error, errorMsg);
