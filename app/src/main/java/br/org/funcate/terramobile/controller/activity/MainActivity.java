@@ -23,7 +23,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.osmdroid.bonuspack.overlays.InfoWindow;
 import org.osmdroid.bonuspack.overlays.MapEventsReceiver;
@@ -34,8 +33,6 @@ import org.osmdroid.views.MapView;
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.controller.activity.settings.SettingsActivity;
 import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
-import br.org.funcate.terramobile.model.exception.TerraMobileException;
-import br.org.funcate.terramobile.model.osmbonuspack.overlays.SFSEditableMarker;
 import br.org.funcate.terramobile.util.GlobalParameters;
 import br.org.funcate.terramobile.util.Message;
 import br.org.funcate.terramobile.util.ResourceHelper;
@@ -209,9 +206,9 @@ public class MainActivity extends FragmentActivity implements MapEventsReceiver,
             case R.id.settings:
                 startActivity(new Intent(this, SettingsActivity.class));
                 break;
-            case R.id.tooglesfsbboxquery:
+/*            case R.id.tooglesfsbboxquery:
                 this.useNewOverlaySFS=!this.useNewOverlaySFS;
-                break;
+                break;*/
             case R.id.exit:
                 this.finish();
                 System.exit(0);
