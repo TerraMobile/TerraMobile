@@ -68,7 +68,7 @@ dependencies {
     compile project(':dynamicforms')
     compile project(':sldparser')
     compile files('libs/osmbonuspack_v5.1.jar')
-    compile 'com.android.support:support-v4:22.2.0'
     compile 'org.osmdroid:osmdroid-android:4.3'
     compile 'com.android.support:multidex:1.0.0'
+    compile 'com.android.support:support-v4:23.1.0'
 }
