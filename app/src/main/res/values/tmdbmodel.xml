@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- TerraMobile Database Model definitions -->
+
+    <!-- Attributes to table TerraMobile Layer Form (TM_LAYER_FORM) -->
+    <string name="pk_layer_form">tm_conf_id</string>
+    <string name="identify_layer_form">gpkg_layer_identify</string>
+    <string name="json_layer_form">tm_form</string>
+    <string name="media_layer_form">tm_media_table</string>
+
+    <!-- Attributes to table TerraMobile Layer Settings (TM_LAYER_SETTINGS) -->
+    <string name="pk_layer_settings">layer_name</string>
+    <string name="enable_layer_settings">enabled</string>
+    <string name="position_layer_settings">position</string>
+    <string name="data_source_layer_settings">datasource_uri</string>
+    <string name="modified_layer_settings">modified</string>
+
+    <!-- Attributes to table TerraMobile Application Settings (TM_SETTINGS) -->
+    <string name="pk_settings">id</string>
+    <string name="key_settings">key</string>
+    <string name="value_settings">value</string>
+
+    <!-- Attributes to table TerraMobile Layer Style (TM_STYLE) -->
+    <string name="pk_style">layer_name</string>
+    <string name="sld_style">sld_xml</string>
+
+    <!-- Attributes to all tables TerraMobile Media (${LAYER_NAME}+${table_suffix_media}) -->
+    <string name="table_suffix_media">_picture_data</string>
+    <string name="pk_media">PK_UID</string>
+    <string name="feature_id_media">feature_id</string>
+    <string name="picture_thumbnail_media">thumbnail</string>
+    <string name="picture_medium_size_media">display</string>
+    <string name="picture_full_size_media">picture</string>
+    <string name="picture_mime_type_media">picture_mime_type</string>
+
+</resources>
