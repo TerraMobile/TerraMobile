@@ -45,6 +45,7 @@ import java.util.Map;
 import java.util.Set;
 
 import br.org.funcate.dynamicforms.constraints.Constraints;
+import br.org.funcate.dynamicforms.util.Utilities;
 import br.org.funcate.dynamicforms.views.GMapView;
 import br.org.funcate.dynamicforms.views.GView;
 
@@ -158,6 +159,10 @@ public class FragmentDetail extends Fragment {
                         if (jsonObject.has(TAG_READONLY)) {
                             String readonlyStr = jsonObject.getString(TAG_READONLY).trim();
                             readonly = Boolean.parseBoolean(readonlyStr);
+                        }
+                        // if attribute has a non printable char, force readonly mode.
+                        if(Utilities.existUnprintableCharacters(key)) {
+                            readonly = true;
                         }
 
                         Constraints constraints = new Constraints();

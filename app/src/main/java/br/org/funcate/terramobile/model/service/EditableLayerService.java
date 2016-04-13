@@ -539,7 +539,8 @@ public class EditableLayerService {
         if(fields!=null) {
             for (int i = 0, len = fields.size(); i < len; i++) {
                 field = fields.get(i);
-                if(name.equals(field.getFieldName())) return field;
+                String fieldName=field.getFieldName();
+                if(name.equals(fieldName)) return field;
             }
         }
         return field;

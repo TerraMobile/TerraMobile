@@ -293,9 +293,7 @@ public class MarkerInfoWindowController {
                     geojson.put(FormUtilities.GEOJSON_TAG_TYPE,FormUtilities.GEOJSON_TYPE_MULTIPOINT);
 
                 JSONArray coordinates = new JSONArray();
-                Iterator<GeoPoint> it = geoPoints.iterator();
-                while (it.hasNext()) {
-                    GeoPoint gp = it.next();
+                for (GeoPoint gp : geoPoints) {
                     JSONArray coordinate = new JSONArray();
                     coordinate.put(gp.getLongitude());
                     coordinate.put(gp.getLatitude());

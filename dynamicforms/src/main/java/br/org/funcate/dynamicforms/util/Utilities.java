@@ -1093,4 +1093,45 @@ public class Utilities {
                 in.close();
         }
     }
+
+    /**
+     * Verify if exists one or more unprintable chars in String.
+     *
+     * @param str, the input string to analise
+     * @return true if exists or false otherwise
+     */
+    public static boolean existUnprintableCharacters(String str) {
+
+        int len = str.length();
+        boolean test=false;
+        try {
+            for (int i = 0; i < len; i++) {
+                char cp = str.charAt(i);// the code point
+                // Replace invisible control characters and unused code points
+                if( Character.getType(cp)==Character.CONTROL ||
+                        Character.getType(cp)==Character.FORMAT ||
+                        Character.getType(cp)==Character.PRIVATE_USE ||
+                        Character.getType(cp)==Character.SURROGATE ||
+                        Character.getType(cp)==Character.UNASSIGNED) {
+
+                    test=true;
+                    break;
+                }
+            }
+        }catch (NullPointerException e) {
+            e.printStackTrace();
+            System.err.println("Confused: " + e);
+        }catch (IllegalArgumentException e) {
+            e.printStackTrace();
+            System.err.println("Confused: " + e);
+        }catch (IndexOutOfBoundsException e) {
+            e.printStackTrace();
+            System.err.println("Confused: " + e);
+        }catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("Confused: " + e);
+        }
+
+        return test;
+    }
 }
