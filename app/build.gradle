@@ -23,7 +23,7 @@ android {
             // dev utilizes minSDKVersion = 21 to allow the Android gradle plugin
             // to pre-dex each module and produce an APK that can be tested on
             // Android Lollipop without time consuming dex merging processes.
-            minSdkVersion 21
+            minSdkVersion 15
         }
         prod {
             // The actual minSdkVersion for the application.
@@ -68,7 +68,7 @@ dependencies {
     compile project(':dynamicforms')
     compile project(':sldparser')
     compile files('libs/osmbonuspack_v5.1.jar')
-    compile 'com.android.support:support-v4:22.2.0'
     compile 'org.osmdroid:osmdroid-android:4.3'
     compile 'com.android.support:multidex:1.0.0'
+    compile 'com.android.support:support-v4:21.0.0'
 }

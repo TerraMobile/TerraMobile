@@ -236,7 +236,7 @@ public class DownloadTask extends AsyncTask<String, String, Boolean> {
         try {
             if(android.os.Debug.isDebuggerConnected()) android.os.Debug.waitForDebugger(); // Para debugar é preciso colocar um breakpoint nessa linha
 
-                mainActivity.getMainController().getTreeViewController().refreshTreeView();
+              //  mainActivity.getMainController().getTreeViewController().refreshTreeView();
 
             if(mFiles.size()!=0)
             {
