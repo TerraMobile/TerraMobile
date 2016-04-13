@@ -306,7 +306,7 @@ public class MarkerInfoWindowController {
             if(formDataValues!=null) {
                 formIntent.putExtra(FormUtilities.ATTR_DATA_VALUES, formDataValues);
             }
-            File directory = Util.getDirectory(mainActivity.getResources().getString(R.string.app_workspace_dir));
+            File directory = Util.getDirectory(mainActivity.getResources().getString(R.string.app_workspace_temp_dir));
 
             formIntent.putExtra(FormUtilities.MAIN_APP_WORKING_DIRECTORY, directory.getAbsolutePath());
             mainActivity.startActivityForResult(formIntent, FORM_RESULT_CODE);
