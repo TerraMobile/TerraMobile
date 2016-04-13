@@ -37,37 +37,41 @@ public class FragmentInfoPanel extends Fragment {
         if(extras.containsKey(FeatureService.FEATURE_DATA_CONTENT)) {
             extras = extras.getBundle(FeatureService.FEATURE_DATA_CONTENT);
             ArrayList<String> keys = new ArrayList<String>();
-            if(extras.containsKey(FeatureService.FEATURE_DATA_KEYS)) {
+            if(extras!=null && extras.containsKey(FeatureService.FEATURE_DATA_KEYS)) {
                 keys = extras.getStringArrayList(FeatureService.FEATURE_DATA_KEYS);
             }
 
-            Iterator<String> itKeys = keys.iterator();
+            Iterator<String> itKeys = (keys!=null)?(keys.iterator()):(null);
             boolean backgroundControl=true;
 
-            while (itKeys.hasNext()) {
+            if(itKeys!=null) {
+                while (itKeys.hasNext()) {
 
-                String key = itKeys.next();
-                Object o = extras.get(key);
-                String typeClass = o.getClass().getName();
+                    if(extras==null) continue;
 
-                TableRow tableRow = new TableRow(tableLayout.getContext());
+                    String key = itKeys.next();
+                    Object o = extras.get(key);
+                    String typeClass = o.getClass().getName();
 
-                backgroundControl=!backgroundControl;
-                if(backgroundControl)
-                    tableRow.setBackgroundColor(getResources().getColor(R.color.info_panel_background));
+                    TableRow tableRow = new TableRow(tableLayout.getContext());
 
-                TextView label = getTextViewComponent(tableLayout.getContext(), key, getResources().getInteger(R.integer.label_size));
-                label.setLayoutParams( getTableLayoutParams(3) );
-                tableRow.addView(label);
+                    backgroundControl = !backgroundControl;
+                    if (backgroundControl)
+                        tableRow.setBackgroundColor(getResources().getColor(R.color.info_panel_background));
 
-                if(String.class.getName().equals(typeClass)) {
-                    String s = (String) o;
-                    TextView value = getTextViewComponent(tableLayout.getContext(), s, getResources().getInteger(R.integer.value_size));
-                    value.setLayoutParams( getTableLayoutParams(3) );
-                    tableRow.addView(value);
+                    TextView label = getTextViewComponent(tableLayout.getContext(), key, getResources().getInteger(R.integer.label_size));
+                    label.setLayoutParams(getTableLayoutParams(3));
+                    tableRow.addView(label);
+
+                    if (String.class.getName().equals(typeClass)) {
+                        String s = (String) o;
+                        TextView value = getTextViewComponent(tableLayout.getContext(), s, getResources().getInteger(R.integer.value_size));
+                        value.setLayoutParams(getTableLayoutParams(3));
+                        tableRow.addView(value);
+                    }
+
+                    tableLayout.addView(tableRow);
                 }
-
-                tableLayout.addView(tableRow);
             }
         }else {
             TextView defaultText = (TextView) tableLayout.findViewById(R.id.default_text_info);
@@ -98,7 +102,6 @@ public class FragmentInfoPanel extends Fragment {
 
     private TableRow.LayoutParams getTableLayoutParams(int width, int height, int weight) {
 
-        TableRow.LayoutParams layoutParams = new TableRow.LayoutParams( width, height, weight );
-        return layoutParams;
+        return new TableRow.LayoutParams( width, height, weight );
     }
 }
