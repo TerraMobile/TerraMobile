@@ -22,7 +22,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.text.format.DateUtils;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,15 +35,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.sql.SQLData;
-import java.sql.SQLException;
-import java.sql.SQLInput;
-import java.sql.SQLOutput;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -53,7 +45,6 @@ import java.util.Map;
 import java.util.Set;
 
 import br.org.funcate.dynamicforms.constraints.Constraints;
-import br.org.funcate.dynamicforms.util.ResourcesManager;
 import br.org.funcate.dynamicforms.views.GMapView;
 import br.org.funcate.dynamicforms.views.GView;
 
@@ -146,7 +137,7 @@ public class FragmentDetail extends Fragment {
 
                     JSONArray formItemsArray = TagsManager.getFormItems(formObject);
 
-                    int length = formItemsArray.length();
+                    int length = ( (formItemsArray!=null)?(formItemsArray.length()):(0) );
                     for (int i = 0; i < length; i++) {
                         JSONObject jsonObject = formItemsArray.getJSONObject(i);
 
@@ -254,21 +245,30 @@ public class FragmentDetail extends Fragment {
                         } else if (type.equals(TYPE_PICTURES)) {
 
                             o = getValueFromExtras(jsonObject, FormUtilities.IMAGE_MAP);
-                            Map<String, Object> value = null;
+                            Map<String, Map<String, String>> value = null;
                             String clazz = o.getClass().getSimpleName();
                             if (("bundle").equalsIgnoreCase(clazz)) {
                                 Bundle imageMapBundle = (Bundle) o;
-                                Set<String> keys = imageMapBundle.keySet();
-                                Iterator<String> itKeys = keys.iterator();
-                                if (keys.size() > 0)
-                                    value = new HashMap<String, Object>(keys.size());
 
-                                while (itKeys.hasNext()) {
-                                    String keyMap = itKeys.next();
-                                    //Object imageBinary = imageMapBundle.get(keyMap);
-                                    //value.put(keyMap, imageBinary);
-                                    Object imagePath = imageMapBundle.get(keyMap);
-                                    value.put(keyMap, imagePath);
+                                Bundle imageMapThumbnailBundle = imageMapBundle.getBundle("thumbnail");
+                                Bundle imageMapDisplayBundle = imageMapBundle.getBundle("display");
+
+                                if (imageMapThumbnailBundle!=null && imageMapDisplayBundle!=null) {
+                                    Set<String> keys = imageMapThumbnailBundle.keySet();
+                                    Iterator<String> itKeys = keys.iterator();
+
+                                    if (keys.size() > 0) {
+                                        value = new HashMap<String, Map<String, String>>(keys.size());
+
+                                        while (itKeys.hasNext()) {
+                                            String keyMap = itKeys.next();
+                                            Map<String, String> imagePaths = new HashMap<String, String>(2);
+                                            imagePaths.put("thumbnail", (String) imageMapThumbnailBundle.get(keyMap));
+                                            imagePaths.put("display", (String) imageMapDisplayBundle.get(keyMap));
+
+                                            value.put(keyMap, imagePaths);
+                                        }
+                                    }
                                 }
                             }
                             addedView = FormUtilities.addPictureView(this, requestCode, mainView, label, value, constraintDescription);

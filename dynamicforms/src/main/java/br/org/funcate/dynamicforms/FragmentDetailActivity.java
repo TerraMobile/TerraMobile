@@ -196,7 +196,7 @@ public class FragmentDetailActivity extends FragmentActivity {
             JSONObject formObject = TagsManager.getForm4Name(formNameIt, sectionObject);
             JSONArray formItemsArray = TagsManager.getFormItems(formObject);
 
-            int length = formItemsArray.length();
+            int length = formItemsArray != null ? formItemsArray.length() : 0;
             formData = new Bundle(length);
             ArrayList<String> keys = new ArrayList<String>(length);
             ArrayList<String> types = new ArrayList<String>(length);
@@ -229,9 +229,9 @@ public class FragmentDetailActivity extends FragmentActivity {
                     } else if (type.equals(TYPE_STRINGAREA)) {
                         formData.putString(key, value);
                     } else if (type.equals(TYPE_DOUBLE)) {
-                        formData.putDouble(key, new Double(value));
+                        formData.putDouble(key, Double.valueOf(value));
                     } else if (type.equals(TYPE_INTEGER)) {
-                        formData.putInt(key, new Integer(value));
+                        formData.putInt(key, Integer.valueOf(value));
                     } else if (type.equals(TYPE_DATE)) {
                         formData.putString(key, value);
                     } else if (type.equals(TYPE_TIME)) {
@@ -243,7 +243,7 @@ public class FragmentDetailActivity extends FragmentActivity {
                         insertKey = false;
                         //formData.putString(key, value);
                     } else if (type.equals(TYPE_BOOLEAN)) {
-                        formData.putBoolean(key, new Boolean(value));
+                        formData.putBoolean(key, Boolean.valueOf(value));
                     } else if (type.equals(TYPE_STRINGCOMBO)) {
                         formData.putString(key, value);
                     } else if (type.equals(TYPE_CONNECTEDSTRINGCOMBO)) {
@@ -301,10 +301,10 @@ public class FragmentDetailActivity extends FragmentActivity {
         ArrayList<String> listInsertedPaths = null;
         ArrayList<String> listDatabaseIds = null;
         try {
-            String insertedPaths = null;
-            String databaseIds = null;
-            insertedPaths = jsonObject.getString(FormUtilities.TAG_ADDED_IMG);
-            databaseIds = jsonObject.getString(FormUtilities.TAG_DATABASE_IMG);
+            String insertedPaths;
+            String databaseIds;
+            insertedPaths = jsonObject != null ? jsonObject.getString(FormUtilities.TAG_ADDED_IMG) : null;
+            databaseIds = jsonObject != null ? jsonObject.getString(FormUtilities.TAG_DATABASE_IMG) : null;
 
             if(insertedPaths!=null && !insertedPaths.isEmpty()) {
                 String[] paths = insertedPaths.split(FormUtilities.SEMICOLON);

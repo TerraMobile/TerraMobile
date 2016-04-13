@@ -100,20 +100,29 @@ public class ProjectDatabase extends DatabaseHelper {
         StringBuilder sBInto = new StringBuilder();
         StringBuilder sBValues = new StringBuilder();
         sBSelect.append("SELECT ");
-        sBSelect.append("\"INSERT INTO "+tableName+" ");
-        sBInto.append("("+pkName);
-        sBValues.append(" VALUES ('\" || "+pkName+" || \"'\" ");
+        sBSelect.append("\"INSERT INTO ");
+        sBSelect.append(tableName);
+        sBSelect.append(" ");
+        sBInto.append("(");
+        sBInto.append(pkName);
+        sBValues.append(" VALUES ('\" || ");
+        sBValues.append(pkName);
+        sBValues.append(" || \"'\" ");
 
-        for (int i=0; i<args.length;i++) {
-            sBInto.append(", "+args[i]);
-            sBValues.append(" || \",\" || ifnull(\"'\" || " + args[i] + " ||\"'\",\"NULL\") ");
+        for (String arg : args) {
+            sBInto.append(", ");
+            sBInto.append(arg);
+            sBValues.append(" || \",\" || ifnull(\"'\" || ");
+            sBValues.append(arg);
+            sBValues.append(" ||\"'\",\"NULL\") ");
         }
 
         sBInto.append(")");
         sBValues.append(" || \"); \" as scpt ");
         sBSelect.append(sBInto.toString());
         sBSelect.append(sBValues.toString());
-        sBSelect.append(" FROM "+tableName);
+        sBSelect.append(" FROM ");
+        sBSelect.append(tableName);
 
         Cursor c = this.getWritableDatabase().rawQuery(sBSelect.toString(), null);
         StringBuilder sqlOutput = new StringBuilder();
@@ -123,6 +132,8 @@ public class ProjectDatabase extends DatabaseHelper {
                 sqlOutput.append(c.getString(0));
             }while (c.moveToNext());
         }
+        c.close();
+
         return sqlOutput.toString();
     }
 

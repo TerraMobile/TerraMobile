@@ -54,7 +54,8 @@ import br.org.funcate.terramobile.util.Util;
  */
 public class MarkerInfoWindowController {
 
-    private ArrayList<File> temporaryImages;
+    private ArrayList<File> temporaryThumbnailImages;
+    private ArrayList<File> temporaryDisplayImages;
     private MainActivity mainActivity;
     private ProgressBar pgrInfoWindow;
     private ImageButton btnEditMarker;
@@ -82,7 +83,7 @@ public class MarkerInfoWindowController {
     }
 
     public void editMarker(Marker marker) {
-        Long markerId = null;
+        Long markerId;
         try {
             markerId = ((SFSEditableMarker) marker).getMarkerId().longValue();
         }catch (TerraMobileException e){
@@ -231,7 +232,7 @@ public class MarkerInfoWindowController {
             }
 
             try {
-                images = EditableLayerService.getImagesFromDatabase(mainActivity, editableLayer, pointID);
+                images = EditableLayerService.getPhotosFromDatabase(mainActivity, editableLayer, pointID);
             } catch (TerraMobileException e) {
                 e.printStackTrace();
                 images = null;
@@ -252,14 +253,12 @@ public class MarkerInfoWindowController {
                 GeometryDescriptor geometryDescriptor = featureType.getGeometryDescriptor();
                 GeometryType defaultGeometryType = geometryDescriptor.getType();
                 geometryType = defaultGeometryType.getDescription().toString();
-                if(geom!=null) {
-                    if(geometryType.equalsIgnoreCase(FormUtilities.GEOJSON_TYPE_POINT) || geometryType.equalsIgnoreCase(FormUtilities.GEOJSON_TYPE_MULTIPOINT)) {
-                        Coordinate[] coords = geom.getCoordinates();
-                        int coordsLength = coords.length;
-                        geoPoints=new ArrayList<GeoPoint>(coordsLength);
-                        for (int i = 0; i < coordsLength; i++) {
-                            geoPoints.add( new GeoPoint(coords[i].y, coords[i].x) );
-                        }
+                if(geometryType.equalsIgnoreCase(FormUtilities.GEOJSON_TYPE_POINT) || geometryType.equalsIgnoreCase(FormUtilities.GEOJSON_TYPE_MULTIPOINT)) {
+                    Coordinate[] coords = geom.getCoordinates();
+                    int coordsLength = coords.length;
+                    geoPoints=new ArrayList<GeoPoint>(coordsLength);
+                    for (Coordinate coord : coords) {
+                        geoPoints.add(new GeoPoint(coord.y, coord.x));
                     }
                 }
                 formDataValues = FeatureService.featureAttrsToBundle(feature, "");
@@ -321,22 +320,31 @@ public class MarkerInfoWindowController {
     }
 
     private Bundle mediaToBundle(Bundle bundle, Map<String, Object> images) {
-        Bundle imageMapBundle = new Bundle(images.size());
+        Bundle imageMapBundle = new Bundle(2);
+        Bundle imageMapThumbnailBundle = new Bundle(images.size());
+        Bundle imageMapDisplayBundle = new Bundle(images.size());
 
         Set<String> keys = images.keySet();
         Iterator<String> itKeys = keys.iterator();
-        String imagePath = "";
-        temporaryImages = new ArrayList<File>(keys.size());
+        temporaryThumbnailImages = new ArrayList<File>(keys.size());
+        temporaryDisplayImages = new ArrayList<File>(keys.size());
         try {
             while (itKeys.hasNext()) {
                 String key = itKeys.next();
-                File tmpFile = File.createTempFile(ImageUtilities.getTempImageName(null), key);
+                File tmpThumbnailFile = File.createTempFile(ImageUtilities.getTempImageName(null) + "_thumbnail", key);
+                File tmpDisplayFile = File.createTempFile(ImageUtilities.getTempImageName(null)+"_display", key);
                 Object value = images.get(key);
-                imagePath = tmpFile.getPath();
-                ImageUtilities.writeImageDataToFile((byte[])value, imagePath);
-                temporaryImages.add(tmpFile);
-                imageMapBundle.putString(key, imagePath);
+                byte[][] v = (byte[][]) value;
+                ImageUtilities.writeImageDataToFile(v[0], tmpThumbnailFile.getPath());
+                temporaryThumbnailImages.add(tmpThumbnailFile);
+                imageMapThumbnailBundle.putString(key, tmpThumbnailFile.getPath());
+
+                ImageUtilities.writeImageDataToFile(v[1], tmpDisplayFile.getPath());
+                temporaryDisplayImages.add(tmpDisplayFile);
+                imageMapDisplayBundle.putString(key, tmpDisplayFile.getPath());
             }
+            imageMapBundle.putBundle("thumbnail", imageMapThumbnailBundle);
+            imageMapBundle.putBundle("display", imageMapDisplayBundle);
         } catch (IOException e) {
             e.printStackTrace();
             return null;

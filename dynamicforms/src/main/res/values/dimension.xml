@@ -31,4 +31,8 @@
     <!-- horizontal line height -->
 	<dimen name="horizontal_line_height">2dp</dimen>
 	<dimen name="horizontal_line_height_fat">5dp</dimen>
+	<!-- thumbnail dimensions -->
+	<integer name="thumbnail_width">102</integer>
+	<integer name="thumbnail_height">102</integer>
+
 </resources>

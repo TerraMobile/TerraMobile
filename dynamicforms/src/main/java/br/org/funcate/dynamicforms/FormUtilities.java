@@ -468,11 +468,11 @@ public class FormUtilities {
      * @param requestCode           the code to use for activity return.
      * @param mainView              the main view to which to add the new widget to.
      * @param label                 the label of the widget.
-     * @param pictures              the value to put in the widget. A Map with id and binary to images.
+     * @param pictures              the value to put in the widget. A Map with id and Path to images.
      * @param constraintDescription constraint
      * @return the added view.
      */
-    public static GView addPictureView(FragmentDetail fragmentDetail, int requestCode, LinearLayout mainView, String label, Map<String, Object> pictures,
+    public static GView addPictureView(FragmentDetail fragmentDetail, int requestCode, LinearLayout mainView, String label, Map<String, Map<String, String>> pictures,
                                        String constraintDescription) {
         return new GPictureView(fragmentDetail, null, requestCode, mainView, label, pictures, constraintDescription);
     }

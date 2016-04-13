@@ -82,19 +82,16 @@ public class MapFragment extends Fragment implements OpenStreetMapConstants {
         View v = inflater.inflate(R.layout.fragment_map, container, false);
         mMapView = (TerraMobileMapView) v.findViewById(R.id.mapview);
 
-        // TODO: menuMapController is used here before test of this variable. For what reason?
+        if(menuMapController==null)
+        {
+            Message.showErrorMessage((MainActivity)context, R.string.failure_title_msg, "Missing MenuMapController on MapFragment map configuration.");
+        }
         // In some scenarios the app crash here.
         mMapView.setMainController(menuMapController.getMainController());
         mMapView.setMapEventsOverlay();
         drawingImageView = (ImageView) v.findViewById(R.id.DrawingImageView);
         try {
             drawCross(drawingImageView);
-
-            if(menuMapController==null)
-            {
-                throw new InvalidAppConfigException("Missing MenuMapController on MapFragment map configuration.");
-            }
-
 
         } catch (InvalidAppConfigException e) {
             e.printStackTrace();

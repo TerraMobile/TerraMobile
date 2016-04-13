@@ -192,9 +192,7 @@ public class ImageUtilities {
         int targetW = Math.round(bmOptions.outWidth * reductionFactor / 100);
         int targetH = Math.round(bmOptions.outHeight * reductionFactor / 100);
 
-        Bitmap outputBitmap =  Bitmap.createScaledBitmap(BitmapFactory.decodeFile(imagePath), targetW, targetH, false);
-
-        return outputBitmap;
+        return Bitmap.createScaledBitmap(BitmapFactory.decodeFile(imagePath), targetW, targetH, false);
     }
 
     public static BitmapFactory.Options getImageDimensions(String imagePath) {
@@ -245,13 +243,46 @@ public class ImageUtilities {
      */
     public static void writeImageDataToFile(byte[] imageData, String imagePath) throws IOException {
         File img = new File(imagePath);
-        if(img.exists() && img.delete()) {
-            FileOutputStream fout = new FileOutputStream(imagePath);
-            try {
-                fout.write(imageData);
-            } finally {
-                fout.close();
+        if(imageData!=null) {
+            if (img.exists() && img.delete()) {
+                FileOutputStream fout = new FileOutputStream(imagePath);
+                try {
+                    fout.write(imageData);
+                } finally {
+                    fout.close();
+                }
             }
         }
     }
+
+    public static Bitmap getPic(int outputWidth, int outputHeight, String photoPath) {
+
+        if(photoPath==null || photoPath.isEmpty()) {
+            throw new IllegalArgumentException("Invalid parameter.");
+        }
+		/* There isn't enough memory to open up more than a couple camera photos */
+		/* So pre-scale the target bitmap into which the file is decoded */
+
+		/* Get the size of the image */
+        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+        bmOptions.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(photoPath, bmOptions);
+        int photoW = bmOptions.outWidth;
+        int photoH = bmOptions.outHeight;
+
+		/* Figure out which way needs to be reduced less */
+        int scaleFactor = 1;
+        if ((outputWidth > 0) || (outputHeight > 0)) {
+            scaleFactor = Math.min(photoW/outputWidth, photoH/outputHeight);
+        }
+
+		/* Set bitmap options to scale the image decode target */
+        bmOptions.inJustDecodeBounds = false;
+        bmOptions.inSampleSize = scaleFactor;
+        bmOptions.inPurgeable = true;
+
+		/* Decode the JPEG file into a Bitmap */
+        return BitmapFactory.decodeFile(photoPath, bmOptions);
+    }
+
 }

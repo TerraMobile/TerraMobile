@@ -58,20 +58,20 @@ public class AppGeoPackageService {
      * @return ArrayList<GpkgLayer> listLayers, the list Layers
      * @throws Exception
      */
-    public static ArrayList<GpkgLayer> getLayers(Project project, Context context) throws InvalidGeopackageException, QueryException {
+    public static ArrayList<GpkgLayer> getLayers(Project project, Context context) throws InvalidGeopackageException, QueryException, InvalidAppConfigException {
 
 
 
         GeoPackage gpkg = null;
 
-        if(project!=null)
+        if(project!=null) {
             try {
 
                 gpkg = GeoPackageService.readGPKG(context, project.getFilePath());
-            }catch (Exception e) {
+            } catch (Exception e) {
                 throw new InvalidGeopackageException("Invalid GeoPackage file.");
             }
-        else {
+        }else {
             Log.i("getLayers", "Project not found");
             return null;
         }
@@ -82,7 +82,12 @@ public class AppGeoPackageService {
         }
 
         ArrayList<ArrayList<GpkgField>> layersList = GeoPackageService.getGpkgFieldsContents(gpkg, null, "");
-        TMConfigEditableLayer tmConfigEditableLayer = EditableLayerService.getTMConfigEditableLayer(gpkg);
+        TMConfigEditableLayer tmConfigEditableLayer = null;
+        try {
+            tmConfigEditableLayer = EditableLayerService.getTMConfigEditableLayer(context, gpkg);
+        } catch (DAOException e) {
+            e.printStackTrace();
+        }
         ArrayList<GpkgLayer> listLayers=new ArrayList<GpkgLayer>();
         GpkgLayer layer;
 
@@ -132,11 +137,10 @@ public class AppGeoPackageService {
             // Getting data type
             if("features".equals(dataTypeField.getValue()))
             {
-                if(!tmConfigEditableLayer.isEditable(layerName)) {
+                if(tmConfigEditableLayer==null || !tmConfigEditableLayer.isEditable(layerName)) {
                     layer.setType(GpkgLayer.Type.FEATURES);
                     layer.setFeatureType(GeoPackageService.getLayerFeatureType(gpkg, layerName));
-                }
-                else {
+                }else {
                     layer.setType(GpkgLayer.Type.EDITABLE);
                     layer.setJSON(tmConfigEditableLayer.getJSONConfig(layerName));
                     layer.setFields(GeoPackageService.getLayerFields(gpkg, layerName));
@@ -144,6 +148,7 @@ public class AppGeoPackageService {
                     layer.setMediaTable(tmConfigEditableLayer.getMediaTableConfig(layerName));
                     layer.setPosition(0);
                 }
+
             } else if("tiles".equals(dataTypeField.getValue()))
             {
                 layer.setType(GpkgLayer.Type.TILES);

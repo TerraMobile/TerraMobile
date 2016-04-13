@@ -97,6 +97,8 @@
     <string name="layer_style_delete_exception">Unable to delete layer style from database.</string>
     <string name="layer_form_delete_exception">Unable to delete layer form from database.</string>
     <string name="media_table_delete_exception">Unable to delete media table from database.</string>
+    <string name="media_table_create_exception">Unable to create media table from database.</string>
+    <string name="media_table_insert_exception">Unable to insert media into medias table.</string>
     <string name="invalid_database_exception">Invalid database instance.</string>
     <string name="failed_getting_project_setting">Failed while getting a project setting.</string>
     <string name="failed_getting_project_creation_date">Failed getting a project creation date.</string>

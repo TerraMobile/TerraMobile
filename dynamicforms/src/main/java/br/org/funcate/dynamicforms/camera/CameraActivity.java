@@ -1,226 +1,170 @@
-/*
- * Geopaparazzi - Digital field mapping on Android based devices
- * Copyright (C) 2010  HydroloGIS (www.hydrologis.com)
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 package br.org.funcate.dynamicforms.camera;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.graphics.Bitmap;
 import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import br.org.funcate.dynamicforms.FormUtilities;
 import br.org.funcate.dynamicforms.R;
-import br.org.funcate.dynamicforms.images.ImageUtilities;
 import br.org.funcate.dynamicforms.sensors.OrientationSensor;
-import br.org.funcate.dynamicforms.util.FileUtilities;
 import br.org.funcate.dynamicforms.util.LibraryConstants;
-import br.org.funcate.dynamicforms.util.ResourcesManager;
 import br.org.funcate.dynamicforms.util.Utilities;
 
-/**
- * The taking pictures activity.
- * <p/>
- * <p>
- * The image is created in a <b>tmp</b> folder inside the
- * application folder. If the intent bundle contains a
- * {@link LibraryConstants#PREFS_KEY_CAMERA_IMAGESAVEFOLDER}
- * value, that one is used as folder.
- * </p>
- * <p>
- * The bundle is supposed to contain the gps position available through the keys:
- * {@link LibraryConstants#LONGITUDE},{@link LibraryConstants#LATITUDE},
- * {@link LibraryConstants#ELEVATION},{@link LibraryConstants#AZIMUTH}
- * </p>
- * <p/>
- * <p>
- * The activity returns the id of the image inserted in the database, that can be
- * retrieved through the {@link LibraryConstants#SELECTED_POINT_ID} key from
- * the bundle.
- * </p>
- *
- * @author Andrea Antonello (www.hydrologis.com)
- */
-@SuppressWarnings("nls")
+
 public class CameraActivity extends Activity {
 
-    private static final int CAMERA_PIC_REQUEST = 1337;
-    private String imageFilePath;
-    private Date currentDate;
-    /*
-    private double lon;
-    private double lat;
-    private double elevation;
-    private long noteId = -1;
-    */
-    private int lastImageMediastoreId;
-    private OrientationSensor orientationSensor;
-    private String workingDirectory;
+    private static final int ACTION_TAKE_PHOTO = 1;
 
-/*    private int bestWidthImg;// LibraryConstants.BEST_WIDTH_IMG
-    private int bestHeightImg;// LibraryConstants.BEST_HEIGHT_IMG*/
+    private static final String BITMAP_STORAGE_KEY = "view_bitmap";
+    private Bitmap mImageBitmap;
+    private String mCurrentPhotoPath;
+
+    private static final String JPEG_FILE_PREFIX = "TM_PHOTO_";
+    private static final String JPEG_FILE_SUFFIX = ".jpg";
+
+    private String workingDirectory;
+    private OrientationSensor orientationSensor;
+
 
     public String getWorkingDirectory() {
         return workingDirectory;
     }
 
-    public void onCreate(Bundle icicle) {
-        super.onCreate(icicle);
+    private File getAlbumDir() {
+        File storageDir = null;
 
-        SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        orientationSensor = new OrientationSensor(sensorManager, null);
-        orientationSensor.register(this, SensorManager.SENSOR_DELAY_NORMAL);
+        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState()) && workingDirectory!=null) {
 
-        Bundle extras = getIntent().getExtras();
-        File imageSaveFolder = null;
-        try {
-            workingDirectory = extras.getString(FormUtilities.MAIN_APP_WORKING_DIRECTORY);
-            imageSaveFolder = ResourcesManager.getInstance(this).getTempDir();
-            String imageName;
-            if (extras != null) {
-                String imageSaveFolderTmp = extras.getString(LibraryConstants.PREFS_KEY_CAMERA_IMAGESAVEFOLDER);
-                if (imageSaveFolderTmp != null && new File(imageSaveFolderTmp).exists()) {
-                    imageSaveFolder = new File(imageSaveFolderTmp);
-                }
-                imageName = extras.getString(LibraryConstants.PREFS_KEY_CAMERA_IMAGENAME);
-/*                bestWidthImg = extras.getInt(LibraryConstants.BEST_WIDTH_IMG);
-                bestHeightImg = extras.getInt(LibraryConstants.BEST_HEIGHT_IMG);*/
-                /*
-                noteId = extras.getLong(LibraryConstants.SELECTED_POINT_ID);
-                lon = extras.getDouble(LibraryConstants.LONGITUDE);
-                lat = extras.getDouble(LibraryConstants.LATITUDE);
-                elevation = extras.getDouble(LibraryConstants.ELEVATION);
-                */
-            } else {
-                throw new RuntimeException("Not implemented yet...");
-            }
+            storageDir = new File(workingDirectory);
 
-
-            if (!imageSaveFolder.exists()) {
-                if (!imageSaveFolder.mkdirs()) {
-                    Runnable runnable = new Runnable() {
-                        public void run() {
-                            finish();
-                        }
-                    };
-                    Utilities.messageDialog(this, getString(R.string.cantcreate_img_folder), runnable);
-                    return;
+            if (!storageDir.exists()) {
+                if (! storageDir.mkdirs()) {
+                    if (! storageDir.exists()) {
+                        Log.d("CameraSample", "failed to create directory");
+                        return null;
+                    }
                 }
             }
 
-            File mediaFolder = imageSaveFolder;
+        } else {
+            Log.v(getString(R.string.app_name), "External storage is not mounted READ/WRITE.");
+        }
 
-            currentDate = new Date();
+        return storageDir;
+    }
 
-            if (imageName == null) {
-                imageName = ImageUtilities.getCameraImageName(currentDate);
-            }
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
+        String imageFileName = JPEG_FILE_PREFIX + timeStamp + "_";
+        File albumF = getAlbumDir();
 
-            imageFilePath = mediaFolder.getAbsolutePath() + File.separator + imageName;
-            File imgFile = new File(imageFilePath);
-            Uri outputFileUri = Uri.fromFile(imgFile);
-
-            Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-            cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
-
-            lastImageMediastoreId = getLastImageMediaId();
-
-            startActivityForResult(cameraIntent, CAMERA_PIC_REQUEST);
-        } catch (Exception e) {
-            //GPLog.error(this, null, e);
-            e.printStackTrace();
-            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-            /*Utilities.errorDialog(this, e, new Runnable() {
-                @Override
+        if(albumF==null) {
+            Runnable runnable = new Runnable() {
                 public void run() {
                     finish();
                 }
-            });*/
+            };
+            Utilities.messageDialog(this, getString(R.string.cantcreate_img_folder), runnable);
+            return null;
         }
+
+        return File.createTempFile(imageFileName, JPEG_FILE_SUFFIX, albumF);
     }
 
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == CAMERA_PIC_REQUEST) {
-            checkTakenPictureConsistency();
+    private File setUpPhotoFile() throws IOException {
 
-            Intent intent = getIntent();
-            File imageFile = new File(imageFilePath);
-            if (imageFile.exists()) {
+        File f = createImageFile();
 
-                intent.putExtra(LibraryConstants.OBJECT_EXISTS, true);
-                intent.putExtra(FormUtilities.PHOTO_COMPLETE_PATH, imageFile.getAbsolutePath());
-                double azimuth = orientationSensor.getAzimuthDegrees();
-                intent.putExtra(LibraryConstants.AZIMUTH, azimuth);
+        if(f!=null) {
+            mCurrentPhotoPath = f.getAbsolutePath();
+        }
 
-                /*
-                boolean ret = true;
-                if(imageFile.length() > ImageUtilities.MAX_IMAGE_FILE_SIZE) {
-                    ret = ImageUtilities.resampleImage(bestWidthImg, bestHeightImg, imageFilePath);
-                }
+        return f;
+    }
 
-                if(!ret) {
-                    intent.putExtra(LibraryConstants.OBJECT_EXISTS, false);
-                }else {
-                    intent.putExtra(LibraryConstants.OBJECT_EXISTS, true);
-                    intent.putExtra(FormUtilities.PHOTO_COMPLETE_PATH, imageFile.getAbsolutePath());
-                    double azimuth = orientationSensor.getAzimuthDegrees();
-                    intent.putExtra(LibraryConstants.AZIMUTH, azimuth);
-                }*/
+    private void dispatchTakePictureIntent(int actionCode) {
 
-              /*  try {
-                    byte[][] imageAndThumbnailArray = ImageUtilities.getImageAndThumbnailFromPath(imageFilePath, 5);
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
-                    Class<?> logHelper = Class.forName(DefaultHelperClasses.IMAGE_HELPER_CLASS);
-                    IImagesDbHelper imagesDbHelper = (IImagesDbHelper) logHelper.newInstance();
+        File f;
+        try {
+            f = setUpPhotoFile();
+            mCurrentPhotoPath = f.getAbsolutePath();
+            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
+        } catch (IOException e) {
+            e.printStackTrace();
+            mCurrentPhotoPath = null;
+        }
 
-                    double azimuth = orientationSensor.getAzimuthDegrees();
+        startActivityForResult(takePictureIntent, actionCode);
+    }
 
-                    long imageId = imagesDbHelper.addImage(lon, lat, elevation, azimuth, currentDate.getTime(), imageFile.getName(),
-                            imageAndThumbnailArray[0], imageAndThumbnailArray[1], noteId);
-                    intent.putExtra(LibraryConstants.SELECTED_POINT_ID, imageId);
-                    intent.putExtra(LibraryConstants.OBJECT_EXISTS, true);
+    /** Called when the activity is first created. */
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-                    // delete the file after insertion in db
-                    imageFile.delete();
-                } catch (Exception e) {
-                    GPLog.error(this, null, e);
-                    Utilities.errorDialog(this, e, null);
-                }*/
+        Bundle extras = getIntent().getExtras();
+        try {
+            if (extras != null) {
+
+                workingDirectory = extras.getString(FormUtilities.MAIN_APP_WORKING_DIRECTORY);
+
             } else {
-                intent.putExtra(LibraryConstants.OBJECT_EXISTS, false);
+                throw new RuntimeException("Read data failure from who called.");
             }
 
-            setResult(Activity.RESULT_OK, intent);
+            SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+            orientationSensor = new OrientationSensor(sensorManager, null);
+            orientationSensor.register(this, SensorManager.SENSOR_DELAY_NORMAL);
 
-            finish();
+            if(isIntentAvailable(getApplicationContext(), MediaStore.ACTION_IMAGE_CAPTURE)) {
+                dispatchTakePictureIntent(ACTION_TAKE_PHOTO);
+            }else{
+                throw new RuntimeException("Image Capture not available in your Android.");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
         }
+
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
+        Intent intent = getIntent();
+
+        if(requestCode==ACTION_TAKE_PHOTO && resultCode == RESULT_OK) {
+
+            intent.putExtra(LibraryConstants.OBJECT_EXISTS, true);
+            intent.putExtra(FormUtilities.PHOTO_COMPLETE_PATH, mCurrentPhotoPath);
+            double azimuth = orientationSensor.getAzimuthDegrees();
+            intent.putExtra(LibraryConstants.AZIMUTH, azimuth);
+            setResult(Activity.RESULT_OK, intent);
+            finish();
+        }
+
+    }
     @Override
     public void finish() {
         orientationSensor.unregister();
@@ -228,83 +172,38 @@ public class CameraActivity extends Activity {
     }
 
 
-    private void checkTakenPictureConsistency() {
-        try {
-            /*
-             * Checking for duplicate images
-             * This is necessary because some camera implementation not only save where you want them to save but also in their default location.
-             */
-            final String[] projection = {MediaStore.Images.ImageColumns.DATA, MediaStore.Images.ImageColumns.DATE_TAKEN,
-                    MediaStore.Images.ImageColumns.SIZE, MediaStore.Images.ImageColumns._ID};
-            final String imageOrderBy = MediaStore.Images.Media._ID + " DESC";
-            final String imageWhere = MediaStore.Images.Media._ID + ">?";
-            final String[] imageArguments = {Integer.toString(lastImageMediastoreId)};
-            Cursor imageCursor = getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projection, imageWhere, imageArguments,
-                    imageOrderBy);
-            List<File> cameraTakenMediaFiles = new ArrayList<File>();
-            if (imageCursor.getCount() > 0) {
-                while (imageCursor.moveToNext()) {
-                    // int id =
-                    // imageCursor.getInt(imageCursor.getColumnIndex(MediaStore.Images.Media._ID));
-                    String path = imageCursor.getString(imageCursor.getColumnIndex(MediaStore.Images.Media.DATA));
-                    // Long takenTimeStamp =
-                    // imageCursor.getLong(imageCursor.getColumnIndex(MediaStore.Images.Media.DATE_TAKEN));
-                    // Long size =
-                    // imageCursor.getLong(imageCursor.getColumnIndex(MediaStore.Images.Media.SIZE));
-                    cameraTakenMediaFiles.add(new File(path));
-                }
-            }
-            imageCursor.close();
+    // Some lifecycle callbacks so that the image can survive orientation change
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putParcelable(BITMAP_STORAGE_KEY, mImageBitmap);
+        super.onSaveInstanceState(outState);
+    }
 
-            File imageFile = new File(imageFilePath);
-
-            boolean imageExists = imageFile.exists();
-/*            if (GPLog.LOG)
-                GPLog.addLogEntry("Image file: " + imageFilePath + " exists: " + imageExists);*/
-
-            if (!imageExists && cameraTakenMediaFiles.size() > 0) {
-                // was not saved where I wanted, but the camera saved one in the media folder
-                // try to copy over the one saved by the camera and then delete
-                try {
-                    File cameraDoubleFile = cameraTakenMediaFiles.get(cameraTakenMediaFiles.size() - 1);
-                    FileUtilities.copyFile(cameraDoubleFile, imageFile);
-                    cameraDoubleFile.delete();
-                } catch (IOException e) {
-                    //GPLog.error(this, null, e);
-                    e.printStackTrace();
-                    Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-                }
-            }
-            for (File cameraTakenFile : cameraTakenMediaFiles) {
-                // delete the one duplicated
-                cameraTakenFile.delete();
-            }
-        } catch (Exception e) {
-            //GPLog.error(this, null, e);
-            e.printStackTrace();
-            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-        }
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        mImageBitmap = savedInstanceState.getParcelable(BITMAP_STORAGE_KEY);
     }
 
     /**
-     * Gets the last image id from the media store.
+     * Indicates whether the specified action can be used as an intent. This
+     * method queries the package manager for installed packages that can
+     * respond to an intent with the specified action. If no suitable package is
+     * found, this method returns false.
+     * http://android-developers.blogspot.com/2009/01/can-i-use-this-intent.html
      *
-     * @return the last image id from the media store.
+     * @param context The application's environment.
+     * @param action The Intent action to check for availability.
+     *
+     * @return True if an Intent with the specified action can be sent and
+     *         responded to, false otherwise.
      */
-    private int getLastImageMediaId() {
-        final String[] imageColumns = {MediaStore.Images.Media._ID};
-        final String imageOrderBy = MediaStore.Images.Media._ID + " DESC";
-        final String imageWhere = null;
-        final String[] imageArguments = null;
-        Cursor imageCursor = getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, imageColumns, imageWhere, imageArguments,
-                imageOrderBy);
-        if (imageCursor.moveToFirst()) {
-            int id = imageCursor.getInt(imageCursor.getColumnIndex(MediaStore.Images.Media._ID));
-            imageCursor.close();
-            return id;
-        } else {
-            return 0;
-        }
+    public static boolean isIntentAvailable(Context context, String action) {
+        final PackageManager packageManager = context.getPackageManager();
+        final Intent intent = new Intent(action);
+        List<ResolveInfo> list =
+                packageManager.queryIntentActivities(intent,
+                        PackageManager.MATCH_DEFAULT_ONLY);
+        return list.size() > 0;
     }
-
 }

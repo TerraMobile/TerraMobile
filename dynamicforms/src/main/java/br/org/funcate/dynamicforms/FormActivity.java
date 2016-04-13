@@ -190,8 +190,10 @@ public class FormActivity extends FragmentActivity {
             JSONObject formObject = TagsManager.getForm4Name(formName, sectionObject);
 
             JSONArray formItemsArray = TagsManager.getFormItems(formObject);
+            if(formItemsArray==null) continue;
 
             int length = formItemsArray.length();
+
             String value = null;
             for (int i = 0; i < length; i++) {
                 JSONObject jsonObject = formItemsArray.getJSONObject(i);

@@ -14,7 +14,7 @@ import br.org.funcate.terramobile.util.ResourceHelper;
  */
 public class LayerFormDAO {
     private DatabaseHelper database;
-    private static final String TABLE_NAME="TM_LAYER_FORM";
+    public static final String TABLE_NAME="TM_LAYER_FORM";
 
     public LayerFormDAO(DatabaseHelper database) throws InvalidAppConfigException, DAOException {
         if(database!=null)

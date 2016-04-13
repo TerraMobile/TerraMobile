@@ -1,14 +1,13 @@
 package br.org.funcate.terramobile.model.service;
 
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
 import android.os.Bundle;
 
 import com.augtech.geoapi.feature.SimpleFeatureImpl;
 import com.augtech.geoapi.geopackage.GeoPackage;
 import com.augtech.geoapi.geopackage.GpkgField;
-import com.augtech.geoapi.geopackage.GpkgTable;
 import com.augtech.geoapi.geopackage.ICursor;
-import com.augtech.geoapi.geopackage.table.FeaturesTable;
 import com.augtech.geoapi.geopackage.table.GpkgTriggers;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -28,8 +27,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -43,6 +40,7 @@ import br.org.funcate.jgpkg.service.GeoPackageService;
 import br.org.funcate.terramobile.R;
 import br.org.funcate.terramobile.controller.activity.MainActivity;
 import br.org.funcate.terramobile.controller.activity.TreeViewController;
+import br.org.funcate.terramobile.model.db.dao.LayerFormDAO;
 import br.org.funcate.terramobile.model.exception.DAOException;
 import br.org.funcate.terramobile.model.exception.InvalidAppConfigException;
 import br.org.funcate.terramobile.model.exception.StyleException;
@@ -70,19 +68,19 @@ public class EditableLayerService {
         }else {
             try {
                 SimpleFeature feature = makeSimpleFeature(formData, tv);
-                ArrayList<String> databaseImages = getOldImagesFromForm(formData);
-                ArrayList<Object> insertImages = getNewImagesFromForm(formData);
+                ArrayList<String> databaseImages = getStoredImagesFromForm(formData);// ids list from removed medias
+                ArrayList<String> insertImages = getNewImagesFromForm(formData);// thumbnail medias in byte[] format
                 GeoPackage geoPackage = tv.getSelectedEditableLayer().getGeoPackage();
                 long featureID = GeoPackageService.writeLayerFeature(geoPackage, feature);
                 String mediaTable = tv.getSelectedEditableLayer().getMediaTable();
-                MediaService.updatePictures(context, geoPackage, mediaTable, databaseImages, insertImages, featureID);
+                MediaService.upgradePictures(context, geoPackage, mediaTable, databaseImages, insertImages, featureID);
 
                 ((MainActivity) context).getMainController().getMenuMapController().removeLayer(tv.getSelectedEditableLayer());
                 ((MainActivity)context).getMainController().getMenuMapController().addLayer(tv.getSelectedEditableLayer());
 
             }catch (Exception e) {
                 int flags = context.getApplicationInfo().flags;
-                if((flags & context.getApplicationInfo().FLAG_DEBUGGABLE) != 0) {
+                if((flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0) {
                     throw new TerraMobileException(e.getMessage());// write log here
                 }else {
                     throw new TerraMobileException(context.getString(R.string.error_while_storing_form_data));
@@ -102,15 +100,15 @@ public class EditableLayerService {
      * Load the configuration to create form to editable layer.
      * @param gpkg, the GeoPackage reference
      * @return The id of the editable layer and the JSON configuration into TMConfigEditableLayer object
-     * @throws Exception
+     * @throws QueryException
      */
-    public static TMConfigEditableLayer getTMConfigEditableLayer(GeoPackage gpkg) throws QueryException {
+    public static TMConfigEditableLayer getTMConfigEditableLayer(Context context, GeoPackage gpkg) throws DAOException, QueryException, InvalidAppConfigException {
 
-        String tableName = "tm_layer_form";
+        String tableName = LayerFormDAO.TABLE_NAME;//"tm_layer_form";
         String[] columns = new String[3];
-        columns[0] = "gpkg_layer_identify";
-        columns[1] = "tm_form";
-        columns[2] = "tm_media_table";
+        columns[0] = ResourceHelper.getStringResource(R.string.identify_layer_form);//"gpkg_layer_identify";
+        columns[1] = ResourceHelper.getStringResource(R.string.json_layer_form);//"tm_form";
+        columns[2] = ResourceHelper.getStringResource(R.string.media_layer_form);//"tm_media_table";
 
         TMConfigEditableLayer tmConfigEditableLayer=new TMConfigEditableLayer();
         ICursor c=null;
@@ -120,17 +118,19 @@ public class EditableLayerService {
                 String id = c.getString(0);
                 String json = c.getString(1);
                 String mediaTable = c.getString(2);
-                boolean isValid = EditableLayerService.validateEditableLayerConfiguration(gpkg, id, json, mediaTable);
+                boolean isValid = EditableLayerService.validateEditableLayerConfiguration(context, gpkg, id, json, mediaTable);
                 if(isValid) {
                     json = removeUnprintableCharacters(json);
-                    if(mediaTable == null || mediaTable.isEmpty()) mediaTable = id + "_picture_data";
+                    if(mediaTable == null || mediaTable.isEmpty()) {
+                        mediaTable = id + ResourceHelper.getStringResource(R.string.table_suffix_media);
+                    }
                     tmConfigEditableLayer.addConfig(id, json, mediaTable);
                     EditableLayerService.removeTriggersOfTable(gpkg, id);
                 }
             }
             c.close();
         }catch (Exception e) {
-            if(c!=null && c instanceof ICursor) c.close();
+            if(c!=null) c.close();
             throw new QueryException(e.getMessage());
         }
 
@@ -138,7 +138,12 @@ public class EditableLayerService {
     }
 
 
-    private static boolean validateEditableLayerConfiguration(GeoPackage gpkg, String layerName, String jsonForm, String mediaTable) throws Exception {
+    private static boolean validateEditableLayerConfiguration(Context context,
+                                                              GeoPackage gpkg,
+                                                              String layerName,
+                                                              String jsonForm,
+                                                              String mediaTable) throws Exception, DAOException, InvalidAppConfigException {
+
         boolean isValid=false;
 
         if(layerName==null || layerName.isEmpty() || jsonForm==null || jsonForm.isEmpty()) return false;
@@ -168,8 +173,8 @@ public class EditableLayerService {
             // validate if registered name of the media table is valid
             if (mediaTable == null || mediaTable.isEmpty()) {
 
-                mediaTable = layerName + "_picture_data";
-                isValid = EditableLayerService.createMediaTable(gpkg, layerName, mediaTable);
+                mediaTable = layerName + ResourceHelper.getStringResource(R.string.table_suffix_media);//"_picture_data";
+                isValid = MediaService.createMediaTable(context, gpkg, layerName, mediaTable);
 
             } else {
 
@@ -180,11 +185,11 @@ public class EditableLayerService {
                     String tableName = c.getString(0);
                     c.close();
                     if(tableName==null || tableName.isEmpty() || !tableName.equals(mediaTable)) {
-                        isValid = EditableLayerService.createMediaTable(gpkg, layerName, mediaTable);
+                        isValid = MediaService.createMediaTable(context, gpkg, layerName, mediaTable);
                     }
                 } else {// the result set is empty, then media table not exists.
                     c.close();
-                    isValid = EditableLayerService.createMediaTable(gpkg, layerName, mediaTable);
+                    isValid = MediaService.createMediaTable(context, gpkg, layerName, mediaTable);
                 }
             }
         }
@@ -226,61 +231,6 @@ public class EditableLayerService {
         return str;
     }
 
-    public static boolean createMediaTable(GeoPackage gpkg, String layerName, String mediaTable) throws Exception {
-
-        FeaturesTable userTable = (FeaturesTable) gpkg.getUserTable(layerName, GpkgTable.TABLE_TYPE_FEATURES);
-        String layerPK = userTable.getPrimaryKey(gpkg);
-
-        String mediaTableStmt = "CREATE TABLE IF NOT EXISTS '"+mediaTable+"' ("+
-                " PK_UID INTEGER PRIMARY KEY AUTOINCREMENT,"+
-                " feature_id INTEGER NOT NULL,"+
-                " picture BLOB,"+
-                " picture_mime_type TEXT";
-
-        if(!layerPK.equals("rowid")) {
-            mediaTableStmt += ", CONSTRAINT fk_feature_id FOREIGN KEY (feature_id) REFERENCES " + layerName + "(" + layerPK + ") ON DELETE CASCADE);";
-        }else {
-            mediaTableStmt += ");";
-        }
-
-        String updateTmLayerFormConfigStmt = "UPDATE tm_layer_form SET tm_media_table='"+mediaTable+"' WHERE gpkg_layer_identify='"+layerName+"';";
-
-        String[] statements = new String[2];
-        statements[0]=mediaTableStmt;
-        statements[1]=updateTmLayerFormConfigStmt;
-        return gpkg.getDatabase().execSQLWithRollback(statements);
-    }
-
-    public static boolean existMedias(Context context,
-                                      GeoPackage geoPackage,
-                                      String mediaTable) throws InvalidAppConfigException, DAOException {
-
-        return MediaService.existMediasOnTable(context, geoPackage, mediaTable);
-
-    }
-
-    public static boolean transferMedias(Context context,
-                                         GpkgLayer layerInput,
-                                         GpkgLayer layerOutput,
-                                         List<SimpleFeature> features) throws InvalidAppConfigException, TerraMobileException, DAOException, Exception {
-
-        Iterator<SimpleFeature> iterator = features.iterator();
-        while(iterator.hasNext()) {
-            SimpleFeature sf = iterator.next();
-            long fid = new Long(sf.getID()).longValue();
-
-            Map<String, Object> imgs = EditableLayerService.getImagesFromDatabase(context, layerInput, fid);
-            if(imgs!=null && !imgs.isEmpty()) {
-                ArrayList<Object> images = (ArrayList<Object>) imgs.values();
-                if(MediaService.insertPictures(context, layerOutput.getGeoPackage(), layerOutput.getMediaTable(), images, fid)) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
     public static boolean removeTriggersOfTable(GeoPackage gpkg, String tableName) throws Exception {
         boolean exec=false;
         if(!gpkg.getDatabase().hasRTreeEnabled()) {
@@ -308,10 +258,11 @@ public class EditableLayerService {
      * @param context, The application context.
      * @param layer, The vector layer that contains the Feature.
      * @param featureID, The identity of the Feature.
-     * @return A HashMap that contains the key and binary data to the pictures.
+     * @return A HashMap that contains the key and binary data to the pictures. The binary data are divide in thumbnail binary data and binary data in display size.
+     * The structure contents: mediaIdentify=>{binaryData:{thumbnailBinary, displayBinary}}.
      * @throws TerraMobileException
      */
-    public static Map<String, Object> getImagesFromDatabase(Context context, GpkgLayer layer, long featureID) throws TerraMobileException, InvalidAppConfigException, DAOException {
+    public static Map<String, Object> getPhotosFromDatabase(Context context, GpkgLayer layer, long featureID) throws TerraMobileException, InvalidAppConfigException, DAOException {
         Map<String, Object> images;
         try{
             images = MediaService.getMedias(context, layer.getGeoPackage(), layer.getMediaTable(), featureID);
@@ -331,7 +282,7 @@ public class EditableLayerService {
      * @param formData, the form
      * @return list of the images identifiers
      */
-    private static ArrayList<String> getOldImagesFromForm(Bundle formData) {
+    private static ArrayList<String> getStoredImagesFromForm(Bundle formData) {
         ArrayList<String> imageIds=null;
 
         if(formData.containsKey(FormUtilities.DATABASE_IMAGE_IDS)) {
@@ -346,27 +297,24 @@ public class EditableLayerService {
      * @param formData, the form
      * @return list in memory of the images in binary format
      */
-    private static ArrayList<Object> getNewImagesFromForm(Bundle formData) {
-
-        ArrayList<Object> images = null;
-        Object image;
+    private static ArrayList<String> getNewImagesFromForm(Bundle formData) {
 
         if(formData.containsKey(FormUtilities.INSERTED_IMAGE_PATHS)) {
+            return formData.getStringArrayList(FormUtilities.INSERTED_IMAGE_PATHS);
+            /*
             ArrayList<String> imagePaths = formData.getStringArrayList(FormUtilities.INSERTED_IMAGE_PATHS);
 
-            if(imagePaths.isEmpty()) return images;
+            if(imagePaths==null || imagePaths.isEmpty()) return null;
 
             images = new ArrayList<Object>(imagePaths.size());
-            Iterator<String> it = imagePaths.iterator();
-            while (it.hasNext()) {
-                String path = it.next();
+            for (String path : imagePaths) {
                 if (ImageUtilities.isImagePath(path)) {
                     image = ImageUtilities.getImageFromPath(path, 2);
                     images.add(image);
                 }
-            }
+            }*/
         }
-        return images;
+        return null;
     }
 
     /**
@@ -430,6 +378,10 @@ public class EditableLayerService {
 
         ArrayList<String> formKeys = formData.getStringArrayList(LibraryConstants.FORM_KEYS);
         ArrayList<String> formTypes = formData.getStringArrayList(LibraryConstants.FORM_TYPES);
+
+        if(formKeys==null || formTypes==null) {
+            throw new TerraMobileException("Attributes form are missing.");
+        }
 
         // adding control attribute into form key list
         String statusKey;
@@ -507,7 +459,7 @@ public class EditableLayerService {
                     attrs[index]=dt;
                 }
             } else if ("BLOB".equalsIgnoreCase(dbType)) {
-                if( !key.equals(feature.getFeatureType().getGeometryDescriptor().getName())) {
+                if( !key.equals(feature.getFeatureType().getGeometryDescriptor().getName().toString())) {
                     String path = formData.getString(key);
                     if (path!=null && ImageUtilities.isImagePath(path)) {
                         byte[] blob = ImageUtilities.getImageFromPath(path, 1);
@@ -540,7 +492,7 @@ public class EditableLayerService {
      */
     private static String mappingAffinityDBType(String originalDBType) {
 
-        String affinityDBType="";
+        String affinityDBType;
         originalDBType = originalDBType.toUpperCase();
 
         if(originalDBType.contains("INT")) {

@@ -86,9 +86,11 @@ public class ProjectListFragment extends DialogFragment{
 
     @Override
     public void onDismiss(DialogInterface dialogInterface) {
-        getProjectListAdapter().resetIcon();
-        if(lVProject!=null) {
-            lVProject.invalidateViews();
+        if(projectListAdapter!=null) {
+            projectListAdapter.resetIcon();
+            if (lVProject != null) {
+                lVProject.invalidateViews();
+            }
         }
     }
 
