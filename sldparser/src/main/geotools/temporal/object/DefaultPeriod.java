@@ -36,19 +36,19 @@ public class DefaultPeriod extends DefaultTemporalGeometricPrimitive implements 
     /**
      * This is the TM_Instant at which this Period starts.
      */
-    private Instant begining;
+    private Instant beginning;
     /**
      * This is the TM_Instant at which this Period ends.
      */
     private Instant ending;
 
-    public DefaultPeriod(Instant begining, Instant ending) {
-        if (begining.relativePosition(ending).equals(RelativePosition.BEFORE)) {
-            this.begining = begining;
+    public DefaultPeriod(Instant beginning, Instant ending) {
+        if (beginning.relativePosition(ending).equals(RelativePosition.BEFORE)) {
+            this.beginning = beginning;
             this.ending = ending;
         }
-        /*if (((DefaultInstant) begining).getPosition().getDate().before(((DefaultInstant) ending).getPosition().getDate())) {
-            this.begining = begining;
+        /*if (((DefaultInstant) beginning).getPosition().getDate().before(((DefaultInstant) ending).getPosition().getDate())) {
+            this.beginning = beginning;
             this.ending = ending;
         } */else {
             throw new IllegalArgumentException("The temporal position of the beginning of the period must be less than (i.e. earlier than) the temporal position of the end of the period");
@@ -59,15 +59,15 @@ public class DefaultPeriod extends DefaultTemporalGeometricPrimitive implements 
      * Links this period to the instant at which it starts.
      */
     public Instant getBeginning() {
-        return begining;
+        return beginning;
     }
 
-    public void setBegining(Instant begining) {
-        this.begining = begining;
+    public void setBeginning(Instant beginning) {
+        this.beginning = beginning;
     }
 
-    public void setBegining(Date date) {
-        this.begining = new DefaultInstant(new DefaultPosition(date));
+    public void setBeginning(Date date) {
+        this.beginning = new DefaultInstant(new DefaultPosition(date));
     }
 
     /**
@@ -96,7 +96,7 @@ public class DefaultPeriod extends DefaultTemporalGeometricPrimitive implements 
         if (object instanceof DefaultPeriod) {
             final DefaultPeriod that = (DefaultPeriod) object;
 
-            return Utilities.equals(this.begining, that.begining) &&
+            return Utilities.equals(this.beginning, that.beginning) &&
                     Utilities.equals(this.ending, that.ending);
         }
         return false;
@@ -112,7 +112,7 @@ public class DefaultPeriod extends DefaultTemporalGeometricPrimitive implements 
  //        if (object instanceof DefaultPeriod) {
  //            final DefaultPeriod that = (DefaultPeriod) object;
  //
- //            if (Utilities.equals(this.begining, that.begining) &&
+ //            if (Utilities.equals(this.beginning, that.beginning) &&
  //                    Utilities.equals(this.ending, that.ending))
  //                return 0;
  //            else {
@@ -126,7 +126,7 @@ public class DefaultPeriod extends DefaultTemporalGeometricPrimitive implements 
     @Override
     public int hashCode() {
         int hash = 5;
-        hash = 37 * hash + (this.begining != null ? this.begining.hashCode() : 0);
+        hash = 37 * hash + (this.beginning != null ? this.beginning.hashCode() : 0);
         hash = 37 * hash + (this.ending != null ? this.ending.hashCode() : 0);
         return hash;
     }
@@ -134,8 +134,8 @@ public class DefaultPeriod extends DefaultTemporalGeometricPrimitive implements 
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder("Period:").append('\n');
-        if (begining != null) {
-            s.append("begin:").append(begining).append('\n');
+        if (beginning != null) {
+            s.append("begin:").append(beginning).append('\n');
         }
         if (ending != null) {
             s.append("end:").append(ending).append('\n');
